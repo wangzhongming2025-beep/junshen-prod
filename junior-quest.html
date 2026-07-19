@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>学科主权夺还战 · 闯关原型</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --c-yuwen:#ff6b6b; --c-shuxue:#4dabf7; --c-yingyu:#fab005; --c-lishi:#9775fa;
+    --c-daofa:#20c997; --c-tiyu:#ff922b; --c-shengwu:#51cf66; --c-wuli:#22b8cf;
+    --c-huaxue:#f06595; --c-dili:#94d82d;
+  }
+  body {
+    font-family: "PingFang SC","Microsoft YaHei","Hiragino Sans GB",sans-serif;
+    background: linear-gradient(135deg,#e0c3fc 0%,#8ec5fc 60%,#a1ffce 100%);
+    min-height: 100vh; color: #2b2b3a; padding-bottom: 40px;
+  }
+  /* HUD */
+  #hud {
+    position: sticky; top: 0; z-index: 50;
+    display: flex; align-items: center; gap: 14px;
+    padding: 10px 18px;
+    background: rgba(255,255,255,.82); backdrop-filter: blur(8px);
+    box-shadow: 0 4px 14px rgba(0,0,0,.08);
+  }
+  #hud .avatar { font-size: 30px; }
+  #hud .who { font-weight: 700; font-size: 15px; }
+  #hud .lv { font-size: 12px; color: #666; }
+  #hud .xpwrap { flex: 1; max-width: 260px; }
+  #hud .xptrack { height: 12px; background: #e4e4ef; border-radius: 99px; overflow: hidden; }
+  #hud .xpfill { height: 100%; width: 0%; background: linear-gradient(90deg,#ffd43b,#ff922b); transition: width .5s; }
+  #hud .stat { text-align: center; font-size: 12px; color: #555; }
+  #hud .stat b { display: block; font-size: 17px; color: #2b2b3a; }
+  /* layout */
+  .wrap { max-width: 960px; margin: 22px auto; padding: 0 16px; }
+  h1.title { text-align: center; font-size: 26px; font-weight: 800; margin-bottom: 4px;
+    text-shadow: 0 2px 0 #fff; }
+  .subtitle { text-align: center; color: #555; font-size: 13px; margin-bottom: 18px; }
+  /* map */
+  .map { display: grid; grid-template-columns: repeat(auto-fit,minmax(170px,1fr)); gap: 14px; }
+  .land {
+    background: #fff; border-radius: 20px; padding: 16px; cursor: pointer;
+    border: 3px solid transparent; box-shadow: 0 8px 20px rgba(0,0,0,.10);
+    transition: transform .15s, box-shadow .15s; position: relative;
+  }
+  .land:hover { transform: translateY(-5px) scale(1.02); box-shadow: 0 14px 26px rgba(0,0,0,.16); }
+  .land.locked { filter: grayscale(.9) brightness(.95); cursor: not-allowed; opacity: .65; }
+  .land.locked:hover { transform: none; box-shadow: 0 8px 20px rgba(0,0,0,.10); }
+  .land .emoji { font-size: 34px; }
+  .land .nm { font-weight: 800; font-size: 18px; margin: 4px 0 2px; }
+  .land .boss { font-size: 12px; color: #777; }
+  .land .mech { display: inline-block; margin-top: 8px; font-size: 11px; padding: 3px 8px;
+    border-radius: 99px; color: #fff; font-weight: 700; }
+  .land .badge-done { position: absolute; top: 10px; right: 12px; font-size: 18px; }
+  .lock-ic { position: absolute; top: 10px; right: 12px; font-size: 18px; }
+  /* quest view */
+  .view { background: rgba(255,255,255,.9); border-radius: 22px; padding: 22px; box-shadow: 0 10px 28px rgba(0,0,0,.12); }
+  .back { display: inline-block; cursor: pointer; color: #555; font-size: 13px; margin-bottom: 12px; }
+  .back:hover { color: #222; }
+  .quest-head { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
+  .quest-head .big { font-size: 40px; }
+  .quest-head .nm { font-weight: 800; font-size: 22px; }
+  .quest-head .bs { font-size: 13px; color: #777; }
+  .levels { display: flex; flex-direction: column; gap: 12px; }
+  .lvl { display: flex; align-items: center; gap: 14px; background: #fff; border-radius: 16px;
+    padding: 14px 16px; box-shadow: 0 4px 12px rgba(0,0,0,.07); }
+  .lvl .dot { width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center;
+    justify-content: center; font-size: 20px; background: #eef; flex-shrink: 0; }
+  .lvl.cleared .dot { background: #d3f9d8; }
+  .lvl .info { flex: 1; }
+  .lvl .info .t { font-weight: 700; font-size: 15px; }
+  .lvl .info .d { font-size: 12px; color: #777; }
+  .lvl .go { padding: 8px 16px; border-radius: 99px; border: none; background: #4dabf7; color: #fff;
+    font-weight: 700; cursor: pointer; font-size: 13px; }
+  .lvl.cleared .go { background: #51cf66; }
+  .lvl.locked .go { background: #ccc; cursor: not-allowed; }
+  .soon { text-align: center; color: #888; font-size: 13px; margin-top: 16px; padding: 12px;
+    background: #f4f4fa; border-radius: 12px; }
+  /* battle */
+  .battle { text-align: center; }
+  .bosswrap { margin: 10px 0 6px; }
+  .bossimg { font-size: 72px; transition: transform .1s; display: inline-block; }
+  .bossimg.hit { animation: shake .4s; }
+  @keyframes shake {
+    0%,100%{transform: translateX(0);}
+    20%{transform: translateX(-10px) rotate(-4deg);}
+    40%{transform: translateX(10px) rotate(4deg);}
+    60%{transform: translateX(-8px);}
+    80%{transform: translateX(8px);}
+  }
+  .bossname { font-weight: 800; font-size: 18px; }
+  .hpwrap { max-width: 420px; margin: 8px auto; }
+  .hptrack { height: 18px; background: #ffd6d6; border-radius: 99px; overflow: hidden; border: 2px solid #ffa8a8; }
+  .hpfill { height: 100%; width: 100%; background: linear-gradient(90deg,#ff6b6b,#fa5252); transition: width .4s; }
+  .hptxt { font-size: 12px; color: #c92a2a; font-weight: 700; }
+  .qbox { background: #fff; border-radius: 16px; padding: 18px; max-width: 520px; margin: 16px auto;
+    box-shadow: 0 6px 16px rgba(0,0,0,.1); }
+  .qbox .q { font-size: 16px; font-weight: 600; line-height: 1.6; margin-bottom: 12px; }
+  .qbox input { width: 80%; padding: 11px 14px; border: 2px solid #dee2e6; border-radius: 12px;
+    font-size: 15px; text-align: center; }
+  .qbox input:focus { outline: none; border-color: #4dabf7; }
+  .row { display: flex; gap: 10px; justify-content: center; margin-top: 12px; flex-wrap: wrap; }
+  .btn { padding: 10px 22px; border-radius: 99px; border: none; font-weight: 700; cursor: pointer;
+    font-size: 14px; }
+  .btn.primary { background: #4dabf7; color: #fff; }
+  .btn.ghost { background: #eef; color: #444; }
+  .feedback { margin-top: 10px; font-size: 14px; font-weight: 700; min-height: 20px; }
+  .feedback.ok { color: #2f9e44; }
+  .feedback.no { color: #e03131; }
+  /* 化学配平 */
+  .eq { font-size: 22px; font-weight: 700; letter-spacing: 1px; margin: 6px 0 14px; display: flex;
+    gap: 6px; justify-content: center; align-items: center; flex-wrap: wrap; }
+  .coef { display: inline-flex; flex-direction: column; align-items: center; }
+  .coef button { width: 26px; height: 22px; border: none; background: #e9ecef; cursor: pointer;
+    border-radius: 6px; font-size: 13px; line-height: 1; }
+  .coef .val { font-size: 18px; font-weight: 800; min-width: 18px; }
+  .coef button.top { border-radius: 6px 6px 2px 2px; }
+  .coef button.bot { border-radius: 2px 2px 6px 6px; }
+  /* 胜利弹窗 */
+  .modal { position: fixed; inset: 0; background: rgba(0,0,0,.45); display: none;
+    align-items: center; justify-content: center; z-index: 100; }
+  .modal.show { display: flex; }
+  .modal .card { background: #fff; border-radius: 22px; padding: 28px 32px; text-align: center;
+    max-width: 360px; box-shadow: 0 20px 50px rgba(0,0,0,.3); animation: pop .3s; }
+  @keyframes pop { from{transform: scale(.8); opacity: 0;} to{transform: scale(1); opacity: 1;} }
+  .modal .card .big { font-size: 56px; }
+  .modal .card h2 { margin: 8px 0; font-size: 22px; }
+  .modal .card p { color: #666; font-size: 14px; margin-bottom: 16px; }
+</style>
+</head>
+<body>
+  <div id="hud">
+    <span class="avatar">🎖️</span>
+    <div>
+      <div class="who">指挥官 <span id="hud-name">你</span></div>
+      <div class="lv">LV.<span id="hud-lv">1</span> · <span id="hud-xp">0</span>/<span id="hud-need">300</span> XP</div>
+    </div>
+    <div class="xpwrap"><div class="xptrack"><div class="xpfill" id="xpfill"></div></div></div>
+    <div class="stat">🏅<b id="hud-badge">0</b>徽章</div>
+    <div class="stat">🗺️<b id="hud-unlock">1</b>领地</div>
+  </div>
+
+  <div class="wrap">
+    <h1 class="title">学科主权夺还战</h1>
+    <div class="subtitle">打怪升级闯关 · 一门一种玩法 · 通关解锁下一领地</div>
+
+    <!-- 地图 -->
+    <div id="map" class="map"></div>
+
+    <!-- 闯关 -->
+    <div id="quest" class="view" style="display:none">
+      <span class="back" onclick="showMap()">← 返回学科大陆</span>
+      <div class="quest-head">
+        <span class="big" id="q-emoji">📜</span>
+        <div>
+          <div class="nm" id="q-name">语文</div>
+          <div class="bs" id="q-boss">Boss：错别字巨魔</div>
+        </div>
+      </div>
+      <div class="levels" id="q-levels"></div>
+      <div class="soon" id="q-soon"></div>
+    </div>
+
+    <!-- 战斗 -->
+    <div id="battle" class="view battle" style="display:none">
+      <span class="back" onclick="backToQuest()">← 退出战斗</span>
+      <div class="bosswrap">
+        <div class="bossimg" id="b-boss">👹</div>
+        <div class="bossname" id="b-name">错别字巨魔</div>
+      </div>
+      <div class="hpwrap">
+        <div class="hptrack"><div class="hpfill" id="b-hp"></div></div>
+        <div class="hptxt" id="b-hptxt">HP 100/100</div>
+      </div>
+      <div class="qbox" id="b-qbox"></div>
+    </div>
+  </div>
+
+  <div class="modal" id="modal">
+    <div class="card">
+      <div class="big" id="m-emoji">🎉</div>
+      <h2 id="m-title">胜利！</h2>
+      <p id="m-desc"></p>
+      <button class="btn primary" onclick="closeModal()">继续征程</button>
+    </div>
+  </div>
+
+<script>
+/* ====== 数据 ====== */
+const SUBJECTS = [
+  {id:'yuwen', name:'语文', emoji:'📜', boss:'错别字巨魔', bossEmoji:'👹', color:'var(--c-yuwen)', mech:'诗词填空斩'},
+  {id:'shuxue', name:'数学', emoji:'🔢', boss:'未知数X怪兽', bossEmoji:'👾', color:'var(--c-shuxue)', mech:'方程炮台'},
+  {id:'yingyu', name:'英语', emoji:'🔤', boss:'词汇健忘小鬼', bossEmoji:'👻', color:'var(--c-yingyu)', mech:'词汇狩猎'},
+  {id:'lishi', name:'历史', emoji:'🏛️', boss:'时空虚无幽灵', bossEmoji:'🌫️', color:'var(--c-lishi)', mech:'时空回廊'},
+  {id:'daofa', name:'道法', emoji:'⚖️', boss:'法则审查裁决官', bossEmoji:'🧑‍⚖️', color:'var(--c-daofa)', mech:'天平裁决'},
+  {id:'tiyu', name:'体育', emoji:'🏃', boss:'重力耐力教官', bossEmoji:'💪', color:'var(--c-tiyu)', mech:'耐力跑酷'},
+  {id:'shengwu', name:'生物', emoji:'🧬', boss:'基因变异巨蛛', bossEmoji:'🕷️', color:'var(--c-shengwu)', mech:'显微镜副本'},
+  {id:'wuli', name:'物理', emoji:'⚡', boss:'折射光学巨灵', bossEmoji:'🔆', color:'var(--c-wuli)', mech:'折射迷宫'},
+  {id:'huaxue', name:'化学', emoji:'🧪', boss:'反应熔炼大魔王', bossEmoji:'🔥', color:'var(--c-huaxue)', mech:'配平熔炉'},
+  {id:'dili', name:'地理', emoji:'🌍', boss:'经纬坐标领主', bossEmoji:'🗺️', color:'var(--c-dili)', mech:'经纬远征'}
+];
+const LV_NAMES = ['入门','进阶','终章'];
+
+// 语文诗词题库（七上）
+const POEMS = [
+  {q:'《论语》中“学而不思则罔”的下一句是？', a:'思而不学则殆'},
+  {q:'曹操《观沧海》中“日月之行”的下一句是？', a:'若出其中'},
+  {q:'《次北固山下》“海日生残夜”下一句是？', a:'江春入旧年'},
+  {q:'《天净沙·秋思》“夕阳西下”下一句是？', a:'断肠人在天涯'},
+  {q:'《闻王昌龄左迁龙标遥有此寄》“我寄愁心与明月”下一句是？', a:'随君直到夜郎西'},
+  {q:'《论语》中“温故而知新”的下一句是？', a:'可以为师矣'},
+  {q:'《诫子书》“非淡泊无以明志”的下一句是？', a:'非宁静无以致远'}
+];
+// 化学配平题库（九上）
+const EQUATIONS = [
+  {tokens:['__','H₂','+','__','O₂','→','__','H₂O'], ans:[2,1,2], hint:'氢气燃烧'},
+  {tokens:['__','Fe','+','__','O₂','→','__','Fe₃O₄'], ans:[3,2,1], hint:'铁在氧气中燃烧'},
+  {tokens:['__','H₂O','→','__','H₂','+','__','O₂'], ans:[2,2,1], hint:'电解水'},
+  {tokens:['__','KMnO₄','→','__','K₂MnO₄','+','__','MnO₂','+','__','O₂'], ans:[2,1,1,1], hint:'高锰酸钾受热分解'}
+];
+
+/* ====== 状态 / 存档 ====== */
+const SAVE_KEY = 'laowang_junior_quest';
+let state = load();
+function load() {
+  try {
+    const s = JSON.parse(localStorage.getItem(SAVE_KEY));
+    if (s) return s;
+  } catch(e){}
+  return { xp:0, badges:0, cleared:{}, unlocked:['yuwen'] };
+}
+function save() { localStorage.setItem(SAVE_KEY, JSON.stringify(state)); }
+function levelOf(xp){ return Math.floor(xp/300)+1; }
+function needOf(xp){ return (levelOf(xp))*300; }
+
+/* ====== 渲染 HUD ====== */
+function renderHUD() {
+  const lv = levelOf(state.xp);
+  document.getElementById('hud-lv').textContent = lv;
+  document.getElementById('hud-xp').textContent = state.xp;
+  document.getElementById('hud-need').textContent = needOf(state.xp);
+  document.getElementById('hud-badge').textContent = state.badges;
+  document.getElementById('hud-unlock').textContent = state.unlocked.length;
+  document.getElementById('xpfill').style.width = ((state.xp % 300)/300*100) + '%';
+}
+
+/* ====== 地图 ====== */
+function renderMap() {
+  const map = document.getElementById('map');
+  map.innerHTML = '';
+  SUBJECTS.forEach((s, i) => {
+    const unlocked = state.unlocked.includes(s.id);
+    const clearedLv = state.cleared[s.id] || [];
+    const allDone = clearedLv.length === 3;
+    const el = document.createElement('div');
+    el.className = 'land' + (unlocked ? '' : ' locked');
+    el.style.borderColor = s.color;
+    el.innerHTML = `
+      <div class="emoji">${s.emoji}</div>
+      <div class="nm">${s.name}</div>
+      <div class="boss">Boss：${s.boss}</div>
+      <span class="mech" style="background:${s.color}">${s.mech}</span>
+      ${allDone ? '<span class="badge-done">🏅</span>' : (unlocked ? '' : '<span class="lock-ic">🔒</span>')}
+    `;
+    if (unlocked) el.onclick = () => showQuest(s.id);
+    map.appendChild(el);
+  });
+}
+
+/* ====== 闯关视图 ====== */
+let curSubject = null;
+function showQuest(id) {
+  curSubject = SUBJECTS.find(s => s.id === id);
+  document.getElementById('map').style.display = 'none';
+  document.getElementById('battle').style.display = 'none';
+  document.getElementById('quest').style.display = 'block';
+  document.getElementById('q-emoji').textContent = curSubject.emoji;
+  document.getElementById('q-name').textContent = curSubject.name;
+  document.getElementById('q-boss').textContent = 'Boss：' + curSubject.boss;
+  const cleared = state.cleared[id] || [];
+  const lvEl = document.getElementById('q-levels');
+  lvEl.innerHTML = '';
+  for (let i=0;i<3;i++) {
+    const isCleared = cleared.includes(i);
+    const isUnlocked = i===0 || cleared.includes(i-1);
+    const row = document.createElement('div');
+    row.className = 'lvl' + (isCleared?' cleared':'') + (isUnlocked?'':' locked');
+    row.innerHTML = `
+      <div class="dot">${isCleared?'✅':(i+1)}</div>
+      <div class="info">
+        <div class="t">第${i+1}关 · ${LV_NAMES[i]}</div>
+        <div class="d">${mechDesc(curSubject, i)}</div>
+      </div>
+      <button class="go" ${(!isUnlocked)?'disabled':''} onclick="startBattle('${id}',${i})">
+        ${isCleared?'复习':(isUnlocked?'挑战':'未解锁')}</button>
+    `;
+    lvEl.appendChild(row);
+  }
+  // 非示范学科提示
+  const isDemo = (id==='yuwen' || id==='huaxue');
+  document.getElementById('q-soon').style.display = isDemo ? 'none' : 'block';
+  if (!isDemo) {
+    document.getElementById('q-soon').innerHTML =
+      '⚡ 本学科专属玩法【' + curSubject.mech + '】设计中<br>原型已开放 <b>语文·诗词填空斩</b> 与 <b>化学·配平熔炉</b> 真实可玩，先去体验！';
+  }
+}
+function mechDesc(s, i) {
+  const map = {
+    yuwen:['课内古诗文填空','错别字+文学常识混战','整册背诵连击 Boss'],
+    huaxue:['化学式书写热身','方程式配平实战','反应推断 Boss 战']
+  };
+  if (map[s.id]) return map[s.id][i];
+  return s.mech + ' · 第'+(i+1)+'阶';
+}
+
+/* ====== 战斗通用 ====== */
+let battle = null;
+function startBattle(id, lv) {
+  curSubject = SUBJECTS.find(s => s.id === id);
+  document.getElementById('quest').style.display = 'none';
+  document.getElementById('battle').style.display = 'block';
+  document.getElementById('b-boss').textContent = curSubject.bossEmoji;
+  document.getElementById('b-name').textContent = curSubject.boss;
+  battle = { id, lv, bossHP:100, max:100, idx:0 };
+  if (id === 'yuwen') initPoem();
+  else if (id === 'huaxue') initChem();
+}
+function setHP(hp) {
+  battle.bossHP = Math.max(0, hp);
+  const pct = battle.bossHP / battle.max * 100;
+  document.getElementById('b-hp').style.width = pct + '%';
+  document.getElementById('b-hptxt').textContent = 'HP ' + battle.bossHP + '/' + battle.max;
+  if (battle.bossHP <= 0) winBattle();
+}
+function showHP() {
+  const pct = battle.bossHP / battle.max * 100;
+  document.getElementById('b-hp').style.width = pct + '%';
+  document.getElementById('b-hptxt').textContent = 'HP ' + battle.bossHP + '/' + battle.max;
+}
+function hitBoss() {
+  const b = document.getElementById('b-boss');
+  b.classList.remove('hit'); void b.offsetWidth; b.classList.add('hit');
+}
+function winBattle() {
+  const lv = battle.lv;
+  const cleared = state.cleared[battle.id] || [];
+  if (!cleared.includes(lv)) {
+    cleared.push(lv);
+    state.cleared[battle.id] = cleared;
+    state.xp += 100;
+    // 全3关通 → 发徽章 + 解锁下一学科
+    if (cleared.length === 3) {
+      state.badges += 1;
+      const idx = SUBJECTS.findIndex(s => s.id === battle.id);
+      const next = SUBJECTS[idx+1];
+      if (next && !state.unlocked.includes(next.id)) state.unlocked.push(next.id);
+    }
+    save();
+    renderHUD();
+    renderMap();
+  }
+  setTimeout(() => {
+    document.getElementById('m-emoji').textContent = '🎉';
+    document.getElementById('m-title').textContent = '领地夺还成功！';
+    const next = SUBJECTS[SUBJECTS.findIndex(s=>s.id===battle.id)+1];
+    let d = '获得 100 XP！' + (cleared.length===3 ? ' 解锁新领地：'+(next?next.name:'全部通关🏆') : ' 下一关已开启。');
+    document.getElementById('m-desc').textContent = d;
+    document.getElementById('modal').classList.add('show');
+  }, 600);
+}
+function closeModal() { document.getElementById('modal').classList.remove('show'); backToQuest(); }
+function backToQuest() { showQuest(battle.id); }
+
+/* ====== 语文：诗词填空斩 ====== */
+function initPoem() {
+  const pool = POEMS.slice();
+  // 洗牌取4题
+  for (let i=pool.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [pool[i],pool[j]]=[pool[j],pool[i]]; }
+  battle.questions = pool.slice(0,4);
+  battle.qi = 0;
+  renderPoem();
+}
+function renderPoem() {
+  showHP();
+  const q = battle.questions[battle.qi];
+  const box = document.getElementById('b-qbox');
+  box.innerHTML = `
+    <div class="q">第${battle.qi+1}/4 题 · ${q.q}</div>
+    <input id="ans" placeholder="输入答案" autocomplete="off">
+    <div class="row">
+      <button class="btn primary" onclick="submitPoem()">出剑 ⚔️</button>
+    </div>
+    <div class="feedback" id="fb"></div>
+  `;
+  document.getElementById('ans').focus();
+  document.getElementById('ans').addEventListener('keydown', e => { if(e.key==='Enter') submitPoem(); });
+}
+function normalize(s){ return (s||'').replace(/[，。、？！；：""''《》\s]/g,''); }
+function submitPoem() {
+  const val = document.getElementById('ans').value;
+  const q = battle.questions[battle.qi];
+  const fb = document.getElementById('fb');
+  if (normalize(val) === normalize(q.a)) {
+    fb.className = 'feedback ok'; fb.textContent = '⚔️ 命中！' + q.a;
+    hitBoss(); setHP(battle.bossHP - 25);
+    if (battle.bossHP > 0) {
+      battle.qi++;
+      setTimeout(() => { if (battle.qi < battle.questions.length) renderPoem(); }, 700);
+    }
+  } else {
+    fb.className = 'feedback no'; fb.textContent = '✖ 再想想，巨魔闪开了';
+  }
+}
+
+/* ====== 化学：配平熔炉 ====== */
+function initChem() {
+  const pool = EQUATIONS.slice();
+  battle.equations = pool.slice(0,3);
+  battle.ei = 0;
+  renderChem();
+}
+function renderChem() {
+  showHP();
+  const eq = battle.equations[battle.ei];
+  battle.cur = eq.ans.map(()=>1);
+  const box = document.getElementById('b-qbox');
+  box.innerHTML = `
+    <div class="q">第${battle.ei+1}/3 题 · 配平方程式（${eq.hint}）</div>
+    <div class="eq" id="eqbox"></div>
+    <div class="row"><button class="btn primary" onclick="checkChem()">投入熔炉 🔥</button></div>
+    <div class="feedback" id="fb"></div>
+  `;
+  drawEq();
+}
+function drawEq() {
+  const eq = battle.equations[battle.ei];
+  const box = document.getElementById('eqbox');
+  box.innerHTML = '';
+  let b = 0;
+  eq.tokens.forEach((tk, idx) => {
+    if (tk === '__') {
+      const bi = b++;
+      const c = document.createElement('span');
+      c.className = 'coef';
+      c.innerHTML = `
+        <button class="top" onclick="adjCoef(${bi},1)">▲</button>
+        <span class="val" id="cv${bi}">${battle.cur[bi]}</span>
+        <button class="bot" onclick="adjCoef(${bi},-1)">▼</button>`;
+      box.appendChild(c);
+    } else {
+      box.appendChild(document.createTextNode(' ' + tk + ' '));
+    }
+  });
+}
+function adjCoef(i, d) {
+  battle.cur[i] = Math.max(1, Math.min(4, battle.cur[i] + d));
+  document.getElementById('cv'+i).textContent = battle.cur[i];
+}
+function checkChem() {
+  const eq = battle.equations[battle.ei];
+  const ok = battle.cur.every((v,i) => v === eq.ans[i]);
+  const fb = document.getElementById('fb');
+  if (ok) {
+    fb.className = 'feedback ok'; fb.textContent = '🔥 炼化成功！方程式平衡';
+    hitBoss(); setHP(battle.bossHP - 34);
+    if (battle.bossHP > 0) {
+      battle.ei++;
+      setTimeout(() => { if (battle.ei < battle.equations.length) renderChem(); }, 700);
+    }
+  } else {
+    fb.className = 'feedback no'; fb.textContent = '✖ 还没平衡，调整系数再试';
+  }
+}
+
+/* ====== 导航 ====== */
+function showMap() {
+  document.getElementById('quest').style.display = 'none';
+  document.getElementById('battle').style.display = 'none';
+  document.getElementById('map').style.display = 'grid';
+}
+renderHUD();
+renderMap();
+</script>
+</body>
+</html>

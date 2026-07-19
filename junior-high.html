@@ -72,6 +72,19 @@
         .card-back {
             transform: rotateY(180deg);
         }
+        /* ===== 闯关子系统 jq- 专属动画 ===== */
+        @keyframes jq-shake {
+            0%,100%{transform: translateX(0);}
+            20%{transform: translateX(-12px) rotate(-5deg);}
+            40%{transform: translateX(12px) rotate(5deg);}
+            60%{transform: translateX(-9px);}
+            80%{transform: translateX(9px);}
+        }
+        .jq-hit { animation: jq-shake 0.4s; }
+        .jq-land { transition: transform .15s, box-shadow .15s, border-color .15s; }
+        .jq-land:hover { transform: translateY(-5px); box-shadow: 0 18px 40px rgba(255,215,0,.12); }
+        .jq-locked { filter: grayscale(.85) brightness(.7); cursor: not-allowed; }
+        .jq-locked:hover { transform: none !important; box-shadow: none !important; }
     </style>
 
     <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
@@ -94,6 +107,9 @@
             <div class="text-lg font-bold tracking-wider text-military-accent glow-text-gold">
                 <i class="fas fa-graduation-cap mr-2"></i>初中智能学习中心
             </div>
+            <a href="#jq-quest-hub" class="border border-military-accent/40 text-military-accent px-3 py-1.5 rounded-full font-bold text-xs hover:bg-military-accent hover:text-military-dark transition-all">
+                🗺️ 闯关
+            </a>
             <a href="index.html#contact-section" class="bg-military-accent text-military-dark px-4 py-1.5 rounded-full font-bold text-sm hover:bg-white transition-all">
                 家长咨询
             </a>
@@ -233,6 +249,81 @@
                 </div>
             </div>
         </section>
+
+        <!-- ================= QUEST CAMPAIGN HUB (打怪升级闯关·一门一种) ================= -->
+        <section id="jq-quest-hub" class="glass-card rounded-2xl p-6 md:p-8 space-y-6 mb-8 scroll-mt-24">
+            <div class="flex flex-col md:flex-row md:items-end justify-between gap-3">
+                <div>
+                    <span class="bg-military-accent/10 text-military-accent border border-military-accent/20 text-xs px-3.5 py-1 rounded-full font-semibold tracking-wider uppercase mb-3 inline-block"><i class="fas fa-bolt mr-1"></i> 闯关版 NEW</span>
+                    <h2 class="text-2xl md:text-3xl font-extrabold text-white glow-text-gold flex items-center gap-2">
+                        <i class="fas fa-map-location-dot text-military-accent"></i> 学科闯关地图
+                    </h2>
+                    <p class="text-sm text-gray-400 mt-1">打怪升级 · 一门一种玩法 · 通关解锁下一领地 · 示范：语文·诗词填空斩 / 化学·配平熔炉</p>
+                </div>
+                <!-- 指挥官 HUD -->
+                <div class="flex items-center gap-4 bg-black/40 border border-white/10 rounded-xl px-4 py-3">
+                    <div class="flex items-center gap-2">
+                        <span class="text-3xl">🎖️</span>
+                        <div>
+                            <div class="font-extrabold text-white text-sm leading-tight">指挥官</div>
+                            <div class="text-[11px] text-gray-400">LV.<span id="jq-lv">1</span> · <span id="jq-xp">0</span>/<span id="jq-need">300</span> XP</div>
+                        </div>
+                    </div>
+                    <div class="w-28">
+                        <div class="h-2.5 bg-black/60 rounded-full overflow-hidden border border-white/10">
+                            <div id="jq-xpfill" class="bg-military-accent h-full rounded-full transition-all duration-500" style="width:0%"></div>
+                        </div>
+                    </div>
+                    <div class="flex gap-4 text-center">
+                        <div><div class="text-lg font-extrabold text-military-accent" id="jq-badge">0</div><div class="text-[10px] text-gray-400">徽章</div></div>
+                        <div><div class="text-lg font-extrabold text-military-accent" id="jq-unlock">1</div><div class="text-[10px] text-gray-400">领地</div></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 学科大陆地图 -->
+            <div id="jq-map" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4"></div>
+
+            <!-- 闯关视图（单学科 3 关） -->
+            <div id="jq-quest" class="hidden bg-black/30 border border-white/10 rounded-2xl p-6 space-y-4">
+                <span class="inline-block cursor-pointer text-gray-400 text-sm hover:text-military-accent transition-colors" onclick="jqShowMap()"><i class="fas fa-arrow-left mr-1"></i> 返回学科大陆</span>
+                <div class="flex items-center gap-3">
+                    <span class="text-4xl" id="jq-q-emoji">📜</span>
+                    <div>
+                        <div class="font-extrabold text-white text-xl" id="jq-q-name">语文</div>
+                        <div class="text-xs text-gray-400" id="jq-q-boss">Boss：错别字巨魔</div>
+                    </div>
+                </div>
+                <div class="space-y-3" id="jq-q-levels"></div>
+                <div id="jq-q-soon" class="hidden text-center text-gray-400 text-sm bg-black/40 border border-white/10 rounded-xl py-4 px-3"></div>
+            </div>
+
+            <!-- 战斗视图 -->
+            <div id="jq-battle" class="hidden bg-black/45 border border-white/10 rounded-2xl p-6 space-y-5 relative overflow-hidden text-center">
+                <span class="inline-block cursor-pointer text-gray-400 text-sm hover:text-military-accent transition-colors" onclick="jqBackToQuest()"><i class="fas fa-arrow-left mr-1"></i> 退出战斗</span>
+                <div>
+                    <div class="text-6xl inline-block" id="jq-b-boss">👹</div>
+                    <div class="font-extrabold text-white text-lg mt-1" id="jq-b-name">错别字巨魔</div>
+                </div>
+                <div class="max-w-md mx-auto">
+                    <div class="h-4 bg-red-900/40 border border-red-500/30 rounded-full overflow-hidden">
+                        <div id="jq-b-hp" class="bg-gradient-to-r from-red-500 to-red-600 h-full rounded-full transition-all duration-300" style="width:100%"></div>
+                    </div>
+                    <div class="text-[11px] font-mono text-red-400 mt-1" id="jq-b-hptxt">HP 100/100</div>
+                </div>
+                <div id="jq-b-qbox" class="bg-black/40 border border-white/10 rounded-2xl p-5 max-w-lg mx-auto text-left"></div>
+            </div>
+        </section>
+
+        <!-- 胜利弹窗 -->
+        <div id="jq-modal" class="fixed inset-0 bg-black/50 hidden items-center justify-center z-[100]">
+            <div class="bg-military-dark border border-military-accent/30 rounded-2xl p-7 text-center max-w-xs shadow-2xl">
+                <div class="text-5xl" id="jq-m-emoji">🎉</div>
+                <h2 class="text-xl font-extrabold text-white mt-2" id="jq-m-title">胜利！</h2>
+                <p class="text-sm text-gray-400 mt-1 mb-4" id="jq-m-desc"></p>
+                <button class="bg-military-accent text-military-dark px-6 py-2 rounded-full font-bold text-sm hover:bg-white transition-all" onclick="jqCloseModal()">继续征程</button>
+            </div>
+        </div>
 
         <!-- ================= CLASSIC MODE WRAP CONTAINER ================= -->
         <div id="jh-classic-sections" class="space-y-12 hidden">
@@ -1828,6 +1919,16 @@
             </div>
             <div class="space-y-4 py-4" id="modalSlidersContainer"></div>
             <button onclick="closeModal()" class="w-full py-2.5 rounded-lg bg-military-accent text-military-dark text-xs font-bold hover:bg-white transition-all text-center">退出大屏投影</button>
+        </div>
+    </div>
+
+    <!-- Mind Map Modal -->
+    <div id="mindmap-modal" class="fixed inset-0 bg-black/95 z-[999] hidden flex flex-col items-center justify-center p-4 md:p-8">
+        <button onclick="closeMindMap()" class="absolute top-4 right-4 text-white hover:text-military-accent text-2xl z-50 bg-white/5 w-12 h-12 rounded-full flex items-center justify-center border border-white/10"><i class="fas fa-times"></i></button>
+        <div class="w-full max-w-4xl bg-military-dark/40 border border-white/5 rounded-2xl p-6 flex flex-col items-center max-h-[90vh] overflow-auto">
+            <h3 class="text-lg font-bold text-white mb-4" id="mindmap-title"><i class="fas fa-sitemap mr-2"></i>学科思维导图</h3>
+            <div id="mermaid-view" class="w-full overflow-auto bg-black/35 rounded-xl border border-white/5 p-4 text-center"></div>
+            <button onclick="closeMindMap()" class="mt-6 px-8 py-2.5 rounded-lg bg-military-accent text-military-dark text-xs font-bold hover:bg-white transition-all text-center">关闭思维导图</button>
         </div>
     </div>
 
@@ -4824,5 +4925,323 @@ const masteryData = {
 
     <!-- Confetti Particle Overlay Canvas -->
     <canvas id="confettiCanvas" class="fixed inset-0 pointer-events-none z-[9999] w-full h-full"></canvas>
+
+<script>
+/* ===== 学科闯关子系统（独立隔离，jq- 前缀，不污染主脚本） ===== */
+(function(){
+  const JQ_SUBJECTS = [
+    {id:'yuwen', name:'语文', emoji:'📜', boss:'错别字巨魔', bossEmoji:'👹', color:'#ff6b6b', mech:'诗词填空斩'},
+    {id:'shuxue', name:'数学', emoji:'🔢', boss:'未知数X怪兽', bossEmoji:'👾', color:'#4dabf7', mech:'方程炮台'},
+    {id:'yingyu', name:'英语', emoji:'🔤', boss:'词汇健忘小鬼', bossEmoji:'👻', color:'#fab005', mech:'词汇狩猎'},
+    {id:'lishi', name:'历史', emoji:'🏛️', boss:'时空虚无幽灵', bossEmoji:'🌫️', color:'#9775fa', mech:'时空回廊'},
+    {id:'daofa', name:'道法', emoji:'⚖️', boss:'法则审查裁决官', bossEmoji:'🧑‍⚖️', color:'#20c997', mech:'天平裁决'},
+    {id:'tiyu', name:'体育', emoji:'🏃', boss:'重力耐力教官', bossEmoji:'💪', color:'#ff922b', mech:'耐力跑酷'},
+    {id:'shengwu', name:'生物', emoji:'🧬', boss:'基因变异巨蛛', bossEmoji:'🕷️', color:'#51cf66', mech:'显微镜副本'},
+    {id:'wuli', name:'物理', emoji:'⚡', boss:'折射光学巨灵', bossEmoji:'🔆', color:'#22b8cf', mech:'折射迷宫'},
+    {id:'huaxue', name:'化学', emoji:'🧪', boss:'反应熔炼大魔王', bossEmoji:'🔥', color:'#f06595', mech:'配平熔炉'},
+    {id:'dili', name:'地理', emoji:'🌍', boss:'经纬坐标领主', bossEmoji:'🗺️', color:'#94d82d', mech:'经纬远征'}
+  ];
+  const JQ_LV_NAMES = ['入门','进阶','终章'];
+  const JQ_POEMS = [
+    {q:'《论语》中“学而不思则罔”的下一句是？', a:'思而不学则殆'},
+    {q:'曹操《观沧海》中“日月之行”的下一句是？', a:'若出其中'},
+    {q:'《次北固山下》“海日生残夜”下一句是？', a:'江春入旧年'},
+    {q:'《天净沙·秋思》“夕阳西下”下一句是？', a:'断肠人在天涯'},
+    {q:'《闻王昌龄左迁龙标遥有此寄》“我寄愁心与明月”下一句是？', a:'随君直到夜郎西'},
+    {q:'《论语》中“温故而知新”的下一句是？', a:'可以为师矣'},
+    {q:'《诫子书》“非淡泊无以明志”的下一句是？', a:'非宁静无以致远'}
+  ];
+  const JQ_EQUATIONS = [
+    {tokens:['__','H₂','+','__','O₂','→','__','H₂O'], ans:[2,1,2], hint:'氢气燃烧'},
+    {tokens:['__','Fe','+','__','O₂','→','__','Fe₃O₄'], ans:[3,2,1], hint:'铁在氧气中燃烧'},
+    {tokens:['__','H₂O','→','__','H₂','+','__','O₂'], ans:[2,2,1], hint:'电解水'},
+    {tokens:['__','KMnO₄','→','__','K₂MnO₄','+','__','MnO₂','+','__','O₂'], ans:[2,1,1,1], hint:'高锰酸钾受热分解'}
+  ];
+  const JQ_SAVE_KEY = 'laowang_junior_quest_v2';
+  function jqLoad(){
+    try { const s = JSON.parse(localStorage.getItem(JQ_SAVE_KEY)); if (s) return s; } catch(e){}
+    return { xp:0, badges:0, cleared:{}, unlocked:['yuwen'] };
+  }
+  function jqSave(){ localStorage.setItem(JQ_SAVE_KEY, JSON.stringify(jqState)); }
+  let jqState = jqLoad();
+  // 占位（非示范）学科默认解锁，避免解锁链路被占位科卡死；示范科按进度解锁
+  JQ_SUBJECTS.forEach(s => {
+    if (s.id !== 'yuwen' && s.id !== 'huaxue' && !jqState.unlocked.includes(s.id)) {
+      jqState.unlocked.push(s.id);
+    }
+  });
+  function jqLevelOf(xp){ return Math.floor(xp/300)+1; }
+  function jqNeedOf(xp){ return jqLevelOf(xp)*300; }
+  function jqRenderHUD(){
+    const lv = jqLevelOf(jqState.xp);
+    document.getElementById('jq-lv').textContent = lv;
+    document.getElementById('jq-xp').textContent = jqState.xp;
+    document.getElementById('jq-need').textContent = jqNeedOf(jqState.xp);
+    document.getElementById('jq-badge').textContent = jqState.badges;
+    document.getElementById('jq-unlock').textContent = jqState.unlocked.length;
+    document.getElementById('jq-xpfill').style.width = ((jqState.xp % 300)/300*100) + '%';
+  }
+  function jqRenderMap(){
+    const map = document.getElementById('jq-map');
+    map.innerHTML = '';
+    JQ_SUBJECTS.forEach(s => {
+      const unlocked = jqState.unlocked.includes(s.id);
+      const clearedLv = jqState.cleared[s.id] || [];
+      const allDone = clearedLv.length === 3;
+      const el = document.createElement('div');
+      el.className = 'jq-land relative glass-card rounded-2xl p-4 cursor-pointer border-2' + (unlocked ? '' : ' jq-locked');
+      el.style.borderColor = s.color;
+      el.innerHTML = `
+        <div class="text-3xl mb-1">${s.emoji}</div>
+        <div class="font-extrabold text-white text-base">${s.name}</div>
+        <div class="text-[11px] text-gray-400 mb-2">Boss：${s.boss}</div>
+        <span class="inline-block text-[10px] px-2 py-0.5 rounded-full font-bold text-military-dark" style="background:${s.color}">${s.mech}</span>
+        ${allDone ? '<span class="absolute top-2 right-2 text-lg">🏅</span>' : (unlocked ? '' : '<span class="absolute top-2 right-2 text-lg">🔒</span>')}
+      `;
+      if (unlocked) el.onclick = () => jqShowQuest(s.id);
+      map.appendChild(el);
+    });
+  }
+  let jqCur = null;
+  function jqShowQuest(id){
+    jqCur = JQ_SUBJECTS.find(s => s.id === id);
+    document.getElementById('jq-map').style.display = 'none';
+    document.getElementById('jq-battle').classList.add('hidden');
+    document.getElementById('jq-quest').classList.remove('hidden');
+    document.getElementById('jq-q-emoji').textContent = jqCur.emoji;
+    document.getElementById('jq-q-name').textContent = jqCur.name;
+    document.getElementById('jq-q-boss').textContent = 'Boss：' + jqCur.boss;
+    const cleared = jqState.cleared[id] || [];
+    const lvEl = document.getElementById('jq-q-levels');
+    lvEl.innerHTML = '';
+    const isDemo = (id === 'yuwen' || id === 'huaxue');
+    for (let i=0;i<3;i++){
+      const isCleared = cleared.includes(i);
+      const isUnlocked = isDemo && (i===0 || cleared.includes(i-1));
+      const row = document.createElement('div');
+      row.className = 'flex items-center gap-3 bg-black/40 border border-white/10 rounded-xl p-3' + (isCleared ? ' border-military-accent/40' : '');
+      const dot = isCleared ? '✅' : (i+1);
+      const btnLabel = isCleared ? '复习' : (isUnlocked ? '挑战' : '开发中');
+      const btnCls = isCleared ? 'bg-emerald-500' : (isUnlocked ? 'bg-military-accent' : 'bg-gray-600');
+      const btnHtml = isUnlocked
+        ? `<button class="px-4 py-1.5 rounded-full font-bold text-xs text-military-dark ${btnCls}" onclick="jqStartBattle('${id}',${i})">${btnLabel}</button>`
+        : `<button class="px-4 py-1.5 rounded-full font-bold text-xs text-white ${btnCls}" disabled>${btnLabel}</button>`;
+      row.innerHTML = `
+        <div class="w-10 h-10 rounded-full flex items-center justify-center font-extrabold ${isCleared ? 'bg-emerald-500/20 text-emerald-400' : 'bg-white/10 text-white'}">${dot}</div>
+        <div class="flex-1">
+          <div class="font-bold text-white text-sm">第${i+1}关 · ${JQ_LV_NAMES[i]}</div>
+          <div class="text-[11px] text-gray-400">${jqMechDesc(jqCur, i)}</div>
+        </div>
+        ${btnHtml}
+      `;
+      lvEl.appendChild(row);
+    }
+    const soon = document.getElementById('jq-q-soon');
+    if (isDemo){ soon.classList.add('hidden'); }
+    else {
+      soon.classList.remove('hidden');
+      soon.innerHTML = '⚡ 本学科专属玩法【' + jqCur.mech + '】设计中<br>原型已开放 <b class="text-military-accent">语文·诗词填空斩</b> 与 <b class="text-military-accent">化学·配平熔炉</b> 真实可玩，先去体验！';
+    }
+  }
+  function jqMechDesc(s, i){
+    const map = {
+      yuwen:['课内古诗文填空','错别字+文学常识混战','整册背诵连击 Boss'],
+      huaxue:['化学式书写热身','方程式配平实战','反应推断 Boss 战']
+    };
+    if (map[s.id]) return map[s.id][i];
+    return s.mech + ' · 第'+(i+1)+'阶';
+  }
+  let jqBattle = null;
+  function jqStartBattle(id, lv){
+    jqCur = JQ_SUBJECTS.find(s => s.id === id);
+    if (id !== 'yuwen' && id !== 'huaxue') return;
+    document.getElementById('jq-quest').classList.add('hidden');
+    document.getElementById('jq-battle').classList.remove('hidden');
+    document.getElementById('jq-b-boss').textContent = jqCur.bossEmoji;
+    document.getElementById('jq-b-name').textContent = jqCur.boss;
+    jqBattle = { id, lv, bossHP:100, max:100, idx:0 };
+    if (id === 'yuwen') jqInitPoem();
+    else if (id === 'huaxue') jqInitChem();
+  }
+  function jqSetHP(hp){
+    jqBattle.bossHP = Math.max(0, hp);
+    const pct = jqBattle.bossHP / jqBattle.max * 100;
+    document.getElementById('jq-b-hp').style.width = pct + '%';
+    document.getElementById('jq-b-hptxt').textContent = 'HP ' + jqBattle.bossHP + '/' + jqBattle.max;
+    if (jqBattle.bossHP <= 0) jqWinBattle();
+  }
+  function jqShowHP(){
+    const pct = jqBattle.bossHP / jqBattle.max * 100;
+    document.getElementById('jq-b-hp').style.width = pct + '%';
+    document.getElementById('jq-b-hptxt').textContent = 'HP ' + jqBattle.bossHP + '/' + jqBattle.max;
+  }
+  function jqHitBoss(){
+    const b = document.getElementById('jq-b-boss');
+    b.classList.remove('jq-hit'); void b.offsetWidth; b.classList.add('jq-hit');
+  }
+  function jqWinBattle(){
+    const lv = jqBattle.lv;
+    const cleared = jqState.cleared[jqBattle.id] || [];
+    let nextUnlocked = null;
+    if (!cleared.includes(lv)){
+      cleared.push(lv);
+      jqState.cleared[jqBattle.id] = cleared;
+      jqState.xp += 100;
+      if (cleared.length === 3){
+        jqState.badges += 1;
+        const idx = JQ_SUBJECTS.findIndex(s => s.id === jqBattle.id);
+        // 找下一个未解锁的学科解锁（优先下一个 demo 科，保证可玩链路不被占位科卡死）
+        for (let k=idx+1;k<JQ_SUBJECTS.length;k++){
+          const sid = JQ_SUBJECTS[k].id;
+          const isDemo = (sid==='yuwen' || sid==='huaxue');
+          if (!jqState.unlocked.includes(sid)){ jqState.unlocked.push(sid); nextUnlocked = JQ_SUBJECTS[k]; break; }
+          if (isDemo) break; // 已解锁的 demo 科，停止（避免越级）
+        }
+      }
+      jqSave(); jqRenderHUD(); jqRenderMap();
+    }
+    setTimeout(() => {
+      document.getElementById('jq-m-emoji').textContent = '🎉';
+      document.getElementById('jq-m-title').textContent = '领地夺还成功！';
+      let d = '获得 100 XP！' + (cleared.length===3 ? ' 解锁新领地：'+(nextUnlocked?nextUnlocked.name:'全部通关🏆') : ' 下一关已开启。');
+      document.getElementById('jq-m-desc').textContent = d;
+      document.getElementById('jq-modal').classList.remove('hidden');
+      document.getElementById('jq-modal').classList.add('flex');
+    }, 600);
+  }
+  function jqCloseModal(){
+    document.getElementById('jq-modal').classList.add('hidden');
+    document.getElementById('jq-modal').classList.remove('flex');
+    jqBackToQuest();
+  }
+  function jqBackToQuest(){ if (jqBattle) jqShowQuest(jqBattle.id); else jqShowMap(); }
+
+  /* 语文：诗词填空斩 */
+  function jqInitPoem(){
+    const pool = JQ_POEMS.slice();
+    for (let i=pool.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [pool[i],pool[j]]=[pool[j],pool[i]]; }
+    jqBattle.questions = pool.slice(0,4);
+    jqBattle.qi = 0;
+    jqRenderPoem();
+  }
+  function jqRenderPoem(){
+    jqShowHP();
+    const q = jqBattle.questions[jqBattle.qi];
+    const box = document.getElementById('jq-b-qbox');
+    box.innerHTML = `
+      <div class="font-bold text-white text-base leading-relaxed mb-3">第${jqBattle.qi+1}/4 题 · ${q.q}</div>
+      <input id="jq-ans" placeholder="输入答案" autocomplete="off" class="w-full px-4 py-2.5 rounded-xl bg-black/40 border border-white/15 text-white text-center focus:outline-none focus:border-military-accent">
+      <div class="flex justify-center mt-3">
+        <button class="bg-military-accent text-military-dark px-6 py-2 rounded-full font-bold text-sm hover:bg-white transition-all" onclick="jqSubmitPoem()">出剑 ⚔️</button>
+      </div>
+      <div class="text-center font-bold text-sm min-h-[20px] mt-2" id="jq-fb"></div>
+    `;
+    const inp = document.getElementById('jq-ans');
+    inp.focus();
+    inp.addEventListener('keydown', e => { if (e.key === 'Enter') jqSubmitPoem(); });
+  }
+  function jqNormalize(s){ return (s||'').replace(/[，。、？！；：""''《》\s]/g,''); }
+  function jqSubmitPoem(){
+    const val = document.getElementById('jq-ans').value;
+    const q = jqBattle.questions[jqBattle.qi];
+    const fb = document.getElementById('jq-fb');
+    if (jqNormalize(val) === jqNormalize(q.a)){
+      fb.className = 'text-center font-bold text-sm min-h-[20px] mt-2 text-emerald-400';
+      fb.textContent = '⚔️ 命中！' + q.a;
+      jqHitBoss(); jqSetHP(jqBattle.bossHP - 25);
+      if (jqBattle.bossHP > 0){
+        jqBattle.qi++;
+        setTimeout(() => { if (jqBattle.qi < jqBattle.questions.length) jqRenderPoem(); }, 700);
+      }
+    } else {
+      fb.className = 'text-center font-bold text-sm min-h-[20px] mt-2 text-red-400';
+      fb.textContent = '✖ 再想想，巨魔闪开了';
+    }
+  }
+
+  /* 化学：配平熔炉 */
+  function jqInitChem(){
+    const pool = JQ_EQUATIONS.slice();
+    jqBattle.equations = pool.slice(0,3);
+    jqBattle.ei = 0;
+    jqRenderChem();
+  }
+  function jqRenderChem(){
+    jqShowHP();
+    const eq = jqBattle.equations[jqBattle.ei];
+    jqBattle.cur = eq.ans.map(()=>1);
+    const box = document.getElementById('jq-b-qbox');
+    box.innerHTML = `
+      <div class="font-bold text-white text-base mb-3">第${jqBattle.ei+1}/3 题 · 配平方程式（${eq.hint}）</div>
+      <div id="jq-eqbox" class="flex flex-wrap justify-center items-center gap-1 text-xl font-extrabold text-white my-3"></div>
+      <div class="flex justify-center">
+        <button class="bg-military-accent text-military-dark px-6 py-2 rounded-full font-bold text-sm hover:bg-white transition-all" onclick="jqCheckChem()">投入熔炉 🔥</button>
+      </div>
+      <div class="text-center font-bold text-sm min-h-[20px] mt-2" id="jq-fb"></div>
+    `;
+    jqDrawEq();
+  }
+  function jqDrawEq(){
+    const eq = jqBattle.equations[jqBattle.ei];
+    const box = document.getElementById('jq-eqbox');
+    box.innerHTML = '';
+    let b = 0;
+    eq.tokens.forEach((tk, idx) => {
+      if (tk === '__'){
+        const bi = b++;
+        const c = document.createElement('span');
+        c.className = 'inline-flex flex-col items-center mx-0.5';
+        c.innerHTML = `
+          <button class="w-6 h-5 bg-white/10 rounded-t hover:bg-military-accent/40 text-xs" onclick="jqAdjCoef(${bi},1)">▲</button>
+          <span class="text-base font-extrabold text-military-accent" id="jq-cv${bi}">${jqBattle.cur[bi]}</span>
+          <button class="w-6 h-5 bg-white/10 rounded-b hover:bg-military-accent/40 text-xs" onclick="jqAdjCoef(${bi},-1)">▼</button>`;
+        box.appendChild(c);
+      } else {
+        box.appendChild(document.createTextNode(' ' + tk + ' '));
+      }
+    });
+  }
+  function jqAdjCoef(i, d){
+    jqBattle.cur[i] = Math.max(1, Math.min(4, jqBattle.cur[i] + d));
+    document.getElementById('jq-cv'+i).textContent = jqBattle.cur[i];
+  }
+  function jqCheckChem(){
+    const eq = jqBattle.equations[jqBattle.ei];
+    const ok = jqBattle.cur.every((v,i) => v === eq.ans[i]);
+    const fb = document.getElementById('jq-fb');
+    if (ok){
+      fb.className = 'text-center font-bold text-sm min-h-[20px] mt-2 text-emerald-400';
+      fb.textContent = '🔥 炼化成功！方程式平衡';
+      jqHitBoss(); jqSetHP(jqBattle.bossHP - 34);
+      if (jqBattle.bossHP > 0){
+        jqBattle.ei++;
+        setTimeout(() => { if (jqBattle.ei < jqBattle.equations.length) jqRenderChem(); }, 700);
+      }
+    } else {
+      fb.className = 'text-center font-bold text-sm min-h-[20px] mt-2 text-red-400';
+      fb.textContent = '✖ 还没平衡，调整系数再试';
+    }
+  }
+
+  /* 导航 */
+  function jqShowMap(){
+    document.getElementById('jq-quest').classList.add('hidden');
+    document.getElementById('jq-battle').classList.add('hidden');
+    document.getElementById('jq-map').style.display = 'grid';
+  }
+  window.jqShowMap = jqShowMap;
+  window.jqShowQuest = jqShowQuest;
+  window.jqStartBattle = jqStartBattle;
+  window.jqSubmitPoem = jqSubmitPoem;
+  window.jqCheckChem = jqCheckChem;
+  window.jqAdjCoef = jqAdjCoef;
+  window.jqCloseModal = jqCloseModal;
+  window.jqBackToQuest = jqBackToQuest;
+
+  jqRenderHUD();
+  jqRenderMap();
+})();
+</script>
+
 </body>
 </html>
