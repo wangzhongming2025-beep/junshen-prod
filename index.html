@@ -1,0 +1,1136 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>老王队长[军神] - 从军官到创业者的转型之路 | 开发工具合集</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Noto+Sans+SC:wght@300;400;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Outfit', 'Noto Sans SC', 'sans-serif'],
+                    },
+                    colors: {
+                        military: {
+                            light: '#5c7065',
+                            DEFAULT: '#2f3b35', // Deep military green
+                            dark: '#141a17',
+                            accent: '#ffd700', // Gold accent
+                            glass: 'rgba(20, 26, 23, 0.7)',
+                            border: 'rgba(255, 215, 0, 0.15)'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #0b0f0d;
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(47, 59, 53, 0.15) 0%, transparent 40%),
+                radial-gradient(circle at 90% 80%, rgba(255, 215, 0, 0.03) 0%, transparent 35%);
+        }
+        .glow-avatar {
+            box-shadow: 0 0 25px rgba(255, 215, 0, 0.3);
+            animation: pulse-glow 3s infinite alternate;
+        }
+        .glass-card {
+            background: rgba(20, 26, 23, 0.65);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.03);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .glass-card:hover {
+            border-color: rgba(255, 215, 0, 0.3);
+            box-shadow: 0 15px 35px rgba(255, 215, 0, 0.08);
+            transform: translateY(-4px);
+        }
+        .glow-text-gold {
+            text-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
+        }
+        .glow-btn {
+            box-shadow: 0 4px 15px rgba(255, 215, 0, 0.2);
+            transition: all 0.3s ease;
+        }
+        .glow-btn:hover {
+            box-shadow: 0 8px 25px rgba(255, 215, 0, 0.45);
+        }
+        @keyframes pulse-glow {
+            from { box-shadow: 0 0 20px rgba(255, 215, 0, 0.2); }
+            to { box-shadow: 0 0 35px rgba(255, 215, 0, 0.5); }
+        }
+        /* Hide scrollbar for Chrome, Safari and Opera */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        /* Hide scrollbar for IE, Edge and Firefox */
+        .no-scrollbar {
+            -ms-overflow-style: none;  /* IE and Edge */
+            scrollbar-width: none;  /* Firefox */
+        }
+    </style>
+</head>
+
+<body class="text-gray-300 antialiased pb-24 md:pb-8">
+
+    <!-- Premium Header / Hero Section -->
+    <header class="relative overflow-hidden py-16 md:py-24 border-b border-white/5 bg-gradient-to-b from-military-dark to-transparent">
+        <div class="absolute inset-0 bg-[radial-gradient(rgba(255,215,0,0.05)_1px,transparent_1px)] [background-size:20px_20px] pointer-events-none"></div>
+        <div class="max-w-6xl mx-auto px-6 text-center relative z-10 flex flex-col items-center">
+            
+            <!-- Glow Avatar Wrapper -->
+            <div class="relative w-28 h-28 md:w-32 md:h-32 mb-6">
+                <div class="absolute inset-0 rounded-full bg-gradient-to-r from-military-accent to-military-light animate-spin-slow opacity-30 blur-sm"></div>
+                <img src="zhaopian1.jpg" alt="老王队长" class="w-full h-full object-cover rounded-full border-2 border-military-accent glow-avatar relative z-10">
+            </div>
+
+            <!-- Name & Subtitle -->
+            <h1 class="text-3xl md:text-5xl font-extrabold tracking-wide text-white mb-2 glow-text-gold">
+                老王队长 <span class="text-military-accent font-light">[军神]</span>
+            </h1>
+            
+            <div class="flex items-center justify-center space-x-1 text-military-accent text-xs mb-4">
+                <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+            </div>
+            
+            <p class="text-base md:text-xl text-gray-300 font-bold max-w-2xl leading-relaxed">
+                用 AI 赋能：帮助企业增长 · 助力老板打造个人 IP · 陪伴个人成长
+            </p>
+            <p class="text-xs md:text-sm text-gray-500 mt-2 font-mono">
+                从军官到全职创业者 · 超级个体与一人企业 (OPC) 孵化导师
+            </p>
+        </div>
+    </header>
+
+    <!-- Trust Stats & Badges Bar -->
+    <div class="max-w-6xl mx-auto px-4 md:px-6 -mt-8 relative z-20">
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 bg-military-glass backdrop-blur-xl border border-military-accent/20 rounded-2xl p-6 shadow-2xl text-center">
+            <div class="border-r border-white/5 last:border-r-0">
+                <div class="text-2xl md:text-4xl font-extrabold text-military-accent glow-text-gold">10+ 年</div>
+                <div class="text-xs text-white mt-1.5 font-bold">军旅管理背书</div>
+                <div class="text-[10px] text-gray-400 mt-0.5">历任排长连长指导员，执行力拉满</div>
+            </div>
+            <div class="border-r border-white/5 last:border-r-0">
+                <div class="text-2xl md:text-4xl font-extrabold text-military-accent glow-text-gold">300万+字</div>
+                <div class="text-xs text-white mt-1.5 font-bold">公开写作沉淀</div>
+                <div class="text-[10px] text-gray-400 mt-0.5">输出倒逼输入，全网知识沉淀</div>
+            </div>
+            <div class="border-r border-white/5 last:border-r-0">
+                <div class="text-2xl md:text-4xl font-extrabold text-military-accent glow-text-gold">30+ 个</div>
+                <div class="text-xs text-white mt-1.5 font-bold">实操副业项目</div>
+                <div class="text-[10px] text-gray-400 mt-0.5">深谙一人企业与轻资产快速变现</div>
+            </div>
+            <div class="last:border-r-0">
+                <div class="text-2xl md:text-4xl font-extrabold text-military-accent glow-text-gold">100%</div>
+                <div class="text-xs text-white mt-1.5 font-bold">坦诚靠谱交付</div>
+                <div class="text-[10px] text-gray-400 mt-0.5">军人本色，以信立身，共赢合作</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Container -->
+    <div class="max-w-6xl mx-auto px-4 md:px-6 py-8 grid grid-cols-1 lg:grid-cols-3 gap-8">
+
+        <!-- Left Column: Biography & Timeline & Contacts -->
+        <div class="lg:col-span-1 space-y-8">
+
+            <!-- Profile Story Card -->
+            <section class="glass-card rounded-2xl p-6 relative overflow-hidden group">
+                <div class="absolute top-0 right-0 w-24 h-24 bg-military-accent/5 rounded-full blur-2xl"></div>
+                <h3 class="text-lg font-bold text-white mb-4 flex items-center border-b border-white/5 pb-3">
+                    <i class="fas fa-shield-halved mr-3 text-military-accent"></i>关于我
+                </h3>
+                <p class="text-gray-400 text-sm leading-relaxed text-justify space-y-2">
+                    <strong>王忠明 (老王队长)，定居昆明</strong>。<br>
+                    2008年考入军校，历任排长、指导员、连长。在13年军官生涯中，利用业余时间做了13年副业（读书300本、写作200万字、实操50+个项目）。<br>
+                    2021年复员创业，专注<strong>“一人公司+AI助理”</strong>：用AI把1个人活成一支队伍，帮创业者降本增效，少请人多干活。裸辞连长转战AI自媒体，一个月写出10篇10w+爆文，单篇最高4500+收益，单日引流精准客户300+，已服务600+战友开启第二职业。
+                </p>
+                <div class="mt-4 p-3 bg-military-accent/10 border-l-2 border-military-accent rounded-r-xl space-y-1.5">
+                    <h5 class="text-xs font-bold text-white flex items-center">
+                        <i class="fas fa-heart text-military-accent mr-1.5 animate-pulse"></i> 初心与战书 (Why I Do This)
+                    </h5>
+                    <p class="text-[11px] text-gray-300 leading-relaxed">
+                        我为什么会做家长成长、个人成长、企业增长和老板 IP 陪跑？因为我自己本身首先是一个创业者，另外也是一个家长。在探索解决我自己问题（育儿、提效、增长）的成长过程中，我把这些形成的实战经验与 AI 赋能方法总结出来，去帮助更多同样境遇的同路人，达成共赢。
+                    </p>
+                </div>
+                <div class="mt-4 bg-white/5 p-3.5 rounded-xl border border-white/5">
+                    <p class="text-xs font-semibold text-military-accent italic leading-relaxed">
+                        核心关注：自我产品化、超级个体、私域复利、轻创业、公众号价值写作、IP商业化。
+                    </p>
+                </div>
+            </section>
+
+            <!-- Career Track Timeline -->
+            <section class="glass-card rounded-2xl p-6">
+                <h3 class="text-lg font-bold text-white mb-6 flex items-center border-b border-white/5 pb-3">
+                    <i class="fas fa-compass mr-3 text-military-accent"></i>军旅与创业轨迹
+                </h3>
+                <div class="relative pl-6 border-l border-white/10 space-y-6">
+                    <div class="relative">
+                        <span class="absolute -left-[30px] top-1 bg-military text-military-accent w-4 h-4 rounded-full border-2 border-military-accent flex items-center justify-center"></span>
+                        <div class="text-xs font-bold text-military-accent">2008</div>
+                        <div class="font-semibold text-white text-sm">考入军校</div>
+                        <div class="text-xs text-gray-500">步入热血军营，接受正规军事培养</div>
+                    </div>
+                    <div class="relative">
+                        <span class="absolute -left-[30px] top-1 bg-military text-military-accent w-4 h-4 rounded-full border-2 border-military-accent flex items-center justify-center"></span>
+                        <div class="text-xs font-bold text-military-accent">2012</div>
+                        <div class="font-semibold text-white text-sm">13年军官生涯</div>
+                        <div class="text-xs text-gray-500">历任排长、指导员、连长，坚毅靠谱，执行力拉满</div>
+                    </div>
+                    <div class="relative">
+                        <span class="absolute -left-[30px] top-1 bg-military text-military-accent w-4 h-4 rounded-full border-2 border-military-accent flex items-center justify-center"></span>
+                        <div class="text-xs font-bold text-military-accent">2021</div>
+                        <div class="font-semibold text-white text-sm">复员创业</div>
+                        <div class="text-xs text-gray-500">裸辞转战地方，专注一人公司+AI助理，低成本试错</div>
+                    </div>
+                    <div class="relative">
+                        <span class="absolute -left-[30px] top-1 bg-military-accent w-4 h-4 rounded-full border-2 border-white flex items-center justify-center animate-pulse"></span>
+                        <div class="text-xs font-bold text-military-accent">NOW</div>
+                        <div class="font-semibold text-white text-sm">超级个体孵化</div>
+                        <div class="text-xs text-gray-500">用AI做自媒体获客与短视频，打造自我产品化闭环</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Core Concept Card: Second Brain -->
+            <section class="glass-card rounded-2xl p-6 border-t-2 border-military-accent bg-gradient-to-br from-military/20 to-transparent">
+                <h3 class="text-base font-bold text-white mb-4 flex items-center border-b border-white/5 pb-3">
+                    <i class="fas fa-brain mr-2.5 text-military-accent"></i> 个人心法：把 AI 变成第二大脑
+                </h3>
+                <div class="space-y-4">
+                    <p class="text-xs text-gray-400 font-bold leading-relaxed">
+                        “这本册子不教你基础注册——那些东西网上随便一搜就有。我要教你的，是普通人如何真正把 AI 变成自己的第二大脑。”
+                    </p>
+                    
+                    <div class="space-y-3 pt-2">
+                        <div class="flex items-start space-x-2.5">
+                            <span class="w-5 h-5 bg-military-accent/15 text-military-accent rounded-full border border-military-accent/35 flex items-center justify-center text-[10px] font-bold shrink-0 mt-0.5">1</span>
+                            <p class="text-xs text-gray-300 leading-relaxed">
+                                <strong>实战变现</strong>：我从零代码基础，用 AI 编程帮客户开发了十多款小程序，赚到了实实在在的真金白银。
+                            </p>
+                        </div>
+                        <div class="flex items-start space-x-2.5">
+                            <span class="w-5 h-5 bg-military-accent/15 text-military-accent rounded-full border border-military-accent/35 flex items-center justify-center text-[10px] font-bold shrink-0 mt-0.5">2</span>
+                            <p class="text-xs text-gray-300 leading-relaxed">
+                                <strong>重塑学习</strong>：利用 AI 彻底改造读书、看视频和解决问题的方式，个人成长效率至少提升 5 倍以上。
+                            </p>
+                        </div>
+                        <div class="flex items-start space-x-2.5">
+                            <span class="w-5 h-5 bg-military-accent/15 text-military-accent rounded-full border border-military-accent/35 flex items-center justify-center text-[10px] font-bold shrink-0 mt-0.5">3</span>
+                            <p class="text-xs text-gray-300 leading-relaxed">
+                                <strong>问答分水岭</strong>：会提问的人，AI 是超级助理；不会提问的人，AI 只是个高阶版百度。
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-black/40 p-3 rounded-xl border border-white/5 text-[11px] text-gray-400 leading-relaxed">
+                        💡 <strong>何为“第二大脑”？</strong><br>
+                        当您遇到任何困境时，不再是一个人痛苦地闷头想。在您身边，始终有一个 24 小时在线、永远不嫌烦、什么领域都懂一些的私人专属军师。
+                    </div>
+                </div>
+            </section>
+
+            <!-- Contact Box -->
+            <section id="contact-section" class="glass-card rounded-2xl p-6 text-center border border-military-border/30 bg-gradient-to-b from-military/40 to-transparent">
+                <h3 class="text-lg font-bold text-white mb-4 flex items-center justify-center">
+                    <i class="fas fa-qrcode mr-2 text-military-accent"></i>联系与合作
+                </h3>
+                <div class="flex justify-center space-x-6 mb-4">
+                    <div class="text-center bg-black/30 p-2.5 rounded-xl border border-white/5">
+                        <img src="erweima2.jpg" alt="微信" class="w-20 h-20 mx-auto rounded-lg mb-1.5 opacity-90 hover:opacity-100 transition-opacity">
+                        <span class="text-[10px] text-gray-400">扫码添加微信</span>
+                    </div>
+                    <div class="text-center bg-black/30 p-2.5 rounded-xl border border-white/5">
+                        <img src="jzdn2.jpg" alt="公众号" class="w-20 h-20 mx-auto rounded-lg mb-1.5 opacity-90 hover:opacity-100 transition-opacity">
+                        <span class="text-[10px] text-gray-400">关注官方公众号</span>
+                    </div>
+                </div>
+                
+                <!-- Instant Copy Action -->
+                <div class="mt-4 pt-4 border-t border-white/5 flex flex-col items-center">
+                    <span class="text-xs text-gray-400 mb-2.5 flex items-center">
+                        <i class="fas fa-hand-point-right mr-1.5 text-military-accent animate-bounce"></i>手机访问可直接复制微信号：
+                    </span>
+                    <div class="flex items-center space-x-2 bg-black/40 px-3.5 py-2 rounded-full border border-white/10 w-full justify-between">
+                        <span class="text-sm font-bold text-white tracking-wider select-all" id="wechat-id">vip20213456</span>
+                        <button onclick="copyWeChat()" class="text-xs bg-military-accent text-military-dark px-3 py-1.5 rounded-full hover:bg-white hover:text-military-dark transition-all duration-200 font-bold glow-btn active:scale-95">
+                            <i class="fas fa-copy mr-1"></i>一键复制
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+
+        <!-- Right Column: Services & Tools & Experiences -->
+        <div class="lg:col-span-2 space-y-8">
+
+            <!-- Premium Lead Magnet Card (Resource Library) -->
+            <section class="relative overflow-hidden bg-gradient-to-br from-military/80 via-military-dark to-black border border-military-accent/30 rounded-2xl p-6 shadow-xl">
+                <div class="absolute -right-10 -top-10 w-32 h-32 bg-military-accent/10 rounded-full blur-3xl pointer-events-none"></div>
+                <div class="relative z-10 space-y-4">
+                    <div class="flex justify-between items-center border-b border-white/5 pb-3">
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-military-accent/20 text-military-accent border border-military-accent/30">
+                            <i class="fas fa-gift mr-1"></i> 独家干货资源赠送 (Resource Library)
+                        </span>
+                        <span class="text-xs text-gray-500 font-mono">已送出 1200+ 份</span>
+                    </div>
+
+                    <!-- Grid of Resources -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <!-- Book 1: 一人企业工具箱 -->
+                        <div class="bg-black/35 p-4 rounded-xl border border-white/5 flex flex-col justify-between hover:border-military-accent/30 transition-all duration-300">
+                            <div class="space-y-2">
+                                <div class="text-military-accent text-base"><i class="fas fa-book-open"></i></div>
+                                <h4 class="font-bold text-white text-xs">《一人企业提效工具箱》</h4>
+                                <p class="text-[10px] text-gray-400 leading-relaxed">
+                                    30+款精选AI工具与提示词模板，冷启动小程序实战方法论。
+                                </p>
+                            </div>
+                            <div class="pt-3 space-y-1.5">
+                                <a href="opc_toolbox.html" target="_blank" class="block text-center py-1.5 rounded-lg bg-white/5 border border-white/10 text-white font-bold hover:border-military-accent hover:text-military-accent transition-all text-[10px]">
+                                    在线浏览体验版
+                                </a>
+                                <button onclick="copyWeChatAndGo()" class="w-full text-center py-1.5 rounded-lg bg-military-accent text-military-dark font-bold hover:bg-white hover:text-military-dark transition-all text-[10px] glow-btn">
+                                    复制微信领完整版
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Book 2: 超级个体搞钱心法 -->
+                        <div class="bg-black/35 p-4 rounded-xl border border-white/5 flex flex-col justify-between hover:border-military-accent/30 transition-all duration-300">
+                            <div class="space-y-2">
+                                <div class="text-military-accent text-base"><i class="fas fa-fire"></i></div>
+                                <h4 class="font-bold text-white text-xs">《超级个体搞钱心法》</h4>
+                                <p class="text-[10px] text-gray-400 leading-relaxed">
+                                    个人商业闭环的核心逻辑，教你如何将AI技能与知识变现。
+                                </p>
+                            </div>
+                            <div class="pt-3 space-y-1.5">
+                                <a href="/超级个体搞钱心法.pdf" target="_blank" class="block text-center py-1.5 rounded-lg bg-military-accent/15 border border-military-accent/30 text-military-accent font-bold hover:bg-military-accent hover:text-military-dark transition-all text-[10px]">
+                                    <i class="fas fa-file-pdf mr-1"></i> 在线阅读全文 (PDF)
+                                </a>
+                                <a href="/超级个体搞钱心法.pdf" download class="block text-center py-1.5 rounded-lg bg-white/5 border border-white/10 text-white font-bold hover:border-white hover:text-military-dark transition-all text-[10px]">
+                                    <i class="fas fa-download mr-1"></i> 免费下载保存
+                                </a>
+                            </div>
+                        </div>
+
+                        <!-- Book 3: 用好业余时间 -->
+                        <div class="bg-black/35 p-4 rounded-xl border border-white/5 flex flex-col justify-between hover:border-military-accent/30 transition-all duration-300">
+                            <div class="space-y-2">
+                                <div class="text-military-accent text-base"><i class="fas fa-clock"></i></div>
+                                <h4 class="font-bold text-white text-xs">《用好业余时间成就你的一生》</h4>
+                                <p class="text-[10px] text-gray-400 leading-relaxed">
+                                    时间管理心法，教你如何在工作之余探索和孵化个人第二曲线。
+                                </p>
+                            </div>
+                            <div class="pt-3 space-y-1.5">
+                                <a href="/用好业余时间成就你的一生.pdf" target="_blank" class="block text-center py-1.5 rounded-lg bg-military-accent/15 border border-military-accent/30 text-military-accent font-bold hover:bg-military-accent hover:text-military-dark transition-all text-[10px]">
+                                    <i class="fas fa-file-pdf mr-1"></i> 在线阅读全文 (PDF)
+                                </a>
+                                <a href="/用好业余时间成就你的一生.pdf" download class="block text-center py-1.5 rounded-lg bg-white/5 border border-white/10 text-white font-bold hover:border-white hover:text-military-dark transition-all text-[10px]">
+                                    <i class="fas fa-download mr-1"></i> 免费下载保存
+                                </a>
+                            </div>
+                        </div>
+
+                        <!-- Book 4: AI助理使用手册 -->
+                        <div class="bg-black/35 p-4 rounded-xl border border-white/5 flex flex-col justify-between hover:border-military-accent/30 transition-all duration-300">
+                            <div class="space-y-2">
+                                <div class="text-military-accent text-base"><i class="fas fa-cogs"></i></div>
+                                <h4 class="font-bold text-white text-xs">《AI助理使用手册》</h4>
+                                <p class="text-[10px] text-gray-400 leading-relaxed">
+                                    企业与个人AI数字分身部署指南，教你如何实现人机协同高效工作。
+                                </p>
+                            </div>
+                            <div class="pt-3 space-y-1.5">
+                                <a href="/AI助理使用手册.pdf" target="_blank" class="block text-center py-1.5 rounded-lg bg-military-accent/15 border border-military-accent/30 text-military-accent font-bold hover:bg-military-accent hover:text-military-dark transition-all text-[10px]">
+                                    <i class="fas fa-file-pdf mr-1"></i> 在线阅读全文 (PDF)
+                                </a>
+                                <a href="/AI助理使用手册.pdf" download class="block text-center py-1.5 rounded-lg bg-white/5 border border-white/10 text-white font-bold hover:border-white hover:text-military-dark transition-all text-[10px]">
+                                    <i class="fas fa-download mr-1"></i> 免费下载保存
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- AI Potential Interactive Test -->
+            <section class="glass-card rounded-2xl p-6 border-l-4 border-military-accent">
+                <div class="flex justify-between items-center mb-4 border-b border-white/5 pb-3">
+                    <h2 class="text-lg font-bold text-white flex items-center">
+                        <i class="fas fa-vial mr-3 text-military-accent"></i>30秒测测你的 AI 副业与变现潜力
+                    </h2>
+                    <span class="text-[10px] bg-military-accent/10 text-military-accent px-2 py-0.5 rounded border border-military-accent/20">智能评估</span>
+                </div>
+
+                <div id="quiz-container" class="space-y-5">
+                    <!-- Step 1 -->
+                    <div id="quiz-step-1" class="space-y-3">
+                        <p class="text-xs font-bold text-white flex items-center">
+                            <span class="w-5 h-5 bg-military-accent text-military-dark rounded-full flex items-center justify-center text-[10px] mr-2 font-mono">1</span>
+                            你当前在商业或职场中扮演什么角色？
+                        </p>
+                        <div class="grid grid-cols-1 gap-2.5">
+                            <button onclick="selectAnswer(1, 'A')" class="quiz-opt text-left p-3 rounded-xl border border-white/5 bg-black/10 hover:border-military-accent/50 hover:bg-military/10 text-xs transition-all flex justify-between items-center group">
+                                <span>A. 中小企业老板 / 业务负责人 (想通过AI获客与提效)</span>
+                                <i class="fas fa-chevron-right text-gray-600 group-hover:text-military-accent"></i>
+                            </button>
+                            <button onclick="selectAnswer(1, 'B')" class="quiz-opt text-left p-3 rounded-xl border border-white/5 bg-black/10 hover:border-military-accent/50 hover:bg-military/10 text-xs transition-all flex justify-between items-center group">
+                                <span>B. 独立创业者 / 自由职业者 (想用AI做一人企业，精益提效)</span>
+                                <i class="fas fa-chevron-right text-gray-600 group-hover:text-military-accent"></i>
+                            </button>
+                            <button onclick="selectAnswer(1, 'C')" class="quiz-opt text-left p-3 rounded-xl border border-white/5 bg-black/10 hover:border-military-accent/50 hover:bg-military/10 text-xs transition-all flex justify-between items-center group">
+                                <span>C. 职场人员 / 技术开发者 (想用AI编程开发小程序/自有产品)</span>
+                                <i class="fas fa-chevron-right text-gray-600 group-hover:text-military-accent"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Step 2 (Hidden by default) -->
+                    <div id="quiz-step-2" class="hidden space-y-3">
+                        <p class="text-xs font-bold text-white flex items-center">
+                            <span class="w-5 h-5 bg-military-accent text-military-dark rounded-full flex items-center justify-center text-[10px] mr-2 font-mono">2</span>
+                            你最急迫想用 AI 攻克哪个难题？
+                        </p>
+                        <div class="grid grid-cols-1 gap-2.5">
+                            <button onclick="selectAnswer(2, 'A')" class="quiz-opt text-left p-3 rounded-xl border border-white/5 bg-black/10 hover:border-military-accent/50 hover:bg-military/10 text-xs transition-all flex justify-between items-center group">
+                                <span>A. 缺乏流量、渠道与个人 IP，获客成本高</span>
+                                <i class="fas fa-chevron-right text-gray-600 group-hover:text-military-accent"></i>
+                            </button>
+                            <button onclick="selectAnswer(2, 'B')" class="quiz-opt text-left p-3 rounded-xl border border-white/5 bg-black/10 hover:border-military-accent/50 hover:bg-military/10 text-xs transition-all flex justify-between items-center group">
+                                <span>B. 重复工作量大，运营人效低，想搭建AI全自动工作流</span>
+                                <i class="fas fa-chevron-right text-gray-600 group-hover:text-military-accent"></i>
+                            </button>
+                            <button onclick="selectAnswer(2, 'C')" class="quiz-opt text-left p-3 rounded-xl border border-white/5 bg-black/10 hover:border-military-accent/50 hover:bg-military/10 text-xs transition-all flex justify-between items-center group">
+                                <span>C. 空有好的副业或产品想法，却不懂代码，无法低成本快速落地</span>
+                                <i class="fas fa-chevron-right text-gray-600 group-hover:text-military-accent"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Step 3 (Hidden by default) -->
+                    <div id="quiz-step-3" class="hidden space-y-3">
+                        <p class="text-xs font-bold text-white flex items-center">
+                            <span class="w-5 h-5 bg-military-accent text-military-dark rounded-full flex items-center justify-center text-[10px] mr-2 font-mono">3</span>
+                            你目前在 AI 上的实操基础处于什么阶段？
+                        </p>
+                        <div class="grid grid-cols-1 gap-2.5">
+                            <button onclick="selectAnswer(3, 'A')" class="quiz-opt text-left p-3 rounded-xl border border-white/5 bg-black/10 hover:border-military-accent/50 hover:bg-military/10 text-xs transition-all flex justify-between items-center group">
+                                <span>A. 纯小白，听说过，但没有在业务中深度使用过</span>
+                                <i class="fas fa-chevron-right text-gray-600 group-hover:text-military-accent"></i>
+                            </button>
+                            <button onclick="selectAnswer(3, 'B')" class="quiz-opt text-left p-3 rounded-xl border border-white/5 bg-black/10 hover:border-military-accent/50 hover:bg-military/10 text-xs transition-all flex justify-between items-center group">
+                                <span>B. 会简单对话或提示词，但缺乏系统性商业应用和工具流沉淀</span>
+                                <i class="fas fa-chevron-right text-gray-600 group-hover:text-military-accent"></i>
+                            </button>
+                            <button onclick="selectAnswer(3, 'C')" class="quiz-opt text-left p-3 rounded-xl border border-white/5 bg-black/10 hover:border-military-accent/50 hover:bg-military/10 text-xs transition-all flex justify-between items-center group">
+                                <span>C. 尝试过结合自己的项目，但遇到瓶颈，希望获得1对1实战指导/陪跑</span>
+                                <i class="fas fa-chevron-right text-gray-600 group-hover:text-military-accent"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Quiz Result (Hidden by default) -->
+                    <div id="quiz-result" class="hidden space-y-4 bg-black/30 p-4 rounded-xl border border-military-accent/20 animate-fade-in">
+                        <div class="text-center pb-2 border-b border-white/5">
+                            <div class="text-2xl font-black text-military-accent tracking-wider glow-text-gold" id="result-score">潜力估值: 92%</div>
+                            <div class="text-[10px] text-gray-400 mt-1">根据您的测试结果，为您匹配的AI变现方案如下</div>
+                        </div>
+                        <div class="space-y-2.5">
+                            <div class="text-xs font-bold text-white flex items-center">
+                                <i class="fas fa-route text-military-accent mr-1.5"></i> 核心路线匹配：
+                                <span id="result-route" class="text-military-accent ml-1">AI编程实战与个人产品变现陪跑</span>
+                            </div>
+                            <div class="text-xs text-gray-400 leading-relaxed" id="result-desc">
+                                您非常适合结合AI技术实现自己产品的低成本开发。推荐通过系统性的AI带教（AI编程陪跑营），实现从想法到上线小程序的完整闭环。
+                            </div>
+                        </div>
+                        <div class="bg-military-accent/10 p-3 rounded-lg border border-military-accent/20 text-center space-y-2.5">
+                            <div class="text-xs font-bold text-white flex items-center justify-center">
+                                <i class="fas fa-handshake-angle text-military-accent mr-1.5 animate-pulse"></i>
+                                已为您锁定专属大礼包与免费诊疗名额
+                            </div>
+                            <p class="text-[10.5px] text-gray-300 leading-relaxed">
+                                微信号 <strong class="text-military-accent underline decoration-dotted font-mono">vip20213456</strong> 已成功复制！请添加老王队长微信，发送诊断暗号：<span class="text-military-accent font-bold" id="result-code">AI编程</span>，即可免费预约一次【15分钟语音商业诊断】并领走对应PDF指南。
+                            </p>
+                            <button onclick="copyWeChatAndGo()" class="inline-block w-full py-2 bg-military-accent text-military-dark rounded-lg font-bold hover:bg-white text-xs glow-btn">
+                                <i class="fas fa-user-plus mr-1"></i> 复制微信号并添加
+                            </button>
+                        </div>
+                        <div class="text-center">
+                            <button onclick="resetQuiz()" class="text-[10px] text-gray-500 hover:text-military-accent transition-colors underline">
+                                <i class="fas fa-redo-alt mr-1"></i>重新测试
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Core Custom Services Section -->
+            <section id="services-section" class="glass-card rounded-2xl p-6 border-t-2 border-military-accent">
+                <div class="flex justify-between items-center mb-6 border-b border-white/5 pb-3">
+                    <h2 class="text-xl font-bold text-white flex items-center">
+                        <i class="fas fa-cubes mr-3 text-military-accent"></i>核心定制服务
+                    </h2>
+                    <span class="text-xs font-semibold px-2.5 py-1 bg-military-accent/10 text-military-accent rounded-full border border-military-accent/20">专业交付</span>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <!-- Service 1: Mini Program -->
+                    <a href="xiaochengxu.html" class="flex flex-col justify-between p-4 rounded-xl border border-white/5 bg-black/20 hover:bg-black/40 transition-all group">
+                        <div>
+                            <div class="text-military-accent text-2xl mb-3 group-hover:scale-110 transition-transform duration-300">
+                                <i class="fas fa-mobile-alt"></i>
+                            </div>
+                            <h4 class="font-bold text-white mb-2 group-hover:text-military-accent transition-colors text-sm">小程序定制开发</h4>
+                            <p class="text-[11px] text-gray-400 leading-relaxed mb-4">为您定制专属商城、点餐、服务预约或功能开发，高效交付。</p>
+                        </div>
+                        <span class="text-[11px] font-bold text-military-accent flex items-center group-hover:translate-x-1 transition-transform">
+                            了解详情 <i class="fas fa-arrow-right ml-1"></i>
+                        </span>
+                    </a>
+
+                    <!-- Service 2: GEO (Generative Engine Optimization) -->
+                    <a href="geo.html" class="flex flex-col justify-between p-4 rounded-xl border border-white/5 bg-black/20 hover:bg-black/40 transition-all group">
+                        <div>
+                            <div class="text-cyan-400 text-2xl mb-3 group-hover:scale-110 transition-transform duration-300">
+                                <i class="fas fa-search-plus"></i>
+                            </div>
+                            <h4 class="font-bold text-white mb-2 group-hover:text-cyan-400 transition-colors text-sm">GEO生成式引擎优化</h4>
+                            <p class="text-[11px] text-gray-400 leading-relaxed mb-4">优化品牌与内容，使其更容易被 ChatGPT、Google AIO 以及国内的 DeepSeek、豆包、元宝、Kimi 等主流 AI 引擎优先抓取与推荐。</p>
+                        </div>
+                        <span class="text-[11px] font-bold text-cyan-400 flex items-center group-hover:translate-x-1 transition-transform">
+                            了解详情 <i class="fas fa-arrow-right ml-1"></i>
+                        </span>
+                    </a>
+
+                    <!-- Service 3: AI Peipao -->
+                    <a href="ai_peipao.html" class="flex flex-col justify-between p-4 rounded-xl border border-white/5 bg-black/20 hover:bg-black/40 transition-all group">
+                        <div>
+                            <div class="text-purple-400 text-2xl mb-3 group-hover:scale-110 transition-transform duration-300">
+                                <i class="fas fa-robot"></i>
+                            </div>
+                            <h4 class="font-bold text-white mb-2 group-hover:text-purple-400 transition-colors text-sm">AI编程实战陪跑营</h4>
+                            <p class="text-[11px] text-gray-400 leading-relaxed mb-4">1对1带教AI编程，既能接单帮人开发，更能从零做出小程序/网站/App等自有产品，火了持续收钱！</p>
+                        </div>
+                        <span class="text-[11px] font-bold text-purple-400 flex items-center group-hover:translate-x-1 transition-transform">
+                            了解详情 <i class="fas fa-arrow-right ml-1"></i>
+                        </span>
+                    </a>
+
+                    <!-- Service 4: OPC Solopreneur -->
+                    <a href="opc.html" class="flex flex-col justify-between p-4 rounded-xl border border-white/5 bg-black/20 hover:bg-black/40 transition-all group">
+                        <div>
+                            <div class="text-emerald-400 text-2xl mb-3 group-hover:scale-110 transition-transform duration-300">
+                                <i class="fas fa-user-tie"></i>
+                            </div>
+                            <h4 class="font-bold text-white mb-2 group-hover:text-emerald-400 transition-colors text-sm">一人企业(OPC)咨询</h4>
+                            <p class="text-[11px] text-gray-400 leading-relaxed mb-4">打造超级个体商业闭环，搭建AI自动化工作流，精益创业低门槛启动。</p>
+                        </div>
+                        <span class="text-[11px] font-bold text-emerald-400 flex items-center group-hover:translate-x-1 transition-transform">
+                            了解详情 <i class="fas fa-arrow-right ml-1"></i>
+                        </span>
+                    </a>
+                </div>
+            </section>
+
+            <!-- Tools Collection Section -->
+            <section id="tools-section" class="glass-card rounded-2xl p-6">
+                <div class="flex justify-between items-center mb-6 border-b border-white/5 pb-3">
+                    <h2 class="text-xl font-bold text-white flex items-center">
+                        <i class="fas fa-toolbox mr-3 text-military-accent"></i>实用开发工具合集
+                    </h2>
+                    <span class="text-xs font-semibold px-2.5 py-1 bg-white/5 text-gray-400 rounded-full border border-white/10">持续更新</span>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    
+                    <!-- Tool: HTML Temporary Hosting -->
+                    <div class="p-5 rounded-xl border border-white/5 bg-black/20 hover:bg-black/30 transition-all flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-center justify-between mb-3">
+                                <div class="text-military-accent text-xl"><i class="fas fa-code"></i></div>
+                                <span class="bg-red-500/20 text-red-400 text-[9px] px-2 py-0.5 rounded border border-red-500/30 font-semibold">NEW</span>
+                            </div>
+                            <h4 class="font-bold text-white mb-1.5 text-sm">AI 网页极速临时托管</h4>
+                            <p class="text-xs text-gray-400 mb-4 leading-relaxed">用 AI 生成了网页，却没有地方部署预览？粘贴代码即可生成 3 天免费公开链接，支持升级永久托管与专属域名。</p>
+                        </div>
+                        <a href="html_host.html" class="inline-block w-full text-center py-2 rounded-lg bg-white/5 border border-white/10 hover:border-military-accent text-white hover:text-military-accent font-semibold transition-all text-xs font-bold">立即托管</a>
+                    </div>
+
+                    <!-- Tool: Personal IP Guide -->
+                    <div class="p-5 rounded-xl border border-white/5 bg-black/20 hover:bg-black/30 transition-all flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-center justify-between mb-3">
+                                <div class="text-military-accent text-xl"><i class="fas fa-folder-open"></i></div>
+                                <span class="bg-military-accent/20 text-military-accent text-[9px] px-2 py-0.5 rounded border border-military-accent/30 font-semibold">推荐</span>
+                            </div>
+                            <h4 class="font-bold text-white mb-1.5 text-sm">〖十年原创资料包〗& IP指南</h4>
+                            <p class="text-xs text-gray-400 mb-4 leading-relaxed">收录老王队长近10年的所有副业原创入口、飞书文档、搞钱电子书与合伙人方案。</p>
+                        </div>
+                        <a href="ger.html" class="inline-block w-full text-center py-2 rounded-lg bg-white/5 border border-white/10 hover:border-military-accent text-white hover:text-military-accent font-semibold transition-all text-xs font-bold">立即进入查阅</a>
+                    </div>
+                    <!-- Tool: Junior High School Study Center -->
+                    <div class="p-5 rounded-xl border border-military-accent/20 bg-military-accent/5 hover:bg-military-accent/10 transition-all flex flex-col justify-between shadow-lg shadow-black/20">
+                        <div>
+                            <div class="flex items-center justify-between mb-3">
+                                <div class="text-military-accent text-xl"><i class="fas fa-graduation-cap"></i></div>
+                                <span class="bg-military-accent/20 text-military-accent text-[9px] px-2 py-0.5 rounded border border-military-accent/30 font-semibold">FLAGSHIP</span>
+                            </div>
+                            <h4 class="font-bold text-white mb-1.5 text-sm glow-text-gold">初中智能学习中心</h4>
+                            <p class="text-xs text-gray-400 mb-4 leading-relaxed">提供初中全套语文电子课本，融入脑科学记忆法、间隔重复卡片与主动学习机制。</p>
+                        </div>
+                        <a href="/junior-high" class="inline-block w-full text-center py-2 rounded-lg bg-military-accent text-military-dark hover:bg-white transition-all text-xs font-bold glow-btn">立即进入</a>
+                    </div>
+
+                    <!-- Tool: Primary School Math Adventure Cabin -->
+                    <div class="p-5 rounded-xl border border-amber-500/20 bg-amber-500/5 hover:bg-amber-500/10 transition-all flex flex-col justify-between shadow-lg shadow-black/20">
+                        <div>
+                            <div class="flex items-center justify-between mb-3">
+                                <div class="text-amber-400 text-xl"><i class="fas fa-magic"></i></div>
+                                <span class="bg-amber-500/20 text-amber-400 text-[9px] px-2 py-0.5 rounded border border-amber-500/30 font-semibold">GAMIFIED</span>
+                            </div>
+                            <h4 class="font-bold text-white mb-1.5 text-sm text-amber-400">小学数学智能冒险舱</h4>
+                            <p class="text-xs text-gray-400 mb-4 leading-relaxed">三年级上册数学：依据2022新课标，融入勇者打怪闯关地图、魔法时钟/周长拼图/等分切割模拟器。</p>
+                        </div>
+                        <a href="xiaoxue-math.html" class="inline-block w-full text-center py-2 rounded-lg bg-amber-50 text-amber-950 hover:bg-white transition-all text-xs font-bold">立即进入冒险</a>
+                    </div>
+
+                    <!-- Tool: Teacher's Toolkit -->
+                    <div class="p-5 rounded-xl border border-white/5 bg-black/20 hover:bg-black/30 transition-all flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-center justify-between mb-3">
+                                <div class="text-military-accent text-xl"><i class="fas fa-chalkboard-teacher"></i></div>
+                                <span class="bg-red-500/20 text-red-400 text-[9px] px-2 py-0.5 rounded border border-red-500/30 font-semibold">NEW</span>
+                            </div>
+                            <h4 class="font-bold text-white mb-1.5 text-sm">小学老师实用工具箱</h4>
+                            <p class="text-xs text-gray-400 mb-4 leading-relaxed">整合了班级倒计时、随机点名、智能分组、加分板等高效工具。</p>
+                        </div>
+                        <a href="teacher_tools.html" class="inline-block w-full text-center py-2 rounded-lg bg-white/5 border border-white/10 hover:border-military-accent text-white hover:text-military-accent font-semibold transition-all text-xs">立即使用</a>
+                    </div>
+
+                    <!-- Tool: Family Education -->
+                    <div class="p-5 rounded-xl border border-white/5 bg-black/20 hover:bg-black/30 transition-all flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-center justify-between mb-3">
+                                <div class="text-military-accent text-xl"><i class="fas fa-house"></i></div>
+                            </div>
+                            <h4 class="font-bold text-white mb-1.5 text-sm">家庭教育协同看板</h4>
+                            <p class="text-xs text-gray-400 mb-4 leading-relaxed">家庭仪表盘管理，支持每日任务规划、运动追踪和阅读打卡。</p>
+                        </div>
+                        <a href="jiating.html" class="inline-block w-full text-center py-2 rounded-lg bg-white/5 border border-white/10 hover:border-military-accent text-white hover:text-military-accent font-semibold transition-all text-xs">立即使用</a>
+                    </div>
+
+                    <!-- Tool: Strabismus (more-tool hidden) -->
+                    <div class="more-tool hidden p-5 rounded-xl border border-white/5 bg-black/20 hover:bg-black/30 transition-all flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-center justify-between mb-3">
+                                <div class="text-military-accent text-xl"><i class="fas fa-eye"></i></div>
+                            </div>
+                            <h4 class="font-bold text-white mb-1.5 text-sm">斜视康复训练系统</h4>
+                            <p class="text-xs text-gray-400 mb-4 leading-relaxed">包含眼球运动、集合训练、融合训练及立体视觉等训练模块。</p>
+                        </div>
+                        <a href="xieshi.html" class="inline-block w-full text-center py-2 rounded-lg bg-white/5 border border-white/10 hover:border-military-accent text-white hover:text-military-accent font-semibold transition-all text-xs">立即使用</a>
+                    </div>
+
+                    <!-- Tool: AI Vision Detector (more-tool hidden) -->
+                    <div class="more-tool hidden p-5 rounded-xl border border-white/5 bg-black/20 hover:bg-black/30 transition-all flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-center justify-between mb-3">
+                                <div class="text-military-accent text-xl"><i class="fas fa-glasses"></i></div>
+                            </div>
+                            <h4 class="font-bold text-white mb-1.5 text-sm">在线视力与姿势检测</h4>
+                            <p class="text-xs text-gray-400 mb-4 leading-relaxed">基于 Mediapipe AI 人脸分析，在线进行距离监测与防驼背姿势检测。</p>
+                        </div>
+                        <a href="eye_detector.html" class="inline-block w-full text-center py-2 rounded-lg bg-white/5 border border-white/10 hover:border-military-accent text-white hover:text-military-accent font-semibold transition-all text-xs">立即使用</a>
+                    </div>
+
+                    <!-- Tool: Eye Monitor Assistant (more-tool hidden) -->
+                    <div class="more-tool hidden p-5 rounded-xl border border-white/5 bg-black/20 hover:bg-black/30 transition-all flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-center justify-between mb-3">
+                                <div class="text-military-accent text-xl"><i class="fas fa-stopwatch"></i></div>
+                            </div>
+                            <h4 class="font-bold text-white mb-1.5 text-sm">用眼智能守护助手</h4>
+                            <p class="text-xs text-gray-400 mb-4 leading-relaxed">科学用眼智能提醒，集成时间规划、桌面休息间歇番番茄钟。</p>
+                        </div>
+                        <a href="huyanzhushou.html" class="inline-block w-full text-center py-2 rounded-lg bg-white/5 border border-white/10 hover:border-military-accent text-white hover:text-military-accent font-semibold transition-all text-xs">立即使用</a>
+                    </div>
+
+                    <!-- Tool: Brain Anatomy Graphic (more-tool hidden) -->
+                    <div class="more-tool hidden p-5 rounded-xl border border-white/5 bg-black/20 hover:bg-black/30 transition-all flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-center justify-between mb-3">
+                                <div class="text-military-accent text-xl"><i class="fas fa-brain"></i></div>
+                            </div>
+                            <h4 class="font-bold text-white mb-1.5 text-sm">脑视觉神经动态图</h4>
+                            <p class="text-xs text-gray-400 mb-4 leading-relaxed">交互式神经网络海报，动态高亮显示大脑视觉皮层区域和雷达分析。</p>
+                        </div>
+                        <a href="brain_visual_design.html" class="inline-block w-full text-center py-2 rounded-lg bg-white/5 border border-white/10 hover:border-military-accent text-white hover:text-military-accent font-semibold transition-all text-xs">立即使用</a>
+                    </div>
+
+                    <!-- Tool: Admin Screen Monitor (more-tool hidden) -->
+                    <div class="more-tool hidden p-5 rounded-xl border border-white/5 bg-black/20 hover:bg-black/30 transition-all flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-center justify-between mb-3">
+                                <div class="text-military-accent text-xl"><i class="fas fa-desktop"></i></div>
+                            </div>
+                            <h4 class="font-bold text-white mb-1.5 text-sm">数据可视化大屏监控</h4>
+                            <p class="text-xs text-gray-400 mb-4 leading-relaxed">提供给管理后台使用的核心指标可视化数据大屏面板原型。</p>
+                        </div>
+                        <a href="admin_monitor.html" class="inline-block w-full text-center py-2 rounded-lg bg-white/5 border border-white/10 hover:border-military-accent text-white hover:text-military-accent font-semibold transition-all text-xs">立即使用</a>
+                    </div>
+
+                </div>
+
+                <!-- Toggle Button -->
+                <div class="mt-6 flex justify-center">
+                    <button onclick="toggleMoreTools()" class="px-6 py-2.5 bg-white/5 border border-white/10 hover:border-military-accent hover:text-military-accent text-white rounded-full text-xs font-bold transition-all flex items-center justify-center active:scale-95 shadow-md">
+                        <span id="toggle-tools-btn-text">展开显示全部开发工具</span>
+                        <i id="toggle-tools-btn-icon" class="fas fa-chevron-down ml-2"></i>
+                    </button>
+                </div>
+            </section>
+            </section>
+
+            <!-- Experience Highlights Section -->
+            <section class="glass-card rounded-2xl p-6">
+                <h3 class="text-lg font-bold text-white mb-5 flex items-center border-b border-white/5 pb-3">
+                    <i class="fas fa-medal mr-3 text-military-accent"></i>副业实战经验与成果
+                </h3>
+                <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+                    <div class="bg-black/20 p-4 rounded-xl border border-white/5 text-center">
+                        <div class="font-bold text-white text-sm md:text-base mb-1">社交电商</div>
+                        <div class="text-[10px] text-gray-500">小米/每日一淘实战运营</div>
+                    </div>
+                    <div class="bg-black/20 p-4 rounded-xl border border-white/5 text-center">
+                        <div class="font-bold text-white text-sm md:text-base mb-1">POS机推广</div>
+                        <div class="text-[10px] text-gray-500">从零做到日收益上千</div>
+                    </div>
+                    <div class="bg-black/20 p-4 rounded-xl border border-white/5 text-center">
+                        <div class="font-bold text-white text-sm md:text-base mb-1">社群微商</div>
+                        <div class="text-[10px] text-gray-500">操盘代理，创日入5000+记录</div>
+                    </div>
+                    <div class="bg-black/20 p-4 rounded-xl border border-white/5 text-center">
+                        <div class="font-bold text-white text-sm md:text-base mb-1">共享纸巾</div>
+                        <div class="text-[10px] text-gray-500">共享经济早期线下网点建设</div>
+                    </div>
+                    <div class="bg-black/20 p-4 rounded-xl border border-white/5 text-center">
+                        <div class="font-bold text-white text-sm md:text-base mb-1">WAP移动网站</div>
+                        <div class="text-[10px] text-gray-500">早期移动端流量站建站与变现</div>
+                    </div>
+                    <div class="bg-black/20 p-4 rounded-xl border border-white/5 text-center">
+                        <div class="font-bold text-white text-sm md:text-base mb-1">二手循环交易</div>
+                        <div class="text-[10px] text-gray-500">数码硬件与话费流转包代销</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Insight Slogans Section -->
+            <section class="grid grid-cols-1 md:grid-cols-3 gap-5">
+                <div class="bg-gradient-to-br from-military to-transparent border border-white/5 p-5 rounded-xl shadow-md relative overflow-hidden">
+                    <i class="fas fa-lightbulb absolute -right-3 -bottom-5 text-7xl opacity-5 text-white"></i>
+                    <h4 class="font-bold mb-2 text-white text-sm">机会与准备</h4>
+                    <p class="text-xs text-gray-400 leading-relaxed">机会不会等待完全准备好的人。先迈出第一步，再持续修正调整。</p>
+                </div>
+                <div class="bg-gradient-to-br from-military/80 to-transparent border border-white/5 p-5 rounded-xl shadow-md relative overflow-hidden">
+                    <i class="fas fa-layer-group absolute -right-3 -bottom-5 text-7xl opacity-5 text-white"></i>
+                    <h4 class="font-bold mb-2 text-white text-sm">日常累积</h4>
+                    <p class="text-xs text-gray-400 leading-relaxed">在别人刷手机娱乐的时候，我在学习。读书和公开写作是核心底座。</p>
+                </div>
+                <div class="bg-military-accent/10 border border-military-accent/20 p-5 rounded-xl shadow-md relative overflow-hidden">
+                    <i class="fas fa-fist-raised absolute -right-3 -bottom-5 text-7xl opacity-5 text-military-accent"></i>
+                    <h4 class="font-bold mb-2 text-military-accent text-sm">勇于尝试</h4>
+                    <p class="text-xs text-gray-300 leading-relaxed">不冒险本身就是最大风险。只要能承受最差结果的损失，就值得尝试。</p>
+                </div>
+            </section>
+
+            <!-- Customer & Student Testimonials (Social Proof) -->
+            <section class="glass-card rounded-2xl p-6">
+                <div class="flex justify-between items-center mb-6 border-b border-white/5 pb-3">
+                    <h2 class="text-xl font-bold text-white flex items-center">
+                        <i class="fas fa-comments mr-3 text-military-accent"></i>学员与客户口碑见证
+                    </h2>
+                    <span class="text-xs font-semibold px-2.5 py-1 bg-military-accent/10 text-military-accent rounded-full border border-military-accent/20">口碑见证</span>
+                </div>
+
+                <div class="relative w-full min-h-[140px] flex flex-col justify-between" id="testimonial-slider">
+                    <!-- Slides Container -->
+                    <div class="relative overflow-hidden flex-1 min-h-[100px]">
+                        <!-- Slide 1 -->
+                        <div class="testimonial-slide block opacity-100 transition-all duration-500 bg-black/20 p-4 rounded-xl border border-white/5">
+                            <div class="flex items-center space-x-3 mb-2">
+                                <div class="w-8 h-8 rounded-full bg-military-accent/20 flex items-center justify-center text-military-accent font-bold text-xs">张</div>
+                                <div>
+                                    <div class="text-xs font-bold text-white">张总 (某传统商贸企业老板)</div>
+                                    <div class="text-[9px] text-gray-500">企业AI赋能获客与全自动提效方案</div>
+                                </div>
+                            </div>
+                            <p class="text-xs text-gray-400 italic">
+                                "之前团队每天写公众号和文案花好几个小时，老王队长帮我们搭了AI全自动内容生成流，现在10分钟就能发一篇，质量还很高！"
+                            </p>
+                        </div>
+
+                        <!-- Slide 2 -->
+                        <div class="testimonial-slide hidden opacity-0 transition-all duration-500 bg-black/20 p-4 rounded-xl border border-white/5">
+                            <div class="flex items-center space-x-3 mb-2">
+                                <div class="w-8 h-8 rounded-full bg-purple-400/20 flex items-center justify-center text-purple-400 font-bold text-xs">李</div>
+                                <div>
+                                    <div class="text-xs font-bold text-white">小李 (零基础转型AI开发者)</div>
+                                    <div class="text-[9px] text-gray-500">参加AI编程实战陪跑营</div>
+                                </div>
+                            </div>
+                            <p class="text-xs text-gray-400 italic">
+                                "真没想到我一个不懂代码的运营，也能在老王的带教下独立做出了一个单词学习微信小程序，上线第一周就拿到了上百个付费用户，太有成就感了！"
+                            </p>
+                        </div>
+
+                        <!-- Slide 3 -->
+                        <div class="testimonial-slide hidden opacity-0 transition-all duration-500 bg-black/20 p-4 rounded-xl border border-white/5">
+                            <div class="flex items-center space-x-3 mb-2">
+                                <div class="w-8 h-8 rounded-full bg-emerald-400/20 flex items-center justify-center text-emerald-400 font-bold text-xs">王</div>
+                                <div>
+                                    <div class="text-xs font-bold text-white">王宇 (一人企业/超级个体)</div>
+                                    <div class="text-[9px] text-gray-500">咨询一人企业(OPC)商业闭环</div>
+                                </div>
+                            </div>
+                            <p class="text-xs text-gray-400 italic">
+                                "老王队长对底层商业逻辑的敏锐度极高。他的三节棍IP方法论帮我重新理清了定位，教我如何通过自动化工具大幅降低启动成本。绝对靠谱！"
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Slide dots -->
+                    <div class="flex justify-center space-x-2 mt-4">
+                        <span onclick="setSlide(0)" class="slide-dot w-2 h-2 rounded-full bg-military-accent cursor-pointer transition-all"></span>
+                        <span onclick="setSlide(1)" class="slide-dot w-2 h-2 rounded-full bg-gray-600 cursor-pointer transition-all"></span>
+                        <span onclick="setSlide(2)" class="slide-dot w-2 h-2 rounded-full bg-gray-600 cursor-pointer transition-all"></span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Success Case Gallery Section (Teaser) -->
+            <section class="glass-card rounded-2xl p-6 relative overflow-hidden">
+                <div class="absolute top-0 right-0 w-32 h-32 bg-military-accent/5 rounded-full blur-3xl pointer-events-none"></div>
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-white/5 pb-4 mb-4">
+                    <div>
+                        <h2 class="text-xl font-bold text-white flex items-center">
+                            <i class="fas fa-trophy mr-3 text-military-accent"></i>实战成功案例库
+                        </h2>
+                        <p class="text-xs text-gray-400 mt-1">真实学员反馈 / 零基础建站 / 流量冷启动与内容智能自动化</p>
+                    </div>
+                    <span class="text-xs font-semibold px-2.5 py-1 bg-military-accent/10 text-military-accent rounded-full border border-military-accent/20">持续更新中</span>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-4">
+                    <div class="bg-black/20 p-3.5 rounded-xl border border-white/5 flex flex-col justify-between hover:border-military-accent/30 transition-all duration-300">
+                        <div class="flex items-center space-x-3 mb-2">
+                            <div class="w-8 h-8 rounded-lg bg-military-accent/10 flex items-center justify-center text-military-accent shrink-0">
+                                <i class="fas fa-chart-line text-sm"></i>
+                            </div>
+                            <h4 class="font-bold text-white text-xs">闲鱼自动化铺货起飞</h4>
+                        </div>
+                        <p class="text-[10px] text-gray-400">起步首周店铺流量实现零的突破，日曝光量迅速破百。</p>
+                    </div>
+                    
+                    <div class="bg-black/20 p-3.5 rounded-xl border border-white/5 flex flex-col justify-between hover:border-purple-400/30 transition-all duration-300">
+                        <div class="flex items-center space-x-3 mb-2">
+                            <div class="w-8 h-8 rounded-lg bg-purple-500/10 flex items-center justify-center text-purple-400 shrink-0">
+                                <i class="fas fa-laptop-code text-sm"></i>
+                            </div>
+                            <h4 class="font-bold text-white text-xs">零基础 3 天搭建个人主页</h4>
+                        </div>
+                        <p class="text-[10px] text-gray-400">利用 AI 辅助与一键 CDN 部署，拥有独立域名个人官网。</p>
+                    </div>
+
+                    <div class="bg-black/20 p-3.5 rounded-xl border border-white/5 flex flex-col justify-between hover:border-emerald-400/30 transition-all duration-300">
+                        <div class="flex items-center space-x-3 mb-2">
+                            <div class="w-8 h-8 rounded-lg bg-emerald-500/10 flex items-center justify-center text-emerald-400 shrink-0">
+                                <i class="fas fa-store text-sm"></i>
+                            </div>
+                            <h4 class="font-bold text-white text-xs">同城实体引流与话术优化</h4>
+                        </div>
+                        <p class="text-[10px] text-gray-400">矩阵短视频引流客群精细化话术调整，当天实现成交 1000 元。</p>
+                    </div>
+
+                    <div class="bg-black/20 p-3.5 rounded-xl border border-white/5 flex flex-col justify-between hover:border-blue-400/30 transition-all duration-300">
+                        <div class="flex items-center space-x-3 mb-2">
+                            <div class="w-8 h-8 rounded-lg bg-blue-500/10 flex items-center justify-center text-blue-400 shrink-0">
+                                <i class="fas fa-cogs text-sm"></i>
+                            </div>
+                            <h4 class="font-bold text-white text-xs">企微 AI 客服与私域内容工厂</h4>
+                        </div>
+                        <p class="text-[10px] text-gray-400">前端 React 控制台监控 + 后端 Express AI 意图判定，90% 托管回复与人工无缝警报。</p>
+                    </div>
+
+                    <div class="bg-black/20 p-3.5 rounded-xl border border-white/5 flex flex-col justify-between hover:border-amber-400/30 transition-all duration-300">
+                        <div class="flex items-center space-x-3 mb-2">
+                            <div class="w-8 h-8 rounded-lg bg-amber-500/10 flex items-center justify-center text-amber-400 shrink-0">
+                                <i class="fas fa-play-circle text-sm"></i>
+                            </div>
+                            <h4 class="font-bold text-white text-xs">低门槛短视频副业分发变现</h4>
+                        </div>
+                        <p class="text-[10px] text-gray-400">爆款内容二次重发与评论区精细化互动，跑通零成本流量复利收益。</p>
+                    </div>
+
+                    <div class="bg-military-accent/5 p-3.5 rounded-xl border border-military-accent/20 flex flex-col justify-between hover:bg-military-accent/10 transition-all duration-300 cursor-pointer" onclick="scrollToContact()">
+                        <div class="flex items-center space-x-3 mb-2">
+                            <div class="w-8 h-8 rounded-lg bg-military-accent/20 flex items-center justify-center text-military-accent shrink-0">
+                                <i class="fas fa-plus-circle text-sm"></i>
+                            </div>
+                            <h4 class="font-bold text-military-accent text-xs">期待您的成果在此展现</h4>
+                        </div>
+                        <p class="text-[10px] text-gray-400 italic">点击立即扫码，免费获取 15分钟 专属商业闭环与 AI 提效诊断。</p>
+                    </div>
+                </div>
+
+                <div class="text-center pt-2">
+                    <a href="/cases" class="inline-flex items-center justify-center w-full sm:w-auto bg-military-accent text-military-dark hover:bg-white hover:text-military-dark font-bold py-2.5 px-8 rounded-full shadow-lg transition-all duration-300 transform active:scale-95 text-xs glow-btn">
+                        <i class="fas fa-external-link-alt mr-2"></i>进入案例库查看详情与聊天实录
+                    </a>
+                </div>
+            </section>
+
+            <!-- Business Collaboration Card -->
+            <section id="cooperate-section" class="bg-gradient-to-r from-military via-military-dark to-black border border-military-border/30 rounded-2xl p-6 md:p-8 text-center relative overflow-hidden">
+                <div class="absolute inset-0 bg-[radial-gradient(rgba(255,215,0,0.02)_1px,transparent_1px)] [background-size:15px_15px]"></div>
+                <h2 class="text-xl md:text-2xl font-extrabold mb-4 text-white glow-text-gold">核心团队业务合作</h2>
+                <div class="flex flex-wrap justify-center gap-2 md:gap-3 mb-6">
+                    <span class="bg-white/5 border border-white/10 px-3 py-1.5 rounded-full font-semibold text-xs text-military-accent">合作开发应用/小程序</span>
+                    <span class="bg-white/5 border border-white/10 px-3 py-1.5 rounded-full font-semibold text-xs text-military-accent">AI 辅导家长教育</span>
+                    <span class="bg-white/5 border border-white/10 px-3 py-1.5 rounded-full font-semibold text-xs text-military-accent">一人企业 AI 提效咨询</span>
+                </div>
+                <p class="mb-6 opacity-90 max-w-xl mx-auto text-xs md:text-sm text-gray-300 leading-relaxed">
+                    <strong>合作机制</strong>：我们拥有成熟的 AI 快速开发能力与 AI 辅助家庭教育落地经验。期待与有场景、有资源、有热情的伙伴深度合作，共同打造创新小程序与应用，或推广 AI 家庭教育陪伴方案，共同发掘更大商业价值。
+                </p>
+                <button onclick="scrollToContact()" class="bg-military-accent text-military-dark hover:bg-white hover:text-military-dark font-bold py-3 px-8 rounded-full shadow-lg transition-all duration-300 transform active:scale-95 text-xs md:text-sm glow-btn">
+                    <i class="fas fa-handshake mr-2"></i>立即获取合作方案
+                </button>
+            </section>
+        </div>
+    </div>
+
+    <!-- IOS Style Mobile Bottom Tab Bar (Hidden on Desktop) -->
+    <div class="md:hidden fixed bottom-4 left-4 right-4 bg-black/85 backdrop-blur-md text-white py-2.5 px-4 rounded-2xl shadow-2xl border border-white/10 flex justify-around items-center z-50 transition-all duration-300">
+        <button onclick="window.scrollTo({top:0, behavior:'smooth'})" class="flex flex-col items-center space-y-1 text-white/60 hover:text-military-accent focus:outline-none">
+            <i class="fas fa-home text-base"></i>
+            <span class="text-[9px]">首页</span>
+        </button>
+        <button onclick="document.getElementById('services-section').scrollIntoView({behavior:'smooth'})" class="flex flex-col items-center space-y-1 text-white/60 hover:text-military-accent focus:outline-none">
+            <i class="fas fa-cubes text-base"></i>
+            <span class="text-[9px]">核心定制</span>
+        </button>
+        <button onclick="document.getElementById('tools-section').scrollIntoView({behavior:'smooth'})" class="flex flex-col items-center space-y-1 text-white/60 hover:text-military-accent focus:outline-none">
+            <i class="fas fa-toolbox text-base"></i>
+            <span class="text-[9px]">工具箱</span>
+        </button>
+        <button onclick="copyWeChat()" class="flex flex-col items-center space-y-1 text-white/60 hover:text-military-accent focus:outline-none relative">
+            <i class="fas fa-user-plus text-base text-military-accent animate-pulse"></i>
+            <span class="text-[9px] text-military-accent font-bold">加微信</span>
+        </button>
+    </div>
+
+    <!-- Toast Component -->
+    <div id="toast" class="fixed top-6 left-1/2 transform -translate-x-1/2 bg-military-accent text-military-dark px-6 py-3.5 rounded-full font-bold shadow-2xl z-[100] opacity-0 transition-opacity duration-300 pointer-events-none text-center text-xs border border-military">
+        🎉 成功复制微信号，快去微信搜索添加吧！
+    </div>
+
+    <!-- Footer Section -->
+    <footer class="bg-military-dark text-gray-500 py-12 pb-24 md:pb-12 text-center text-xs border-t border-white/5">
+        <div class="max-w-6xl mx-auto px-4">
+            <p>&copy; 2026 老王队长 - 从军官到创业者的转型之路</p>
+            <p class="mt-2 text-gray-600">人生需要挑战，行动创造可能</p>
+        </div>
+    </footer>
+
+    <script>
+        // Quiz State
+        let quizAnswers = {};
+
+        function selectAnswer(step, choice) {
+            quizAnswers[step] = choice;
+            
+            // Hide current step
+            document.getElementById('quiz-step-' + step).classList.add('hidden');
+            
+            if (step < 3) {
+                // Show next step
+                document.getElementById('quiz-step-' + (step + 1)).classList.remove('hidden');
+            } else {
+                // Calculate and show results
+                showQuizResult();
+            }
+        }
+
+        function showQuizResult() {
+            const resultDiv = document.getElementById('quiz-result');
+            const scoreSpan = document.getElementById('result-score');
+            const routeSpan = document.getElementById('result-route');
+            const descSpan = document.getElementById('result-desc');
+            const codeSpan = document.getElementById('result-code');
+            
+            // Match Logic based on Question 1 answer
+            const role = quizAnswers[1];
+            let score = 90 + Math.floor(Math.random() * 9); // Random score between 90% and 98%
+            let route = "";
+            let desc = "";
+            let code = "";
+
+            if (role === 'A') {
+                route = "企业AI赋能与私域增长方案";
+                desc = "您是企业老板，核心痛点是低成本获客与团队人效。推荐采用【老板个人IP + AI爆款工作流】的打法，用AI提效50%，低成本获取公域流量。";
+                code = "企业增长";
+            } else if (role === 'B') {
+                route = "一人企业(OPC)自动化提效闭环指南";
+                desc = "您非常适合超级个体模式。通过搭建AI全自动工作流（信息收集、内容生成、跨平台分发），实现一个人就是一家企业，实现极高的人效比。";
+                code = "一人企业";
+            } else {
+                route = "AI编程实战与个人产品变现陪跑";
+                desc = "您适合通过AI快速低代码开发属于自己的小程序或网站。建议加入【AI编程实战陪跑营】，1对1手把手教你编写、上线并跑通自己的变现产品。";
+                code = "AI编程";
+            }
+
+            scoreSpan.innerText = `潜力值: ${score}%`;
+            routeSpan.innerText = route;
+            descSpan.innerText = desc;
+            codeSpan.innerText = code;
+
+            // Show result block
+            resultDiv.classList.remove('hidden');
+        }
+
+        function resetQuiz() {
+            quizAnswers = {};
+            document.getElementById('quiz-result').classList.add('hidden');
+            document.getElementById('quiz-step-2').classList.add('hidden');
+            document.getElementById('quiz-step-3').classList.add('hidden');
+            document.getElementById('quiz-step-1').classList.remove('hidden');
+        }
+
+        function copyWeChat() {
+            const wechatId = document.getElementById('wechat-id').innerText;
+            navigator.clipboard.writeText(wechatId).then(() => {
+                showToast();
+            }).catch(err => {
+                // Fallback for older browsers
+                const input = document.createElement('input');
+                input.value = wechatId;
+                document.body.appendChild(input);
+                input.select();
+                document.execCommand('copy');
+                document.body.removeChild(input);
+                showToast();
+            });
+        }
+
+        function copyWeChatAndGo() {
+            copyWeChat();
+            scrollToContact();
+        }
+
+        function showToast() {
+            const toast = document.getElementById('toast');
+            toast.style.opacity = '1';
+            setTimeout(() => {
+                toast.style.opacity = '0';
+            }, 3000);
+        }
+
+        function scrollToContact() {
+            document.getElementById('contact-section').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Testimonial Slider Logic
+        let currentSlide = 0;
+        const slides = document.getElementsByClassName('testimonial-slide');
+        const dots = document.getElementsByClassName('slide-dot');
+
+        function setSlide(index) {
+            currentSlide = index;
+            for (let i = 0; i < slides.length; i++) {
+                if (i === index) {
+                    slides[i].classList.remove('hidden');
+                    setTimeout(() => {
+                        slides[i].classList.remove('opacity-0');
+                        slides[i].classList.add('opacity-100');
+                    }, 20);
+                    dots[i].classList.remove('bg-gray-600');
+                    dots[i].classList.add('bg-military-accent');
+                } else {
+                    slides[i].classList.add('hidden');
+                    slides[i].classList.remove('opacity-100');
+                    slides[i].classList.add('opacity-0');
+                    dots[i].classList.remove('bg-military-accent');
+                    dots[i].classList.add('bg-gray-600');
+                }
+            }
+        }
+
+        // Auto rotate testimonials
+        setInterval(() => {
+            if (slides.length > 0) {
+                let next = (currentSlide + 1) % slides.length;
+                setSlide(next);
+            }
+        }, 6000);
+
+        function toggleMoreTools() {
+            const moreTools = document.querySelectorAll('.more-tool');
+            const btnText = document.getElementById('toggle-tools-btn-text');
+            const btnIcon = document.getElementById('toggle-tools-btn-icon');
+            const isHidden = moreTools[0].classList.contains('hidden');
+            
+            moreTools.forEach(el => {
+                if (isHidden) {
+                    el.classList.remove('hidden');
+                    el.classList.add('animate-fade-in');
+                } else {
+                    el.classList.add('hidden');
+                    el.classList.remove('animate-fade-in');
+                }
+            });
+            
+            if (isHidden) {
+                btnText.innerText = "收起部分开发工具";
+                btnIcon.className = "fas fa-chevron-up ml-2";
+            } else {
+                btnText.innerText = "展开显示全部开发工具";
+                btnIcon.className = "fas fa-chevron-down ml-2";
+            }
+        }
+
+        function openImageModal(src) {
+            const modal = document.getElementById('image-modal');
+            const modalImg = document.getElementById('image-modal-src');
+            modal.classList.remove('hidden');
+            modalImg.src = src;
+        }
+
+        function closeImageModal() {
+            document.getElementById('image-modal').classList.add('hidden');
+        }
+    </script>
+
+    <!-- Lightbox Image Modal -->
+    <div id="image-modal" class="hidden fixed inset-0 bg-black/90 backdrop-blur-sm z-[100] flex justify-center items-center p-4 cursor-zoom-out" onclick="closeImageModal()">
+        <div class="relative max-w-4xl max-h-full">
+            <img id="image-modal-src" src="" alt="预览图" class="rounded-lg max-h-[90vh] object-contain border border-white/10 shadow-2xl">
+            <button class="absolute -top-10 right-0 text-white hover:text-military-accent text-2xl" onclick="closeImageModal()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+    </div>
+</body>
+
+</html>

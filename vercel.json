@@ -1,1 +1,1 @@
-{"version": 2, "name": "junshen-prod", "cleanUrls": true, "outputDirectory": ".", "framework": null, "redirects": [{"source": "/", "destination": "/junior-high"}]}
+{"version": 2, "name": "junshen-prod", "cleanUrls": true, "outputDirectory": ".", "framework": null}
