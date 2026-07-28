@@ -1,0 +1,807 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>单词消消乐</title>
+    <style>
+        body {
+            font-family: 'Microsoft YaHei', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin: 0;
+            padding: 20px;
+            color: #333;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        h1 {
+            text-align: center;
+            color: #667eea;
+            font-size: 36px;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+        .game-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            border-radius: 10px;
+            color: white;
+        }
+        .game-title {
+            font-size: 24px;
+            font-weight: bold;
+        }
+        .game-stats {
+            display: flex;
+            gap: 30px;
+        }
+        .stat-item {
+            text-align: center;
+        }
+        .stat-value {
+            font-size: 24px;
+            font-weight: bold;
+        }
+        .stat-label {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+        .game-controls {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 25px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        .btn-secondary {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+        }
+        .btn-success {
+            background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+            color: white;
+        }
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(0,0,0,0.2);
+        }
+        .game-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+        .word-card {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border-radius: 15px;
+            padding: 25px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            position: relative;
+            overflow: hidden;
+        }
+        .word-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.2);
+        }
+        .word-card.active {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            transform: scale(1.05);
+        }
+        .word-card.correct {
+            background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+            color: white;
+            animation: correctAnimation 1s ease-in-out;
+        }
+        .word-card.incorrect {
+            background: linear-gradient(135deg, #f44336 0%, #e91e63 100%);
+            color: white;
+            animation: incorrectAnimation 1s ease-in-out;
+        }
+        @keyframes correctAnimation {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.2) rotate(5deg); }
+            100% { transform: scale(1); }
+        }
+        @keyframes incorrectAnimation {
+            0% { transform: scale(1); }
+            25% { transform: scale(1.1) rotate(-5deg); }
+            50% { transform: scale(1.1) rotate(5deg); }
+            75% { transform: scale(1.1) rotate(-5deg); }
+            100% { transform: scale(1); }
+        }
+        .word {
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .meaning {
+            font-size: 16px;
+            color: #666;
+        }
+        .word-card.active .meaning {
+            color: rgba(255,255,255,0.9);
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.4);
+        }
+        .modal-content {
+            background-color: #fefefe;
+            margin: 15% auto;
+            padding: 30px;
+            border: 1px solid #888;
+            width: 80%;
+            max-width: 600px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #eee;
+        }
+        .modal-header h2 {
+            margin: 0;
+            color: #667eea;
+        }
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .close:hover {
+            color: black;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #666;
+        }
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+        .form-group textarea {
+            height: 200px;
+            resize: vertical;
+        }
+        .form-row {
+            display: flex;
+            gap: 10px;
+        }
+        .form-row .form-group {
+            flex: 1;
+        }
+        .error-list {
+            margin: 30px 0;
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+        }
+        .error-item {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 10px 0;
+            border-left: 4px solid #f44336;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .error-word { font-weight: bold; color: #f44336; }
+        .error-meaning { color: #666; margin-left: 10px; }
+        .footer {
+            margin-top: 50px;
+            text-align: center;
+            color: #666;
+            font-size: 14px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+        }
+        .audio-control {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-left: auto;
+        }
+        .volume-slider {
+            width: 100px;
+        }
+        .page-controls {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            margin: 30px 0;
+        }
+        .page-info {
+            font-size: 18px;
+            font-weight: bold;
+            color: #667eea;
+        }
+        .hidden {
+            display: none;
+        }
+        @media (max-width: 768px) {
+            .game-header {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+            .game-stats {
+                justify-content: center;
+            }
+            .game-controls {
+                flex-direction: column;
+                align-items: center;
+            }
+            .game-grid {
+                grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎮 单词消消乐</h1>
+        
+        <div class="game-header">
+            <div class="game-title" id="gameTitle">姜小仙的英语课堂</div>
+            <div class="game-stats">
+                <div class="stat-item">
+                    <div class="stat-value" id="totalWords">0</div>
+                    <div class="stat-label">总单词</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="correctAnswers">0</div>
+                    <div class="stat-label">正确</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="incorrectAnswers">0</div>
+                    <div class="stat-label">错误</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="accuracy">0%</div>
+                    <div class="stat-label">正确率</div>
+                </div>
+            </div>
+            <div class="audio-control">
+                <label for="volume">音量:</label>
+                <input type="range" id="volume" class="volume-slider" min="0" max="100" value="50">
+                <button class="btn btn-secondary" onclick="toggleAudio()">🔊</button>
+            </div>
+        </div>
+        
+        <div class="game-controls">
+            <button class="btn btn-primary" onclick="openSettingsModal()">⚙️ 设置</button>
+            <button class="btn btn-secondary" onclick="startGame()">🎮 开始游戏</button>
+            <button class="btn btn-success" onclick="showErrorList()">📋 错题记录</button>
+            <button class="btn" style="background: #999; color: white;" onclick="exportErrorWords()">💾 导出错题</button>
+        </div>
+        
+        <div class="page-controls">
+            <button class="btn" onclick="prevPage()">← 上一页</button>
+            <div class="page-info" id="pageInfo">第 1 页 / 共 0 页</div>
+            <button class="btn" onclick="nextPage()">下一页 →</button>
+        </div>
+        
+        <div class="game-grid" id="gameGrid">
+            <!-- 单词卡片将通过JavaScript动态生成 -->
+        </div>
+        
+        <div id="errorListContainer" class="error-list hidden">
+            <h3>📋 错题记录</h3>
+            <div id="errorListContent">
+                <!-- 错题将通过JavaScript动态生成 -->
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p>📚 单词消消乐 - 让学习更有趣！</p>
+            <p>© 2026 小学生学习工具 | 支持本地存储，离线可用</p>
+        </div>
+    </div>
+    
+    <!-- 设置模态框 -->
+    <div id="settingsModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>⚙️ 游戏设置</h2>
+                <span class="close" onclick="closeSettingsModal()">&times;</span>
+            </div>
+            <form id="settingsForm">
+                <div class="form-group">
+                    <label for="titleInput">标题</label>
+                    <input type="text" id="titleInput" value="姜小仙的英语课堂">
+                </div>
+                
+                <div class="form-group">
+                    <label for="wordsPerPage">每页单词数</label>
+                    <input type="number" id="wordsPerPage" value="10" min="1" max="50">
+                </div>
+                
+                <div class="form-group">
+                    <label for="wordList">单词列表 (格式: 单词@释义，每行一个)</label>
+                    <textarea id="wordList">apple@苹果
+banana@香蕉
+orange@橙子
+cat@猫
+dog@狗
+bird@鸟
+fish@鱼
+pig@猪
+cow@奶牛
+sheep@绵羊
+tiger@老虎
+lion@狮子
+elephant@大象
+monkey@猴子
+rabbit@兔子
+book@书
+pen@钢笔
+pencil@铅笔
+school@学校
+teacher@老师
+student@学生
+friend@朋友
+family@家庭
+father@爸爸
+mother@妈妈
+brother@兄弟
+sister@姐妹</textarea>
+                </div>
+                
+                <div class="form-row">
+                    <button type="button" class="btn btn-secondary" onclick="importFromExcel()">📁 选择Excel</button>
+                    <button type="button" class="btn btn-primary" onclick="saveSettings()">💾 保存</button>
+                    <button type="button" class="btn" style="background: #999; color: white;" onclick="closeSettingsModal()">取消</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <script>
+        let wordList = [];
+        let gameTitle = "姜小仙的英语课堂";
+        let wordsPerPage = 10;
+        let currentPage = 1;
+        let totalPages = 0;
+        let selectedCards = [];
+        let correctAnswers = 0;
+        let incorrectAnswers = 0;
+        let errorWords = [];
+        let audioEnabled = true;
+        let volume = 0.5;
+        
+        // 初始化
+        function init() {
+            // 从本地存储加载数据
+            loadFromLocalStorage();
+            // 更新游戏标题
+            document.getElementById('gameTitle').textContent = gameTitle;
+            // 计算总页数
+            calculateTotalPages();
+            // 显示第一页单词
+            showPage(currentPage);
+            // 更新统计信息
+            updateStats();
+        }
+        
+        // 从本地存储加载数据
+        function loadFromLocalStorage() {
+            const savedData = localStorage.getItem('wordMatchingGame');
+            if (savedData) {
+                const data = JSON.parse(savedData);
+                wordList = data.wordList || [];
+                gameTitle = data.gameTitle || "姜小仙的英语课堂";
+                wordsPerPage = data.wordsPerPage || 10;
+                correctAnswers = data.correctAnswers || 0;
+                incorrectAnswers = data.incorrectAnswers || 0;
+                errorWords = data.errorWords || [];
+                audioEnabled = data.audioEnabled !== false;
+                volume = data.volume || 0.5;
+                document.getElementById('volume').value = volume * 100;
+                document.getElementById('titleInput').value = gameTitle;
+                document.getElementById('wordsPerPage').value = wordsPerPage;
+                document.getElementById('wordList').value = wordList.map(item => `${item.word}@${item.meaning}`).join('\n');
+            } else {
+                // 初始化默认单词列表
+                const defaultWords = document.getElementById('wordList').value;
+                parseWordList(defaultWords);
+            }
+        }
+        
+        // 保存数据到本地存储
+        function saveToLocalStorage() {
+            const data = {
+                wordList,
+                gameTitle,
+                wordsPerPage,
+                correctAnswers,
+                incorrectAnswers,
+                errorWords,
+                audioEnabled,
+                volume
+            };
+            localStorage.setItem('wordMatchingGame', JSON.stringify(data));
+        }
+        
+        // 解析单词列表
+        function parseWordList(text) {
+            const lines = text.trim().split('\n');
+            wordList = [];
+            lines.forEach(line => {
+                const parts = line.split('@');
+                if (parts.length >= 2) {
+                    const word = parts[0].trim();
+                    const meaning = parts.slice(1).join('@').trim();
+                    if (word && meaning) {
+                        wordList.push({ word, meaning });
+                    }
+                }
+            });
+        }
+        
+        // 计算总页数
+        function calculateTotalPages() {
+            totalPages = Math.ceil(wordList.length / wordsPerPage);
+            document.getElementById('totalWords').textContent = wordList.length;
+            document.getElementById('pageInfo').textContent = `第 ${currentPage} 页 / 共 ${totalPages} 页`;
+        }
+        
+        // 显示指定页的单词
+        function showPage(page) {
+            currentPage = page;
+            const startIndex = (page - 1) * wordsPerPage;
+            const endIndex = startIndex + wordsPerPage;
+            const pageWords = wordList.slice(startIndex, endIndex);
+            
+            const gameGrid = document.getElementById('gameGrid');
+            gameGrid.innerHTML = '';
+            
+            // 生成单词和释义卡片
+            const allCards = [];
+            
+            // 生成单词卡片
+            pageWords.forEach((item, index) => {
+                const wordCard = document.createElement('div');
+                wordCard.className = 'word-card';
+                wordCard.dataset.index = startIndex + index;
+                wordCard.dataset.type = 'word';
+                wordCard.dataset.word = item.word;
+                wordCard.dataset.meaning = item.meaning;
+                wordCard.innerHTML = `
+                    <div class="word">${item.word}</div>
+                `;
+                wordCard.onclick = () => selectCard(wordCard);
+                allCards.push(wordCard);
+            });
+            
+            // 生成释义卡片
+            pageWords.forEach((item, index) => {
+                const meaningCard = document.createElement('div');
+                meaningCard.className = 'word-card';
+                meaningCard.dataset.index = startIndex + index;
+                meaningCard.dataset.type = 'meaning';
+                meaningCard.dataset.word = item.word;
+                meaningCard.dataset.meaning = item.meaning;
+                meaningCard.innerHTML = `
+                    <div class="meaning">${item.meaning}</div>
+                `;
+                meaningCard.onclick = () => selectCard(meaningCard);
+                allCards.push(meaningCard);
+            });
+            
+            // 随机打乱卡片顺序
+            allCards.sort(() => Math.random() - 0.5);
+            
+            // 添加到游戏网格
+            allCards.forEach(card => {
+                gameGrid.appendChild(card);
+            });
+            
+            document.getElementById('pageInfo').textContent = `第 ${currentPage} 页 / 共 ${totalPages} 页`;
+        }
+        
+        // 选择卡片
+        function selectCard(card) {
+            if (selectedCards.length >= 2) {
+                // 重置之前的选择
+                selectedCards.forEach(c => c.classList.remove('active'));
+                selectedCards = [];
+            }
+            
+            card.classList.add('active');
+            selectedCards.push(card);
+            
+            // 播放单词读音
+            if (audioEnabled && card.dataset.type === 'word') {
+                const word = card.dataset.word;
+                playWordAudio(word);
+            }
+            
+            if (selectedCards.length === 2) {
+                // 检查是否匹配
+                setTimeout(() => checkMatch(), 500);
+            }
+        }
+        
+        // 检查匹配
+        function checkMatch() {
+            const card1 = selectedCards[0];
+            const card2 = selectedCards[1];
+            
+            // 检查是否是不同类型的卡片（一个是单词，一个是释义）
+            if (card1.dataset.type === card2.dataset.type) {
+                // 类型相同，不匹配
+                card1.classList.add('incorrect');
+                card2.classList.add('incorrect');
+                incorrectAnswers++;
+                playSound('incorrect');
+            } else {
+                // 检查单词和释义是否对应
+                const isMatch = (card1.dataset.word === card2.dataset.word && card1.dataset.meaning === card2.dataset.meaning);
+                
+                if (isMatch) {
+                    // 匹配正确
+                    card1.classList.add('correct');
+                    card2.classList.add('correct');
+                    correctAnswers++;
+                    playSound('correct');
+                    
+                    // 延迟后移除匹配的卡片
+                    setTimeout(() => {
+                        card1.style.display = 'none';
+                        card2.style.display = 'none';
+                    }, 1000);
+                } else {
+                    // 匹配错误
+                    card1.classList.add('incorrect');
+                    card2.classList.add('incorrect');
+                    incorrectAnswers++;
+                    
+                    // 添加到错题记录
+                    const errorWord = {
+                        word: card1.dataset.type === 'word' ? card1.dataset.word : card2.dataset.word,
+                        meaning: card1.dataset.type === 'meaning' ? card1.dataset.meaning : card2.dataset.meaning
+                    };
+                    errorWords.push(errorWord);
+                    
+                    playSound('incorrect');
+                }
+            }
+            
+            // 更新统计信息
+            updateStats();
+            // 保存数据
+            saveToLocalStorage();
+            
+            // 重置选择
+            setTimeout(() => {
+                selectedCards.forEach(c => {
+                    c.classList.remove('active', 'correct', 'incorrect');
+                });
+                selectedCards = [];
+            }, 1500);
+        }
+        
+        // 播放单词读音
+        function playWordAudio(word) {
+            // 这里使用Web Speech API实现语音合成
+            if ('speechSynthesis' in window) {
+                const utterance = new SpeechSynthesisUtterance(word);
+                utterance.lang = 'en-US';
+                utterance.volume = volume;
+                speechSynthesis.speak(utterance);
+            }
+        }
+        
+        // 播放音效
+        function playSound(type) {
+            // 这里可以添加正确和错误的音效
+            console.log(`Playing ${type} sound`);
+        }
+        
+        // 切换音频
+        function toggleAudio() {
+            audioEnabled = !audioEnabled;
+            saveToLocalStorage();
+            const btn = event.target;
+            btn.textContent = audioEnabled ? '🔊' : '🔇';
+        }
+        
+        // 更新统计信息
+        function updateStats() {
+            const total = correctAnswers + incorrectAnswers;
+            const accuracy = total > 0 ? Math.round((correctAnswers / total) * 100) : 0;
+            
+            document.getElementById('correctAnswers').textContent = correctAnswers;
+            document.getElementById('incorrectAnswers').textContent = incorrectAnswers;
+            document.getElementById('accuracy').textContent = `${accuracy}%`;
+        }
+        
+        // 上一页
+        function prevPage() {
+            if (currentPage > 1) {
+                showPage(currentPage - 1);
+            }
+        }
+        
+        // 下一页
+        function nextPage() {
+            if (currentPage < totalPages) {
+                showPage(currentPage + 1);
+            }
+        }
+        
+        // 开始游戏
+        function startGame() {
+            // 随机打乱单词顺序
+            wordList.sort(() => 0.5 - Math.random());
+            // 重置统计信息
+            correctAnswers = 0;
+            incorrectAnswers = 0;
+            errorWords = [];
+            // 更新统计信息
+            updateStats();
+            // 保存数据
+            saveToLocalStorage();
+            // 显示第一页
+            showPage(1);
+            alert('游戏开始！');
+        }
+        
+        // 显示错题记录
+        function showErrorList() {
+            const container = document.getElementById('errorListContainer');
+            const content = document.getElementById('errorListContent');
+            
+            if (errorWords.length === 0) {
+                content.innerHTML = '<p>恭喜！没有错题！</p>';
+            } else {
+                content.innerHTML = '';
+                errorWords.forEach(item => {
+                    const errorItem = document.createElement('div');
+                    errorItem.className = 'error-item';
+                    errorItem.innerHTML = `<span class="error-word">${item.word}</span><span class="error-meaning">${item.meaning}</span>`;
+                    content.appendChild(errorItem);
+                });
+            }
+            
+            container.classList.remove('hidden');
+        }
+        
+        // 导出错题
+        function exportErrorWords() {
+            if (errorWords.length === 0) {
+                alert('没有错题可以导出！');
+                return;
+            }
+            
+            let content = `错题记录 - ${gameTitle}\n`;
+            content += `导出时间: ${new Date().toLocaleString()}\n`;
+            content += `===================\n`;
+            
+            errorWords.forEach(item => {
+                content += `${item.word} - ${item.meaning}\n`;
+            });
+            
+            const blob = new Blob([content], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `error-words-${new Date().getTime()}.txt`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+        
+        // 打开设置模态框
+        function openSettingsModal() {
+            document.getElementById('settingsModal').style.display = 'block';
+        }
+        
+        // 关闭设置模态框
+        function closeSettingsModal() {
+            document.getElementById('settingsModal').style.display = 'none';
+        }
+        
+        // 保存设置
+        function saveSettings() {
+            gameTitle = document.getElementById('titleInput').value || "姜小仙的英语课堂";
+            wordsPerPage = parseInt(document.getElementById('wordsPerPage').value) || 10;
+            const wordListText = document.getElementById('wordList').value;
+            
+            // 解析单词列表
+            parseWordList(wordListText);
+            
+            // 更新游戏标题
+            document.getElementById('gameTitle').textContent = gameTitle;
+            
+            // 计算总页数
+            calculateTotalPages();
+            
+            // 显示第一页
+            showPage(1);
+            
+            // 保存数据
+            saveToLocalStorage();
+            
+            // 关闭模态框
+            closeSettingsModal();
+            
+            alert('设置保存成功！');
+        }
+        
+        // 从Excel导入
+        function importFromExcel() {
+            // 这里简化处理，实际可以实现Excel文件上传和解析
+            alert('Excel导入功能开发中，敬请期待！');
+        }
+        
+        // 音量变化
+        document.getElementById('volume').addEventListener('input', function() {
+            volume = parseInt(this.value) / 100;
+            saveToLocalStorage();
+        });
+        
+        // 点击模态框外部关闭
+        window.onclick = function(event) {
+            const modal = document.getElementById('settingsModal');
+            if (event.target === modal) {
+                closeSettingsModal();
+            }
+        }
+        
+        // 初始化游戏
+        init();
+    </script>
+</body>
+</html>

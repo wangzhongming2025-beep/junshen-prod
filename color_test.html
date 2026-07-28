@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>色盲/色弱自助检测 - AI 护眼卫士</title>
+    <style>
+        :root {
+            --primary: #00f2ff;
+            --bg: #0b0e14;
+            --card-bg: rgba(255, 255, 255, 0.05);
+            --safe: #00ff88;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: var(--bg);
+            color: white;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+
+        .test-container {
+            max-width: 500px;
+            width: 90%;
+            text-align: center;
+            background: var(--card-bg);
+            padding: 40px;
+            border-radius: 30px;
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+        }
+
+        .plate-box {
+            width: 260px;
+            height: 260px;
+            border-radius: 50%;
+            margin: 0 auto 30px;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #fff;
+            border: 8px solid #1a1e26;
+            box-shadow: 0 0 30px rgba(0, 0, 0, 0.3);
+            position: relative;
+        }
+
+        .plate-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: opacity 0.3s;
+        }
+
+        .loader {
+            position: absolute;
+            font-size: 12px;
+            color: #666;
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+
+        .opt-btn {
+            background: rgba(255, 255, 255, 0.08);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 16px;
+            border-radius: 16px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 16px;
+            font-weight: 500;
+        }
+
+        .opt-btn:hover {
+            background: var(--primary);
+            color: #000;
+            border-color: var(--primary);
+            transform: translateY(-2px);
+        }
+
+        .progress {
+            color: var(--primary);
+            font-size: 13px;
+            margin-bottom: 25px;
+            letter-spacing: 3px;
+            font-weight: bold;
+        }
+
+        #result-screen {
+            display: none;
+        }
+
+        .score-val {
+            font-size: 72px;
+            font-weight: 900;
+            color: var(--primary);
+            margin-bottom: 5px;
+        }
+
+        .result-label {
+            font-size: 24px;
+            color: var(--safe);
+            margin-bottom: 20px;
+        }
+
+        .error-msg {
+            font-size: 12px;
+            color: #ff3e3e;
+            margin-top: 10px;
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="test-container" id="test-main">
+        <div class="progress" id="progress-text">TEST PLATE 1/3</div>
+
+        <div class="plate-box">
+            <div class="loader" id="loader">本地资源加载中...</div>
+            <img id="plate-img" src="" class="plate-image" alt="Ishihara Plate"
+                onload="document.getElementById('loader').style.display='none'; this.style.opacity=1;"
+                onerror="handleImgError(this)">
+        </div>
+
+        <p style="margin-bottom: 30px; opacity: 0.8; font-size: 15px;">请问图中显示的数字是？</p>
+
+        <div class="options-grid" id="options"></div>
+    </div>
+
+    <div class="test-container" id="result-screen">
+        <div class="score-val" id="score">0</div>
+        <div class="result-label" id="result-type">辨色力：正常</div>
+        <p style="margin: 20px 0; opacity: 0.7; line-height: 1.6; font-size: 14px;" id="result-desc"></p>
+        <button class="opt-btn" style="width: 100%; background: var(--primary); color: #000;"
+            onclick="location.reload()">重新测试</button>
+    </div>
+
+    <script>
+        // 使用本地生成的稳定图源
+        const questions = [
+            { img: "assets/plate_12.png", options: ["12", "18", "72", "看不清"], correct: "12" },
+            { img: "assets/plate_8.png", options: ["8", "3", "5", "看不清"], correct: "8" },
+            { img: "assets/plate_6.png", options: ["6", "5", "16", "看不清"], correct: "6" }
+        ];
+
+        let currentIdx = 0;
+        let score = 0;
+
+        function renderQuestion() {
+            const q = questions[currentIdx];
+            document.getElementById('progress-text').innerText = `TEST PLATE ${currentIdx + 1}/${questions.length}`;
+            document.getElementById('loader').style.display = 'block';
+            const imgEl = document.getElementById('plate-img');
+            imgEl.style.opacity = 0;
+            imgEl.src = q.img;
+
+            const optionsDiv = document.getElementById('options');
+            optionsDiv.innerHTML = '';
+            q.options.forEach(opt => {
+                const btn = document.createElement('button');
+                btn.className = 'opt-btn';
+                btn.innerText = opt;
+                btn.onclick = () => handleAnswer(opt);
+                optionsDiv.appendChild(btn);
+            });
+        }
+
+        function handleImgError(img) {
+            console.error("Image failed to load:", img.src);
+            document.getElementById('loader').innerText = "资源加载失败，请检查 assets 目录";
+        }
+
+        function handleAnswer(ans) {
+            if (ans === questions[currentIdx].correct) {
+                score += Math.round(100 / questions.length);
+            }
+            currentIdx++;
+            if (currentIdx < questions.length) {
+                renderQuestion();
+            } else {
+                showResult();
+            }
+        }
+
+        function showResult() {
+            document.getElementById('test-main').style.display = 'none';
+            const resScreen = document.getElementById('result-screen');
+            resScreen.style.display = 'block';
+
+            const finalScore = score > 90 ? 100 : score;
+            document.getElementById('score').innerText = finalScore;
+
+            const typeLabel = document.getElementById('result-type');
+            const descLabel = document.getElementById('result-desc');
+
+            if (finalScore >= 80) {
+                typeLabel.innerText = "辨色力：正常";
+                typeLabel.style.color = "#00ff88";
+                descLabel.innerText = "您的颜色识别能力非常出色。本地 AI 生成的测试图显示您的视锥细胞功能发育非常健全。";
+            } else if (finalScore >= 60) {
+                typeLabel.innerText = "辨色力：疑似色弱";
+                typeLabel.style.color = "#ffd700";
+                descLabel.innerText = "系统检测到您在部分色块识别上存在困难。建议前往专业机构进行更精密的光学测试。";
+            } else {
+                typeLabel.innerText = "辨色力：疑似色盲";
+                typeLabel.style.color = "#ff3e3e";
+                descLabel.innerText = "检测结果显示您对特定频段的颜色敏感度较低。建议咨询专业医生。";
+            }
+        }
+
+        renderQuestion();
+    </script>
+</body>
+
+</html>

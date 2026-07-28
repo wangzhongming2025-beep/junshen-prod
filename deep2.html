@@ -1,0 +1,823 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HTML文件上传预览工具</title>
+    <style>
+        /* 基础样式 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
+        }
+        body {
+            background-color: #f5f5f5;
+            color: #333;
+            line-height: 1.6;
+            padding-bottom: 60px; /* 为底部导航留出空间 */
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        h1, h2, h3 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+        }
+        .btn {
+            display: inline-block;
+            background-color: #3498db;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            text-decoration: none;
+            transition: background-color 0.3s;
+        }
+        .btn:hover {
+            background-color: #2980b9;
+        }
+        .btn-danger {
+            background-color: #e74c3c;
+        }
+        .btn-danger:hover {
+            background-color: #c0392b;
+        }
+        .btn-secondary {
+            background-color: #95a5a6;
+        }
+        .btn-secondary:hover {
+            background-color: #7f8c8d;
+        }
+        .alert {
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 4px;
+        }
+        .alert-success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .alert-error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .alert-info {
+            background-color: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+
+        /* 登录页面样式 */
+        .login-container {
+            max-width: 400px;
+            margin: 100px auto;
+            padding: 30px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        .login-form .form-group {
+            margin-bottom: 20px;
+        }
+        .login-form label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        .login-form input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        /* 上传区域样式 */
+        .upload-area {
+            border: 2px dashed #ccc;
+            border-radius: 8px;
+            padding: 40px 20px;
+            text-align: center;
+            margin-bottom: 30px;
+            background-color: white;
+            transition: border-color 0.3s;
+        }
+        .upload-area:hover,
+        .upload-area.dragover {
+            border-color: #3498db;
+        }
+        .upload-icon {
+            font-size: 50px;
+            color: #ccc;
+            margin-bottom: 15px;
+        }
+        .upload-text {
+            margin-bottom: 20px;
+        }
+        .browse-btn {
+            margin-top: 10px;
+        }
+        #file-input {
+            display: none;
+        }
+
+        /* 文件列表样式 */
+        .file-list {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            margin-bottom: 30px;
+        }
+        .file-list-header {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+            font-weight: bold;
+        }
+        .file-item {
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .file-item:last-child {
+            border-bottom: none;
+        }
+        .file-info {
+            flex: 1;
+        }
+        .file-name {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        .file-meta {
+            font-size: 12px;
+            color: #666;
+        }
+        .file_actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        /* 预览页面样式 */
+        .preview-container {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            margin-bottom: 30px;
+        }
+        .preview-header {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .preview-iframe {
+            width: 100%;
+            height: 600px;
+            border: none;
+        }
+        .file-details {
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-top: 1px solid #eee;
+        }
+        .detail-item {
+            margin-bottom: 10px;
+        }
+        .detail-label {
+            font-weight: bold;
+            margin-right: 10px;
+        }
+
+        /* 全局导航样式 */
+        .footer-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background-color: #2c3e50;
+            padding: 15px;
+            text-align: center;
+            z-index: 1000;
+        }
+        .footer-nav .btn {
+            background-color: #3498db;
+        }
+        .footer-nav .btn:hover {
+            background-color: #2980b9;
+        }
+
+        /* 模态框样式 */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-content {
+            background-color: white;
+            border-radius: 8px;
+            padding: 20px;
+            max-width: 500px;
+            width: 90%;
+        }
+        .modal-header {
+            margin-bottom: 20px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+        }
+        .modal-footer {
+            margin-top: 20px;
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .file-item {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .file_actions {
+                margin-top: 15px;
+                width: 100%;
+                justify-content: space-between;
+            }
+            .preview-iframe {
+                height: 400px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container" id="app-container">
+        <!-- 登录页面 -->
+        <div id="login-page" class="login-container">
+            <h1>管理员登录</h1>
+            <form id="login-form" class="login-form">
+                <div class="form-group">
+                    <label for="password">管理员密码</label>
+                    <input type="password" id="password" placeholder="请输入管理员密码">
+                </div>
+                <button type="submit" class="btn">登录</button>
+            </form>
+            <p style="margin-top: 15px; text-align: center; color: #666;">提示: 默认密码为 'admin123'</p>
+        </div>
+
+        <!-- 主页面 -->
+        <div id="main-page" style="display: none;">
+            <h1>HTML文件上传预览工具</h1>
+
+            <!-- 上传区域 -->
+            <div id="upload-area" class="upload-area">
+                <div class="upload-icon">📤</div>
+                <div class="upload-text">
+                    <h3>拖放HTML文件到此处上传</h3>
+                    <p>或者</p>
+                </div>
+                <label for="file-input" class="btn browse-btn">选择文件</label>
+                <input type="file" id="file-input" accept=".html">
+            </div>
+
+            <!-- 文件列表 -->
+            <div id="file-list-container">
+                <h2>已上传文件</h2>
+                <div id="file-list" class="file-list">
+                    <div class="file-list-header">
+                        文件名 | 大小 | 上传时间 | 操作
+                    </div>
+                    <div id="file-list-items"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 预览页面 -->
+        <div id="preview-page" style="display: none;">
+            <h1>文件预览</h1>
+            <div class="preview-container">
+                <div class="preview-header">
+                    <h2 id="preview-file-name"></h2>
+                    <div class="file_actions">
+                        <button id="rename-btn" class="btn btn-secondary">重命名</button>
+                        <button id="delete-btn" class="btn btn-danger">删除</button>
+                        <button id="copy-url-btn" class="btn">复制访问链接</button>
+                    </div>
+                </div>
+                <iframe id="preview-iframe" class="preview-iframe"></iframe>
+                <div class="file-details">
+                    <div class="detail-item">
+                        <span class="detail-label">文件大小:</span>
+                        <span id="preview-file-size"></span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">上传时间:</span>
+                        <span id="preview-file-time"></span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">直接访问链接:</span>
+                        <a id="direct-access-url" target="_blank"></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 重命名模态框 -->
+    <div id="rename-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>重命名文件</h3>
+            </div>
+            <div class="form-group">
+                <label for="new-file-name">新文件名</label>
+                <input type="text" id="new-file-name" placeholder="请输入新文件名">
+            </div>
+            <div class="modal-footer">
+                <button id="cancel-rename" class="btn btn-secondary">取消</button>
+                <button id="confirm-rename" class="btn">确认</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 全局导航 -->
+    <div class="footer-nav">
+        <button id="back-to-home" class="btn">返回主页</button>
+    </div>
+
+    <script>
+        // DOM元素
+        const appContainer = document.getElementById('app-container');
+        const loginPage = document.getElementById('login-page');
+        const mainPage = document.getElementById('main-page');
+        const previewPage = document.getElementById('preview-page');
+        const loginForm = document.getElementById('login-form');
+        const passwordInput = document.getElementById('password');
+        const uploadArea = document.getElementById('upload-area');
+        const fileInput = document.getElementById('file-input');
+        const fileListItems = document.getElementById('file-list-items');
+        const backToHomeBtn = document.getElementById('back-to-home');
+        const previewFileName = document.getElementById('preview-file-name');
+        const previewFileSize = document.getElementById('preview-file-size');
+        const previewFileTime = document.getElementById('preview-file-time');
+        const previewIframe = document.getElementById('preview-iframe');
+        const renameBtn = document.getElementById('rename-btn');
+        const deleteBtn = document.getElementById('delete-btn');
+        const copyUrlBtn = document.getElementById('copy-url-btn');
+        const directAccessUrl = document.getElementById('direct-access-url');
+        const renameModal = document.getElementById('rename-modal');
+        const newFileNameInput = document.getElementById('new-file-name');
+        const cancelRenameBtn = document.getElementById('cancel-rename');
+        const confirmRenameBtn = document.getElementById('confirm-rename');
+
+        // 应用状态
+        let files = [];
+        let currentFile = null;
+        let isAdmin = false;
+
+        // 初始化
+        function init() {
+            // 检查登录状态
+            checkLoginStatus();
+
+            // 加载文件列表
+            loadFiles();
+
+            // 处理哈希变化
+            handleHashChange();
+            window.addEventListener('hashchange', handleHashChange);
+
+            // 设置事件监听
+            setupEventListeners();
+        }
+
+        // 检查登录状态
+        function checkLoginStatus() {
+            isAdmin = localStorage.getItem('isAdmin') === 'true';
+            if (isAdmin) {
+                loginPage.style.display = 'none';
+                mainPage.style.display = 'block';
+            } else {
+                loginPage.style.display = 'block';
+                mainPage.style.display = 'none';
+                previewPage.style.display = 'none';
+            }
+        }
+
+        // 加载文件列表
+        function loadFiles() {
+            const savedFiles = localStorage.getItem('htmlFiles');
+            if (savedFiles) {
+                files = JSON.parse(savedFiles);
+            }
+            renderFileList();
+        }
+
+        // 保存文件列表
+        function saveFiles() {
+            localStorage.setItem('htmlFiles', JSON.stringify(files));
+            renderFileList();
+        }
+
+        // 渲染文件列表
+        function renderFileList() {
+            if (files.length === 0) {
+                fileListItems.innerHTML = '<div class="file-item">暂无上传的文件</div>';
+                return;
+            }
+
+            fileListItems.innerHTML = '';
+            files.forEach(file => {
+                const fileItem = document.createElement('div');
+                fileItem.className = 'file-item';
+                fileItem.innerHTML = `
+                    <div class="file-info">
+                        <div class="file-name">${file.name}</div>
+                        <div class="file-meta">
+                            大小: ${formatFileSize(file.size)} | 上传时间: ${new Date(file.timestamp).toLocaleString()}
+                        </div>
+                    </div>
+                    <div class="file_actions">
+                        <button class="btn preview-btn" data-id="${file.id}">预览</button>
+                        ${isAdmin ? `
+                        <button class="btn btn-secondary rename-btn" data-id="${file.id}">重命名</button>
+                        <button class="btn btn-danger delete-btn" data-id="${file.id}">删除</button>
+                        ` : ''}
+                    </div>
+                `;
+                fileListItems.appendChild(fileItem);
+            });
+
+            // 绑定按钮事件
+            document.querySelectorAll('.preview-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const fileId = btn.getAttribute('data-id');
+                    previewFile(fileId);
+                });
+            });
+
+            if (isAdmin) {
+                document.querySelectorAll('.rename-btn').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        const fileId = btn.getAttribute('data-id');
+                        showRenameModal(fileId);
+                    });
+                });
+
+                document.querySelectorAll('.delete-btn').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        const fileId = btn.getAttribute('data-id');
+                        deleteFile(fileId);
+                    });
+                });
+            }
+        }
+
+        // 预览文件
+        function previewFile(fileId) {
+            const file = files.find(f => f.id === fileId);
+            if (!file) return;
+
+            currentFile = file;
+            previewFileName.textContent = file.name;
+            previewFileSize.textContent = formatFileSize(file.size);
+            previewFileTime.textContent = new Date(file.timestamp).toLocaleString();
+
+            // 创建Blob URL
+            const blob = new Blob([file.content], { type: 'text/html' });
+            const url = URL.createObjectURL(blob);
+            previewIframe.src = url;
+
+            // 生成直接访问URL
+            const directUrl = getDirectAccessUrl(fileId);
+            directAccessUrl.href = directUrl;
+            directAccessUrl.textContent = directUrl;
+
+            // 显示预览页面
+            mainPage.style.display = 'none';
+            previewPage.style.display = 'block';
+
+            // 更新URL哈希
+            window.location.hash = `#preview/${fileId}`;
+        }
+
+        // 生成直接访问URL
+        function getDirectAccessUrl(fileId) {
+            return `${window.location.origin}${window.location.pathname}#direct/${fileId}`;
+        }
+
+        // 处理直接访问
+        function handleDirectAccess(fileId) {
+            // 确保文件列表已加载
+            loadFiles();
+            
+            // 等待文件加载完成
+            setTimeout(() => {
+                const file = files.find(f => f.id === fileId);
+                if (!file) {
+                    showAlert('错误', '找不到指定的文件', 'error');
+                    return;
+                }
+
+                // 创建一个只包含预览iframe的页面
+                appContainer.innerHTML = `
+                    <div style="margin: 0; padding: 0; height: 100vh;">
+                        <iframe src="" id="direct-preview-iframe" style="width: 100%; height: 100%; border: none;"></iframe>
+                    </div>
+                `;
+
+                const directPreviewIframe = document.getElementById('direct-preview-iframe');
+                const blob = new Blob([file.content], { type: 'text/html' });
+                const url = URL.createObjectURL(blob);
+                directPreviewIframe.src = url;
+
+                // 隐藏底部导航
+                const footerNav = document.querySelector('.footer-nav');
+                if (footerNav) {
+                    footerNav.style.display = 'none';
+                }
+            }, 100);
+        }
+
+        // 显示重命名模态框
+        function showRenameModal(fileId) {
+            const file = files.find(f => f.id === fileId);
+            if (!file) return;
+
+            currentFile = file;
+            newFileNameInput.value = file.name;
+            renameModal.style.display = 'flex';
+        }
+
+        // 重命名文件
+        function renameFile(newName) {
+            if (!currentFile) return;
+
+            // 确保文件扩展名为.html
+            if (!newName.endsWith('.html')) {
+                newName += '.html';
+            }
+
+            currentFile.name = newName;
+            saveFiles();
+            renameModal.style.display = 'none';
+
+            // 如果正在预览该文件，更新预览信息
+            if (previewPage.style.display === 'block') {
+                previewFileName.textContent = newName;
+            }
+
+            showAlert('成功', '文件已重命名', 'success');
+        }
+
+        // 删除文件
+        function deleteFile(fileId) {
+            if (!confirm('确定要删除这个文件吗？')) {
+                return;
+            }
+
+            files = files.filter(f => f.id !== fileId);
+            saveFiles();
+
+            // 如果正在预览该文件，返回主页
+            if (previewPage.style.display === 'block' && currentFile && currentFile.id === fileId) {
+                backToHome();
+            }
+
+            showAlert('成功', '文件已删除', 'success');
+        }
+
+        // 处理文件选择
+        function handleFileSelect(event) {
+            if (!isAdmin) {
+                showAlert('错误', '只有管理员可以上传文件', 'error');
+                return;
+            }
+
+            const file = event.target.files[0];
+            if (!file) return;
+
+            // 检查文件类型
+            if (file.type !== 'text/html' && !file.name.endsWith('.html')) {
+                showAlert('错误', '请上传HTML文件', 'error');
+                return;
+            }
+
+            // 读取文件内容
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const fileContent = e.target.result;
+                const newFile = {
+                    id: generateId(),
+                    name: file.name,
+                    size: file.size,
+                    timestamp: Date.now(),
+                    content: fileContent
+                };
+
+                files.push(newFile);
+                saveFiles();
+                showAlert('成功', '文件已上传', 'success');
+            };
+            reader.readAsText(file);
+
+            // 重置文件输入
+            fileInput.value = '';
+        }
+
+        // 处理拖放上传
+        function handleDragOver(event) {
+            event.preventDefault();
+            uploadArea.classList.add('dragover');
+        }
+
+        function handleDragLeave(event) {
+            uploadArea.classList.remove('dragover');
+        }
+
+        function handleDrop(event) {
+            event.preventDefault();
+            uploadArea.classList.remove('dragover');
+
+            if (!isAdmin) {
+                showAlert('错误', '只有管理员可以上传文件', 'error');
+                return;
+            }
+
+            const file = event.dataTransfer.files[0];
+            if (!file) return;
+
+            // 检查文件类型
+            if (file.type !== 'text/html' && !file.name.endsWith('.html')) {
+                showAlert('错误', '请上传HTML文件', 'error');
+                return;
+            }
+
+            // 读取文件内容
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const fileContent = e.target.result;
+                const newFile = {
+                    id: generateId(),
+                    name: file.name,
+                    size: file.size,
+                    timestamp: Date.now(),
+                    content: fileContent
+                };
+
+                files.push(newFile);
+                saveFiles();
+                showAlert('成功', '文件已上传', 'success');
+            };
+            reader.readAsText(file);
+        }
+
+        // 处理登录
+        function handleLogin(event) {
+            event.preventDefault();
+            const password = passwordInput.value;
+
+            // 这里只是示例，实际应用中应该使用更安全的方式
+            if (password === 'admin123') {
+                isAdmin = true;
+                localStorage.setItem('isAdmin', 'true');
+                loginPage.style.display = 'none';
+                mainPage.style.display = 'block';
+                showAlert('成功', '登录成功', 'success');
+            } else {
+                showAlert('错误', '密码不正确', 'error');
+            }
+
+            passwordInput.value = '';
+        }
+
+        // 处理哈希变化
+        function handleHashChange() {
+            const hash = window.location.hash;
+
+            if (hash.startsWith('#preview/')) {
+                const fileId = hash.substring(9);
+                previewFile(fileId);
+            } else if (hash.startsWith('#direct/')) {
+                const fileId = hash.substring(7);
+                handleDirectAccess(fileId);
+            } else {
+                // 默认为主页
+                if (isAdmin) {
+                    mainPage.style.display = 'block';
+                    previewPage.style.display = 'none';
+                }
+            }
+        }
+
+        // 返回主页
+        function backToHome() {
+            window.location.hash = '';
+            mainPage.style.display = 'block';
+            previewPage.style.display = 'none';
+        }
+
+        // 复制URL到剪贴板
+        function copyUrlToClipboard() {
+            if (!currentFile) return;
+
+            const url = getDirectAccessUrl(currentFile.id);
+            navigator.clipboard.writeText(url).then(() => {
+                showAlert('成功', '访问链接已复制到剪贴板', 'success');
+            }).catch(err => {
+                showAlert('错误', '无法复制链接，请手动复制', 'error');
+            });
+        }
+
+        // 设置事件监听
+        function setupEventListeners() {
+            // 登录表单提交
+            loginForm.addEventListener('submit', handleLogin);
+
+            // 文件选择
+            fileInput.addEventListener('change', handleFileSelect);
+
+            // 拖放上传
+            uploadArea.addEventListener('dragover', handleDragOver);
+            uploadArea.addEventListener('dragleave', handleDragLeave);
+            uploadArea.addEventListener('drop', handleDrop);
+
+            // 返回主页
+            backToHomeBtn.addEventListener('click', backToHome);
+
+            // 预览页面按钮
+            renameBtn.addEventListener('click', () => {
+                if (currentFile) {
+                    showRenameModal(currentFile.id);
+                }
+            });
+
+            deleteBtn.addEventListener('click', () => {
+                if (currentFile && isAdmin) {
+                    deleteFile(currentFile.id);
+                }
+            });
+
+            copyUrlBtn.addEventListener('click', copyUrlToClipboard);
+
+            // 重命名模态框按钮
+            cancelRenameBtn.addEventListener('click', () => {
+                renameModal.style.display = 'none';
+            });
+
+            confirmRenameBtn.addEventListener('click', () => {
+                const newName = newFileNameInput.value.trim();
+                if (newName) {
+                    renameFile(newName);
+                } else {
+                    showAlert('错误', '文件名不能为空', 'error');
+                }
+            });
+        }
+
+        // 工具函数
+        function generateId() {
+            return Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+        }
+
+        function formatFileSize(bytes) {
+            if (bytes < 1024) return bytes + ' B';
+            else if (bytes < 1048576) return (bytes / 1024).toFixed(2) + ' KB';
+            else return (bytes / 1048576).toFixed(2) + ' MB';
+        }
+
+        function showAlert(title, message, type) {
+            const alert = document.createElement('div');
+            alert.className = 'alert alert-' + type;
+            alert.innerHTML = `<strong>${title}:</strong> ${message}`;
+            appContainer.insertBefore(alert, appContainer.firstChild);
+
+            // 3秒后移除提示
+            setTimeout(() => {
+                alert.remove();
+            }, 3000);
+        }
+
+        // 初始化应用
+        init();
+    </script>
+</body>
+</html>

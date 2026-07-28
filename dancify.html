@@ -1,0 +1,1293 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>快乐英语单词乐园</title>
+    <style>
+        :root {
+            --primary-color: #FF6B6B;
+            --secondary-color: #4ECDC4;
+            --accent-color: #FFE66D;
+            --dark-color: #292F36;
+            --light-color: #F7FFF7;
+        }
+        
+        body {
+            font-family: 'Comic Sans MS', 'Marker Felt', '微软雅黑', sans-serif;
+            background-color: #F0F8FF;
+            margin: 0;
+            padding: 0;
+            color: var(--dark-color);
+            background-image: url('https://img.freepik.com/free-vector/hand-drawn-school-background_23-2149464866.jpg?w=1380&t=st=1698765432~exp=1698766032~hmac=...');
+            background-size: cover;
+            background-attachment: fixed;
+            background-position: center;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 20px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            margin-top: 30px;
+            margin-bottom: 30px;
+        }
+        
+        h1 {
+            color: var(--primary-color);
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+            animation: bounce 2s infinite;
+        }
+        
+        h2 {
+            color: var(--secondary-color);
+            border-bottom: 3px dotted var(--accent-color);
+            padding-bottom: 5px;
+            margin-top: 30px;
+        }
+        
+        .tab-container {
+            display: flex;
+            margin-bottom: 20px;
+            border-bottom: 2px solid var(--secondary-color);
+        }
+        
+        .tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            background-color: var(--light-color);
+            border-radius: 10px 10px 0 0;
+            margin-right: 5px;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+        
+        .tab.active {
+            background-color: var(--secondary-color);
+            color: white;
+        }
+        
+        .tab:hover {
+            background-color: var(--accent-color);
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.5s;
+        }
+        
+        textarea {
+            width: 100%;
+            height: 100px;
+            padding: 10px;
+            border-radius: 10px;
+            border: 2px solid var(--secondary-color);
+            font-family: inherit;
+            margin-bottom: 10px;
+            resize: vertical;
+        }
+        
+        button {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: bold;
+            margin: 5px;
+            transition: all 0.3s;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        button:hover {
+            background-color: #FF8E8E;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+        }
+        
+        button:active {
+            transform: translateY(0);
+        }
+        
+        .word-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        .word-card {
+            background-color: white;
+            border-radius: 10px;
+            padding: 15px;
+            width: calc(33% - 20px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .word-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+        }
+        
+        .word-card::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+        }
+        
+        .word-card h3 {
+            color: var(--primary-color);
+            margin-top: 0;
+        }
+        
+        .word-card p {
+            color: var(--dark-color);
+            margin-bottom: 0;
+        }
+        
+        .quiz-container {
+            background-color: white;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            margin-top: 20px;
+        }
+        
+        .quiz-question {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            color: var(--dark-color);
+            text-align: center;
+        }
+        
+        .quiz-options {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+        }
+        
+        .quiz-option {
+            background-color: var(--light-color);
+            border: 2px solid var(--secondary-color);
+            border-radius: 10px;
+            padding: 15px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+            font-size: 1.1rem;
+        }
+        
+        .quiz-option:hover {
+            background-color: var(--accent-color);
+            transform: scale(1.02);
+        }
+        
+        .quiz-option.correct {
+            background-color: #A8E6CF;
+            border-color: #4CAF50;
+            animation: pulse 0.5s;
+        }
+        
+        .quiz-option.incorrect {
+            background-color: #FFAAA5;
+            border-color: #FF5252;
+        }
+        
+        .progress-container {
+            width: 100%;
+            background-color: #e0e0e0;
+            border-radius: 10px;
+            margin: 20px 0;
+            height: 20px;
+            overflow: hidden;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+            width: 0%;
+            transition: width 0.3s;
+            border-radius: 10px;
+        }
+        
+        .feedback {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 1.2rem;
+            min-height: 30px;
+        }
+        
+        .positive-feedback {
+            color: #4CAF50;
+            font-weight: bold;
+            animation: celebrate 1s;
+        }
+        
+        .encouragement {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: var(--accent-color);
+            padding: 10px 15px;
+            border-radius: 50px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            font-weight: bold;
+            opacity: 0;
+            transition: opacity 0.3s;
+            z-index: 100;
+        }
+        
+        .jigsaw-container {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        .jigsaw-piece {
+            background-color: white;
+            border: 2px dashed var(--secondary-color);
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .jigsaw-piece:hover {
+            background-color: var(--accent-color);
+        }
+        
+        .jigsaw-piece.matched {
+            background-color: #A8E6CF;
+            border-style: solid;
+            border-color: #4CAF50;
+        }
+        
+        .difficulty-selector {
+            margin: 20px 0;
+            text-align: center;
+        }
+        
+        .difficulty-btn {
+            background-color: var(--light-color);
+            color: var(--dark-color);
+        }
+        
+        .difficulty-btn.active {
+            background-color: var(--secondary-color);
+            color: white;
+        }
+        
+        .speak-btn {
+            background-color: #4ECDC4;
+            padding: 8px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-left: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .speak-btn:hover {
+            transform: scale(1.1);
+        }
+        
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {transform: translateY(0);}
+            40% {transform: translateY(-20px);}
+            60% {transform: translateY(-10px);}
+        }
+        
+        @keyframes fadeIn {
+            from {opacity: 0;}
+            to {opacity: 1;}
+        }
+        
+        @keyframes pulse {
+            0% {transform: scale(1);}
+            50% {transform: scale(1.05);}
+            100% {transform: scale(1);}
+        }
+        
+        @keyframes celebrate {
+            0% {transform: scale(1);}
+            25% {transform: scale(1.2) rotate(5deg);}
+            50% {transform: scale(1.1) rotate(-5deg);}
+            75% {transform: scale(1.2) rotate(5deg);}
+            100% {transform: scale(1) rotate(0deg);}
+        }
+        
+        @keyframes confetti {
+            0% {transform: translateY(0) rotate(0deg); opacity: 1;}
+            100% {transform: translateY(100vh) rotate(360deg); opacity: 0;}
+        }
+        
+        .confetti {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            background-color: var(--primary-color);
+            opacity: 0;
+            z-index: 99;
+            animation: confetti 3s ease-out;
+        }
+        
+        .star {
+            color: gold;
+            font-size: 1.5rem;
+            margin: 0 2px;
+            animation: pulse 1s infinite alternate;
+        }
+        
+        .difficulty-stars {
+            display: inline-block;
+            margin-left: 10px;
+        }
+        
+        .word-difficulty {
+            font-size: 0.8rem;
+            color: #777;
+            margin-top: 5px;
+        }
+        
+        .difficulty-1 { color: #4CAF50; }
+        .difficulty-2 { color: #FFC107; }
+        .difficulty-3 { color: #FF9800; }
+        .difficulty-4 { color: #FF5722; }
+        .difficulty-5 { color: #F44336; }
+        
+        @media (max-width: 768px) {
+            .word-card {
+                width: calc(50% - 15px);
+            }
+            
+            .quiz-options {
+                grid-template-columns: 1fr;
+            }
+            
+            .jigsaw-container {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .word-card {
+                width: 100%;
+            }
+            
+            .jigsaw-container {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🌟 快乐英语单词乐园 🌟</h1>
+        
+        <div class="tab-container">
+            <div class="tab active" onclick="openTab('import-tab')">导入单词</div>
+            <div class="tab" onclick="openTab('learn-tab')">学习单词</div>
+            <div class="tab" onclick="openTab('quiz-tab')">单词测试</div>
+            <div class="tab" onclick="openTab('jigsaw-tab')">拼图游戏</div>
+        </div>
+        
+        <!-- 导入单词标签页 -->
+        <div id="import-tab" class="tab-content active">
+            <h2>导入你的单词</h2>
+            <p>请输入英文单词和对应的中文意思，每行一个单词，格式为：英文=中文</p>
+            <textarea id="word-input" placeholder="例如：
+apple=苹果
+banana=香蕉
+cat=猫"></textarea>
+            <button onclick="importWords()">导入单词</button>
+            <button onclick="clearWords()">清空单词</button>
+            <button onclick="loadSampleWords()">加载示例单词</button>
+            
+            <h2>你的单词库</h2>
+            <div id="word-list" class="word-list"></div>
+        </div>
+        
+        <!-- 学习单词标签页 -->
+        <div id="learn-tab" class="tab-content">
+            <h2>学习单词</h2>
+            <div id="learn-container">
+                <p>请先导入一些单词开始学习！</p>
+            </div>
+            <button id="next-word-btn" style="display: none;" onclick="showNextWord()">下一个单词</button>
+        </div>
+        
+        <!-- 单词测试标签页 -->
+        <div id="quiz-tab" class="tab-content">
+            <h2>单词小测试</h2>
+            <div class="difficulty-selector">
+                <p>选择测试难度：</p>
+                <button class="difficulty-btn active" onclick="setQuizDifficulty('easy')">简单</button>
+                <button class="difficulty-btn" onclick="setQuizDifficulty('medium')">中等</button>
+                <button class="difficulty-btn" onclick="setQuizDifficulty('hard')">困难</button>
+            </div>
+            <div id="quiz-container" class="quiz-container" style="display: none;">
+                <div class="progress-container">
+                    <div id="quiz-progress" class="progress-bar"></div>
+                </div>
+                <div id="quiz-question" class="quiz-question"></div>
+                <div id="quiz-options" class="quiz-options"></div>
+                <div id="quiz-feedback" class="feedback"></div>
+                <button id="next-question-btn" style="display: none;" onclick="nextQuizQuestion()">继续</button>
+            </div>
+            <button id="start-quiz-btn" onclick="startQuiz()">开始测试</button>
+        </div>
+        
+        <!-- 拼图游戏标签页 -->
+        <div id="jigsaw-tab" class="tab-content">
+            <h2>单词拼图</h2>
+            <p>将英文单词和对应的中文意思配对起来！</p>
+            <div class="difficulty-selector">
+                <p>选择拼图数量：</p>
+                <button class="difficulty-btn active" onclick="setJigsawDifficulty(6)">6个</button>
+                <button class="difficulty-btn" onclick="setJigsawDifficulty(9)">9个</button>
+                <button class="difficulty-btn" onclick="setJigsawDifficulty(12)">12个</button>
+            </div>
+            <div id="jigsaw-container" class="jigsaw-container"></div>
+            <button id="start-jigsaw-btn" onclick="startJigsaw()">开始拼图</button>
+            <div id="jigsaw-feedback" class="feedback"></div>
+        </div>
+    </div>
+    
+    <div id="encouragement" class="encouragement">太棒了！继续加油！</div>
+    
+    <script>
+        // 单词库
+        let words = [];
+        // 学习模式中的单词索引
+        let currentWordIndex = 0;
+        // 测试模式中的问题
+        let quizQuestions = [];
+        let currentQuizQuestion = 0;
+        let quizScore = 0;
+        let quizDifficulty = 'easy';
+        // 拼图游戏
+        let jigsawPieces = [];
+        let selectedPiece = null;
+        let matchedPairs = 0;
+        let jigsawDifficulty = 6;
+        // 单词难度记录
+        let wordDifficulties = {};
+        // 语音合成API
+        let speechSynthesis = window.speechSynthesis;
+        let speechUtterance = null;
+        
+        // 打开标签页
+        function openTab(tabId) {
+            // 隐藏所有标签内容
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // 取消所有标签的活动状态
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // 显示选中的标签内容
+            document.getElementById(tabId).classList.add('active');
+            
+            // 设置选中的标签为活动状态
+            event.currentTarget.classList.add('active');
+            
+            // 如果切换到学习标签，初始化学习模式
+            if (tabId === 'learn-tab' && words.length > 0) {
+                showWordToLearn();
+            }
+        }
+        
+        // 导入单词
+        function importWords() {
+            const input = document.getElementById('word-input').value.trim();
+            if (!input) {
+                showEncouragement('请输入一些单词！', false);
+                return;
+            }
+            
+            const lines = input.split('\n');
+            const newWords = [];
+            
+            lines.forEach(line => {
+                line = line.trim();
+                if (line.includes('=')) {
+                    const parts = line.split('=');
+                    if (parts.length >= 2) {
+                        const english = parts[0].trim();
+                        const chinese = parts[1].trim();
+                        if (english && chinese) {
+                            newWords.push({ english, chinese });
+                            
+                            // 初始化单词难度
+                            const key = `${english}-${chinese}`;
+                            if (!wordDifficulties[key]) {
+                                wordDifficulties[key] = 1; // 默认难度为1
+                            }
+                        }
+                    }
+                }
+            });
+            
+            if (newWords.length > 0) {
+                words = [...words, ...newWords];
+                updateWordList();
+                showEncouragement(`成功导入 ${newWords.length} 个单词！`, true);
+                
+                // 如果当前在学习标签页，显示第一个单词
+                if (document.getElementById('learn-tab').classList.contains('active')) {
+                    showWordToLearn();
+                }
+            } else {
+                showEncouragement('没有找到有效的单词格式！', false);
+            }
+        }
+        
+        // 清空单词
+        function clearWords() {
+            words = [];
+            wordDifficulties = {};
+            updateWordList();
+            document.getElementById('word-input').value = '';
+            showEncouragement('单词库已清空！', false);
+        }
+        
+        // 加载示例单词
+        function loadSampleWords() {
+            const sampleWords = `apple=苹果
+banana=香蕉
+cat=猫
+dog=狗
+elephant=大象
+fish=鱼
+giraffe=长颈鹿
+house=房子
+ice cream=冰淇淋
+juice=果汁
+kite=风筝
+lion=狮子
+monkey=猴子
+nose=鼻子
+orange=橙子
+panda=熊猫
+queen=女王
+rabbit=兔子
+sun=太阳
+tiger=老虎
+umbrella=雨伞
+vegetable=蔬菜
+watermelon=西瓜
+xylophone=木琴
+yellow=黄色
+zebra=斑马`;
+            
+            document.getElementById('word-input').value = sampleWords;
+            showEncouragement('示例单词已加载，点击"导入单词"按钮导入！', true);
+        }
+        
+        // 更新单词列表显示
+        function updateWordList() {
+            const wordListElement = document.getElementById('word-list');
+            wordListElement.innerHTML = '';
+            
+            if (words.length === 0) {
+                wordListElement.innerHTML = '<p>还没有单词，请先导入一些单词吧！</p>';
+                return;
+            }
+            
+            words.forEach((word, index) => {
+                const key = `${word.english}-${word.chinese}`;
+                const difficulty = wordDifficulties[key] || 1;
+                
+                const card = document.createElement('div');
+                card.className = 'word-card';
+                card.innerHTML = `
+                    <h3>${word.english}</h3>
+                    <p>${word.chinese}</p>
+                    <div class="word-difficulty">
+                        难度: <span class="difficulty-${difficulty}">${getDifficultyStars(difficulty)}</span>
+                    </div>
+                    <button onclick="removeWord(${index})" style="padding: 5px 10px; font-size: 0.8rem; margin-top: 10px;">删除</button>
+                `;
+                wordListElement.appendChild(card);
+            });
+        }
+        
+        // 获取难度星级显示
+        function getDifficultyStars(difficulty) {
+            let stars = '';
+            for (let i = 0; i < 5; i++) {
+                if (i < difficulty) {
+                    stars += '<span class="star">★</span>';
+                } else {
+                    stars += '<span class="star">☆</span>';
+                }
+            }
+            return stars;
+        }
+        
+        // 删除单词
+        function removeWord(index) {
+            const removedWord = words[index];
+            const key = `${removedWord.english}-${removedWord.chinese}`;
+            delete wordDifficulties[key];
+            
+            words.splice(index, 1);
+            updateWordList();
+            showEncouragement('单词已删除！', false);
+        }
+        
+        // 显示鼓励语句
+        function showEncouragement(message, isPositive) {
+            const encouragement = document.getElementById('encouragement');
+            encouragement.textContent = message;
+            encouragement.style.opacity = '1';
+            
+            if (isPositive) {
+                encouragement.style.backgroundColor = '#A8E6CF';
+                createConfetti();
+            } else {
+                encouragement.style.backgroundColor = '#FFD3B6';
+            }
+            
+            setTimeout(() => {
+                encouragement.style.opacity = '0';
+            }, 2000);
+        }
+        
+        // 创建庆祝彩花
+        function createConfetti() {
+            for (let i = 0; i < 50; i++) {
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti';
+                confetti.style.left = Math.random() * 100 + 'vw';
+                confetti.style.backgroundColor = getRandomColor();
+                confetti.style.width = Math.random() * 10 + 5 + 'px';
+                confetti.style.height = Math.random() * 10 + 5 + 'px';
+                confetti.style.animationDelay = Math.random() * 0.5 + 's';
+                document.body.appendChild(confetti);
+                
+                setTimeout(() => {
+                    confetti.remove();
+                }, 3000);
+            }
+        }
+        
+        // 获取随机颜色
+        function getRandomColor() {
+            const colors = ['#FF6B6B', '#4ECDC4', '#FFE66D', '#A8E6CF', '#DCE2C8', '#F7C1BB'];
+            return colors[Math.floor(Math.random() * colors.length)];
+        }
+        
+        // 朗读单词
+        function speakWord(text, lang = 'en-US') {
+            // 停止当前正在播放的语音
+            if (speechSynthesis.speaking) {
+                speechSynthesis.cancel();
+            }
+            
+            // 创建新的语音实例
+            speechUtterance = new SpeechSynthesisUtterance(text);
+            speechUtterance.lang = lang;
+            speechUtterance.rate = 0.8; // 稍微慢一点
+            
+            // 播放语音
+            speechSynthesis.speak(speechUtterance);
+        }
+        
+        // 学习模式 - 显示单词
+        function showWordToLearn() {
+            if (words.length === 0) {
+                document.getElementById('learn-container').innerHTML = '<p>请先导入一些单词开始学习！</p>';
+                document.getElementById('next-word-btn').style.display = 'none';
+                return;
+            }
+            
+            // 根据单词难度排序，优先显示难度高的单词
+            const sortedWords = [...words].sort((a, b) => {
+                const keyA = `${a.english}-${a.chinese}`;
+                const keyB = `${b.english}-${b.chinese}`;
+                return (wordDifficulties[keyB] || 1) - (wordDifficulties[keyA] || 1);
+            });
+            
+            // 循环显示单词
+            if (currentWordIndex >= sortedWords.length) {
+                currentWordIndex = 0;
+            }
+            
+            const word = sortedWords[currentWordIndex];
+            const key = `${word.english}-${word.chinese}`;
+            const difficulty = wordDifficulties[key] || 1;
+            
+            // 随机决定显示英文还是中文
+            const showEnglishFirst = Math.random() > 0.5;
+            
+            document.getElementById('learn-container').innerHTML = `
+                <div style="text-align: center;">
+                    <div style="display: flex; justify-content: center; align-items: center;">
+                        <h2 style="font-size: 2.5rem; color: ${showEnglishFirst ? '#FF6B6B' : '#4ECDC4'}; margin-bottom: 10px;">
+                            ${showEnglishFirst ? word.english : word.chinese}
+                        </h2>
+                        ${showEnglishFirst ? `<div class="speak-btn" onclick="speakWord('${word.english.replace(/'/g, "\\'")}')">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="#FFFFFF">
+                                <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/>
+                            </svg>
+                        </div>` : ''}
+                    </div>
+                    <div style="margin: 20px 0;">
+                        <button onclick="revealTranslation()" style="font-size: 1.2rem;">显示${showEnglishFirst ? '中文' : '英文'}</button>
+                    </div>
+                    <div id="translation" style="display: none;">
+                        <div style="display: flex; justify-content: center; align-items: center;">
+                            <h2 style="font-size: 2.5rem; color: ${showEnglishFirst ? '#4ECDC4' : '#FF6B6B'};">
+                                ${showEnglishFirst ? word.chinese : word.english}
+                            </h2>
+                            ${!showEnglishFirst ? `<div class="speak-btn" onclick="speakWord('${word.english.replace(/'/g, "\\'")}')">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="#FFFFFF">
+                                    <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/>
+                                </svg>
+                            </div>` : ''}
+                        </div>
+                        <div style="margin-top: 20px;">
+                            <p>这个单词对你来说：</p>
+                            <button onclick="rateDifficulty('${key}', 1)" style="background-color: #A8E6CF;">很简单</button>
+                            <button onclick="rateDifficulty('${key}', 3)" style="background-color: #FFD3B6;">有点难</button>
+                            <button onclick="rateDifficulty('${key}', 5)" style="background-color: #FFAAA5;">非常难</button>
+                        </div>
+                    </div>
+                    <div class="difficulty-stars">
+                        ${getDifficultyStars(difficulty)}
+                    </div>
+                </div>
+            `;
+            
+            // 自动朗读英文单词
+            if (showEnglishFirst) {
+                speakWord(word.english);
+            }
+            
+            document.getElementById('next-word-btn').style.display = 'none';
+        }
+        
+        // 显示翻译
+        function revealTranslation() {
+            document.getElementById('translation').style.display = 'block';
+            document.getElementById('next-word-btn').style.display = 'inline-block';
+        }
+        
+        // 评价单词难度
+        function rateDifficulty(key, rating) {
+            wordDifficulties[key] = rating;
+            updateWordList();
+            showNextWord();
+        }
+        
+        // 显示下一个单词
+        function showNextWord() {
+            currentWordIndex++;
+            showWordToLearn();
+        }
+        
+        // 设置测试难度
+        function setQuizDifficulty(difficulty) {
+            quizDifficulty = difficulty;
+            
+            document.querySelectorAll('.difficulty-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            event.currentTarget.classList.add('active');
+        }
+        
+        // 开始测试
+        function startQuiz() {
+            if (words.length < 4) {
+                showEncouragement('至少需要4个单词才能开始测试！', false);
+                return;
+            }
+            
+            // 根据难度选择测试单词
+            let quizWords = [];
+            if (quizDifficulty === 'easy') {
+                // 选择难度1-2的单词
+                quizWords = words.filter(word => {
+                    const key = `${word.english}-${word.chinese}`;
+                    return (wordDifficulties[key] || 1) <= 2;
+                });
+                
+                if (quizWords.length < 4) {
+                    quizWords = [...words]; // 如果没有足够简单单词，使用所有单词
+                }
+            } else if (quizDifficulty === 'medium') {
+                // 选择难度2-4的单词
+                quizWords = words.filter(word => {
+                    const key = `${word.english}-${word.chinese}`;
+                    const difficulty = wordDifficulties[key] || 1;
+                    return difficulty >= 2 && difficulty <= 4;
+                });
+                
+                if (quizWords.length < 4) {
+                    quizWords = [...words]; // 如果没有足够中等单词，使用所有单词
+                }
+            } else {
+                // 困难模式 - 选择难度3-5的单词
+                quizWords = words.filter(word => {
+                    const key = `${word.english}-${word.chinese}`;
+                    return (wordDifficulties[key] || 1) >= 3;
+                });
+                
+                if (quizWords.length < 4) {
+                    quizWords = [...words]; // 如果没有足够困难单词，使用所有单词
+                }
+            }
+            
+            // 随机选择10个单词或所有单词（如果少于10个）
+            const testSize = Math.min(10, quizWords.length);
+            quizQuestions = [];
+            
+            // 随机选择单词
+            const selectedWords = [...quizWords];
+            shuffleArray(selectedWords);
+            selectedWords.slice(0, testSize).forEach(word => {
+                // 随机决定是英译中还是中译英
+                const isEnglishToChinese = Math.random() > 0.5;
+                
+                quizQuestions.push({
+                    type: isEnglishToChinese ? 'en-cn' : 'cn-en',
+                    question: isEnglishToChinese ? word.english : word.chinese,
+                    answer: isEnglishToChinese ? word.chinese : word.english,
+                    wordKey: `${word.english}-${word.chinese}`
+                });
+            });
+            
+            currentQuizQuestion = 0;
+            quizScore = 0;
+            showQuizQuestion();
+            
+            document.getElementById('start-quiz-btn').style.display = 'none';
+            document.getElementById('quiz-container').style.display = 'block';
+        }
+        
+        // 显示测试问题
+        function showQuizQuestion() {
+            if (currentQuizQuestion >= quizQuestions.length) {
+                // 测试结束
+                const percentage = Math.round((quizScore / quizQuestions.length) * 100);
+                let message = `测试完成！你的得分: ${quizScore}/${quizQuestions.length} (${percentage}%) `;
+                
+                if (percentage >= 80) {
+                    message += '🌟 太棒了！你是单词小达人！';
+                    showEncouragement('太厉害了！', true);
+                } else if (percentage >= 50) {
+                    message += '👍 不错，继续加油！';
+                    showEncouragement('做得不错！', true);
+                } else {
+                    message += '💪 再加把劲，多练习几次！';
+                    showEncouragement('不要灰心！', false);
+                }
+                
+                document.getElementById('quiz-container').innerHTML = `
+                    <h2 style="text-align: center;">测试结果</h2>
+                    <div style="text-align: center; font-size: 1.5rem; margin: 20px 0;">
+                        ${message}
+                    </div>
+                    <div style="text-align: center;">
+                        <button onclick="startQuiz()">再试一次</button>
+                        <button onclick="location.reload()">返回首页</button>
+                    </div>
+                `;
+                return;
+            }
+            
+            const question = quizQuestions[currentQuizQuestion];
+            document.getElementById('quiz-question').textContent = question.question;
+            
+            // 更新进度条
+            document.getElementById('quiz-progress').style.width = 
+                `${(currentQuizQuestion / quizQuestions.length) * 100}%`;
+            
+            // 生成选项
+            const options = [question.answer];
+            
+            // 添加3个错误选项
+            while (options.length < 4) {
+                let randomWord;
+                if (question.type === 'en-cn') {
+                    // 英译中，找其他中文意思
+                    randomWord = words[Math.floor(Math.random() * words.length)];
+                    if (!options.includes(randomWord.chinese)) {
+                        options.push(randomWord.chinese);
+                    }
+                } else {
+                    // 中译英，找其他英文单词
+                    randomWord = words[Math.floor(Math.random() * words.length)];
+                    if (!options.includes(randomWord.english)) {
+                        options.push(randomWord.english);
+                    }
+                }
+            }
+            
+            // 打乱选项顺序
+            shuffleArray(options);
+            
+            // 显示选项
+            const optionsElement = document.getElementById('quiz-options');
+            optionsElement.innerHTML = '';
+            
+            options.forEach(option => {
+                const optionElement = document.createElement('div');
+                optionElement.className = 'quiz-option';
+                optionElement.textContent = option;
+                optionElement.onclick = () => checkQuizAnswer(option, question.answer, question.wordKey);
+                optionsElement.appendChild(optionElement);
+            });
+            
+            document.getElementById('quiz-feedback').textContent = '';
+            document.getElementById('next-question-btn').style.display = 'none';
+        }
+        
+        // 检查测试答案
+        function checkQuizAnswer(selectedAnswer, correctAnswer, wordKey) {
+            const options = document.querySelectorAll('.quiz-option');
+            let isCorrect = false;
+            
+            options.forEach(option => {
+                if (option.textContent === correctAnswer) {
+                    option.classList.add('correct');
+                    if (option.textContent === selectedAnswer) {
+                        isCorrect = true;
+                        quizScore++;
+                        
+                        // 如果答对了，降低单词难度
+                        if (wordDifficulties[wordKey] > 1) {
+                            wordDifficulties[wordKey]--;
+                        }
+                    }
+                } else if (option.textContent === selectedAnswer && selectedAnswer !== correctAnswer) {
+                    option.classList.add('incorrect');
+                    
+                    // 如果答错了，增加单词难度
+                    if (wordDifficulties[wordKey] < 5) {
+                        wordDifficulties[wordKey]++;
+                    }
+                }
+                
+                option.style.pointerEvents = 'none'; // 禁用点击
+            });
+            
+            // 更新单词列表显示
+            updateWordList();
+            
+            // 显示反馈
+            const feedbackElement = document.getElementById('quiz-feedback');
+            if (isCorrect) {
+                feedbackElement.textContent = '✅ 答对了！太棒了！';
+                feedbackElement.className = 'feedback positive-feedback';
+                showEncouragement(getRandomEncouragement(), true);
+            } else {
+                feedbackElement.textContent = `❌ 答错了！正确答案是: ${correctAnswer}`;
+                feedbackElement.className = 'feedback';
+                showEncouragement(getRandomMotivation(), false);
+            }
+            
+            document.getElementById('next-question-btn').style.display = 'inline-block';
+        }
+        
+        // 获取随机鼓励语句
+        function getRandomEncouragement() {
+            const encouragements = [
+                '太棒了！',
+                '你真聪明！',
+                '做得好！',
+                '继续加油！',
+                '你是单词小达人！',
+                '完美！',
+                '厉害！',
+                '哇塞！',
+                '惊人的记忆力！',
+                '保持这个状态！'
+            ];
+            return encouragements[Math.floor(Math.random() * encouragements.length)];
+        }
+        
+        // 获取随机激励语句
+        function getRandomMotivation() {
+            const motivations = [
+                '不要灰心！',
+                '再试一次！',
+                '下次会更好！',
+                '错误是学习的机会！',
+                '加油！',
+                '你可以的！',
+                '坚持就是胜利！',
+                '多练习几次！',
+                '熟能生巧！',
+                '慢慢来，别着急！'
+            ];
+            return motivations[Math.floor(Math.random() * motivations.length)];
+        }
+        
+        // 下一个测试问题
+        function nextQuizQuestion() {
+            currentQuizQuestion++;
+            showQuizQuestion();
+        }
+        
+        // 设置拼图难度
+        function setJigsawDifficulty(difficulty) {
+            jigsawDifficulty = difficulty;
+            
+            document.querySelectorAll('#jigsaw-tab .difficulty-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            event.currentTarget.classList.add('active');
+        }
+        
+        // 开始拼图游戏
+        function startJigsaw() {
+            if (words.length < jigsawDifficulty / 2) {
+                showEncouragement(`至少需要 ${Math.ceil(jigsawDifficulty / 2)} 个单词才能开始拼图！`, false);
+                return;
+            }
+            
+            // 根据难度选择单词
+            let jigsawWords = [];
+            if (jigsawDifficulty === 6) {
+                // 简单模式 - 选择难度1-2的单词
+                jigsawWords = words.filter(word => {
+                    const key = `${word.english}-${word.chinese}`;
+                    return (wordDifficulties[key] || 1) <= 2;
+                });
+                
+                if (jigsawWords.length < 3) {
+                    jigsawWords = [...words]; // 如果没有足够简单单词，使用所有单词
+                }
+            } else if (jigsawDifficulty === 9) {
+                // 中等模式 - 选择难度2-4的单词
+                jigsawWords = words.filter(word => {
+                    const key = `${word.english}-${word.chinese}`;
+                    const difficulty = wordDifficulties[key] || 1;
+                    return difficulty >= 2 && difficulty <= 4;
+                });
+                
+                if (jigsawWords.length < 5) {
+                    jigsawWords = [...words]; // 如果没有足够中等单词，使用所有单词
+                }
+            } else {
+                // 困难模式 - 选择难度3-5的单词
+                jigsawWords = words.filter(word => {
+                    const key = `${word.english}-${word.chinese}`;
+                    return (wordDifficulties[key] || 1) >= 3;
+                });
+                
+                if (jigsawWords.length < 6) {
+                    jigsawWords = [...words]; // 如果没有足够困难单词，使用所有单词
+                }
+            }
+            
+            // 随机选择单词
+            const selectedWords = [...jigsawWords];
+            shuffleArray(selectedWords);
+            selectedWords.splice(jigsawDifficulty / 2); // 只保留需要的数量
+            
+            // 创建拼图块
+            jigsawPieces = [];
+            selectedWords.forEach(word => {
+                jigsawPieces.push({
+                    type: 'english',
+                    content: word.english,
+                    pair: word.chinese,
+                    matched: false
+                });
+                
+                jigsawPieces.push({
+                    type: 'chinese',
+                    content: word.chinese,
+                    pair: word.english,
+                    matched: false
+                });
+            });
+            
+            // 打乱拼图块顺序
+            shuffleArray(jigsawPieces);
+            
+            // 显示拼图块
+            renderJigsawPieces();
+            
+            selectedPiece = null;
+            matchedPairs = 0;
+            document.getElementById('jigsaw-feedback').textContent = '';
+            document.getElementById('start-jigsaw-btn').style.display = 'none';
+        }
+        
+        // 渲染拼图块
+        function renderJigsawPieces() {
+            const container = document.getElementById('jigsaw-container');
+            container.innerHTML = '';
+            
+            // 设置网格列数
+            if (jigsawDifficulty === 6) {
+                container.style.gridTemplateColumns = 'repeat(3, 1fr)';
+            } else if (jigsawDifficulty === 9) {
+                container.style.gridTemplateColumns = 'repeat(3, 1fr)';
+            } else {
+                container.style.gridTemplateColumns = 'repeat(4, 1fr)';
+            }
+            
+            jigsawPieces.forEach((piece, index) => {
+                const pieceElement = document.createElement('div');
+                pieceElement.className = 'jigsaw-piece';
+                if (piece.matched) {
+                    pieceElement.classList.add('matched');
+                }
+                pieceElement.textContent = piece.content;
+                pieceElement.onclick = () => selectJigsawPiece(index);
+                container.appendChild(pieceElement);
+            });
+        }
+        
+        // 选择拼图块
+        function selectJigsawPiece(index) {
+            const piece = jigsawPieces[index];
+            
+            // 如果已经匹配或是同一块，则忽略
+            if (piece.matched || selectedPiece === index) {
+                return;
+            }
+            
+            // 如果没有选中的块，选中当前块
+            if (selectedPiece === null) {
+                selectedPiece = index;
+                document.querySelectorAll('.jigsaw-piece')[index].style.backgroundColor = '#FFE66D';
+                return;
+            }
+            
+            // 检查是否匹配
+            const firstPiece = jigsawPieces[selectedPiece];
+            
+            if ((firstPiece.type === 'english' && piece.type === 'chinese' && firstPiece.pair === piece.content) ||
+                (firstPiece.type === 'chinese' && piece.type === 'english' && firstPiece.pair === piece.content)) {
+                // 匹配成功
+                jigsawPieces[selectedPiece].matched = true;
+                jigsawPieces[index].matched = true;
+                matchedPairs++;
+                
+                // 更新单词难度（降低难度）
+                const english = firstPiece.type === 'english' ? firstPiece.content : piece.content;
+                const chinese = firstPiece.type === 'chinese' ? firstPiece.content : piece.content;
+                const key = `${english}-${chinese}`;
+                
+                if (wordDifficulties[key] > 1) {
+                    wordDifficulties[key]--;
+                }
+                
+                // 更新单词列表显示
+                updateWordList();
+                
+                // 显示反馈
+                document.getElementById('jigsaw-feedback').textContent = '✅ 匹配成功！';
+                document.getElementById('jigsaw-feedback').className = 'feedback positive-feedback';
+                showEncouragement(getRandomEncouragement(), true);
+                
+                // 检查游戏是否结束
+                if (matchedPairs === jigsawDifficulty / 2) {
+                    setTimeout(() => {
+                        document.getElementById('jigsaw-feedback').innerHTML = '🎉 恭喜你完成了拼图游戏！';
+                        document.getElementById('start-jigsaw-btn').style.display = 'inline-block';
+                        document.getElementById('start-jigsaw-btn').textContent = '再玩一次';
+                        createConfetti();
+                    }, 500);
+                }
+            } else {
+                // 匹配失败
+                document.getElementById('jigsaw-feedback').textContent = '❌ 不匹配，再试一次！';
+                document.getElementById('jigsaw-feedback').className = 'feedback';
+                showEncouragement(getRandomMotivation(), false);
+                
+                // 增加单词难度
+                const english1 = firstPiece.type === 'english' ? firstPiece.content : '';
+                const chinese1 = firstPiece.type === 'chinese' ? firstPiece.content : '';
+                const english2 = piece.type === 'english' ? piece.content : '';
+                const chinese2 = piece.type === 'chinese' ? piece.content : '';
+                
+                if (english1 && chinese2) {
+                    const key = `${english1}-${chinese2}`;
+                    if (wordDifficulties[key] < 5) {
+                        wordDifficulties[key]++;
+                    }
+                } else if (chinese1 && english2) {
+                    const key = `${english2}-${chinese1}`;
+                    if (wordDifficulties[key] < 5) {
+                        wordDifficulties[key]++;
+                    }
+                }
+                
+                // 更新单词列表显示
+                updateWordList();
+                
+                // 短暂显示不匹配效果
+                const pieceElements = document.querySelectorAll('.jigsaw-piece');
+                pieceElements[selectedPiece].style.backgroundColor = '#FFAAA5';
+                pieceElements[index].style.backgroundColor = '#FFAAA5';
+                
+                setTimeout(() => {
+                    pieceElements[selectedPiece].style.backgroundColor = '';
+                    pieceElements[index].style.backgroundColor = '';
+                }, 500);
+            }
+            
+            // 重置选中状态
+            document.querySelectorAll('.jigsaw-piece')[selectedPiece].style.backgroundColor = '';
+            selectedPiece = null;
+            
+            // 重新渲染拼图块（更新匹配状态）
+            renderJigsawPieces();
+        }
+        
+        // 打乱数组顺序
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+        
+        // 页面加载时初始化
+        window.onload = function() {
+            // 加载示例单词
+            loadSampleWords();
+        };
+    </script>
+</body>
+</html>

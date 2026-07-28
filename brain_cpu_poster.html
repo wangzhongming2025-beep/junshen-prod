@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Brain Visual Diagnosis Poster</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;700;900&family=Black+Ops+One&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #000000;
+            --neon-green: #00FF00;
+            --alert-red: #FF0000;
+            --text-white: #FFFFFF;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: var(--bg-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100vw;
+            height: 100vh;
+            font-family: 'Noto Sans SC', sans-serif;
+            overflow: hidden;
+        }
+
+        .poster-container {
+            position: relative;
+            width: 1200px;
+            height: 1600px;
+            /* 3:4 aspect ratio */
+            background-color: #000;
+            overflow: hidden;
+            box-shadow: 0 0 50px rgba(0, 255, 0, 0.1);
+            /* Zoom to fit viewport */
+            transform: scale(0.5);
+            transform-origin: center;
+        }
+
+        /* 1. Background Grid & Radar */
+        .grid-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image:
+                linear-gradient(rgba(0, 255, 0, 0.1) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 255, 0, 0.1) 1px, transparent 1px);
+            background-size: 50px 50px;
+            opacity: 0.3;
+            z-index: 1;
+        }
+
+        .radar-scan {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 1200px;
+            height: 1200px;
+            transform: translate(-50%, -50%);
+            border: 1px solid rgba(0, 255, 0, 0.2);
+            border-radius: 50%;
+            z-index: 1;
+        }
+
+        .radar-scan::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: conic-gradient(from 0deg, transparent 80%, rgba(0, 255, 0, 0.4));
+            animation: scan 4s linear infinite;
+        }
+
+        @keyframes scan {
+            from {
+                transform: rotate(0deg);
+            }
+
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* 2. Central Visual */
+        .central-visual {
+            position: absolute;
+            top: 15%;
+            left: 0;
+            width: 100%;
+            height: 60%;
+            z-index: 2;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .central-visual img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            filter: contrast(1.2) brightness(1.1);
+            mix-blend-mode: screen;
+        }
+
+        /* Glitch Effect Overlay */
+        .glitch-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: repeating-linear-gradient(0deg,
+                    transparent,
+                    transparent 2px,
+                    rgba(0, 0, 0, 0.5) 4px,
+                    rgba(0, 0, 0, 0.5) 4px);
+            z-index: 3;
+            pointer-events: none;
+            opacity: 0.3;
+        }
+
+        /* 3. Text Elements */
+        .corner-tag {
+            position: absolute;
+            top: 40px;
+            left: 40px;
+            padding: 10px 20px;
+            border: 1px solid var(--neon-green);
+            background: rgba(0, 50, 0, 0.6);
+            color: var(--neon-green);
+            font-size: 24px;
+            font-weight: 700;
+            letter-spacing: 2px;
+            z-index: 10;
+            clip-path: polygon(0 0, 100% 0, 100% 70%, 90% 100%, 0 100%);
+        }
+
+        .main-title {
+            position: absolute;
+            top: 120px;
+            width: 100%;
+            text-align: center;
+            z-index: 10;
+        }
+
+        .main-title h1 {
+            margin: 0;
+            font-size: 90px;
+            font-weight: 900;
+            color: white;
+            line-height: 1.1;
+            text-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
+            font-family: 'Noto Sans SC', sans-serif;
+        }
+
+        .main-title .highlight {
+            color: var(--neon-green);
+        }
+
+        .sub-title {
+            position: absolute;
+            top: 340px;
+            width: 100%;
+            text-align: center;
+            z-index: 10;
+        }
+
+        .sub-title span {
+            background-color: var(--neon-green);
+            color: black;
+            font-size: 36px;
+            font-weight: 900;
+            padding: 10px 30px;
+            clip-path: polygon(10px 0, 100% 0, 100% 100%, 0 100%, 0 10px);
+            box-shadow: 0 0 20px var(--neon-green);
+        }
+
+        /* 4. Foreground Card (Bottom) */
+        .bottom-card {
+            position: absolute;
+            bottom: 50px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 1000px;
+            height: 450px;
+            background: rgba(20, 20, 20, 0.85);
+            backdrop-filter: blur(10px);
+            border: 2px solid var(--neon-green);
+            border-top: 4px solid var(--neon-green);
+            z-index: 10;
+            /* Folder/Tech Shape */
+            clip-path: polygon(0 40px,
+                    40px 0,
+                    100% 0,
+                    100% 100%,
+                    0 100%);
+            box-shadow: 0 -10px 40px rgba(0, 255, 0, 0.15);
+            padding: 40px;
+            box-sizing: border-box;
+            background-image:
+                linear-gradient(45deg, rgba(0, 255, 0, 0.05) 25%, transparent 25%, transparent 75%, rgba(0, 255, 0, 0.05) 75%, rgba(0, 255, 0, 0.05)),
+                linear-gradient(45deg, rgba(0, 255, 0, 0.05) 25%, transparent 25%, transparent 75%, rgba(0, 255, 0, 0.05) 75%, rgba(0, 255, 0, 0.05));
+            background-size: 20px 20px;
+            background-position: 0 0, 10px 10px;
+        }
+
+        /* Decoration lines on card */
+        .bottom-card::before {
+            content: 'TOP SECRET // DECLASSIFIED';
+            position: absolute;
+            top: 10px;
+            right: 20px;
+            color: var(--neon-green);
+            font-family: 'Black Ops One', cursive;
+            font-size: 14px;
+            opacity: 0.7;
+        }
+
+        .feature-list {
+            margin-top: 20px;
+            list-style: none;
+            padding: 0;
+        }
+
+        .feature-list li {
+            font-size: 40px;
+            color: white;
+            font-weight: 700;
+            margin-bottom: 25px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
+            display: flex;
+            align-items: center;
+        }
+
+        .feature-list li .check {
+            color: var(--neon-green);
+            margin-right: 20px;
+        }
+
+        .price-tag {
+            position: absolute;
+            bottom: 40px;
+            right: 40px;
+            text-align: right;
+            border: 2px solid var(--alert-red);
+            padding: 10px 30px;
+            background: rgba(50, 0, 0, 0.6);
+            transform: rotate(-5deg);
+        }
+
+        .price-tag .fire {
+            font-size: 30px;
+        }
+
+        .price-tag .price {
+            font-size: 60px;
+            color: var(--alert-red);
+            font-weight: 900;
+            font-family: 'Black Ops One', cursive;
+            text-shadow: 0 0 10px var(--alert-red);
+        }
+
+        .price-tag .original {
+            display: block;
+            font-size: 24px;
+            color: #888;
+            text-decoration: line-through;
+            margin-top: -10px;
+        }
+
+        /* Decorative HUD lines */
+        .hud-line {
+            position: absolute;
+            background: var(--neon-green);
+        }
+
+        .hl-top {
+            top: 100px;
+            left: 0;
+            width: 100px;
+            height: 2px;
+        }
+
+        .hl-bottom {
+            bottom: 100px;
+            right: 0;
+            width: 100px;
+            height: 2px;
+        }
+
+        .hl-left {
+            top: 50%;
+            left: 20px;
+            width: 2px;
+            height: 200px;
+            transform: translateY(-50%);
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="poster-container" id="poster">
+        <!-- Background -->
+        <div class="grid-bg"></div>
+        <div class="radar-scan"></div>
+
+        <!-- HUD Decorations -->
+        <div class="hud-line hl-top"></div>
+        <div class="hud-line hl-bottom"></div>
+        <div class="hud-line hl-left"></div>
+
+        <!-- Copy -->
+        <div class="corner-tag">
+            STANFORD NEUROSCIENCE
+        </div>
+
+        <div class="main-title">
+            <!-- Glitch effect on title -->
+            <h1 style="color: #fff;">孩子视力差？磨蹭？<br>先测测大脑 <span class="highlight">"CPU"</span>！</h1>
+        </div>
+
+        <div class="sub-title">
+            <span>【连长·脑视觉深度诊断包】</span>
+        </div>
+
+        <!-- Central Image -->
+        <div class="central-visual">
+            <!-- Using the generated artifact image -->
+            <img src="/Users/wangzhongming/.gemini/antigravity/brain/9bf60341-e62b-4990-9986-ed90aa75dcf0/brain_eye_hologram_1769048191825.png"
+                alt="Brain Hologram">
+        </div>
+        <div class="glitch-overlay"></div>
+
+
+        <!-- Foreground Card -->
+        <div class="bottom-card">
+            <ul class="feature-list">
+                <li><span class="check">✅</span> 飞行员级·舒尔特/Gabor 测试</li>
+                <li><span class="check">✅</span> 连长 1对1 语音毒辣诊断</li>
+            </ul>
+
+            <div class="price-tag">
+                <div class="fire">🔥 限时特价</div>
+                <div class="price">¥299</div>
+                <span class="original">原价 ¥699</span>
+            </div>
+        </div>
+
+    </div>
+
+</body>
+
+</html>

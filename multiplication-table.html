@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>小学生乘法表生成器</title>
+    <style>
+        body {
+            font-family: 'Microsoft YaHei', sans-serif;
+            background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
+            margin: 0;
+            padding: 20px;
+            color: #333;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #ff6b6b;
+            font-size: 28px;
+            margin-bottom: 20px;
+        }
+        .description {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 16px;
+        }
+        .controls {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #555;
+        }
+        input[type="number"] {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+        input[type="number"]:focus {
+            outline: none;
+            border-color: #ff6b6b;
+        }
+        button {
+            background: #ff6b6b;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-right: 10px;
+            margin-bottom: 10px;
+            transition: all 0.3s ease;
+        }
+        button:hover {
+            background: #ff5252;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255,107,107,0.3);
+        }
+        button:active {
+            transform: translateY(0);
+        }
+        button.secondary {
+            background: #4ecdc4;
+        }
+        button.secondary:hover {
+            background: #45b7aa;
+        }
+        .table-container {
+            margin-top: 30px;
+            overflow-x: auto;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 0 auto;
+        }
+        th, td {
+            border: 2px solid #ff6b6b;
+            padding: 12px;
+            text-align: center;
+            font-size: 16px;
+        }
+        th {
+            background: #ff6b6b;
+            color: white;
+            font-weight: bold;
+        }
+        td {
+            background: #fff3f3;
+        }
+        tr:nth-child(even) td {
+            background: #ffebee;
+        }
+        td:hover {
+            background: #ffdbdb;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            background: #e8f5e8;
+            border-radius: 8px;
+            border-left: 5px solid #4caf50;
+        }
+        .footer {
+            margin-top: 30px;
+            text-align: center;
+            color: #666;
+            font-size: 14px;
+        }
+        .highlight {
+            background: #fff9c4 !important;
+            font-weight: bold;
+            color: #ff6b6b;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎓 小学生乘法表生成器</h1>
+        <div class="description">
+            轻松生成和练习乘法表，帮助你快速掌握乘法口诀！
+        </div>
+        
+        <div class="controls">
+            <h2 style="color: #4ecdc4; margin-top: 0; font-size: 20px;">⚙️ 生成设置</h2>
+            <div class="form-group">
+                <label for="startNum">起始数字：</label>
+                <input type="number" id="startNum" min="1" max="12" value="1" placeholder="输入起始数字">
+            </div>
+            <div class="form-group">
+                <label for="endNum">结束数字：</label>
+                <input type="number" id="endNum" min="1" max="12" value="9" placeholder="输入结束数字">
+            </div>
+            <button onclick="generateTable()">✨ 生成乘法表</button>
+            <button class="secondary" onclick="resetTable()">🔄 重置</button>
+            <button class="secondary" onclick="generateFullTable()">📊 生成完整乘法表</button>
+        </div>
+        
+        <div class="table-container" id="tableContainer">
+            <!-- 乘法表将在这里生成 -->
+        </div>
+        
+        <div class="result" id="result" style="display: none;">
+            <!-- 结果信息将在这里显示 -->
+        </div>
+        
+        <div style="background: #fff3cd; padding: 15px; border-radius: 8px; margin: 20px 0; text-align: center; font-weight: bold; color: #856404; border: 1px solid #ffeeba;">
+            💡 教学提效工具定制，教学ppt定制，可以联系小红书店铺客服。
+        </div>
+        
+        <div class="footer">
+            <p>📚 小学生学习工具 - 乘法表生成器</p>
+            <a href="xiaoxue.html" class="home-link">🏠 返回学习工具首页</a>
+        </div>
+    </div>
+    
+    <script>
+        function generateTable() {
+            const start = parseInt(document.getElementById('startNum').value);
+            const end = parseInt(document.getElementById('endNum').value);
+            
+            if (isNaN(start) || isNaN(end)) {
+                showResult('请输入有效的数字！', 'error');
+                return;
+            }
+            
+            if (start > end) {
+                showResult('起始数字不能大于结束数字！', 'error');
+                return;
+            }
+            
+            if (start < 1 || end > 12) {
+                showResult('请输入1-12之间的数字！', 'error');
+                return;
+            }
+            
+            let tableHTML = '<table><tr><th>×</th>';
+            
+            // 生成表头
+            for (let i = start; i <= end; i++) {
+                tableHTML += `<th>${i}</th>`;
+            }
+            tableHTML += '</tr>';
+            
+            // 生成乘法表内容
+            for (let i = start; i <= end; i++) {
+                tableHTML += `<tr><th>${i}</th>`;
+                for (let j = start; j <= end; j++) {
+                    tableHTML += `<td>${i}×${j}=${i*j}</td>`;
+                }
+                tableHTML += '</tr>';
+            }
+            
+            tableHTML += '</table>';
+            document.getElementById('tableContainer').innerHTML = tableHTML;
+            showResult(`已生成 ${start} 到 ${end} 的乘法表！`, 'success');
+        }
+        
+        function generateFullTable() {
+            document.getElementById('startNum').value = 1;
+            document.getElementById('endNum').value = 12;
+            generateTable();
+        }
+        
+        function resetTable() {
+            document.getElementById('startNum').value = 1;
+            document.getElementById('endNum').value = 9;
+            document.getElementById('tableContainer').innerHTML = '';
+            document.getElementById('result').style.display = 'none';
+        }
+        
+        function showResult(message, type) {
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = message;
+            resultDiv.style.display = 'block';
+            
+            if (type === 'error') {
+                resultDiv.style.background = '#ffebee';
+                resultDiv.style.borderLeftColor = '#f44336';
+                resultDiv.style.color = '#c62828';
+            } else {
+                resultDiv.style.background = '#e8f5e8';
+                resultDiv.style.borderLeftColor = '#4caf50';
+                resultDiv.style.color = '#2e7d32';
+            }
+        }
+        
+        // 添加键盘事件监听
+        document.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                generateTable();
+            }
+        });
+        
+        // 初始化生成99乘法表
+        window.onload = function() {
+            generateTable();
+        };
+    </script>
+</body>
+</html>

@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>数学图形绘制 - 可视化教学工具</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#667eea',
+                        secondary: '#764ba2',
+                        accent: '#4facfe',
+                        success: '#43e97b',
+                        info: '#00f2fe',
+                        warning: '#fee140',
+                        danger: '#fa709a'
+                    },
+                    fontFamily: {
+                        sans: ['Microsoft YaHei', 'sans-serif'],
+                    }
+                },
+            }
+        }
+    </script>
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .text-shadow {
+                text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            }
+            .bg-gradient-primary {
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            }
+            .bg-gradient-blue {
+                background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            }
+            .drawing-area {
+                cursor: crosshair;
+            }
+            .shape {
+                position: absolute;
+                transition: all 0.2s ease;
+                cursor: move;
+            }
+            .shape.selected {
+                outline: 2px solid #667eea;
+                outline-offset: 2px;
+            }
+        }
+    </style>
+</head>
+<body class="min-h-screen bg-gray-50 font-sans">
+    <!-- 头部 -->
+    <header class="bg-gradient-blue text-white py-6 px-4 shadow-lg">
+        <div class="container mx-auto flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <button onclick="window.location.href='xiaoxue.html'" class="hover:bg-white/20 p-2 rounded-full transition-colors">
+                    <i class="fa fa-arrow-left text-xl"></i>
+                </button>
+                <h1 class="text-2xl md:text-3xl font-bold text-shadow">数学图形绘制</h1>
+            </div>
+            <div class="flex items-center gap-3">
+                <button class="hover:bg-white/20 p-2 rounded-full transition-colors">
+                    <i class="fa fa-question-circle text-xl"></i>
+                </button>
+                <button class="hover:bg-white/20 p-2 rounded-full transition-colors">
+                    <i class="fa fa-cog text-xl"></i>
+                </button>
+            </div>
+        </div>
+        <div class="container mx-auto mt-2 text-center text-white/90">
+            <p>绘制和学习基本几何图形，培养空间想象力和几何思维</p>
+        </div>
+    </header>
+
+    <!-- 主要内容 -->
+    <main class="container mx-auto py-8 px-4">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- 左侧工具栏 -->
+            <div class="bg-white rounded-xl shadow-lg p-6">
+                <h2 class="text-xl font-bold text-primary mb-4 text-center">绘图工具</h2>
+                
+                <div class="space-y-4">
+                    <!-- 图形选择 -->
+                    <div>
+                        <h3 class="text-lg font-semibold text-gray-700 mb-3">选择图形</h3>
+                        <div class="grid grid-cols-2 gap-2">
+                            <button class="shape-btn bg-gray-200 hover:bg-gray-300 py-2 px-4 rounded-lg transition-colors" data-shape="rectangle">
+                                <i class="fa fa-square mr-2"></i> 正方形
+                            </button>
+                            <button class="shape-btn bg-gray-200 hover:bg-gray-300 py-2 px-4 rounded-lg transition-colors" data-shape="rectangle">
+                                <i class="fa fa-th-large mr-2"></i> 长方形
+                            </button>
+                            <button class="shape-btn bg-gray-200 hover:bg-gray-300 py-2 px-4 rounded-lg transition-colors" data-shape="circle">
+                                <i class="fa fa-circle-o mr-2"></i> 圆形
+                            </button>
+                            <button class="shape-btn bg-gray-200 hover:bg-gray-300 py-2 px-4 rounded-lg transition-colors" data-shape="triangle">
+                                <i class="fa fa-play mr-2"></i> 三角形
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- 颜色选择 -->
+                    <div>
+                        <h3 class="text-lg font-semibold text-gray-700 mb-3">选择颜色</h3>
+                        <div class="grid grid-cols-6 gap-2">
+                            <button class="color-btn w-8 h-8 rounded-full bg-red-500 hover:scale-110 transition-transform" data-color="#ef4444"></button>
+                            <button class="color-btn w-8 h-8 rounded-full bg-blue-500 hover:scale-110 transition-transform" data-color="#3b82f6"></button>
+                            <button class="color-btn w-8 h-8 rounded-full bg-green-500 hover:scale-110 transition-transform" data-color="#22c55e"></button>
+                            <button class="color-btn w-8 h-8 rounded-full bg-yellow-500 hover:scale-110 transition-transform" data-color="#eab308"></button>
+                            <button class="color-btn w-8 h-8 rounded-full bg-purple-500 hover:scale-110 transition-transform" data-color="#a855f7"></button>
+                            <button class="color-btn w-8 h-8 rounded-full bg-orange-500 hover:scale-110 transition-transform" data-color="#f97316"></button>
+                        </div>
+                    </div>
+                    
+                    <!-- 操作按钮 -->
+                    <div class="space-y-3 mt-6">
+                        <button id="clear-btn" class="w-full bg-gray-200 hover:bg-gray-300 py-2 px-4 rounded-lg transition-colors font-medium">
+                            <i class="fa fa-trash mr-2"></i> 清空画布
+                        </button>
+                        <button id="delete-btn" class="w-full bg-danger hover:bg-danger/90 text-white py-2 px-4 rounded-lg transition-colors font-medium">
+                            <i class="fa fa-remove mr-2"></i> 删除选中
+                        </button>
+                        <button id="duplicate-btn" class="w-full bg-primary hover:bg-primary/90 text-white py-2 px-4 rounded-lg transition-colors font-medium">
+                            <i class="fa fa-copy mr-2"></i> 复制选中
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 中间画布 -->
+            <div class="bg-white rounded-xl shadow-lg p-6 lg:col-span-2">
+                <h2 class="text-xl font-bold text-primary mb-4 text-center">绘图区域</h2>
+                <div id="drawing-area" class="w-full h-96 bg-gray-50 rounded-lg border border-gray-200 relative overflow-hidden">
+                    <!-- 网格背景 -->
+                    <div class="absolute inset-0" style="background-image: linear-gradient(#e5e7eb 1px, transparent 1px), linear-gradient(90deg, #e5e7eb 1px, transparent 1px); background-size: 20px 20px;"></div>
+                    <!-- 图形将在这里动态生成 -->
+                </div>
+                
+                <div class="mt-6 grid grid-cols-2 gap-4">
+                    <div>
+                        <h3 class="text-lg font-semibold text-gray-700 mb-3">图形属性</h3>
+                        <div class="space-y-3">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-600 mb-1">宽度</label>
+                                <input type="number" id="width-input" min="10" max="300" value="100" class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-600 mb-1">高度</label>
+                                <input type="number" id="height-input" min="10" max="300" value="100" class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-600 mb-1">旋转角度</label>
+                                <input type="number" id="rotation-input" min="0" max="360" value="0" class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50">
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-semibold text-gray-700 mb-3">坐标位置</h3>
+                        <div class="space-y-3">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-600 mb-1">X 坐标</label>
+                                <input type="number" id="x-input" min="0" max="600" value="100" class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-600 mb-1">Y 坐标</label>
+                                <input type="number" id="y-input" min="0" max="400" value="100" class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-600 mb-1">透明度</label>
+                                <input type="range" id="opacity-input" min="0.1" max="1" step="0.1" value="1" class="w-full p-2">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 教学提示 -->
+        <div class="mt-8 bg-white rounded-xl shadow-lg p-6">
+            <h2 class="text-xl font-bold text-primary mb-4 text-center">教学提示</h2>
+            <div class="prose max-w-none text-gray-700">
+                <p>1. 点击左侧工具选择要绘制的图形，然后在画布上拖动创建。</p>
+                <p>2. 点击选中图形后，可以通过右侧属性面板调整大小、位置和旋转角度。</p>
+                <p>3. 尝试组合不同图形，创建更复杂的几何图案。</p>
+                <p>4. 学习图形的基本属性，如边长、角度、面积等。</p>
+                <p>5. 通过绘制对称图形，培养对称意识和美感。</p>
+            </div>
+        </div>
+        
+        <!-- 定制提示 -->
+        <div class="mt-8 bg-yellow-50 border border-yellow-200 rounded-xl p-6">
+            <div class="flex items-center gap-3 mb-3">
+                <i class="fa fa-lightbulb-o text-yellow-500 text-xl"></i>
+                <h2 class="text-xl font-bold text-yellow-700">定制更多可视化教学工具</h2>
+            </div>
+            <p class="text-yellow-700">需要定制更多适合您教学需求的可视化工具吗？</p>
+            <p class="text-yellow-700">联系我们，为您打造专属的教学辅助工具！</p>
+            <div class="mt-4">
+                <button class="bg-yellow-500 hover:bg-yellow-600 text-white py-2 px-6 rounded-lg transition-colors font-medium">
+                    <i class="fa fa-envelope mr-2"></i> 联系店主
+                </button>
+            </div>
+        </div>
+    </main>
+
+    <!-- 页脚 -->
+    <footer class="bg-gray-800 text-white py-6 px-4 mt-12">
+        <div class="container mx-auto text-center">
+            <p class="mb-2">© 2026 小学生学习工具集合</p>
+            <p class="text-gray-400 text-sm">专为小学生设计的趣味学习工具</p>
+        </div>
+    </footer>
+
+    <script>
+        // 全局变量
+        let currentShape = 'rectangle';
+        let currentColor = '#3b82f6';
+        let selectedShape = null;
+        let shapes = [];
+        let isDragging = false;
+        let startX, startY;
+        let offsetX, offsetY;
+        
+        // DOM 元素
+        const drawingArea = document.getElementById('drawing-area');
+        const shapeBtns = document.querySelectorAll('.shape-btn');
+        const colorBtns = document.querySelectorAll('.color-btn');
+        const clearBtn = document.getElementById('clear-btn');
+        const deleteBtn = document.getElementById('delete-btn');
+        const duplicateBtn = document.getElementById('duplicate-btn');
+        
+        // 属性输入框
+        const widthInput = document.getElementById('width-input');
+        const heightInput = document.getElementById('height-input');
+        const rotationInput = document.getElementById('rotation-input');
+        const xInput = document.getElementById('x-input');
+        const yInput = document.getElementById('y-input');
+        const opacityInput = document.getElementById('opacity-input');
+        
+        // 初始化
+        function init() {
+            // 绑定事件
+            shapeBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    setCurrentShape(this.dataset.shape);
+                });
+            });
+            
+            colorBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    setCurrentColor(this.dataset.color);
+                });
+            });
+            
+            clearBtn.addEventListener('click', clearCanvas);
+            deleteBtn.addEventListener('click', deleteSelected);
+            duplicateBtn.addEventListener('click', duplicateSelected);
+            
+            // 绑定属性输入事件
+            widthInput.addEventListener('input', updateShapeProperties);
+            heightInput.addEventListener('input', updateShapeProperties);
+            rotationInput.addEventListener('input', updateShapeProperties);
+            xInput.addEventListener('input', updateShapeProperties);
+            yInput.addEventListener('input', updateShapeProperties);
+            opacityInput.addEventListener('input', updateShapeProperties);
+            
+            // 绑定画布事件
+            drawingArea.addEventListener('mousedown', startDrawing);
+            drawingArea.addEventListener('mousemove', draw);
+            drawingArea.addEventListener('mouseup', endDrawing);
+            drawingArea.addEventListener('mouseleave', endDrawing);
+        }
+        
+        // 设置当前图形
+        function setCurrentShape(shape) {
+            currentShape = shape;
+            
+            // 更新按钮状态
+            shapeBtns.forEach(btn => {
+                btn.classList.remove('active', 'bg-primary', 'text-white');
+                btn.classList.add('bg-gray-200', 'hover:bg-gray-300');
+            });
+            
+            const activeBtn = document.querySelector(`.shape-btn[data-shape="${shape}"]`);
+            if (activeBtn) {
+                activeBtn.classList.remove('bg-gray-200', 'hover:bg-gray-300');
+                activeBtn.classList.add('active', 'bg-primary', 'text-white');
+            }
+        }
+        
+        // 设置当前颜色
+        function setCurrentColor(color) {
+            currentColor = color;
+            
+            // 更新按钮状态
+            colorBtns.forEach(btn => {
+                btn.classList.remove('ring-2', 'ring-white');
+            });
+            
+            const activeBtn = document.querySelector(`.color-btn[data-color="${color}"]`);
+            if (activeBtn) {
+                activeBtn.classList.add('ring-2', 'ring-white');
+            }
+            
+            // 如果有选中的图形，更新其颜色
+            if (selectedShape) {
+                selectedShape.style.backgroundColor = color;
+            }
+        }
+        
+        // 开始绘制
+        function startDrawing(e) {
+            const rect = drawingArea.getBoundingClientRect();
+            startX = e.clientX - rect.left;
+            startY = e.clientY - rect.top;
+            
+            // 创建新图形
+            const shape = document.createElement('div');
+            shape.className = 'shape';
+            shape.style.left = `${startX}px`;
+            shape.style.top = `${startY}px`;
+            shape.style.width = '0px';
+            shape.style.height = '0px';
+            shape.style.backgroundColor = currentColor;
+            shape.style.opacity = opacityInput.value;
+            
+            // 根据图形类型设置不同样式
+            if (currentShape === 'circle') {
+                shape.style.borderRadius = '50%';
+            } else if (currentShape === 'triangle') {
+                shape.style.width = '0';
+                shape.style.height = '0';
+                shape.style.backgroundColor = 'transparent';
+                shape.style.borderLeft = '50px solid transparent';
+                shape.style.borderRight = '50px solid transparent';
+                shape.style.borderBottom = '100px solid ' + currentColor;
+            }
+            
+            drawingArea.appendChild(shape);
+            selectedShape = shape;
+            isDragging = true;
+            
+            // 选中新图形
+            selectShape(shape);
+        }
+        
+        // 绘制
+        function draw(e) {
+            if (!isDragging || !selectedShape) return;
+            
+            const rect = drawingArea.getBoundingClientRect();
+            const currentX = e.clientX - rect.left;
+            const currentY = e.clientY - rect.top;
+            
+            const width = Math.abs(currentX - startX);
+            const height = Math.abs(currentY - startY);
+            const left = Math.min(startX, currentX);
+            const top = Math.min(startY, currentY);
+            
+            selectedShape.style.left = `${left}px`;
+            selectedShape.style.top = `${top}px`;
+            
+            if (currentShape === 'triangle') {
+                // 对于三角形，调整边框大小
+                selectedShape.style.borderLeft = `${width/2}px solid transparent`;
+                selectedShape.style.borderRight = `${width/2}px solid transparent`;
+                selectedShape.style.borderBottom = `${height}px solid ${currentColor}`;
+            } else {
+                selectedShape.style.width = `${width}px`;
+                selectedShape.style.height = `${height}px`;
+            }
+            
+            // 更新属性输入框
+            updatePropertyInputs();
+        }
+        
+        // 结束绘制
+        function endDrawing() {
+            isDragging = false;
+            
+            // 如果创建了新图形，添加到数组
+            if (selectedShape) {
+                shapes.push(selectedShape);
+            }
+        }
+        
+        // 选择图形
+        function selectShape(shape) {
+            // 取消之前的选择
+            if (selectedShape) {
+                selectedShape.classList.remove('selected');
+            }
+            
+            // 选择新图形
+            selectedShape = shape;
+            selectedShape.classList.add('selected');
+            
+            // 更新属性输入框
+            updatePropertyInputs();
+        }
+        
+        // 更新属性输入框
+        function updatePropertyInputs() {
+            if (!selectedShape) return;
+            
+            const rect = selectedShape.getBoundingClientRect();
+            const areaRect = drawingArea.getBoundingClientRect();
+            
+            widthInput.value = Math.round(rect.width);
+            heightInput.value = Math.round(rect.height);
+            xInput.value = Math.round(rect.left - areaRect.left);
+            yInput.value = Math.round(rect.top - areaRect.top);
+            
+            // 获取旋转角度
+            const transform = getComputedStyle(selectedShape).transform;
+            if (transform !== 'none') {
+                const matrix = new DOMMatrix(transform);
+                const angle = Math.round(Math.atan2(matrix.b, matrix.a) * (180/Math.PI));
+                rotationInput.value = angle;
+            } else {
+                rotationInput.value = 0;
+            }
+            
+            // 获取透明度
+            opacityInput.value = getComputedStyle(selectedShape).opacity;
+        }
+        
+        // 更新图形属性
+        function updateShapeProperties() {
+            if (!selectedShape) return;
+            
+            selectedShape.style.width = `${widthInput.value}px`;
+            selectedShape.style.height = `${heightInput.value}px`;
+            selectedShape.style.left = `${xInput.value}px`;
+            selectedShape.style.top = `${yInput.value}px`;
+            selectedShape.style.transform = `rotate(${rotationInput.value}deg)`;
+            selectedShape.style.opacity = opacityInput.value;
+        }
+        
+        // 清空画布
+        function clearCanvas() {
+            shapes.forEach(shape => {
+                drawingArea.removeChild(shape);
+            });
+            shapes = [];
+            selectedShape = null;
+        }
+        
+        // 删除选中图形
+        function deleteSelected() {
+            if (!selectedShape) return;
+            
+            const index = shapes.indexOf(selectedShape);
+            if (index > -1) {
+                shapes.splice(index, 1);
+                drawingArea.removeChild(selectedShape);
+                selectedShape = null;
+            }
+        }
+        
+        // 复制选中图形
+        function duplicateSelected() {
+            if (!selectedShape) return;
+            
+            const rect = selectedShape.getBoundingClientRect();
+            const areaRect = drawingArea.getBoundingClientRect();
+            
+            // 创建新图形
+            const newShape = selectedShape.cloneNode(true);
+            newShape.style.left = `${parseInt(newShape.style.left) + 20}px`;
+            newShape.style.top = `${parseInt(newShape.style.top) + 20}px`;
+            
+            drawingArea.appendChild(newShape);
+            shapes.push(newShape);
+            
+            // 选中新图形
+            selectShape(newShape);
+        }
+        
+        // 页面加载完成后初始化
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>

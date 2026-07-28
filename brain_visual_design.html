@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Brain Visual Training Conceptual Poster</title>
+    <style>
+        :root {
+            --bg-color: #000000;
+            --cyber-blue: #00BFFF;
+            --neon-green: #39FF14;
+            --dim-green: rgba(57, 255, 20, 0.2);
+            --dim-blue: rgba(0, 191, 255, 0.1);
+        }
+
+        body,
+        html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            background-color: var(--bg-color);
+            overflow: hidden;
+            font-family: 'Courier New', Courier, monospace;
+        }
+
+        #poster-container {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background:
+                radial-gradient(circle at center, #0a1a0a 0%, #000 70%),
+                linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%),
+                linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+            background-size: 100% 100%, 100% 2px, 3px 100%;
+        }
+
+        /* HUD Background Elements */
+        .hud-element {
+            position: absolute;
+            pointer-events: none;
+            opacity: 0.3;
+        }
+
+        .radar {
+            width: 600px;
+            height: 600px;
+            border: 1px solid var(--dim-green);
+            border-radius: 50%;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .radar::after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: conic-gradient(from 0deg, transparent 80%, var(--neon-green));
+            border-radius: 50%;
+            animation: rotate 4s linear infinite;
+        }
+
+        @keyframes rotate {
+            from {
+                transform: rotate(0deg);
+            }
+
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Gabor Patch Simulation */
+        .gabor-patch {
+            position: absolute;
+            width: 100px;
+            height: 100px;
+            background: radial-gradient(circle, var(--dim-green) 0%, transparent 70%);
+            border-radius: 50%;
+            filter: contrast(200%) grayscale(100%);
+            mix-blend-mode: screen;
+            opacity: 0.2;
+        }
+
+        /* Silhouette Styling */
+        .silhouette-container {
+            position: relative;
+            z-index: 10;
+            filter: drop-shadow(0 0 30px rgba(0, 191, 255, 0.3));
+        }
+
+        .brain-glow {
+            position: absolute;
+            top: 15%;
+            right: 25%;
+            width: 120px;
+            height: 100px;
+            background: radial-gradient(ellipse, var(--cyber-blue) 0%, transparent 70%);
+            filter: blur(15px);
+            animation: pulse 3s infinite ease-in-out;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                opacity: 0.4;
+                transform: scale(1);
+            }
+
+            50% {
+                opacity: 0.8;
+                transform: scale(1.1);
+            }
+        }
+
+        /* Data Streams */
+        .data-stream {
+            position: absolute;
+            width: 1px;
+            background: linear-gradient(to bottom, transparent, var(--neon-green), transparent);
+            animation: fall linear infinite;
+        }
+
+        @keyframes fall {
+            from {
+                top: -20%;
+            }
+
+            to {
+                top: 120%;
+            }
+        }
+
+        #neural-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 15;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="poster-container">
+        <!-- Background HUD -->
+        <div class="radar"></div>
+        <div class="hud-element" style="top: 10%; right: 10%;"><svg width="200" height="100">
+                <rect width="180" height="2" fill="var(--neon-green)" /><text y="20" fill="var(--neon-green)"
+                    font-size="12">ANALYZING VISUAL CORTEX...</text>
+                <rect y="40" width="100" height="10" fill="none" stroke="var(--neon-green)" />
+                <rect y="42" width="60" height="6" fill="var(--neon-green)" />
+            </svg></div>
+
+        <div class="gabor-patch" style="top: 20%; left: 15%; transform: rotate(45deg);"></div>
+        <div class="gabor-patch" style="bottom: 25%; right: 15%; transform: rotate(-30deg);"></div>
+
+        <!-- Silhouette -->
+        <div class="silhouette-container">
+            <!-- SVG Boy Silhouette -->
+            <svg width="400" height="500" viewBox="0 0 400 500" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path
+                    d="M100 450C100 450 150 480 200 480C250 480 300 450 300 450V350C300 350 380 300 380 200C380 100 300 50 200 50C100 50 20 100 20 200C20 300 100 350 100 350V450Z"
+                    fill="black" stroke="var(--cyber-blue)" stroke-width="2" />
+                <path d="M100 350C100 350 80 340 70 300M300 350C300 350 320 340 330 300" stroke="var(--dim-blue)"
+                    stroke-width="1" />
+                <!-- Inner Brain Glow Area Placeholder -->
+                <circle cx="200" cy="180" r="80" fill="url(#brainGradient)" opacity="0.4" />
+                <defs>
+                    <radialGradient id="brainGradient">
+                        <stop offset="0%" stop-color="#00BFFF" />
+                        <stop offset="100%" stop-color="transparent" />
+                    </radialGradient>
+                </defs>
+            </svg>
+            <div class="brain-glow"></div>
+            <canvas id="neural-canvas"></canvas>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('neural-canvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = 400;
+        canvas.height = 500;
+
+        const nodes = [];
+        const brainCenter = { x: 200, y: 180 };
+        const nodeCount = 40;
+
+        for (let i = 0; i < nodeCount; i++) {
+            nodes.push({
+                x: brainCenter.x + (Math.random() - 0.5) * 140,
+                y: brainCenter.y + (Math.random() - 0.5) * 120,
+                vx: (Math.random() - 0.5) * 0.5,
+                vy: (Math.random() - 0.5) * 0.5,
+                radius: Math.random() * 2 + 1
+            });
+        }
+
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Draw connections
+            ctx.strokeStyle = 'rgba(57, 255, 20, 0.4)';
+            ctx.lineWidth = 0.5;
+            for (let i = 0; i < nodes.length; i++) {
+                for (let j = i + 1; j < nodes.length; j++) {
+                    const dx = nodes[i].x - nodes[j].x;
+                    const dy = nodes[i].y - nodes[j].y;
+                    const dist = Math.sqrt(dx * dx + dy * dy);
+                    if (dist < 50) {
+                        ctx.beginPath();
+                        ctx.moveTo(nodes[i].x, nodes[i].y);
+                        ctx.lineTo(nodes[j].x, nodes[j].y);
+                        ctx.stroke();
+                    }
+                }
+            }
+
+            // Draw nodes
+            nodes.forEach(node => {
+                node.x += node.vx;
+                node.y += node.vy;
+
+                if (Math.sqrt((node.x - brainCenter.x) ** 2 + (node.y - brainCenter.y) ** 2) > 70) {
+                    node.vx *= -1;
+                    node.vy *= -1;
+                }
+
+                ctx.fillStyle = Math.random() > 0.9 ? '#39FF14' : '#00BFFF';
+                ctx.beginPath();
+                ctx.arc(node.x, node.y, node.radius, 0, Math.PI * 2);
+                ctx.fill();
+            });
+
+            requestAnimationFrame(animate);
+        }
+
+        animate();
+
+        // Add falling data streams
+        const container = document.getElementById('poster-container');
+        for (let i = 0; i < 30; i++) {
+            const stream = document.createElement('div');
+            stream.className = 'data-stream';
+            stream.style.left = Math.random() * 100 + 'vw';
+            stream.style.height = Math.random() * 100 + 50 + 'px';
+            stream.style.animationDuration = Math.random() * 3 + 2 + 's';
+            stream.style.animationDelay = Math.random() * 5 + 's';
+            container.appendChild(stream);
+        }
+    </script>
+
+</body>
+
+</html>

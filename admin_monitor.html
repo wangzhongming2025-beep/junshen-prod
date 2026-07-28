@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>连长作战指挥室 - 全员监控大屏</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #050505;
+            color: #e4e4e7;
+        }
+
+        .glass-panel {
+            background: rgba(24, 24, 27, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .success-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: #10b981;
+            box-shadow: 0 0 10px #10b981;
+        }
+
+        .fail-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: #ef4444;
+            box-shadow: 0 0 10px #ef4444;
+        }
+    </style>
+</head>
+
+<body class="min-h-screen p-6">
+
+    <div class="max-w-6xl mx-auto">
+        <!-- Dashboard Header -->
+        <header class="flex justify-between items-center mb-10">
+            <div>
+                <h1 class="text-3xl font-black text-white tracking-tight">老王特训营 · <span
+                        class="text-cyan-400">作战指挥室</span></h1>
+                <p class="text-zinc-500 text-sm mt-1">实时监控学员训练动态与视觉激活进度</p>
+            </div>
+            <div class="flex items-center gap-4">
+                <div class="text-right">
+                    <p class="text-xs text-zinc-500 uppercase font-mono">Current Status</p>
+                    <p class="text-sm font-bold text-green-400">系统运行正常</p>
+                </div>
+                <button onclick="refreshData()"
+                    class="p-3 bg-zinc-900 rounded-xl hover:bg-zinc-800 transition-colors border border-zinc-800">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8" />
+                        <path d="M21 3v5h-5" />
+                        <path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16" />
+                        <path d="M3 21v-5h5" />
+                    </svg>
+                </button>
+            </div>
+        </header>
+
+        <!-- Stats Overview -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+            <div class="glass-panel p-6 rounded-3xl">
+                <p class="text-zinc-500 text-xs mb-1 uppercase font-mono tracking-widest">在册学员</p>
+                <p class="text-3xl font-black text-white" id="total-trainees">--</p>
+            </div>
+            <div class="glass-panel p-6 rounded-3xl">
+                <p class="text-zinc-500 text-xs mb-1 uppercase font-mono tracking-widest">今日打卡</p>
+                <p class="text-3xl font-black text-cyan-400" id="today-active">--</p>
+            </div>
+            <div class="glass-panel p-6 rounded-3xl">
+                <p class="text-zinc-500 text-xs mb-1 uppercase font-mono tracking-widest">活跃深度</p>
+                <p class="text-3xl font-black text-purple-400">89%</p>
+            </div>
+            <div class="glass-panel p-6 rounded-3xl">
+                <p class="text-zinc-500 text-xs mb-1 uppercase font-mono tracking-widest">平均视搜速度</p>
+                <p class="text-3xl font-black text-emerald-400">18.4s</p>
+            </div>
+        </div>
+
+        <!-- Main Monitor Table -->
+        <div class="glass-panel rounded-[32px] overflow-hidden">
+            <div class="p-6 border-b border-white/5 flex justify-between items-center">
+                <h2 class="text-lg font-bold">全员实时监测大屏</h2>
+                <div class="flex items-center gap-2 text-xs text-zinc-500">
+                    <span class="flex items-center gap-1">
+                        <div class="success-dot"></div> 优秀
+                    </span>
+                    <span class="flex items-center gap-1 ml-4">
+                        <div class="fail-dot"></div> 掉队
+                    </span>
+                </div>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="w-full text-left">
+                    <thead>
+                        <tr class="bg-zinc-900/50 text-zinc-500 text-[10px] uppercase tracking-widest font-mono">
+                            <th class="px-6 py-4">学员编号</th>
+                            <th class="px-6 py-4">姓名</th>
+                            <th class="px-6 py-4">今日 Gabor</th>
+                            <th class="px-6 py-4">今日专注力</th>
+                            <th class="px-6 py-4">连续打卡</th>
+                            <th class="px-6 py-4">状态</th>
+                            <th class="px-6 py-4 text-center">操作</th>
+                        </tr>
+                    </thead>
+                    <tbody id="monitor-tbody" class="divide-y divide-white/5">
+                        <!-- Loaded by JS -->
+                        <tr>
+                            <td colspan="7" class="px-6 py-20 text-center text-zinc-600">正在同步战区数据...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Script Area -->
+    <script>
+        const SUPABASE_URL = 'https://oqwqlrmqblguiikrsmjf.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9xd3Fscm1xYmxndWlpa3JzbWpmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjgxMzcwMDUsImV4cCI6MjA4MzcxMzAwNX0.JlVesN-orDXZa5skq_WmKcVTlLP_HKMq2GKWwfuMoTA';
+
+        async function giveReward(traineeId, traineeName) {
+            if (!confirm(`确定要表扬学员 ${traineeName} 吗？`)) return;
+
+            try {
+                const res = await fetch(`${SUPABASE_URL}/rest/v1/training_logs`, {
+                    method: 'POST',
+                    headers: {
+                        'apikey': SUPABASE_KEY,
+                        'Authorization': 'Bearer ' + SUPABASE_KEY,
+                        'Content-Type': 'application/json',
+                        'Prefer': 'return=minimal'
+                    },
+                    body: JSON.stringify({
+                        trainee_id: traineeId,
+                        project_name: 'reward',
+                        score: 1,
+                        duration: 0,
+                        created_at: new Date().toISOString()
+                    })
+                });
+
+                if (!res.ok) throw new Error('网络请求失败');
+
+                // Show toast/alert
+                const btn = event.target;
+                const originalText = btn.innerText;
+                btn.innerText = '已表扬! 🌟';
+                btn.className = "text-[10px] font-black uppercase tracking-tighter text-green-400 border border-green-800 px-3 py-1 rounded bg-green-900/30 transition-all";
+
+                setTimeout(() => {
+                    refreshData(); // Refresh UI to show updated count
+                }, 1000);
+
+            } catch (e) {
+                alert('表扬失败: ' + e.message);
+            }
+        }
+
+        async function refreshData() {
+            const tbody = document.getElementById('monitor-tbody');
+
+            try {
+                // 1. Fetch Trainees
+                const tRes = await fetch(`${SUPABASE_URL}/rest/v1/trainees?select=*&order=trainee_id.asc`, {
+                    headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY }
+                });
+                const trainees = await tRes.json();
+
+                if (trainees.error) throw new Error(`学员表错误: ${trainees.error.message}`);
+                if (!Array.isArray(trainees)) throw new Error('学员表返回格式错误 (非数组)');
+                document.getElementById('total-trainees').innerText = trainees.length;
+
+                // 2. Fetch Today's Logs
+                const today = new Date().toISOString().split('T')[0];
+                const lRes = await fetch(`${SUPABASE_URL}/rest/v1/training_logs?created_at=gte.${today}&select=*`, {
+                    headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY }
+                });
+                const logs = await lRes.json();
+                if (logs.error) throw new Error(`记录表错误: ${logs.error.message}`);
+                if (!Array.isArray(logs)) throw new Error('记录表返回格式错误 (非数组)');
+
+                // 3. Map logs to trainees
+                tbody.innerHTML = '';
+                let activeCount = 0;
+
+                trainees.forEach(t => {
+                    const tLogs = logs.filter(l => l.trainee_id === t.trainee_id);
+
+                    // Filter specifically for actual training (exclude rewards for active count if desired, 
+                    // or keep everything. Let's exclude 'reward' from active status calc basics, or keep it simple?
+                    // Let's count rewards as activity too for now, or just separate.)
+                    // Actually, 'active' usually implies they did some work. Let's keep tLogs as ALL logs for now.
+
+                    const gaborLogs = tLogs.filter(l => l.project_name === 'gabor');
+                    const schulteLogs = tLogs.filter(l => l.project_name.startsWith('schulte'));
+                    const rewardLogs = tLogs.filter(l => l.project_name === 'reward');
+
+                    // Only count as "Today Active" if they did training (gabor or schulte), not just got a reward?
+                    // Let's stick to simple: if they have logs, they are active.
+                    if (tLogs.length > 0) activeCount++;
+
+                    const row = document.createElement('tr');
+                    row.className = 'hover:bg-white/5 transition-colors cursor-default';
+                    row.innerHTML = `
+                        <td class="px-6 py-6 font-mono font-bold text-zinc-400">${t.trainee_id}</td>
+                        <td class="px-6 py-6 font-bold text-white">
+                            ${t.name || '特等学员'}
+                            ${rewardLogs.length > 0 ? `<span class="ml-2 text-yellow-400 text-xs shadow-glow">🌟 x${rewardLogs.length}</span>` : ''}
+                        </td>
+                        <td class="px-6 py-6">
+                            ${gaborLogs.length > 0
+                            ? `<span class="text-green-400 text-xs font-bold">✅ 已练 (${gaborLogs[0].score})</span>`
+                            : `<span class="text-zinc-700 text-xs">❌ 未训练</span>`}
+                        </td>
+                        <td class="px-6 py-6">
+                            ${schulteLogs.length > 0
+                            ? `<span class="text-green-400 text-xs font-bold">✅ ${schulteLogs[0].duration}s (${schulteLogs[0].score})</span>`
+                            : `<span class="text-zinc-700 text-xs">❌ 未训练</span>`}
+                        </td>
+                        <td class="px-6 py-6 font-bold text-white">-- 天</td>
+                        <td class="px-6 py-6">
+                            <div class="flex items-center gap-2">
+                                <div class="${tLogs.length > 0 ? 'success-dot' : 'fail-dot'}"></div>
+                                <span class="text-xs ${tLogs.length > 0 ? 'text-green-400' : 'text-red-400'}">${tLogs.length > 0 ? '优秀' : '掉队'}</span>
+                            </div>
+                        </td>
+                        <td class="px-6 py-6 text-center">
+                            <button onclick="giveReward('${t.trainee_id}', '${t.name || '学员'}' )" class="text-[10px] font-black uppercase tracking-tighter text-zinc-500 border border-zinc-800 px-3 py-1 rounded hover:text-white hover:border-zinc-400 transition-all active:scale-95">
+                                [ 表扬一次 ]
+                            </button>
+                        </td>
+                    `;
+                    tbody.appendChild(row);
+                });
+
+                document.getElementById('today-active').innerText = activeCount;
+
+            } catch (e) {
+                console.error('Refresh failed:', e);
+                tbody.innerHTML = `<tr><td colspan="7" class="px-6 py-20 text-center text-red-500 font-bold">同步失败: ${e.message}</td></tr>`;
+                document.getElementById('total-trainees').innerText = 'Error';
+                document.getElementById('today-active').innerText = 'Error';
+            }
+        }
+
+        window.onload = refreshData;
+        setInterval(refreshData, 30000); // 30s auto refresh
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>手机视力自测</title>
+    <style>
+        /* 基础样式 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
+        }
+
+        body {
+            background-color: #f5f5f5;
+            color: #333;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* 标题样式 */
+        h1, h2, h3 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            font-size: 1.8rem;
+            margin-top: 10px;
+        }
+
+        /* 卡片样式 */
+        .card {
+            background-color: white;
+            border-radius: 15px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            padding: 25px;
+            margin-bottom: 20px;
+        }
+
+        /* 按钮样式 */
+        button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 50px;
+            padding: 12px 25px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            width: 100%;
+            max-width: 300px;
+            display: block;
+            margin: 15px auto;
+        }
+
+        button:hover {
+            background-color: #2980b9;
+            transform: scale(1.03);
+        }
+
+        button:active {
+            transform: scale(0.98);
+        }
+
+        /* 视力表样式 */
+        .vision-chart {
+            position: relative;
+            width: 100%;
+            height: 250px;
+            background-color: #f8f9fa;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 15px 0;
+            overflow: hidden;
+        }
+
+        .e-letter {
+            font-size: 60px;
+            font-weight: bold;
+            color: #333;
+            transition: all 0.3s;
+        }
+
+        /* 方向按钮 */
+        .direction-buttons {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin: 20px 0;
+            max-width: 250px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .direction-btn {
+            aspect-ratio: 1;
+            background-color: #ecf0f1;
+            border: 2px solid #bdc3c7;
+            border-radius: 10px;
+            font-size: 1.8rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .direction-btn:hover {
+            background-color: #dfe6e9;
+        }
+
+        .direction-btn:active {
+            transform: scale(0.95);
+        }
+
+        /* 结果显示 */
+        .result {
+            text-align: center;
+            margin: 30px 0;
+        }
+
+        .vision-value {
+            font-size: 3rem;
+            font-weight: bold;
+            color: #3498db;
+            margin: 10px 0;
+        }
+
+        /* 记录列表 */
+        .records {
+            margin-top: 30px;
+        }
+
+        .record-item {
+            background-color: #ecf0f1;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+        }
+
+        /* 提示信息 */
+        .notification {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #e74c3c;
+            color: white;
+            padding: 15px 25px;
+            border-radius: 50px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            z-index: 1000;
+            display: none;
+        }
+
+        /* 横屏提示 */
+        .landscape-tip {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.9);
+            color: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            display: none;
+        }
+
+        .landscape-icon {
+            font-size: 5rem;
+            margin-bottom: 20px;
+        }
+
+        /* 适配横屏 */
+        @media screen and (orientation: landscape) {
+            .vision-chart {
+                height: 300px;
+            }
+
+            .direction-buttons {
+                max-width: 400px;
+            }
+        }
+
+        /* 适配小屏幕 */
+        @media screen and (max-width: 360px) {
+            h1 {
+                font-size: 1.5rem;
+            }
+
+            .vision-chart {
+                height: 300px;
+            }
+
+            .e-letter {
+                font-size: 60px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 横屏提示 -->
+    <div class="landscape-tip" id="landscapeTip">
+        <div class="landscape-icon">📱</div>
+        <h2>请旋转手机至横屏模式</h2>
+        <p>获得更好的测试体验</p>
+    </div>
+
+    <!-- 提示信息 -->
+    <div class="notification" id="notification"></div>
+
+    <div class="container">
+        <h1>手机视力自测</h1>
+
+        <!-- 开始页面 -->
+        <div class="card" id="startPage">
+            <h2>欢迎使用视力自测</h2>
+            <p>本测试仅供参考，不能替代专业医疗检查</p>
+            <button id="startTest">开始测试</button>
+        </div>
+
+        <!-- 环境检测页面 -->
+        <div class="card" id="environmentPage" style="display: none;">
+            <h2>测试环境准备</h2>
+            <p>1. 请确保测试环境光线充足</p>
+            <p>2. 请摘掉眼镜或隐形眼镜</p>
+            <p>3. 请保持手机屏幕清洁</p>
+            <button id="checkEnvironment">检查环境</button>
+            <button id="skipEnvironment">跳过检查</button>
+        </div>
+
+        <!-- 距离检测页面 -->
+        <div class="card" id="distancePage" style="display: none;">
+            <h2>测试距离调整</h2>
+            <p>请将手机保持在约50厘米的距离</p>
+            <div id="distanceStatus">正在检测距离...</div>
+            <button id="skipDistance">我已测量好距离</button>
+        </div>
+
+        <!-- 视力测试页面 -->
+        <div class="card" id="testPage" style="display: none;">
+            <h2>视力测试</h2>
+            <p>请识别下面字母"E"的开口方向</p>
+            <div class="vision-chart">
+                <div class="e-letter" id="eLetter">E</div>
+            </div>
+            <div class="direction-buttons">
+                <div class="direction-btn" data-direction="up">↑</div>
+                <div class="direction-btn" data-direction="left">←</div>
+                <div class="direction-btn" data-direction="right">→</div>
+                <div class="direction-btn" data-direction="down">↓</div>
+            </div>
+            <div id="currentLevel">当前级别: 0.1</div>
+        </div>
+
+        <!-- 结果页面 -->
+        <div class="card" id="resultPage" style="display: none;">
+            <h2>测试结果</h2>
+            <div class="result">
+                <p>您的视力值为:</p>
+                <div class="vision-value" id="visionValue">1.0</div>
+                <p id="visionSuggestion">您的视力正常，请继续保持</p>
+            </div>
+
+            <h3>最近测试记录</h3>
+            <div class="records" id="recordsList"></div>
+
+            <button id="retest">重新测试</button>
+        </div>
+    </div>
+
+    <script>
+        // 全局变量
+        let currentLevel = 0; // 0-7 对应 0.1-1.5
+        const visionLevels = [0.1, 0.2, 0.3, 0.5, 0.7, 1.0, 1.2, 1.5];
+        let correctAnswers = 0;
+        let totalAnswers = 0;
+        let testRecords = JSON.parse(localStorage.getItem('visionTestRecords')) || [];
+        let isTesting = false;
+
+        // DOM元素
+        const startPage = document.getElementById('startPage');
+        const environmentPage = document.getElementById('environmentPage');
+        const distancePage = document.getElementById('distancePage');
+        const testPage = document.getElementById('testPage');
+        const resultPage = document.getElementById('resultPage');
+        const startTestBtn = document.getElementById('startTest');
+        const checkEnvironmentBtn = document.getElementById('checkEnvironment');
+        const skipEnvironmentBtn = document.getElementById('skipEnvironment');
+        const skipDistanceBtn = document.getElementById('skipDistance');
+        const retestBtn = document.getElementById('retest');
+        const eLetter = document.getElementById('eLetter');
+        const directionBtns = document.querySelectorAll('.direction-btn');
+        const currentLevelEl = document.getElementById('currentLevel');
+        const visionValueEl = document.getElementById('visionValue');
+        const visionSuggestionEl = document.getElementById('visionSuggestion');
+        const recordsListEl = document.getElementById('recordsList');
+        const notification = document.getElementById('notification');
+        const landscapeTip = document.getElementById('landscapeTip');
+        const distanceStatus = document.getElementById('distanceStatus');
+
+        // 初始化
+        function init() {
+            // 检查屏幕方向
+            checkOrientation();
+            window.addEventListener('resize', checkOrientation);
+
+            // 事件监听器
+            startTestBtn.addEventListener('click', startTest);
+            checkEnvironmentBtn.addEventListener('click', checkEnvironment);
+            skipEnvironmentBtn.addEventListener('click', () => showPage(distancePage));
+            skipDistanceBtn.addEventListener('click', startVisionTest);
+            retestBtn.addEventListener('click', startTest);
+
+            // 方向按钮事件
+            directionBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    if (isTesting) {
+                        checkAnswer(btn.dataset.direction);
+                    }
+                });
+            });
+
+            // 更新记录列表
+            updateRecordsList();
+        }
+
+        // 检查屏幕方向
+        function checkOrientation() {
+            // 增加延迟以确保屏幕旋转完成
+            setTimeout(() => {
+                // 不再强制横屏，仅显示提示
+                landscapeTip.style.display = 'none';
+            }, 100);
+        }
+
+        // 开始测试
+        function startTest() {
+            // 重置测试参数
+            currentLevel = 0;
+            correctAnswers = 0;
+            totalAnswers = 0;
+            isTesting = false;
+
+            // 显示环境检测页面
+            showPage(environmentPage);
+        }
+
+        // 检查环境
+        function checkEnvironment() {
+            // 模拟环境检测
+            showNotification('环境光线良好');
+            setTimeout(() => {
+                showNotification('请确保已摘掉眼镜');
+                setTimeout(() => {
+                    showPage(distancePage);
+                    simulateDistanceDetection();
+                }, 1500);
+            }, 1500);
+        }
+
+        // 模拟距离检测
+        function simulateDistanceDetection() {
+            let distance = 30; // 模拟初始距离30cm
+            distanceStatus.textContent = `当前距离: ${distance}cm (建议50cm)`;
+
+            // 模拟距离逐渐增加
+            const interval = setInterval(() => {
+                distance += 5;
+                distanceStatus.textContent = `当前距离: ${distance}cm (建议50cm)`;
+
+                if (distance >= 50) {
+                    clearInterval(interval);
+                    distanceStatus.textContent = `距离合适: ${distance}cm`;
+                    showNotification('距离已调整合适，可以开始测试');
+                }
+            }, 800);
+        }
+
+        // 开始视力测试
+        function startVisionTest() {
+            showPage(testPage);
+            currentLevel = 0;
+            correctAnswers = 0;
+            totalAnswers = 0;
+            isTesting = true;
+            generateELetter();
+            updateLevelDisplay();
+        }
+
+        // 生成E字母
+        function generateELetter() {
+            // 随机方向
+            const direction = ['up', 'down', 'left', 'right'][Math.floor(Math.random() * 4)];
+            eLetter.dataset.direction = direction;
+
+            // 根据级别调整大小
+            const size = 80 - currentLevel * 8;
+            eLetter.style.fontSize = `${size}px`;
+
+            // 根据方向旋转字母
+            let rotation = 0;
+            if (direction === 'up') {
+                rotation = 270;
+            } else if (direction === 'right') {
+                rotation = 0;
+            } else if (direction === 'down') {
+                rotation = 90;
+            } else if (direction === 'left') {
+                rotation = 180;
+            }
+
+            // 增加小角度旋转增加难度
+            if (currentLevel > 3) {
+                rotation += Math.random() * 10 - 5;
+            }
+
+            eLetter.style.transform = `rotate(${rotation}deg)`;
+
+            // 更新级别显示
+            updateLevelDisplay();
+        }
+
+        // 更新级别显示
+        function updateLevelDisplay() {
+            currentLevelEl.textContent = `当前级别: ${visionLevels[currentLevel]}`;
+        }
+
+        // 检查答案
+        function checkAnswer(userDirection) {
+            const correctDirection = eLetter.dataset.direction;
+            totalAnswers++;
+
+            if (userDirection === correctDirection) {
+                correctAnswers++;
+                showNotification('正确');
+            } else {
+                showNotification('错误');
+            }
+
+            // 每级别测试3次
+            if (totalAnswers % 3 === 0) {
+                // 评估该级别是否通过
+                if (correctAnswers >= 2) {
+                    // 通过，进入下一级
+                    currentLevel++;
+                    if (currentLevel >= visionLevels.length) {
+                        // 已完成所有级别
+                        finishTest();
+                    } else {
+                        showNotification(`已通过级别 ${visionLevels[currentLevel-1]}，进入级别 ${visionLevels[currentLevel]}`);
+                        setTimeout(generateELetter, 1000);
+                    }
+                } else {
+                    // 未通过，结束测试
+                    finishTest();
+                }
+                // 重置计数
+                correctAnswers = 0;
+            } else {
+                // 继续该级别测试
+                setTimeout(generateELetter, 1000);
+            }
+        }
+
+        // 完成测试
+        function finishTest() {
+            isTesting = false;
+
+            // 计算视力值
+            let visionValue = visionLevels[Math.max(0, currentLevel - 1)];
+            if (currentLevel === 0) visionValue = 0.1;
+
+            // 保存测试记录
+            const record = {
+                date: new Date().toLocaleString(),
+                value: visionValue
+            };
+
+            testRecords.unshift(record);
+            // 只保留最近3条记录
+            if (testRecords.length > 3) {
+                testRecords = testRecords.slice(0, 3);
+            }
+
+            // 保存到本地存储
+            localStorage.setItem('visionTestRecords', JSON.stringify(testRecords));
+
+            // 更新结果显示
+            visionValueEl.textContent = visionValue;
+
+            // 给出建议
+            if (visionValue >= 1.0) {
+                visionSuggestionEl.textContent = '您的视力正常，请继续保持';
+            } else if (visionValue >= 0.5) {
+                visionSuggestionEl.textContent = '您的视力略低，建议定期复查';
+            } else {
+                visionSuggestionEl.textContent = '您的视力较差，建议尽快就医检查';
+            }
+
+            // 更新记录列表
+            updateRecordsList();
+
+            // 显示结果页面
+            showPage(resultPage);
+        }
+
+        // 更新记录列表
+        function updateRecordsList() {
+            recordsListEl.innerHTML = '';
+
+            testRecords.forEach(record => {
+                const recordItem = document.createElement('div');
+                recordItem.className = 'record-item';
+                recordItem.innerHTML = `<p>日期: ${record.date}</p><p>视力值: ${record.value}</p>`;
+                recordsListEl.appendChild(recordItem);
+            });
+        }
+
+        // 显示页面
+        function showPage(page) {
+            // 隐藏所有页面
+            startPage.style.display = 'none';
+            environmentPage.style.display = 'none';
+            distancePage.style.display = 'none';
+            testPage.style.display = 'none';
+            resultPage.style.display = 'none';
+
+            // 显示目标页面
+            page.style.display = 'block';
+        }
+
+        // 显示提示
+        function showNotification(message) {
+            notification.textContent = message;
+            notification.style.display = 'block';
+
+            setTimeout(() => {
+                notification.style.display = 'none';
+            }, 2000);
+        }
+
+        // 初始化应用
+        window.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>

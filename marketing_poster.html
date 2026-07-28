@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Brain Visual Training Camp Poster</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;700;900&display=swap');
+
+        :root {
+            --bg-color: #000000;
+            --neon-green: #39FF14;
+            --cyber-blue: #00BFFF;
+            --dark-gray: #1a1a1a;
+            --text-color: #ffffff;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            width: 800px;
+            /* Poster width */
+            background-color: var(--bg-color);
+            font-family: 'Noto Sans SC', sans-serif;
+            color: var(--text-color);
+            overflow-x: hidden;
+            /* Prevent horizontal scroll only */
+        }
+
+        .poster-container {
+            position: relative;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            background: linear-gradient(to bottom, #000 0%, #050505 100%);
+        }
+
+        /* 1. Header (The Hook) */
+        .header {
+            position: relative;
+            height: 500px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            padding: 40px;
+            border-bottom: 2px solid var(--neon-green);
+        }
+
+        .header-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0.6;
+            z-index: 0;
+            mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 1) 50%, rgba(0, 0, 0, 0) 100%);
+            -webkit-mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 1) 50%, rgba(0, 0, 0, 0) 100%);
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 1;
+            text-align: left;
+        }
+
+        .sub-title {
+            font-size: 24px;
+            color: var(--cyber-blue);
+            font-weight: 700;
+            margin-bottom: 10px;
+            text-shadow: 0 0 10px rgba(0, 191, 255, 0.5);
+            letter-spacing: 2px;
+            display: flex;
+            align-items: center;
+        }
+
+        .sub-title::before {
+            content: '';
+            display: inline-block;
+            width: 6px;
+            height: 24px;
+            background: var(--cyber-blue);
+            margin-right: 10px;
+        }
+
+        .main-title {
+            font-size: 64px;
+            line-height: 1.1;
+            background: linear-gradient(90deg, #fff, #ccc);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 900;
+            margin: 0;
+            text-shadow: 0 10px 20px rgba(0, 0, 0, 0.8);
+        }
+
+        .highlight-green {
+            color: var(--neon-green);
+            -webkit-text-fill-color: var(--neon-green);
+            text-shadow: 0 0 20px rgba(57, 255, 20, 0.4);
+        }
+
+        .highlight-blue {
+            color: var(--cyber-blue);
+            -webkit-text-fill-color: var(--cyber-blue);
+            text-shadow: 0 0 20px rgba(0, 191, 255, 0.4);
+        }
+
+        /* 2. Core Value (The Value) */
+        .section-value {
+            padding: 40px;
+            background: #080808;
+            border-bottom: 1px solid #333;
+        }
+
+        .value-item {
+            display: flex;
+            margin-bottom: 30px;
+            align-items: center;
+        }
+
+        .value-icon {
+            width: 80px;
+            height: 80px;
+            background: rgba(57, 255, 20, 0.1);
+            border: 2px solid var(--neon-green);
+            border-radius: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 40px;
+            margin-right: 20px;
+            flex-shrink: 0;
+            color: var(--neon-green);
+            box-shadow: 0 0 15px rgba(57, 255, 20, 0.2);
+        }
+
+        .value-text h3 {
+            margin: 0 0 5px 0;
+            color: var(--cyber-blue);
+            font-size: 28px;
+            text-transform: uppercase;
+        }
+
+        .value-text p {
+            margin: 0;
+            color: #ccc;
+            font-size: 18px;
+            line-height: 1.4;
+        }
+
+        /* 3. Pain Points (The Target) */
+        .section-target {
+            padding: 40px;
+            background: #000;
+        }
+
+        .section-title {
+            font-size: 32px;
+            color: white;
+            border-left: 8px solid var(--neon-green);
+            padding-left: 20px;
+            margin-bottom: 30px;
+            font-weight: 900;
+        }
+
+        .checklist {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .check-item {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 20px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            border: 1px solid #333;
+        }
+
+        .check-box {
+            width: 24px;
+            height: 24px;
+            border: 2px solid #555;
+            margin-right: 15px;
+            position: relative;
+        }
+
+        .check-item p {
+            margin: 0;
+            font-size: 18px;
+            color: #ddd;
+        }
+
+        /* 4. Offer (The Delivery) */
+        .section-offer {
+            padding: 0;
+            position: relative;
+            background: #050505;
+            border-top: 1px solid #333;
+        }
+
+        .offer-header {
+            padding: 40px 40px 20px 40px;
+        }
+
+        .offer-img-container {
+            width: 100%;
+            height: auto;
+            /* Allow natural height */
+            min-height: 500px;
+            overflow: hidden;
+            position: relative;
+            border-top: 2px solid var(--cyber-blue);
+            border-bottom: 2px solid var(--cyber-blue);
+        }
+
+        .offer-img {
+            width: 100%;
+            height: auto;
+            /* Function as block image */
+            display: block;
+        }
+
+        .offer-list-overlay {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            background: rgba(0, 0, 0, 0.8);
+            padding: 20px;
+            border: 1px solid var(--neon-green);
+            max-width: 400px;
+        }
+
+        .offer-list-overlay ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .offer-list-overlay li {
+            color: #fff;
+            margin-bottom: 8px;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+        }
+
+        .nav-icon {
+            color: var(--neon-green);
+            margin-right: 10px;
+            font-weight: bold;
+        }
+
+        /* 5. Footer (Call to Action) */
+        .footer {
+            background: linear-gradient(135deg, #001100 0%, #000 100%);
+            padding: 50px 40px;
+            text-align: center;
+            border-top: 4px solid var(--neon-green);
+        }
+
+        .price-tag {
+            font-size: 24px;
+            color: #888;
+            text-decoration: line-through;
+            margin-bottom: 10px;
+        }
+
+        .final-price {
+            font-size: 80px;
+            color: var(--neon-green);
+            font-weight: 900;
+            line-height: 1;
+            margin-bottom: 10px;
+            text-shadow: 0 0 30px rgba(57, 255, 20, 0.4);
+            font-family: 'Arial Black', sans-serif;
+        }
+
+        .final-price span {
+            font-size: 30px;
+            color: white;
+            font-weight: bold;
+        }
+
+        .urgency {
+            display: inline-block;
+            background: #ff3333;
+            color: white;
+            padding: 8px 20px;
+            font-weight: bold;
+            font-size: 20px;
+            border-radius: 4px;
+            margin-bottom: 30px;
+            transform: skewX(-10deg);
+        }
+
+        .cta-slogan {
+            font-size: 32px;
+            font-weight: 900;
+            color: white;
+            margin-top: 20px;
+            letter-spacing: 2px;
+        }
+
+        /* Tech Decorations */
+        .tech-line {
+            position: absolute;
+            background: var(--cyber-blue);
+            opacity: 0.5;
+        }
+
+        .scan-line {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: rgba(255, 255, 255, 0.1);
+            animation: scan 3s linear infinite;
+            z-index: 10;
+            pointer-events: none;
+        }
+
+        @keyframes scan {
+            0% {
+                top: 0;
+                opacity: 0;
+            }
+
+            50% {
+                opacity: 1;
+            }
+
+            100% {
+                top: 100%;
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="poster-container">
+        <!-- Scanline Effect -->
+        <div class="scan-line"></div>
+
+        <!-- 1. Header -->
+        <div class="header">
+            <!-- Background Image: Brain Visual Poster -->
+            <img src="./brain_visual_poster.png" class="header-bg" alt="Brain Visual Art">
+
+            <div class="header-content">
+                <div class="sub-title">老王队长 · 青少年脑视觉“特种兵” 21天特训营</div>
+                <h1 class="main-title">视力不是“练”出来的<br>是<span class="highlight-green">“大脑”</span>算出来的！</h1>
+            </div>
+        </div>
+
+        <!-- 2. Core Value -->
+        <div class="section-value">
+            <div class="value-item">
+                <div class="value-icon">🧠</div>
+                <div class="value-text">
+                    <h3>Gabor 神经激活</h3>
+                    <p>源自斯坦福神经科学，激活视皮层，重塑大脑视觉处理效率。</p>
+                </div>
+            </div>
+            <div class="value-item">
+                <div class="value-icon">⚡</div>
+                <div class="value-text">
+                    <h3>飞行员级专注力</h3>
+                    <p>动态舒尔特方格特训，把拖拉磨蹭变为雷达般的搜索扫描。</p>
+                </div>
+            </div>
+            <div class="value-item">
+                <div class="value-icon">👮</div>
+                <div class="value-text">
+                    <h3>退役连长“死磕”</h3>
+                    <p>拒绝“买完不管”！后台数据实时监控，不达标不许睡！</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 3. Targets (Pain Points) -->
+        <div class="section-target">
+            <div class="section-title">重点攻克以下“挑战”</div>
+            <div class="checklist">
+                <div class="check-item">
+                    <div class="check-box"></div>
+                    <p>写作业拖拉磨蹭</p>
+                </div>
+                <div class="check-item">
+                    <div class="check-box"></div>
+                    <p>漏字跳行、粗心</p>
+                </div>
+                <div class="check-item">
+                    <div class="check-box"></div>
+                    <p>度数疯狂上涨</p>
+                </div>
+                <div class="check-item">
+                    <div class="check-box"></div>
+                    <p>沉迷游戏眼神呆滞</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 4. Offer Area -->
+        <div class="section-offer">
+            <div class="offer-header">
+                <div class="section-title" style="margin-bottom: 0;">【入营即送】特种兵军火箱</div>
+            </div>
+            <div class="offer-img-container">
+                <!-- Using Product Kit Poster -->
+                <img src="./product_kit_poster.png" class="offer-img" alt="Product Kit">
+
+                <div class="offer-list-overlay">
+                    <ul>
+                        <li><span class="nav-icon">✅</span> 数字化脑力训练系统（终身账号）</li>
+                        <li><span class="nav-icon">✅</span> 连长定制翻转拍 & 训练道具</li>
+                        <li><span class="nav-icon">✅</span> 《脑科学视觉作战地图》手册</li>
+                        <li><span class="nav-icon">✅</span> NSDR 神经深度放松音频（专业级）</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- 5. Footer / Call to Action -->
+        <div class="footer">
+            <div class="urgency">⚠️ 本期仅招收 50 名新兵</div>
+            <div class="price-tag">原价 ¥5980</div>
+            <div class="final-price">¥2980 <span>/ 21天全托管</span></div>
+            <div class="cta-slogan">如果你管不住孩子，我来管！</div>
+        </div>
+
+    </div>
+
+</body>
+
+</html>

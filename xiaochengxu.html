@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>微信小程序定制开发服务 - 老王队长特工队</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        military: {
+                            light: '#8da399',
+                            DEFAULT: '#4b5c53',
+                            dark: '#2f3b35',
+                            accent: '#d4af37',
+                            bg: '#f0f2f1'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            background-color: #f8faf9;
+        }
+        .hero-gradient {
+            background: linear-gradient(135deg, #2f3b35 0%, #4b5c53 100%);
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(75, 92, 83, 0.1);
+        }
+        .hover-lift {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .hover-lift:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(75, 92, 83, 0.15);
+        }
+    </style>
+</head>
+
+<body class="text-gray-800 pb-20 md:pb-0">
+
+    <!-- Top Navigation Bar -->
+    <nav class="bg-military-dark text-white py-4 px-6 sticky top-0 z-40 shadow-md">
+        <div class="max-w-6xl mx-auto flex justify-between items-center">
+            <a href="index.html" class="flex items-center space-x-2 text-white hover:text-military-accent transition-colors">
+                <i class="fas fa-arrow-left"></i>
+                <span class="font-bold">返回主页</span>
+            </a>
+            <div class="text-lg font-bold tracking-wider">
+                <i class="fas fa-mobile-alt text-military-accent mr-2"></i>小程序定制开发
+            </div>
+            <a href="#contact" class="bg-military-accent text-military-dark px-4 py-1.5 rounded-full font-bold text-sm hover:bg-white transition-all">
+                立即咨询
+            </a>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <header class="hero-gradient text-white text-center py-16 px-4 relative overflow-hidden">
+        <div class="absolute inset-0 opacity-10 bg-[radial-gradient(#d4af37_1px,transparent_1px)] [background-size:16px_16px]"></div>
+        <div class="max-w-3xl mx-auto relative z-10">
+            <span class="bg-military-accent/20 text-military-accent border border-military-accent/30 text-xs px-3 py-1 rounded-full font-semibold tracking-wider uppercase mb-4 inline-block">全栈交付 · 极速上线</span>
+            <h1 class="text-3xl md:text-5xl font-bold mb-6 tracking-wide leading-tight">微信小程序定制开发</h1>
+            <p class="text-base md:text-lg font-light text-gray-300 max-w-2xl mx-auto leading-relaxed">
+                从创意规划、UI界面设计，到高性能前端开发与高并发后台支持。我们为你量身定制稳定、美观、好用的小程序，助力业务快速实现数字化与流量变现。
+            </p>
+        </div>
+    </header>
+
+    <!-- Core Advantages -->
+    <main class="max-w-6xl mx-auto px-4 py-12">
+        <section class="mb-16">
+            <h2 class="text-2xl md:text-3xl font-bold text-center text-military-dark mb-12 flex items-center justify-center">
+                <span class="h-1 w-10 bg-military-accent mr-3 rounded"></span>
+                我们的核心开发优势
+                <span class="h-1 w-10 bg-military-accent ml-3 rounded"></span>
+            </h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- Advantage 1 -->
+                <div class="glass-card p-8 rounded-2xl hover-lift shadow-sm">
+                    <div class="w-12 h-12 rounded-xl bg-military/10 text-military flex items-center justify-center text-2xl mb-6">
+                        <i class="fas fa-magic"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-military-dark mb-3">极致视觉体验</h3>
+                    <p class="text-gray-600 text-sm leading-relaxed">
+                        拒绝千篇一律的模板！资深 UI/UX 设计师一对一打磨界面，匹配品牌气质，提供丝滑的动效与极佳的交互逻辑。
+                    </p>
+                </div>
+                <!-- Advantage 2 -->
+                <div class="glass-card p-8 rounded-2xl hover-lift shadow-sm">
+                    <div class="w-12 h-12 rounded-xl bg-military/10 text-military flex items-center justify-center text-2xl mb-6">
+                        <i class="fas fa-bolt"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-military-dark mb-3">极致加载速度</h3>
+                    <p class="text-gray-600 text-sm leading-relaxed">
+                        基于原生框架/Taro高性能底层优化，秒级加载，体积轻量，杜绝卡顿，在各种老旧机型上也能顺畅运行。
+                    </p>
+                </div>
+                <!-- Advantage 3 -->
+                <div class="glass-card p-8 rounded-2xl hover-lift shadow-sm">
+                    <div class="w-12 h-12 rounded-xl bg-military/10 text-military flex items-center justify-center text-2xl mb-6">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-military-dark mb-3">高并发与安全性</h3>
+                    <p class="text-gray-600 text-sm leading-relaxed">
+                        支持百万级用户并发架构设计，采用高强度防爬虫、防刷单机制，为你的核心业务和交易流水保驾护航。
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Solutions / Case types -->
+        <section class="mb-16 bg-military/5 rounded-3xl p-8 md:p-12">
+            <h2 class="text-2xl md:text-3xl font-bold text-center text-military-dark mb-10">
+                支持开发的小程序品类
+            </h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div class="bg-white p-6 rounded-xl shadow-sm text-center">
+                    <div class="text-military text-3xl mb-3"><i class="fas fa-shopping-bag"></i></div>
+                    <h4 class="font-bold text-gray-800 mb-1">分销/商城小程序</h4>
+                    <p class="text-xs text-gray-500">团购、多级返利、卡券营销</p>
+                </div>
+                <div class="bg-white p-6 rounded-xl shadow-sm text-center">
+                    <div class="text-military text-3xl mb-3"><i class="fas fa-utensils"></i></div>
+                    <h4 class="font-bold text-gray-800 mb-1">外卖点餐与订座</h4>
+                    <p class="text-xs text-gray-500">扫码点单、实时小票、排队接单</p>
+                </div>
+                <div class="bg-white p-6 rounded-xl shadow-sm text-center">
+                    <div class="text-military text-3xl mb-3"><i class="fas fa-calendar-alt"></i></div>
+                    <h4 class="font-bold text-gray-800 mb-1">预约与上门服务</h4>
+                    <p class="text-xs text-gray-500">家政预约、课程订期、美容美发</p>
+                </div>
+                <div class="bg-white p-6 rounded-xl shadow-sm text-center">
+                    <div class="text-military text-3xl mb-3"><i class="fas fa-cogs"></i></div>
+                    <h4 class="font-bold text-gray-800 mb-1">效率与实用工具</h4>
+                    <p class="text-xs text-gray-500">答题测验、考勤点名、智能打卡</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Development Process -->
+        <section class="mb-16">
+            <h2 class="text-2xl md:text-3xl font-bold text-center text-military-dark mb-12">规范的交付保障流程</h2>
+            <div class="relative pl-6 border-l-2 border-military/30 max-w-2xl mx-auto space-y-8">
+                <div class="relative">
+                    <div class="absolute -left-[35px] bg-military text-white w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm">1</div>
+                    <h4 class="font-bold text-lg text-military-dark">需求沟通与原型设计</h4>
+                    <p class="text-sm text-gray-500">深度沟通业务模式，绘制高保真墨刀原型图，开发前让您对产品一目了然。</p>
+                </div>
+                <div class="relative">
+                    <div class="absolute -left-[35px] bg-military text-white w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm">2</div>
+                    <h4 class="font-bold text-lg text-military-dark">视觉UI及交互定稿</h4>
+                    <p class="text-sm text-gray-500">精细化打磨每个像素，定稿页面样式并为您制作原型流交互动效演示。</p>
+                </div>
+                <div class="relative">
+                    <div class="absolute -left-[35px] bg-military text-white w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm">3</div>
+                    <h4 class="font-bold text-lg text-military-dark">全栈封闭开发与联调</h4>
+                    <p class="text-sm text-gray-500">前后端规范并行开发，数据严格校验，确保性能和扩展性最大化。</p>
+                </div>
+                <div class="relative">
+                    <div class="absolute -left-[35px] bg-military-accent text-military-dark w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm">4</div>
+                    <h4 class="font-bold text-lg text-military-dark">发布审核及长期运维</h4>
+                    <p class="text-sm text-gray-500">协助申请小程序及支付通道，代过腾讯官方审核，提供1年免费系统安全运维。</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Contact Section -->
+        <section id="contact" class="bg-military-dark text-white rounded-3xl p-8 md:p-12 text-center shadow-lg">
+            <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-military-accent/20 text-military-accent border border-military-accent/30 mb-4">
+                <i class="fas fa-handshake-angle mr-1.5 animate-pulse"></i> 专属福利 (Limited Benefit)
+            </span>
+            <h2 class="text-2xl md:text-3xl font-bold mb-4">预约 15 分钟免费小程序商业与技术诊断</h2>
+            <p class="text-gray-300 text-sm max-w-xl mx-auto mb-8 leading-relaxed">
+                添加老王队长微信，即可免费获取一次 1对1 语音技术与商业诊断服务。帮你梳理业务痛点、评估开发成本、避开外包大坑。
+            </p>
+            <div class="flex flex-col md:flex-row justify-center items-center gap-8">
+                <div class="bg-white/5 p-4 rounded-xl border border-white/10 w-48">
+                    <img src="erweima2.jpg" alt="微信二维码" class="w-36 h-36 mx-auto rounded-lg mb-2">
+                    <span class="text-xs opacity-80">微信扫码联系</span>
+                </div>
+                <div class="text-left flex flex-col justify-center space-y-4">
+                    <div>
+                        <div class="text-xs opacity-60">老王队长微信号</div>
+                        <div class="text-lg font-bold text-military-accent tracking-wider" id="wechat-dev">vip20213456</div>
+                    </div>
+                    <button onclick="copyWeChatId()" class="bg-military-accent text-military-dark hover:bg-white hover:text-military-dark font-bold py-2.5 px-6 rounded-full shadow-md transition-all active:scale-95 text-sm">
+                        <i class="fas fa-copy mr-1"></i>复制微信号直接添加
+                    </button>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Toast -->
+    <div id="toast" class="fixed top-5 left-1/2 transform -translate-x-1/2 bg-military-accent text-military-dark px-6 py-3 rounded-full font-bold shadow-2xl z-[100] opacity-0 transition-opacity duration-300 pointer-events-none text-center text-sm border border-military">
+        🎉 成功复制微信号，快去微信搜索添加吧！
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-military-dark text-gray-400 py-8 text-center text-sm border-t border-gray-700">
+        <div class="max-w-6xl mx-auto px-4">
+            <p>&copy; 2026 老王队长 - 从军官到创业者的转型之路</p>
+            <p class="mt-2 text-military-light">人生需要挑战，行动创造可能</p>
+        </div>
+    </footer>
+
+    <script>
+        function copyWeChatId() {
+            const wechatId = document.getElementById('wechat-dev').innerText;
+            navigator.clipboard.writeText(wechatId).then(() => {
+                showToast();
+            }).catch(err => {
+                const input = document.createElement('input');
+                input.value = wechatId;
+                document.body.appendChild(input);
+                input.select();
+                document.execCommand('copy');
+                document.body.removeChild(input);
+                showToast();
+            });
+        }
+
+        function showToast() {
+            const toast = document.getElementById('toast');
+            toast.style.opacity = '1';
+            setTimeout(() => {
+                toast.style.opacity = '0';
+            }, 3000);
+        }
+    </script>
+</body>
+
+</html>

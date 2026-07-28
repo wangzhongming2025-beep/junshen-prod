@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI 网页临时托管与预览工具 - 一人企业提效器 | 老王队长</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Noto+Sans+SC:wght@300;400;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Outfit', 'Noto Sans SC', 'sans-serif'],
+                    },
+                    colors: {
+                        military: {
+                            light: '#5c7065',
+                            DEFAULT: '#2f3b35', // Deep military green
+                            dark: '#141a17',
+                            accent: '#ffd700', // Gold accent
+                            glass: 'rgba(20, 26, 23, 0.75)',
+                            border: 'rgba(255, 215, 0, 0.15)'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #0b0f0d;
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(47, 59, 53, 0.15) 0%, transparent 40%),
+                radial-gradient(circle at 90% 80%, rgba(255, 215, 0, 0.03) 0%, transparent 35%);
+        }
+        .glow-text-gold {
+            text-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
+        }
+        .glass-card {
+            background: rgba(20, 26, 23, 0.65);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.03);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .glow-btn {
+            box-shadow: 0 4px 15px rgba(255, 215, 0, 0.2);
+            transition: all 0.3s ease;
+        }
+        .glow-btn:hover {
+            box-shadow: 0 8px 25px rgba(255, 215, 0, 0.45);
+        }
+    </style>
+</head>
+
+<body class="text-gray-300 antialiased pb-24 md:pb-12">
+
+    <!-- Top Navigation Bar -->
+    <nav class="bg-military-dark/95 border-b border-white/5 py-4 px-6 sticky top-0 z-50 backdrop-blur-md">
+        <div class="max-w-6xl mx-auto flex justify-between items-center">
+            <a href="index.html" class="flex items-center space-x-2 text-white hover:text-military-accent transition-colors">
+                <i class="fas fa-arrow-left"></i>
+                <span class="font-bold">返回主页</span>
+            </a>
+            <div class="text-lg font-bold tracking-wider text-military-accent glow-text-gold">
+                <i class="fas fa-code mr-2"></i>HTML 临时托管工具
+            </div>
+            <a href="#member-info" class="bg-military-accent text-military-dark px-4 py-1.5 rounded-full font-bold text-sm hover:bg-white transition-all">
+                解锁永久托管
+            </a>
+        </div>
+    </nav>
+
+    <!-- Header / Hero Section -->
+    <header class="relative overflow-hidden py-12 md:py-16 border-b border-white/5 bg-gradient-to-b from-military-dark to-transparent">
+        <div class="absolute inset-0 bg-[radial-gradient(rgba(255,215,0,0.05)_1px,transparent_1px)] [background-size:20px_20px] pointer-events-none"></div>
+        <div class="max-w-4xl mx-auto px-6 text-center relative z-10 flex flex-col items-center">
+            <span class="bg-military-accent/10 text-military-accent border border-military-accent/20 text-xs px-3.5 py-1 rounded-full font-semibold tracking-wider uppercase mb-4 inline-block">
+                AI 编程配套神器 / 零成本部署
+            </span>
+            <h1 class="text-3xl md:text-4xl font-extrabold tracking-wide text-white mb-4 glow-text-gold">
+                极速 HTML 代码临时托管与预览
+            </h1>
+            <p class="text-xs md:text-sm text-gray-400 max-w-xl leading-relaxed">
+                用 AI 生成了网页/小程序，却苦于没有服务器、不懂部署发布？在此粘贴代        <!-- Tool Card -->
+        <div class="glass-card p-6 rounded-2xl space-y-6 border border-white/5">
+            <div class="space-y-2">
+                <label class="block text-sm font-bold text-white flex items-center">
+                    <i class="fas fa-edit text-military-accent mr-2"></i> 请粘贴您在 DeepSeek 生成的 HTML 代码：
+                </label>
+                <textarea id="html-code" class="w-full h-[320px] bg-black/40 border border-white/10 rounded-xl p-4 text-xs font-mono focus:outline-none focus:border-military-accent text-gray-300 placeholder-gray-600" placeholder="<!DOCTYPE html>&#10;<html>&#10;<head>&#10;  <title>我的网页</title>&#10;</head>&#10;<body>&#10;  <h1>你好，世界！</h1>&#10;</body>&#10;</html>"></textarea>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="flex justify-between items-center flex-wrap gap-4">
+                <div class="text-[11px] text-gray-500">
+                    * 支持包含 Tailwind CSS、FontAwesome 和 JS 逻辑的单文件 HTML 源码。
+                </div>
+                <div class="flex space-x-3">
+                    <button onclick="previewLocal()" class="bg-white/5 hover:bg-white/10 border border-white/10 text-white font-bold py-2.5 px-6 rounded-full shadow-lg transition-all duration-300 transform active:scale-95 text-xs">
+                        <i class="fas fa-eye mr-1.5"></i> 实时预览网页
+                    </button>
+                    <button onclick="generateLink()" class="bg-military-accent text-military-dark hover:bg-white hover:text-military-dark font-bold py-2.5 px-8 rounded-full shadow-lg transition-all duration-300 transform active:scale-95 text-xs glow-btn">
+                        <i class="fas fa-rocket mr-1.5"></i> 生成 3天免费链接
+                    </button>
+                </div>
+            </div>
+
+            <!-- Local Live Preview Container -->
+            <div id="local-preview-box" class="hidden space-y-2.5 pt-4 border-t border-white/5">
+                <label class="block text-xs font-bold text-gray-400 flex items-center">
+                    <i class="fas fa-desktop mr-1.5 text-military-accent"></i> 实时预览效果 (下方为实时渲染结果)：
+                </label>
+                <div class="w-full h-[450px] bg-white rounded-xl overflow-hidden border border-white/10">
+                    <iframe id="local-preview-frame" class="w-full h-full border-0" sandbox="allow-scripts allow-same-origin allow-popups"></iframe>
+                </div>
+            </div>
+
+            <!-- Result Box (Hidden by default) -->
+            <div id="result-box" class="hidden p-5 bg-black/50 border border-military-accent/20 rounded-xl space-y-4 animate-fade-in">
+                <div class="flex justify-between items-center pb-2 border-b border-white/5">
+                    <span class="text-xs font-bold text-white flex items-center">
+                        <i class="fas fa-check-circle text-military-accent mr-1.5"></i> 链接生成成功！
+                    </span>
+                    <span class="text-[9px] bg-red-500/20 text-red-400 px-2 py-0.5 rounded border border-red-500/30">
+                        有效期：72 小时
+                    </span>
+                </div>
+                
+                <div class="flex items-center space-x-2 bg-black/60 px-4 py-2.5 rounded-xl border border-white/10 w-full justify-between">
+                    <input type="text" id="preview-url" class="bg-transparent text-xs text-gray-300 w-full font-mono focus:outline-none select-all" readonly>
+                    <button onclick="copyLink()" class="text-xs bg-military-accent text-military-dark px-4 py-1.5 rounded-full hover:bg-white transition-all font-bold shrink-0">
+                        <i class="fas fa-copy mr-1"></i>复制链接
+                    </button>
+                </div>
+
+                <p class="text-[10px] text-gray-500 leading-relaxed">
+                    💡 <strong>提示</strong>：将复制的链接发送给任何人，他们均可直接在手机/电脑浏览器中访问预览您设计的网页。3 天后页面会自动锁定过期。
+                </p>
+            </div>
+        </div>
+
+        <!-- DeepSeek Tutorial Section -->
+        <section class="glass-card p-6 md:p-8 rounded-2xl border border-white/5 space-y-6">
+            <div class="border-b border-white/5 pb-3">
+                <h3 class="text-base font-bold text-white flex items-center">
+                    <i class="fas fa-book-open text-military-accent mr-2"></i> 💡 玩转指南：如何在 DeepSeek 生成网页并在此托管？
+                </h3>
+                <p class="text-[11px] text-gray-500 mt-1">跟着以下 4 步走，零基础小白也能在 1 分钟内发布专属的精美网页。</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-5">
+                <!-- Step 1 -->
+                <div class="space-y-2 relative">
+                    <div class="w-7 h-7 rounded-full bg-military-accent/10 text-military-accent border border-military-accent/20 flex items-center justify-center text-xs font-extrabold">1</div>
+                    <h5 class="text-xs font-bold text-white">前往 DeepSeek</h5>
+                    <p class="text-[11px] text-gray-400 leading-relaxed">
+                        打开 <a href="https://chat.deepseek.com" target="_blank" class="text-military-accent hover:underline font-semibold">chat.deepseek.com</a> 并登录，进入对话界面。
+                    </p>
+                </div>
+
+                <!-- Step 2 -->
+                <div class="space-y-2">
+                    <div class="w-7 h-7 rounded-full bg-military-accent/10 text-military-accent border border-military-accent/20 flex items-center justify-center text-xs font-extrabold">2</div>
+                    <h5 class="text-xs font-bold text-white">发送指令 (Prompt)</h5>
+                    <p class="text-[11px] text-gray-400 leading-relaxed">
+                        发送您的网页需求。建议直接复制下方精心调优过的**“高颜值网页生成提示词”**：
+                    </p>
+                </div>
+
+                <!-- Step 3 -->
+                <div class="space-y-2">
+                    <div class="w-7 h-7 rounded-full bg-military-accent/10 text-military-accent border border-military-accent/20 flex items-center justify-center text-xs font-extrabold">3</div>
+                    <h5 class="text-xs font-bold text-white">复制 HTML 源码</h5>
+                    <p class="text-[11px] text-gray-400 leading-relaxed">
+                        等待 DeepSeek 回答完毕，点击代码框右上角的 <strong>“复制” (Copy)</strong> 按钮。
+                    </p>
+                </div>
+
+                <!-- Step 4 -->
+                <div class="space-y-2">
+                    <div class="w-7 h-7 rounded-full bg-military-accent/10 text-military-accent border border-military-accent/20 flex items-center justify-center text-xs font-extrabold">4</div>
+                    <h5 class="text-xs font-bold text-white">在此粘贴并发布</h5>
+                    <p class="text-[11px] text-gray-400 leading-relaxed">
+                        返回本站，选择 <strong>「手动粘贴代码」</strong>，粘贴并点击一键生成，即可分享给任何人！
+                    </p>
+                </div>
+            </div>
+
+            <!-- Interactive Scenario Prompts Generator -->
+            <div class="space-y-4 pt-4 border-t border-white/5">
+                <div class="flex justify-between items-center flex-wrap gap-2">
+                    <span class="text-xs font-bold text-white flex items-center">
+                        <i class="fas fa-magic text-military-accent mr-1.5 animate-pulse"></i> 💡 玩转各类场景：点击下方按钮复制优化提示词去 DeepSeek
+                    </span>
+                </div>
+                
+                <!-- Tab Categories -->
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                    <button onclick="switchPromptTab('tab-lead')" id="tab-btn-lead" class="py-2.5 px-3 bg-military-accent text-military-dark rounded-xl text-[11px] font-bold transition-all border border-military-accent flex items-center justify-center">
+                        <i class="fas fa-user-plus mr-1.5"></i> 微信私域引流卡
+                    </button>
+                    <button onclick="switchPromptTab('tab-landing')" id="tab-btn-landing" class="py-2.5 px-3 bg-white/5 text-gray-400 hover:text-white rounded-xl text-[11px] font-bold transition-all border border-white/5 flex items-center justify-center">
+                        <i class="fas fa-book mr-1.5"></i> 电子书/产品落地页
+                    </button>
+                    <button onclick="switchPromptTab('tab-tool')" id="tab-btn-tool" class="py-2.5 px-3 bg-white/5 text-gray-400 hover:text-white rounded-xl text-[11px] font-bold transition-all border border-white/5 flex items-center justify-center">
+                        <i class="fas fa-hourglass-half mr-1.5"></i> 倒计时/互动工具
+                    </button>
+                    <button onclick="switchPromptTab('tab-resume')" id="tab-btn-resume" class="py-2.5 px-3 bg-white/5 text-gray-400 hover:text-white rounded-xl text-[11px] font-bold transition-all border border-white/5 flex items-center justify-center">
+                        <i class="fas fa-id-badge mr-1.5"></i> 个人精美简历页
+                    </button>
+                </div>
+
+                <!-- Template Container -->
+                <div class="bg-black/50 p-4 rounded-xl border border-white/10 space-y-3">
+                    <div class="flex justify-between items-center">
+                        <span id="prompt-title-display" class="text-[11px] font-bold text-military-accent">场景：微信私域引流卡</span>
+                        <button onclick="copyCurrentTabPrompt()" class="text-[10px] bg-military-accent/15 hover:bg-military-accent text-military-accent hover:text-military-dark px-2.5 py-1.5 rounded border border-military-accent/35 font-bold transition-all active:scale-95 glow-btn">
+                            <i class="fas fa-copy mr-1"></i>复制此模板提示词
+                        </button>
+                    </div>
+                    <div id="prompt-template-display" class="bg-black/60 p-3 rounded-lg border border-white/5 font-mono text-[10.5px] text-gray-400 select-all leading-relaxed whitespace-pre-wrap"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Membership & Permanent Hosting Info -->
+        <section id="member-info" class="bg-gradient-to-r from-military via-military-dark to-black border border-military-border/30 rounded-2xl p-6 md:p-8 text-center relative overflow-hidden">
+            <div class="absolute inset-0 bg-[radial-gradient(rgba(255,215,0,0.02)_1px,transparent_1px)] [background-size:15px_15px]"></div>
+            
+            <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-military-accent/15 text-military-accent border border-military-accent/25 mb-4">
+                <i class="fas fa-crown mr-1.5 text-military-accent"></i> 超级个体专属服务 (Permanent Hosting)
+            </span>
+            <h2 class="text-xl md:text-2xl font-extrabold mb-4 text-white glow-text-gold">
+                需要长期托管与专属域名？
+            </h2>
+            <p class="mb-6 opacity-90 max-w-xl mx-auto text-xs md:text-sm text-gray-300 leading-relaxed">
+                想让您用 AI 写的网页/小程序拥有<strong>永久访问权限</strong>，或者绑定诸如 <code class="text-military-accent">name.junshen.top</code> 的个性化二级域名？
+            </p>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-2xl mx-auto mb-6 text-left">
+                <div class="bg-black/30 p-4 rounded-xl border border-white/5 space-y-1.5">
+                    <h5 class="text-xs font-bold text-white"><i class="fas fa-check-circle text-military-accent mr-1.5"></i> 永久发布不失效</h5>
+                    <p class="text-[10.5px] text-gray-500">解除 72 小时限制，代码直接部署到全球 CDN，页面加载速度提升 5 倍。</p>
+                </div>
+                <div class="bg-black/30 p-4 rounded-xl border border-white/5 space-y-1.5">
+                    <h5 class="text-xs font-bold text-white"><i class="fas fa-link text-military-accent mr-1.5"></i> 独立简短域名</h5>
+                    <p class="text-[10.5px] text-gray-500">支持绑定您的个人简短链接，摆脱长后缀 URL，方便自媒体及朋友圈传播。</p>
+                </div>
+            </div>
+
+            <!-- Claim Box -->
+            <div class="bg-black/40 p-5 rounded-xl border border-white/10 max-w-xl mx-auto flex flex-col items-center">
+                <img src="erweima2.jpg" alt="微信二维码" class="w-24 h-24 rounded-lg mb-3 shadow-lg">
+                <span class="text-xs text-gray-400 mb-3">
+                    扫码或一键复制微信号，联系老王队长升级会员：
+                </span>
+                <div class="flex items-center space-x-2 bg-black/60 px-4 py-2 rounded-full border border-white/10 w-full max-w-sm justify-between">
+                    <span class="text-sm font-bold text-white tracking-wider font-mono select-all" id="wechat-id">vip20213456</span>
+                    <button onclick="copyWeChat()" class="text-xs bg-military-accent text-military-dark px-3 py-1.5 rounded-full hover:bg-white hover:text-military-dark transition-all duration-200 font-bold active:scale-95 glow-btn">
+                        一键复制微信号
+                    </button>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Toast Component -->
+    <div id="toast" class="fixed top-6 left-1/2 transform -translate-x-1/2 bg-military-accent text-military-dark px-6 py-3.5 rounded-full font-bold shadow-2xl z-[100] opacity-0 transition-opacity duration-300 pointer-events-none text-center text-xs border border-military">
+        🎉 成功复制微信号，快去微信搜索添加吧！
+    </div>
+
+    <!-- Footer Section -->
+    <footer class="bg-military-dark text-gray-500 py-12 text-center text-xs border-t border-white/5">
+        <div class="max-w-6xl mx-auto px-4">
+            <p>&copy; 2026 老王队长 - 从军官到创业者的转型之路</p>
+        </div>
+    </footer>
+
+    <script>
+        function cleanHtmlCode(code) {
+            let cleaned = code.trim();
+            // Remove markdown code blocks if the user copied from chat output format
+            if (cleaned.startsWith('```html')) {
+                cleaned = cleaned.replace(/^```html/, '').replace(/```$/, '').trim();
+            } else if (cleaned.startsWith('```')) {
+                cleaned = cleaned.replace(/^```/, '').replace(/```$/, '').trim();
+            }
+            return cleaned;
+        }
+
+        function previewLocal() {
+            const rawCode = document.getElementById('html-code').value.trim();
+            if (!rawCode) {
+                alert('请先粘贴 HTML 代码！');
+                return;
+            }
+
+            const code = cleanHtmlCode(rawCode);
+            const previewBox = document.getElementById('local-preview-box');
+            const iframe = document.getElementById('local-preview-frame');
+
+            previewBox.classList.remove('hidden');
+            iframe.srcdoc = code;
+
+            // Scroll to preview area
+            previewBox.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // UTF-8 to Base64 (supporting Unicode characters)
+        function utoa(str) {
+            return window.btoa(unescape(encodeURIComponent(str)));
+        }
+
+        function generateLinkFromCode(code) {
+            const timestamp = Date.now();
+            try {
+                const encodedCode = utoa(code);
+                
+                // Get base URL directly using window.location.origin
+                const baseDir = window.location.origin;
+                // If it is cleanUrls, preview.html becomes just /preview
+                const previewUrl = `${baseDir}/preview#t=${timestamp}&c=${encodedCode}`;
+                
+                document.getElementById('preview-url').value = previewUrl;
+                document.getElementById('result-box').classList.remove('hidden');
+                document.getElementById('result-box').scrollIntoView({ behavior: 'smooth' });
+            } catch (err) {
+                alert('编码生成失败，请检查是否贴入非标准格式文本。');
+            }
+        }
+
+        function generateLink() {
+            const rawCode = document.getElementById('html-code').value.trim();
+            if (!rawCode) {
+                alert('请先粘贴 HTML 代码！');
+                return;
+            }
+            const code = cleanHtmlCode(rawCode);
+            // Put cleaned code back in textarea
+            document.getElementById('html-code').value = code;
+            generateLinkFromCode(code);
+        }
+
+        function copyLink() {
+            const urlInput = document.getElementById('preview-url');
+            urlInput.select();
+            document.execCommand('copy');
+            showToastWithMessage('🎉 预览链接已成功复制，快去发给别人吧！');
+        }
+
+        function copyWeChat() {
+            const wechatId = document.getElementById('wechat-id').innerText;
+            navigator.clipboard.writeText(wechatId).then(() => {
+                showToastWithMessage('🎉 微信复制成功，请添加老王沟通域名托管！');
+            }).catch(err => {
+                const input = document.createElement('input');
+                input.value = wechatId;
+                document.body.appendChild(input);
+                input.select();
+                document.execCommand('copy');
+                document.body.removeChild(input);
+                showToastWithMessage('🎉 微信复制成功，请添加老王沟通域名托管！');
+            });
+        }
+
+        const promptTemplates = {
+            'tab-lead': {
+                title: '场景：微信私域引流卡',
+                text: `请帮我写一个精致高颜值的单文件 HTML 网页。
+要求：
+1. 页面主题为：个人微信私域引流主页，用于吸引自媒体粉丝添加微信好友。
+2. 包含这些内容：一个精致的个人磨砂卡片头像与名字（老王）、“从军官到创业者的转型之路”IP介绍标签、主攻业务清单（个人IP陪跑/自动化工具咨询）、以及显眼的“扫码加微信”二维码图片占位符与一键复制微信号（vip20213456）按钮，点击能弹出提示“微信复制成功！”。
+3. 样式极力追求高阶质感：使用 Tailwind CSS 引入，采用暗黑奢金（#ffd700）微发光风格，加上毛玻璃卡片面板，搭配 FontAwesome 矢量图标。
+4. 拥有响应式布局，完美适配手机端（优先）与电脑端，并加上流畅的悬停缩放或渐变动效。
+5. 只返回单个 HTML 源码文件，不要做任何 markdown 代码块以外的解释。`
+            },
+            'tab-landing': {
+                title: '场景：电子书/产品落地页',
+                text: `请帮我写一个精致高颜值的单文件 HTML 网页。
+要求：
+1. 页面主题为：一本名为《一人企业自动化提效工具箱》的电子书产品销售与免费赠送落地页。
+2. 包含这些内容：电子书的精美 3D 图书封面卡片占位、书籍卖点介绍（30+AI效率工具/全套提示词模板/冷启动方法论）、三个核心痛点展示（缺乏工具沉淀/不知道如何闭环）、以及“立即免费领取 PDF”的醒目按钮（点击后弹出提示“请添加微信：vip20213456 免费获取电子书PDF”）。
+3. 样式极力追求高阶质感：使用 Tailwind CSS 引入，采用墨绿加金黄（军绿主题）配色方案，配以磨砂玻璃质感、微发光字和高对比度边框。
+4. 拥有响应式布局，完美适配手机端与电脑端，并加上流畅的悬停缩放或渐变动效。
+5. 只返回单个 HTML 源码文件，不要做任何 markdown 代码块以外的解释。`
+            },
+            'tab-tool': {
+                title: '场景：倒计时/互动工具',
+                text: `请帮我写一个精致高颜值的单文件 HTML 网页。
+要求：
+1. 页面主题为：新品限时首发倒计时网页。
+2. 包含这些内容：顶部写着“老王队长新品首发”，中间是具有动效的“天、小时、分钟、秒”倒计时器（用 JS 编写倒计时截止到今晚 24 点并循环倒数），倒计时卡片使用微发光边框。底部有“限时加入合伙人，加微信: vip20213456”的文字提示。
+3. 样式极力追求高阶质感：使用 Tailwind CSS 引入，采用酷炫暗黑色加科技蓝发光渐变背景，磨砂玻璃卡片面板，配合 FontAwesome 图标。
+4. 拥有响应式布局，完美适配手机端与电脑端，并加上流畅的悬停缩放或渐变动效。
+5. 只返回单个 HTML 源码文件，不要做任何 markdown 代码块以外的解释。`
+            },
+            'tab-resume': {
+                title: '场景：个人精美简历页',
+                text: `请帮我写一个精致高颜值的单文件 HTML 网页。
+要求：
+1. 页面主题为：超级个体/独立开发者个人线上简历与作品集网页。
+2. 包含这些内容：顶部个人高清头像（带微发光呼吸灯效果）、名字与职业标签（老王队长 | 自动化架构师）、个人成长故事时间轴（军旅生涯 ➔ 首次创业 ➔ AI提效合伙人）、精选项目成果展示网格（带 hover 悬停放大与阴影扩展）、底部带“联系合作/微信: vip20213456”按钮。
+3. 样式极力追求高阶质感：使用 Tailwind CSS 引入，采用暗灰到纯黑的渐变背景，点缀金色主调，磨砂玻璃质感，搭配 FontAwesome 矢量图标。
+4. 拥有响应式布局，完美适配手机端与电脑端，并加上流畅的悬停缩放或渐变动效。
+5. 只返回单个 HTML 源码文件，不要做任何 markdown 代码块以外的解释。`
+            }
+        };
+
+        let currentActiveTab = 'tab-lead';
+
+        function switchPromptTab(tabKey) {
+            currentActiveTab = tabKey;
+            
+            // Re-render button classes
+            const tabs = ['tab-lead', 'tab-landing', 'tab-tool', 'tab-resume'];
+            tabs.forEach(key => {
+                const btn = document.getElementById(`tab-btn-${key.replace('tab-', '')}`);
+                if (key === tabKey) {
+                    btn.className = "py-2.5 px-3 bg-military-accent text-military-dark rounded-xl text-[11px] font-bold transition-all border border-military-accent flex items-center justify-center";
+                } else {
+                    btn.className = "py-2.5 px-3 bg-white/5 text-gray-400 hover:text-white rounded-xl text-[11px] font-bold transition-all border border-white/5 flex items-center justify-center";
+                }
+            });
+
+            // Display text
+            document.getElementById('prompt-title-display').innerText = promptTemplates[tabKey].title;
+            document.getElementById('prompt-template-display').innerText = promptTemplates[tabKey].text;
+        }
+
+        function copyCurrentTabPrompt() {
+            const promptText = promptTemplates[currentActiveTab].text;
+            navigator.clipboard.writeText(promptText).then(() => {
+                showToastWithMessage('🎉 场景提示词复制成功！快去 DeepSeek 提问吧！');
+            }).catch(err => {
+                const input = document.createElement('textarea');
+                input.value = promptText;
+                document.body.appendChild(input);
+                input.select();
+                document.execCommand('copy');
+                document.body.removeChild(input);
+                showToastWithMessage('🎉 场景提示词复制成功！快去 DeepSeek 提问吧！');
+            });
+        }
+
+        // Initialize template on page load
+        window.onload = function() {
+            switchPromptTab('tab-lead');
+        };
+
+        function showToastWithMessage(message) {
+            const toast = document.getElementById('toast');
+            toast.innerText = message;
+            toast.style.opacity = '1';
+            setTimeout(() => {
+                toast.style.opacity = '0';
+            }, 3500);
+        }
+    </script>
+</body>
+
+</html>

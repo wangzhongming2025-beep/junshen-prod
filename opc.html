@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>一人企业 (OPC) 实战孵化与咨询 - 打造你的超级个体闭环 | 老王队长</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Noto+Sans+SC:wght@300;400;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Outfit', 'Noto Sans SC', 'sans-serif'],
+                    },
+                    colors: {
+                        opc: {
+                            light: '#10b981',
+                            DEFAULT: '#059669',
+                            dark: '#064e3b',
+                            accent: '#fbbf24',
+                            bg: '#020617'
+                        },
+                        military: {
+                            light: '#8da399',
+                            DEFAULT: '#4b5c53',
+                            dark: '#2f3b35',
+                            accent: '#d4af37'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #020617;
+            color: #f1f5f9;
+        }
+        .opc-grid {
+            background-size: 30px 30px;
+            background-image: 
+                linear-gradient(to right, rgba(16, 185, 129, 0.03) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(16, 185, 129, 0.03) 1px, transparent 1px);
+        }
+        .glow-card {
+            background: rgba(15, 23, 42, 0.75);
+            border: 1px solid rgba(16, 185, 129, 0.15);
+            backdrop-filter: blur(12px);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .glow-card:hover {
+            border-color: rgba(16, 185, 129, 0.45);
+            box-shadow: 0 0 20px rgba(16, 185, 129, 0.15);
+            transform: translateY(-3px);
+        }
+        .glow-text {
+            text-shadow: 0 0 10px rgba(16, 185, 129, 0.4);
+        }
+    </style>
+</head>
+
+<body class="opc-grid pb-20 md:pb-0">
+
+    <!-- Top Navigation Bar -->
+    <nav class="bg-slate-900/90 text-white py-4 px-6 sticky top-0 z-40 border-b border-opc-light/10 backdrop-blur-md">
+        <div class="max-w-6xl mx-auto flex justify-between items-center">
+            <a href="index.html" class="flex items-center space-x-2 text-white hover:text-opc-light transition-colors">
+                <i class="fas fa-arrow-left"></i>
+                <span class="font-bold">返回主页</span>
+            </a>
+            <div class="text-lg font-bold tracking-wider text-opc-light glow-text">
+                <i class="fas fa-user-tie mr-2"></i>一人企业 (OPC) 咨询
+            </div>
+            <a href="#contact" class="bg-opc-light text-white px-4 py-1.5 rounded-full font-bold text-sm hover:bg-emerald-600 transition-all shadow-[0_0_15px_rgba(16,185,129,0.3)]">
+                预约咨询
+            </a>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <header class="text-center py-20 px-4 relative overflow-hidden bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-emerald-950/20 via-opc-bg to-opc-bg">
+        <div class="max-w-3xl mx-auto relative z-10">
+            <span class="bg-opc-light/10 text-opc-light border border-opc-light/30 text-xs px-3.5 py-1 rounded-full font-semibold tracking-wider uppercase mb-4 inline-block">超级个体 · 精益创业 · 自动化工作流</span>
+            <h1 class="text-3xl md:text-5xl font-bold mb-6 tracking-wide leading-tight text-white glow-text">一人企业 (OPC) 落地闭环</h1>
+            <p class="text-base md:text-lg font-light text-slate-400 max-w-2xl mx-auto leading-relaxed">
+                一人企业（One Person Company）并不是孤军奋战。它是利用 AI 辅助、云端托管和低代码自动化工作流，将创始人个人包装成一个闭环商业系统。以一当百，用最小阻力开启你的副业和数字化企业闭环。
+            </p>
+        </div>
+    </header>
+
+    <!-- Core Services/Consulting -->
+    <main class="max-w-6xl mx-auto px-4 py-8">
+        <section class="mb-16">
+            <h2 class="text-2xl md:text-3xl font-bold text-center text-white mb-12 glow-text">
+                我们的 OPC 孵化板块
+            </h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- Service 1 -->
+                <div class="glow-card p-8 rounded-2xl">
+                    <div class="w-12 h-12 rounded-xl bg-opc-light/10 text-opc-light flex items-center justify-center text-2xl mb-6 border border-opc-light/20">
+                        <i class="fas fa-lightbulb"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-white mb-3">1. 个人商业闭环设计</h3>
+                    <p class="text-slate-400 text-sm leading-relaxed">
+                        梳理你的个人特长、职业经历和变现资源。规划轻量化MVP产品、设计流量漏斗和高客单价服务，完成你的第一条冷启动现金流。
+                    </p>
+                </div>
+                <!-- Service 2 -->
+                <div class="glow-card p-8 rounded-2xl">
+                    <div class="w-12 h-12 rounded-xl bg-opc-light/10 text-opc-light flex items-center justify-center text-2xl mb-6 border border-opc-light/20">
+                        <i class="fas fa-project-diagram"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-white mb-3">2. AI 自动化工作流搭建</h3>
+                    <p class="text-slate-400 text-sm leading-relaxed">
+                        利用 AI 工具链自动生成内容、自动接单、自动处理基础客服，搭配自动化工具将你每天的运营时间压缩在 1 小时内。
+                    </p>
+                </div>
+                <!-- Service 3 -->
+                <div class="glow-card p-8 rounded-2xl">
+                    <div class="w-12 h-12 rounded-xl bg-opc-light/10 text-opc-light flex items-center justify-center text-2xl mb-6 border border-opc-light/20">
+                        <i class="fas fa-tools"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-white mb-3">3. 一人企业必备工具栈</h3>
+                    <p class="text-slate-400 text-sm leading-relaxed">
+                        带你挑选、配置并熟练运用适合超级个体的核心软件（No-code、云服务、AI 生成器等），实现零代码或低代码高效率运营。
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Solopreneur Philosophy -->
+        <section class="mb-16 bg-gradient-to-r from-emerald-950/20 to-slate-900/40 border border-opc-light/10 rounded-3xl p-8 md:p-12">
+            <h2 class="text-2xl md:text-3xl font-bold text-center text-white mb-10 glow-text">一人企业核心运营法则</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
+                <div>
+                    <div class="text-opc-accent text-3xl mb-3"><i class="fas fa-compress-arrows-alt"></i></div>
+                    <h4 class="font-bold text-white mb-1">精益求精，保持极简</h4>
+                    <p class="text-xs text-slate-400">绝不在初期雇人或租用昂贵的办公室。所有的流程以“用最少的工具实现闭环”为原则，把风险降到最低。</p>
+                </div>
+                <div>
+                    <div class="text-opc-accent text-3xl mb-3"><i class="fas fa-sync"></i></div>
+                    <h4 class="font-bold text-white mb-1">自动化大于人工</h4>
+                    <p class="text-xs text-slate-400">凡是能被机器或者 AI 替代的，绝不用人工。通过设置定时脚本、自动邮件漏斗，实现系统的全天候被动运转。</p>
+                </div>
+                <div>
+                    <div class="text-opc-accent text-3xl mb-3"><i class="fas fa-piggy-bank"></i></div>
+                    <h4 class="font-bold text-white mb-1">高现金流与即时变现</h4>
+                    <p class="text-xs text-slate-400">只做能在短期内产生高额现金流或者有高溢价的服务。不做研发周期过长、变现路径模糊的产品。</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Contact Section -->
+        <section id="contact" class="bg-gradient-to-br from-slate-900 to-emerald-950/30 border border-opc-light/20 rounded-3xl p-8 md:p-12 text-center shadow-[0_0_50px_rgba(16,185,129,0.05)]">
+            <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-opc-light/10 text-opc-light border border-opc-light/30 mb-4 shadow-[0_0_10px_rgba(16,185,129,0.1)]">
+                <i class="fas fa-handshake-angle mr-1.5 animate-pulse"></i> 专属福利 (Limited Benefit)
+            </span>
+            <h2 class="text-2xl md:text-3xl font-bold mb-4 text-white glow-text">预约 15 分钟免费“一人企业”商业与提效诊断</h2>
+            <p class="text-slate-400 text-sm max-w-xl mx-auto mb-8 leading-relaxed">
+                添加老王队长微信，即可免费获取一次 1对1 语音诊断，帮你梳理业务变现逻辑、配置最省钱的AI工具栈、跑通一人企业商业闭环。
+            </p>
+            <div class="flex flex-col md:flex-row justify-center items-center gap-8">
+                <div class="bg-white/5 p-4 rounded-xl border border-opc-light/10 w-48">
+                    <img src="erweima2.jpg" alt="微信二维码" class="w-36 h-36 mx-auto rounded-lg mb-2">
+                    <span class="text-xs text-slate-400">微信扫码联系</span>
+                </div>
+                <div class="text-left flex flex-col justify-center space-y-4">
+                    <div>
+                        <div class="text-xs text-slate-400">老王队长微信号</div>
+                        <div class="text-lg font-bold text-opc-light tracking-wider" id="wechat-opc">vip20213456</div>
+                    </div>
+                    <button onclick="copyWeChatId()" class="bg-opc-light text-white hover:bg-emerald-600 font-bold py-2.5 px-6 rounded-full shadow-[0_0_20px_rgba(16,185,129,0.2)] transition-all active:scale-95 text-sm">
+                        <i class="fas fa-copy mr-1"></i>复制微信号直接添加
+                    </button>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Toast -->
+    <div id="toast" class="fixed top-5 left-1/2 transform -translate-x-1/2 bg-opc-light text-white px-6 py-3 rounded-full font-bold shadow-2xl z-[100] opacity-0 transition-opacity duration-300 pointer-events-none text-center text-sm border border-opc-light">
+        🎉 成功复制微信号，快去微信搜索添加吧！
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-slate-900 text-gray-500 py-8 text-center text-sm border-t border-opc-light/10">
+        <div class="max-w-6xl mx-auto px-4">
+            <p>&copy; 2026 老王队长 - 从军官到创业者的转型之路</p>
+            <p class="mt-2 text-opc-light/60">人生需要挑战，行动创造可能</p>
+        </div>
+    </footer>
+
+    <script>
+        function copyWeChatId() {
+            const wechatId = document.getElementById('wechat-opc').innerText;
+            navigator.clipboard.writeText(wechatId).then(() => {
+                showToast();
+            }).catch(err => {
+                const input = document.createElement('input');
+                input.value = wechatId;
+                document.body.appendChild(input);
+                input.select();
+                document.execCommand('copy');
+                document.body.removeChild(input);
+                showToast();
+            });
+        }
+
+        function showToast() {
+            const toast = document.getElementById('toast');
+            toast.style.opacity = '1';
+            setTimeout(() => {
+                toast.style.opacity = '0';
+            }, 3000);
+        }
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,742 @@
+d:\xwechat_files\bbrs88_a927\temp\RWTemp\2026-01\cbc41a5839142859987f0e2c7935a49d.jpg<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>单词问答游戏</title>
+    <style>
+        body {
+            font-family: 'Microsoft YaHei', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin: 0;
+            padding: 20px;
+            color: #333;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        h1 {
+            text-align: center;
+            color: #667eea;
+            font-size: 36px;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+        .game-container {
+            display: flex;
+            justify-content: space-between;
+            margin: 30px 0;
+            position: relative;
+        }
+        .team-side {
+            width: 48%;
+            padding: 20px;
+            border-radius: 15px;
+            min-height: 400px;
+        }
+        .red-team {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a52 100%);
+            color: white;
+        }
+        .blue-team {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+        }
+        .team-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid rgba(255,255,255,0.3);
+        }
+        .team-name {
+            font-size: 24px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+        }
+        .team-name::before {
+            content: '👨‍🎓';
+            margin-right: 10px;
+            font-size: 28px;
+        }
+        .team-score {
+            font-size: 20px;
+            font-weight: bold;
+        }
+        .word-cards {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        .word-card {
+            background: rgba(255,255,255,0.9);
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: #333;
+            font-size: 18px;
+            font-weight: bold;
+        }
+        .word-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        .word-card.correct {
+            background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+            color: white;
+        }
+        .word-card.incorrect {
+            background: linear-gradient(135deg, #f44336 0%, #da190b 100%);
+            color: white;
+        }
+        .vs-symbol {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 48px;
+            font-weight: bold;
+            color: #ffeb3b;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+            z-index: 10;
+        }
+        .control-panel {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin: 30px 0;
+        }
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 25px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        .btn-secondary {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+        }
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(0,0,0,0.2);
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.4);
+        }
+        .modal-content {
+            background-color: #fefefe;
+            margin: 15% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            max-width: 600px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #eee;
+        }
+        .modal-header h2 {
+            margin: 0;
+            color: #667eea;
+        }
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .close:hover {
+            color: black;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #666;
+        }
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+        .form-group textarea {
+            height: 200px;
+            resize: vertical;
+        }
+        .form-row {
+            display: flex;
+            gap: 10px;
+        }
+        .form-row .form-group {
+            flex: 1;
+        }
+        .radio-group {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+        .radio-group label {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            cursor: pointer;
+        }
+        .result-modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.4);
+        }
+        .result-content {
+            background-color: #fefefe;
+            margin: 15% auto;
+            padding: 30px;
+            border: 1px solid #888;
+            width: 80%;
+            max-width: 600px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            text-align: center;
+        }
+        .result-title {
+            font-size: 32px;
+            font-weight: bold;
+            margin-bottom: 30px;
+            color: #667eea;
+        }
+        .result-stats {
+            display: flex;
+            justify-content: space-around;
+            margin: 30px 0;
+        }
+        .team-stats {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            min-width: 200px;
+        }
+        .team-stats h3 {
+            margin-top: 0;
+            color: #667eea;
+        }
+        .stats-item {
+            margin: 10px 0;
+            font-size: 16px;
+        }
+        .error-words {
+            margin: 30px 0;
+            text-align: left;
+        }
+        .error-words h3 {
+            margin-bottom: 15px;
+            color: #667eea;
+        }
+        .error-list {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+        }
+        .error-item {
+            margin: 8px 0;
+            padding: 8px;
+            background: white;
+            border-radius: 5px;
+            border-left: 4px solid #f44336;
+        }
+        .word { font-weight: bold; color: #f44336; }
+        .meaning { color: #666; margin-left: 10px; }
+        .footer {
+            margin-top: 50px;
+            text-align: center;
+            color: #666;
+            font-size: 14px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+        }
+        @media (max-width: 768px) {
+            .game-container {
+                flex-direction: column;
+                gap: 20px;
+            }
+            .team-side {
+                width: 100%;
+            }
+            .vs-symbol {
+                position: relative;
+                top: 0;
+                left: 0;
+                transform: none;
+                text-align: center;
+                margin: 10px 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎮 单词问答游戏</h1>
+        
+        <div class="control-panel">
+            <button class="btn btn-primary" onclick="openImportModal()">导入单词</button>
+            <button class="btn btn-secondary" onclick="startGame()">开始游戏</button>
+        </div>
+        
+        <div class="game-container">
+            <div class="team-side red-team">
+                <div class="team-header">
+                    <div class="team-name" id="redTeamName">红队</div>
+                    <div class="team-score" id="redTeamScore">得分: 0</div>
+                </div>
+                <div class="word-cards" id="redTeamCards">
+                    <!-- 单词卡片将通过JavaScript动态生成 -->
+                </div>
+            </div>
+            
+            <div class="vs-symbol">VS</div>
+            
+            <div class="team-side blue-team">
+                <div class="team-header">
+                    <div class="team-name" id="blueTeamName">蓝队</div>
+                    <div class="team-score" id="blueTeamScore">得分: 0</div>
+                </div>
+                <div class="word-cards" id="blueTeamCards">
+                    <!-- 单词卡片将通过JavaScript动态生成 -->
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p>📚 单词问答游戏 - 让学习更有趣！</p>
+            <p>© 2025 小学生学习工具 | 专为小学生设计的学习助手</p>
+        </div>
+    </div>
+    
+    <!-- 导入单词模态框 -->
+    <div id="importModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>导入单词</h2>
+                <span class="close" onclick="closeImportModal()">&times;</span>
+            </div>
+            <form id="importForm">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="redTeamInput">红队名称</label>
+                        <input type="text" id="redTeamInput" value="红队">
+                    </div>
+                    <div class="form-group">
+                        <label for="blueTeamInput">蓝队名称</label>
+                        <input type="text" id="blueTeamInput" value="蓝队">
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label>选择模式</label>
+                    <div class="radio-group">
+                        <label>
+                            <input type="radio" name="gameMode" value="chinese" checked>
+                            从汉语意思猜单词
+                        </label>
+                        <label>
+                            <input type="radio" name="gameMode" value="english">
+                            从单词猜汉语意思
+                        </label>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="wordCount">随机抽取 <input type="number" id="wordCount" value="5" min="1" max="20"> 个单词</label>
+                </div>
+                
+                <div class="form-group">
+                    <label for="wordList">单词列表 (格式: 单词 汉语意思，每行一个)</label>
+                    <textarea id="wordList">beneficial 有益的，有利的
+efficient 高效的，有能力的
+deliberate 故意的；仔细考虑
+hesitate 犹豫，迟疑
+maintain 维持，保持；坚持认为
+justify 证明……正当；为……辩护
+fortunate 幸运的，侥幸的
+obvious 明显的，显而易见的
+negotiate 谈判，协商
+knowledgeable 知识渊博的，有见识的</textarea>
+                </div>
+                
+                <div class="control-panel">
+                    <button type="button" class="btn btn-secondary" onclick="downloadTemplate()">下载模板</button>
+                    <button type="button" class="btn btn-primary" onclick="importWords()">确定</button>
+                    <button type="button" class="btn" style="background: #999; color: white;" onclick="closeImportModal()">取消</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <!-- 结果模态框 -->
+    <div id="resultModal" class="result-modal">
+        <div class="result-content">
+            <h2 class="result-title" id="resultTitle">平局！</h2>
+            <div class="result-stats">
+                <div class="team-stats">
+                    <h3>红队成绩</h3>
+                    <div class="stats-item">总分: <span id="redTotalScore">0</span></div>
+                    <div class="stats-item">回答数: <span id="redAnswerCount">0</span></div>
+                    <div class="stats-item">正确率: <span id="redCorrectRate">0%</span></div>
+                    <div class="stats-item">总正确率: <span id="redTotalCorrectRate">0%</span></div>
+                </div>
+                <div class="team-stats">
+                    <h3>蓝队成绩</h3>
+                    <div class="stats-item">总分: <span id="blueTotalScore">0</span></div>
+                    <div class="stats-item">回答数: <span id="blueAnswerCount">0</span></div>
+                    <div class="stats-item">正确率: <span id="blueCorrectRate">0%</span></div>
+                    <div class="stats-item">总正确率: <span id="blueTotalCorrectRate">0%</span></div>
+                </div>
+            </div>
+            <div class="error-words">
+                <h3>错题记录</h3>
+                <div class="error-list" id="errorWordsList">
+                    <!-- 错题将通过JavaScript动态生成 -->
+                </div>
+            </div>
+            <div class="control-panel">
+                <button class="btn btn-primary" onclick="closeResultModal()">关闭</button>
+                <button class="btn btn-secondary" onclick="exportResults()">导出结果</button>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        let wordList = [];
+        let gameMode = 'chinese';
+        let redTeamName = '红队';
+        let blueTeamName = '蓝队';
+        let wordCount = 5;
+        let gameState = {
+            redTeam: { score: 0, correct: 0, total: 0, errorWords: [] },
+            blueTeam: { score: 0, correct: 0, total: 0, errorWords: [] }
+        };
+        
+        function openImportModal() {
+            document.getElementById('importModal').style.display = 'block';
+        }
+        
+        function closeImportModal() {
+            document.getElementById('importModal').style.display = 'none';
+        }
+        
+        function downloadTemplate() {
+            const template = `beneficial 有益的，有利的
+efficient 高效的，有能力的
+deliberate 故意的；仔细考虑
+thesitate 犹豫，迟疑
+maintain 维持，保持；坚持认为
+justify 证明……正当；为……辩护
+fortunate 幸运的，侥幸的
+obvious 明显的，显而易见的
+negotiate 谈判，协商
+knowledgeable 知识渊博的，有见识的`;
+            
+            const blob = new Blob([template], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'word-template.txt';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+        
+        function importWords() {
+            const input = document.getElementById('wordList').value;
+            const lines = input.trim().split('\n');
+            wordList = [];
+            
+            lines.forEach(line => {
+                if (line.trim()) {
+                    const parts = line.split(/\s+/);
+                    if (parts.length >= 2) {
+                        const word = parts[0];
+                        const meaning = parts.slice(1).join(' ');
+                        wordList.push({ word, meaning });
+                    }
+                }
+            });
+            
+            gameMode = document.querySelector('input[name="gameMode"]:checked').value;
+            redTeamName = document.getElementById('redTeamInput').value || '红队';
+            blueTeamName = document.getElementById('blueTeamInput').value || '蓝队';
+            wordCount = parseInt(document.getElementById('wordCount').value) || 5;
+            
+            document.getElementById('redTeamName').textContent = redTeamName;
+            document.getElementById('blueTeamName').textContent = blueTeamName;
+            
+            closeImportModal();
+            alert('单词导入成功！');
+        }
+        
+        function startGame() {
+            if (wordList.length === 0) {
+                alert('请先导入单词！');
+                return;
+            }
+            
+            // 重置游戏状态
+            gameState = {
+                redTeam: { score: 0, correct: 0, total: 0, errorWords: [] },
+                blueTeam: { score: 0, correct: 0, total: 0, errorWords: [] }
+            };
+            
+            document.getElementById('redTeamScore').textContent = `得分: 0`;
+            document.getElementById('blueTeamScore').textContent = `得分: 0`;
+            
+            // 随机抽取单词
+            const shuffled = [...wordList].sort(() => 0.5 - Math.random());
+            const selectedWords = shuffled.slice(0, wordCount);
+            
+            // 生成红队和蓝队的单词卡片
+            generateTeamCards('redTeamCards', selectedWords, 'red');
+            generateTeamCards('blueTeamCards', selectedWords, 'blue');
+        }
+        
+        function generateTeamCards(containerId, words, teamColor) {
+            const container = document.getElementById(containerId);
+            container.innerHTML = '';
+            
+            words.forEach((wordObj, index) => {
+                const card = document.createElement('div');
+                card.className = 'word-card';
+                card.dataset.word = wordObj.word;
+                card.dataset.meaning = wordObj.meaning;
+                card.dataset.team = teamColor;
+                
+                if (gameMode === 'chinese') {
+                    card.innerHTML = wordObj.meaning;
+                } else {
+                    card.innerHTML = wordObj.word;
+                }
+                
+                card.onclick = () => checkAnswer(card);
+                container.appendChild(card);
+            });
+        }
+        
+        function checkAnswer(card) {
+            const word = card.dataset.word;
+            const meaning = card.dataset.meaning;
+            const team = card.dataset.team;
+            
+            // 这里简化处理，实际游戏中应该有输入答案的界面
+            // 这里我们假设用户点击卡片后会弹出输入框
+            const userAnswer = prompt(`请输入答案:`);
+            
+            if (userAnswer) {
+                let isCorrect = false;
+                
+                if (gameMode === 'chinese') {
+                    isCorrect = userAnswer.toLowerCase() === word.toLowerCase();
+                } else {
+                    isCorrect = userAnswer === meaning;
+                }
+                
+                if (isCorrect) {
+                    card.className = 'word-card correct';
+                    card.innerHTML += `<br><small>正确答案: ${gameMode === 'chinese' ? word : meaning}</small>`;
+                    gameState[team + 'Team'].score += 10;
+                    gameState[team + 'Team'].correct += 1;
+                } else {
+                    card.className = 'word-card incorrect';
+                    card.innerHTML += `<br><small>正确答案: ${gameMode === 'chinese' ? word : meaning}</small>`;
+                    gameState[team + 'Team'].errorWords.push({ word, meaning, userAnswer });
+                }
+                
+                gameState[team + 'Team'].total += 1;
+                
+                // 更新分数
+                document.getElementById(team + 'TeamScore').textContent = `得分: ${gameState[team + 'Team'].score}`;
+                
+                // 检查游戏是否结束
+                checkGameEnd();
+            }
+        }
+        
+        function checkGameEnd() {
+            const redTotal = gameState.redTeam.total;
+            const blueTotal = gameState.blueTeam.total;
+            
+            if (redTotal === wordCount && blueTotal === wordCount) {
+                setTimeout(showResult, 1000);
+            }
+        }
+        
+        function showResult() {
+            const redScore = gameState.redTeam.score;
+            const blueScore = gameState.blueTeam.score;
+            let resultTitle = '平局！';
+            
+            if (redScore > blueScore) {
+                resultTitle = `${redTeamName} 获胜！`;
+            } else if (blueScore > redScore) {
+                resultTitle = `${blueTeamName} 获胜！`;
+            }
+            
+            document.getElementById('resultTitle').textContent = resultTitle;
+            
+            // 填充红队数据
+            document.getElementById('redTotalScore').textContent = redScore;
+            document.getElementById('redAnswerCount').textContent = gameState.redTeam.total;
+            const redCorrectRate = gameState.redTeam.total > 0 ? Math.round((gameState.redTeam.correct / gameState.redTeam.total) * 100) : 0;
+            document.getElementById('redCorrectRate').textContent = `${redCorrectRate}%`;
+            document.getElementById('redTotalCorrectRate').textContent = `${redCorrectRate}%`;
+            
+            // 填充蓝队数据
+            document.getElementById('blueTotalScore').textContent = blueScore;
+            document.getElementById('blueAnswerCount').textContent = gameState.blueTeam.total;
+            const blueCorrectRate = gameState.blueTeam.total > 0 ? Math.round((gameState.blueTeam.correct / gameState.blueTeam.total) * 100) : 0;
+            document.getElementById('blueCorrectRate').textContent = `${blueCorrectRate}%`;
+            document.getElementById('blueTotalCorrectRate').textContent = `${blueCorrectRate}%`;
+            
+            // 填充错题记录
+            const errorWordsList = document.getElementById('errorWordsList');
+            errorWordsList.innerHTML = '';
+            
+            if (gameState.redTeam.errorWords.length > 0) {
+                const redErrors = document.createElement('div');
+                redErrors.innerHTML = `<h4>${redTeamName}错题:</h4>`;
+                gameState.redTeam.errorWords.forEach(item => {
+                    const errorItem = document.createElement('div');
+                    errorItem.className = 'error-item';
+                    errorItem.innerHTML = `<span class="word">${item.word}</span><span class="meaning">${item.meaning}</span><br><small>你的答案: ${item.userAnswer}</small>`;
+                    redErrors.appendChild(errorItem);
+                });
+                errorWordsList.appendChild(redErrors);
+            }
+            
+            if (gameState.blueTeam.errorWords.length > 0) {
+                const blueErrors = document.createElement('div');
+                blueErrors.innerHTML = `<h4>${blueTeamName}错题:</h4>`;
+                gameState.blueTeam.errorWords.forEach(item => {
+                    const errorItem = document.createElement('div');
+                    errorItem.className = 'error-item';
+                    errorItem.innerHTML = `<span class="word">${item.word}</span><span class="meaning">${item.meaning}</span><br><small>你的答案: ${item.userAnswer}</small>`;
+                    blueErrors.appendChild(errorItem);
+                });
+                errorWordsList.appendChild(blueErrors);
+            }
+            
+            if (gameState.redTeam.errorWords.length === 0 && gameState.blueTeam.errorWords.length === 0) {
+                errorWordsList.innerHTML = '<p>恭喜！没有错题！</p>';
+            }
+            
+            document.getElementById('resultModal').style.display = 'block';
+        }
+        
+        function closeResultModal() {
+            document.getElementById('resultModal').style.display = 'none';
+        }
+        
+        function exportResults() {
+            let content = `单词问答游戏结果\n`;
+            content += `===================\n`;
+            content += `游戏时间: ${new Date().toLocaleString()}\n`;
+            content += `游戏模式: ${gameMode === 'chinese' ? '从汉语意思猜单词' : '从单词猜汉语意思'}\n`;
+            content += `单词数量: ${wordCount}\n\n`;
+            
+            content += `${redTeamName}成绩:\n`;
+            content += `总分: ${gameState.redTeam.score}\n`;
+            content += `回答数: ${gameState.redTeam.total}\n`;
+            const redCorrectRate = gameState.redTeam.total > 0 ? Math.round((gameState.redTeam.correct / gameState.redTeam.total) * 100) : 0;
+            content += `正确率: ${redCorrectRate}%\n`;
+            
+            content += `${blueTeamName}成绩:\n`;
+            content += `总分: ${gameState.blueTeam.score}\n`;
+            content += `回答数: ${gameState.blueTeam.total}\n`;
+            const blueCorrectRate = gameState.blueTeam.total > 0 ? Math.round((gameState.blueTeam.correct / gameState.blueTeam.total) * 100) : 0;
+            content += `正确率: ${blueCorrectRate}%\n\n`;
+            
+            if (gameState.redTeam.errorWords.length > 0) {
+                content += `${redTeamName}错题:\n`;
+                gameState.redTeam.errorWords.forEach(item => {
+                    content += `${item.word} - ${item.meaning}\n`;
+                    content += `你的答案: ${item.userAnswer}\n\n`;
+                });
+            }
+            
+            if (gameState.blueTeam.errorWords.length > 0) {
+                content += `${blueTeamName}错题:\n`;
+                gameState.blueTeam.errorWords.forEach(item => {
+                    content += `${item.word} - ${item.meaning}\n`;
+                    content += `你的答案: ${item.userAnswer}\n\n`;
+                });
+            }
+            
+            const blob = new Blob([content], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `word-quiz-result-${new Date().getTime()}.txt`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+        
+        // 点击模态框外部关闭
+        window.onclick = function(event) {
+            const importModal = document.getElementById('importModal');
+            const resultModal = document.getElementById('resultModal');
+            
+            if (event.target === importModal) {
+                closeImportModal();
+            }
+            if (event.target === resultModal) {
+                closeResultModal();
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>〖十年原创资料包〗& 个人IP打造指南 - 老王队长[军神]</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Noto+Sans+SC:wght@300;400;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Outfit', 'Noto Sans SC', 'sans-serif'],
+                    },
+                    colors: {
+                        military: {
+                            light: '#5c7065',
+                            DEFAULT: '#2f3b35', // Deep military green
+                            dark: '#141a17',
+                            accent: '#ffd700', // Gold accent
+                            glass: 'rgba(20, 26, 23, 0.75)',
+                            border: 'rgba(255, 215, 0, 0.15)'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #0b0f0d;
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(47, 59, 53, 0.15) 0%, transparent 40%),
+                radial-gradient(circle at 90% 80%, rgba(255, 215, 0, 0.03) 0%, transparent 35%);
+        }
+        .glow-avatar {
+            box-shadow: 0 0 25px rgba(255, 215, 0, 0.3);
+        }
+        .glass-card {
+            background: rgba(20, 26, 23, 0.65);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.03);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .glass-card:hover {
+            border-color: rgba(255, 215, 0, 0.3);
+            box-shadow: 0 15px 35px rgba(255, 215, 0, 0.08);
+            transform: translateY(-4px);
+        }
+        .glow-text-gold {
+            text-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
+        }
+        .glow-btn {
+            box-shadow: 0 4px 15px rgba(255, 215, 0, 0.2);
+            transition: all 0.3s ease;
+        }
+        .glow-btn:hover {
+            box-shadow: 0 8px 25px rgba(255, 215, 0, 0.45);
+        }
+    </style>
+</head>
+
+<body class="text-gray-300 antialiased pb-24 md:pb-8">
+
+    <!-- Top Navigation Bar -->
+    <nav class="bg-military-dark/95 border-b border-white/5 py-4 px-6 sticky top-0 z-50 backdrop-blur-md">
+        <div class="max-w-6xl mx-auto flex justify-between items-center">
+            <a href="index.html" class="flex items-center space-x-2 text-white hover:text-military-accent transition-colors">
+                <i class="fas fa-arrow-left"></i>
+                <span class="font-bold">返回主页</span>
+            </a>
+            <div class="text-lg font-bold tracking-wider text-military-accent glow-text-gold">
+                <i class="fas fa-folder-open mr-2"></i>十年原创资料包
+            </div>
+            <a href="#contact-section" class="bg-military-accent text-military-dark px-4 py-1.5 rounded-full font-bold text-sm hover:bg-white transition-all">
+                联系老王
+            </a>
+        </div>
+    </nav>
+
+    <!-- Header / Hero Section -->
+    <header class="relative overflow-hidden py-16 md:py-20 border-b border-white/5 bg-gradient-to-b from-military-dark to-transparent">
+        <div class="absolute inset-0 bg-[radial-gradient(rgba(255,215,0,0.05)_1px,transparent_1px)] [background-size:20px_20px] pointer-events-none"></div>
+        <div class="max-w-6xl mx-auto px-6 text-center relative z-10 flex flex-col items-center">
+            <span class="bg-military-accent/10 text-military-accent border border-military-accent/20 text-xs px-3.5 py-1 rounded-full font-semibold tracking-wider uppercase mb-4 inline-block">
+                老王队长（军神）近 10 年副业原创入口合集
+            </span>
+            <h1 class="text-3xl md:text-5xl font-extrabold tracking-wide text-white mb-4 glow-text-gold">
+                〖十年原创资料包〗
+            </h1>
+            <p class="text-xs md:text-sm text-gray-400 max-w-2xl leading-relaxed">
+                建议收藏反复学习并实战！内容很多，建议花1个月看完一遍，找到适合自己的去实战、落地、拿到结果。
+            </p>
+        </div>
+    </header>
+
+    <!-- Main Content Container -->
+    <div class="max-w-6xl mx-auto px-4 md:px-6 py-10 space-y-10">
+
+        <!-- 1. Positioning Method Section (三节棍定位) -->
+        <div class="glass-card p-6 md:p-8 rounded-2xl border-l-4 border-military-accent relative overflow-hidden">
+            <div class="absolute -right-10 -bottom-10 w-44 h-44 bg-military-accent/5 rounded-full blur-3xl pointer-events-none"></div>
+            <h2 class="text-xl md:text-2xl font-bold text-white mb-4 flex items-center">
+                <i class="fas fa-cubes text-military-accent mr-3"></i>
+                个人 IP 定位之「三节棍方法论」
+            </h2>
+            <p class="text-gray-400 text-xs md:text-sm leading-relaxed mb-6">
+                打造个人 IP 不是无章法地自我感动，而是像挥舞“三节棍”一样，将你的灵魂、实力与外在包装进行三位一体的铁三角闭环：
+            </p>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-5 mb-6">
+                <!-- Segment 1: Hun -->
+                <div class="bg-black/40 p-5 rounded-xl border border-white/5 relative">
+                    <span class="absolute top-2 right-3 text-2xl font-bold text-military-accent/10 font-mono">01</span>
+                    <h4 class="font-bold text-white mb-2 flex items-center text-sm md:text-base">
+                        <i class="fas fa-heart text-red-400 mr-2"></i> 魂 (灵魂内核)
+                    </h4>
+                    <p class="text-[11px] text-gray-400 leading-relaxed">
+                        **你的商业愿景信念** —— 为什么而战？老王初心：“我为什么会做家长成长、个人成长、企业增长和老板 IP 陪跑？因为我自己首先是一个创业者，同时也是一个家长。在探索解决我自身问题（育儿、成长、提效）的过程中，我把这些打磨形成的经验与 AI 工具流赋能方法贡献出来，去帮助更多同样境遇的战友。”
+                    </p>
+                </div>
+
+                <!-- Segment 2: Huo -->
+                <div class="bg-black/40 p-5 rounded-xl border border-white/5 relative">
+                    <span class="absolute top-2 right-3 text-2xl font-bold text-military-accent/10 font-mono">02</span>
+                    <h4 class="font-bold text-white mb-2 flex items-center text-sm md:text-base">
+                        <i class="fas fa-hammer text-blue-400 mr-2"></i> 活儿 (交付实力)
+                    </h4>
+                    <p class="text-[11px] text-gray-400 leading-relaxed">
+                        **你具体能交付什么产品/服务** —— 核心武器：小程序定制开发、GEO地理空间信息平台、一人企业 (OPC) 咨询、AI编程实战陪跑营。
+                    </p>
+                </div>
+
+                <!-- Segment 3: Yang -->
+                <div class="bg-black/40 p-5 rounded-xl border border-white/5 relative">
+                    <span class="absolute top-2 right-3 text-2xl font-bold text-military-accent/10 font-mono">03</span>
+                    <h4 class="font-bold text-white mb-2 flex items-center text-sm md:text-base">
+                        <i class="fas fa-eye text-emerald-400 mr-2"></i> 样 (传播触点)
+                    </h4>
+                    <p class="text-[11px] text-gray-400 leading-relaxed">
+                        **你的视觉呈现与品牌触点** —— 怎么被人感知？拥有赛博军事暗黑金的个人主页、极致便捷的移动端访问体验、以及一键复制微信的顺滑沟通管道。
+                    </p>
+                </div>
+            </div>
+
+            <div class="bg-white/5 p-4 rounded-xl border border-white/5 text-xs text-gray-400 leading-relaxed">
+                💡 <strong>核心心法</strong>：课程不值钱，教程也没多大用，关键是反复练习，形成肌肉记忆。先开始，低成本试错，先赚到小钱，然后持续放大。公域输出内容，私域长期沉淀，打造信任度。
+            </div>
+
+            <!-- Sanjiegun AI Agent Skills Links -->
+            <div class="mt-5 pt-5 border-t border-white/5 space-y-3">
+                <h4 class="text-xs font-bold text-white flex items-center">
+                    <i class="fas fa-download text-military-accent mr-2"></i>
+                    三节棍 AI Agent 智能体技能库 (可直接下载导入使用)
+                </h4>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                    <a href="https://clawhub.ai/wangzhongming2025-beep/sanjiegun" target="_blank" class="bg-black/30 hover:bg-black/60 p-3 rounded-lg border border-white/5 hover:border-military-accent/30 text-center transition-all group flex flex-col justify-center items-center space-y-1">
+                        <i class="fas fa-robot text-base text-military-accent group-hover:scale-110 transition-transform"></i>
+                        <span class="text-[10px] font-bold text-white">ClawHub 智能体</span>
+                        <span class="text-[9px] text-gray-500">直接在线运行启用</span>
+                    </a>
+                    <a href="https://skillhub.cloud.tencent.com/skills/sanjiegun?push_animated=1&webview_progress_bar=1&show_loading=0&theme=light" target="_blank" class="bg-black/30 hover:bg-black/60 p-3 rounded-lg border border-white/5 hover:border-military-accent/30 text-center transition-all group flex flex-col justify-center items-center space-y-1">
+                        <i class="fas fa-compass text-base text-military-accent group-hover:scale-110 transition-transform"></i>
+                        <span class="text-[10px] font-bold text-white">腾讯云 SkillHub 技能舱</span>
+                        <span class="text-[9px] text-gray-500">查阅实战技能设定</span>
+                    </a>
+                    <a href="https://github.com/wangzhongming2025-beep/antigravity-/tree/main/skills/three-section-staff" target="_blank" class="bg-black/30 hover:bg-black/60 p-3 rounded-lg border border-white/5 hover:border-military-accent/30 text-center transition-all group flex flex-col justify-center items-center space-y-1">
+                        <i class="fab fa-github text-base text-military-accent group-hover:scale-110 transition-transform"></i>
+                        <span class="text-[10px] font-bold text-white">GitHub 源码仓库</span>
+                        <span class="text-[9px] text-gray-500">直接下载源文件</span>
+                    </a>
+                </div>
+
+                <!-- Action Showcase Card instead of Iframe (CSP blocks iframe) -->
+                <div class="mt-6 bg-gradient-to-br from-military via-military-dark to-black border border-military-border/30 rounded-xl p-6 text-center relative overflow-hidden flex flex-col justify-center items-center py-8">
+                    <div class="absolute -right-10 -top-10 w-24 h-24 bg-military-accent/5 rounded-full blur-2xl pointer-events-none"></div>
+                    <div class="w-14 h-14 rounded-full bg-military-accent/15 border border-military-accent/30 flex items-center justify-center text-military-accent text-2xl mb-4 shadow-lg animate-bounce">
+                        <i class="fas fa-rocket"></i>
+                    </div>
+                    <h4 class="font-extrabold text-white mb-2 text-sm md:text-base">腾讯云「三节棍定位法」官方云端演练舱</h4>
+                    <p class="text-xs text-gray-400 max-w-md leading-relaxed mb-5">
+                        因腾讯云安全防护规则限制在第三方网页直接嵌套，请点击下方按钮直达官方演示舱，开启三节棍IP定位法的动态演练与进度追踪。
+                    </p>
+                    <a href="https://skillhub.cloud.tencent.com/skills/sanjiegun?push_animated=1&webview_progress_bar=1&show_loading=0&theme=light" target="_blank" class="px-6 py-3 rounded-lg bg-military-accent text-military-dark font-extrabold text-xs hover:bg-white transition-all glow-btn flex items-center gap-2">
+                        <i class="fas fa-external-link-alt text-sm"></i> 立即进入官方演练舱
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- 2. Dual Column: Free vs Paid Resources -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+
+            <!-- Left Column: FREE Resources -->
+            <div class="space-y-6">
+                <h2 class="text-lg font-bold text-white flex items-center px-2">
+                    <span class="w-2.5 h-2.5 bg-military-accent rounded-full mr-2.5 animate-pulse"></span>
+                    🆓 免费共享资源 (持续更新，无保留输出)
+                </h2>
+
+                <!-- Item 1: 自我产品化指南 -->
+                <div class="glass-card p-5 rounded-xl space-y-3">
+                    <div class="flex justify-between items-start">
+                        <h4 class="font-bold text-white text-sm">《自我产品化指南》</h4>
+                        <span class="text-[9px] bg-military-accent/25 text-military-accent px-2 py-0.5 rounded border border-military-accent/30">飞书文档</span>
+                    </div>
+                    <p class="text-[11px] text-gray-400 leading-relaxed">
+                        个人IP变现、做个人独一无二的产品，可以卖一辈子的核心指南，文档会持续更新到 10 万字。
+                    </p>
+                    <a href="https://ewd6lv6otf.feishu.cn/wiki/ONeAwWg02iIKMPku1kic8gVRn6b?from=from_copylink" target="_blank" class="inline-flex items-center text-[10.5px] font-semibold text-military-accent hover:underline">
+                        点击立即阅读文档 <i class="fas fa-external-link-alt ml-1.5 text-[9px]"></i>
+                    </a>
+                </div>
+
+                <!-- Item 2: 用AI快速吃透一本书 -->
+                <div class="glass-card p-5 rounded-xl space-y-3">
+                    <div class="flex justify-between items-start">
+                        <h4 class="font-bold text-white text-sm">《用AI快速吃透一本书》教程</h4>
+                        <span class="text-[9px] bg-military-accent/25 text-military-accent px-2 py-0.5 rounded border border-military-accent/30">飞书 & 视频</span>
+                    </div>
+                    <p class="text-[11px] text-gray-400 leading-relaxed">
+                        教你如何一天之内把一本书榨干，内含详细的操作图文指南与视频演示。
+                    </p>
+                    <a href="https://ewd6lv6otf.feisku.cn/wiki/VpyMwZyo6iQd05kq4qIceCKDn8g?from=from_copylink" target="_blank" class="inline-flex items-center text-[10.5px] font-semibold text-military-accent hover:underline">
+                        点击查看吃书视频与教程 <i class="fas fa-external-link-alt ml-1.5 text-[9px]"></i>
+                    </a>
+                </div>
+
+                <!-- Item 3: 超级个体搞钱心法 (Claim via WeChat) -->
+                <div class="glass-card p-5 rounded-xl space-y-3">
+                    <div class="flex justify-between items-start">
+                        <h4 class="font-bold text-white text-sm">原创电子书《超级个体搞钱心法》</h4>
+                        <span class="text-[9px] bg-white/5 text-gray-400 px-2 py-0.5 rounded border border-white/10">添加微信免费领</span>
+                    </div>
+                    <p class="text-[11px] text-gray-400 leading-relaxed">
+                        整合了这些年我在职场及部队里做过的几十个副业实操全套心法，极具参考价值。
+                    </p>
+                    <button onclick="copyWeChatAndSignal('超级个体搞钱心法')" class="text-[10.5px] font-semibold text-military-accent hover:underline text-left">
+                        点击复制微信号，添加后回复【搞钱心法】获取电子书 <i class="fas fa-copy ml-1"></i>
+                    </button>
+                </div>
+
+                <!-- Item 4: 时间管理小册子 -->
+                <div class="glass-card p-5 rounded-xl space-y-3">
+                    <div class="flex justify-between items-start">
+                        <h4 class="font-bold text-white text-sm">时间管理小册《用好业余时间，成就你的一生》</h4>
+                        <span class="text-[9px] bg-white/5 text-gray-400 px-2 py-0.5 rounded border border-white/10">添加微信免费领</span>
+                    </div>
+                    <p class="text-[11px] text-gray-400 leading-relaxed">
+                        专为业余时间多、却不知如何高效规划的职场人打造的习惯与时间效率管理小册子。
+                    </p>
+                    <button onclick="copyWeChatAndSignal('用好业余时间')" class="text-[10.5px] font-semibold text-military-accent hover:underline text-left">
+                        点击复制微信号，添加后回复【时间管理】获取电子版 <i class="fas fa-copy ml-1"></i>
+                    </button>
+                </div>
+
+                <!-- Item 5: 1分钟口播SOP -->
+                <div class="glass-card p-5 rounded-xl space-y-3">
+                    <div class="flex justify-between items-start">
+                        <h4 class="font-bold text-white text-sm">《1分钟口播 SOP 与内容创作手册》</h4>
+                        <span class="text-[9px] bg-white/5 text-gray-400 px-2 py-0.5 rounded border border-white/10">添加微信免费领</span>
+                    </div>
+                    <p class="text-[11px] text-gray-400 leading-relaxed">
+                        帮助你实现一分钟口播的无限量快速创作，掌握如何快速生产批量内容的底层SOP。
+                    </p>
+                    <button onclick="copyWeChatAndSignal('1分钟口播SOP')" class="text-[10.5px] font-semibold text-military-accent hover:underline text-left">
+                        点击复制微信号，添加后回复【口播】免费获取 <i class="fas fa-copy ml-1"></i>
+                    </button>
+                </div>
+
+                <!-- Item 6: 搞钱技能大礼包 (金山文档) -->
+                <div class="glass-card p-5 rounded-xl space-y-3">
+                    <div class="flex justify-between items-start">
+                        <h4 class="font-bold text-white text-sm">搞钱技能电子书与课程大合集</h4>
+                        <span class="text-[9px] bg-military-accent/25 text-military-accent px-2 py-0.5 rounded border border-military-accent/30">金山文档</span>
+                    </div>
+                    <p class="text-[11px] text-gray-400 leading-relaxed">
+                        老王队长帮大家整理的外部高价值资料大礼包，内含各种技能电子书、操作SOP，持续更新中。
+                    </p>
+                    <a href="https://kdocs.cn/l/cmQdzUB20NNN" target="_blank" class="inline-flex items-center text-[10.5px] font-semibold text-military-accent hover:underline">
+                        点击进入金山云盘下载 <i class="fas fa-external-link-alt ml-1.5 text-[9px]"></i>
+                    </a>
+                </div>
+
+            </div>
+
+            <!-- Right Column: PAID Resources -->
+            <div class="space-y-6">
+                <h2 class="text-lg font-bold text-white flex items-center px-2">
+                    <span class="w-2.5 h-2.5 bg-military-accent rounded-full mr-2.5 animate-pulse"></span>
+                    💰 付费精进资源与社群 (按需选择)
+                </h2>
+
+                <!-- Item 1: 深度垂直小IP -->
+                <div class="glass-card p-5 rounded-xl space-y-3">
+                    <div class="flex justify-between items-start">
+                        <h4 class="font-bold text-white text-sm">《深度垂直小IP》小专栏</h4>
+                        <span class="text-xs text-military-accent font-extrabold font-mono">19.9 元</span>
+                    </div>
+                    <p class="text-[11px] text-gray-400 leading-relaxed">
+                        适合没有突出技能、又想打造个人IP作为终身事业的人群，教你如何精准跑通垂直小IP定位。
+                    </p>
+                    <a href="https://www.xiaobot.net/p/js2024?refer=d4d7e0ef-2195-40de-8781-5ce2c91a39df" target="_blank" class="inline-flex items-center text-[10.5px] font-semibold text-military-accent hover:underline">
+                        订阅小报童专栏 <i class="fas fa-external-link-alt ml-1.5 text-[9px]"></i>
+                    </a>
+                </div>
+
+                <!-- Item 2: 超级个体经验库 -->
+                <div class="glass-card p-5 rounded-xl space-y-3">
+                    <div class="flex justify-between items-start">
+                        <h4 class="font-bold text-white text-sm">《超级个体搞钱经验库》小专栏</h4>
+                        <span class="text-xs text-military-accent font-extrabold font-mono">10 元永久</span>
+                    </div>
+                    <p class="text-[11px] text-gray-400 leading-relaxed">
+                        无论在职场还是创业，想成为超级个体的核心实操经验，高频更新，目前累计更新至1000条！
+                    </p>
+                    <a href="https://www.xiaobot.net/p/vip20213456?refer=d4d7e0ef-2195-40de-8781-5ce2c91a39df" target="_blank" class="inline-flex items-center text-[10.5px] font-semibold text-military-accent hover:underline">
+                        订阅小报童专栏 <i class="fas fa-external-link-alt ml-1.5 text-[9px]"></i>
+                    </a>
+                </div>
+
+                <!-- Item 3: 案例库知识星球 -->
+                <div class="glass-card p-5 rounded-xl space-y-3">
+                    <div class="flex justify-between items-start">
+                        <h4 class="font-bold text-white text-sm">《自媒体可复制案例库》知识星球</h4>
+                        <div class="text-right">
+                            <span class="text-xs text-military-accent font-extrabold font-mono">25 元</span>
+                            <div class="text-[8px] text-gray-500">（后续涨至500元以上）</div>
+                        </div>
+                    </div>
+                    <p class="text-[11px] text-gray-400 leading-relaxed">
+                        想做自媒体，首推公众号/视频号/小红书！老王队长专门整理了海量可无缝复制的爆款自媒体案例库。
+                    </p>
+                    <a href="https://t.zsxq.com/nfBAp" target="_blank" class="inline-flex items-center text-[10.5px] font-semibold text-military-accent hover:underline">
+                        微信扫码或点击加入星球 <i class="fas fa-external-link-alt ml-1.5 text-[9px]"></i>
+                    </a>
+                </div>
+
+                <!-- Item 4: AI副业兵团知识星球 -->
+                <div class="glass-card p-5 rounded-xl space-y-3">
+                    <div class="flex justify-between items-start">
+                        <h4 class="font-bold text-white text-sm">《Ai副业兵团》知识星球</h4>
+                        <span class="text-xs text-military-accent font-extrabold font-mono">66 元/年</span>
+                    </div>
+                    <p class="text-[11px] text-gray-400 leading-relaxed">
+                        老王队长从部队玩副业到自由职业的经验结晶，每天高频输出最新的创业思考和项目实操教程。
+                    </p>
+                    <a href="https://t.zsxq.com/964Gv" target="_blank" class="inline-flex items-center text-[10.5px] font-semibold text-military-accent hover:underline">
+                        微信扫码或点击加入星球 <i class="fas fa-external-link-alt ml-1.5 text-[9px]"></i>
+                    </a>
+                </div>
+
+                <!-- Item 5: 自我产品化一对一私教 -->
+                <div class="glass-card p-5 rounded-xl space-y-3 border border-military-accent/30 bg-military/10">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <h4 class="font-bold text-white text-sm flex items-center">
+                                《自我产品化一对一私教》 <span class="bg-red-500/20 text-red-400 text-[8px] px-1.5 py-0.5 rounded border border-red-500/30 ml-2">主打</span>
+                            </h4>
+                            <div class="text-[9px] text-gray-500 mt-1">未来三年老王队长最重要的商业产品</div>
+                        </div>
+                        <span class="text-xs text-military-accent font-extrabold font-mono">3980 元</span>
+                    </div>
+                    <p class="text-[11px] text-gray-400 leading-relaxed">
+                        一次付费，为您手把手从自身定位、优势挖掘，到闭环开发个人产品并将其卖爆，提供全流程深度扶持（价格持续上涨中）。
+                    </p>
+                    <button onclick="copyWeChatAndSignal('自我产品化私教')" class="text-[10.5px] font-semibold text-military-accent hover:underline text-left">
+                        点击复制微信，添加老王开启1对1私教评估 <i class="fas fa-copy ml-1"></i>
+                    </button>
+                </div>
+
+                <!-- Item 6: 十年合伙人计划 -->
+                <div class="glass-card p-5 rounded-xl space-y-3 border border-military-accent/40 bg-military/20">
+                    <div class="flex justify-between items-start">
+                        <h4 class="font-bold text-white text-sm">老王队长「10年合伙人计划」</h4>
+                        <span class="text-xs text-military-accent font-extrabold font-mono">1.8 万元</span>
+                    </div>
+                    <p class="text-[11px] text-gray-400 leading-relaxed">
+                        深度认可老王队长的商业模式，期望成为超级个体共同前行。入伙享有其他产品全部免费使用权，及 100% 独家分销分成权益。
+                    </p>
+                    <button onclick="copyWeChatAndSignal('10年合伙人计划')" class="text-[10.5px] font-semibold text-military-accent hover:underline text-left">
+                        点击复制微信，私信老王加入合伙人交流 <i class="fas fa-copy ml-1"></i>
+                    </button>
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- 3. Social Media & WeChat Groups Section -->
+        <section id="contact-section" class="bg-gradient-to-r from-military via-military-dark to-black border border-military-border/30 rounded-2xl p-6 md:p-8 text-center relative overflow-hidden">
+            <div class="absolute inset-0 bg-[radial-gradient(rgba(255,215,0,0.02)_1px,transparent_1px)] [background-size:15px_15px]"></div>
+            
+            <h2 class="text-xl md:text-2xl font-extrabold mb-4 text-white glow-text-gold">
+                关注老王队长自媒体 & 官方微信群
+            </h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto mb-8">
+                <!-- Group 1 -->
+                <div class="bg-black/30 p-4 rounded-xl border border-white/5 flex flex-col items-center">
+                    <i class="fab fa-weixin text-3xl text-military-accent mb-2"></i>
+                    <h4 class="font-bold text-white text-sm mb-1">官方微信群</h4>
+                    <p class="text-[10px] text-gray-500 leading-relaxed">
+                        设有免费交流群及不同门槛的付费精进群，获取高频商业思考与搞钱项目。
+                    </p>
+                </div>
+                <!-- Group 2 -->
+                <div class="bg-black/30 p-4 rounded-xl border border-white/5 flex flex-col items-center">
+                    <i class="fas fa-brain text-3xl text-military-accent mb-2"></i>
+                    <h4 class="font-bold text-white text-sm mb-1">微信公众号：价值大脑</h4>
+                    <p class="text-[10px] text-gray-500 leading-relaxed">
+                        老王队长的核心长文输出地，分享自我产品化、私域变现与超级个体案例复盘。
+                    </p>
+                </div>
+                <!-- Group 3 -->
+                <div class="bg-black/30 p-4 rounded-xl border border-white/5 flex flex-col items-center">
+                    <i class="fas fa-video text-3xl text-military-accent mb-2"></i>
+                    <h4 class="font-bold text-white text-sm mb-1">视频号：老王队长碎碎念</h4>
+                    <p class="text-[10px] text-gray-500 leading-relaxed">
+                        记录每天的短思考、AI编程工具链实战应用、一人公司创业的碎碎念。
+                    </p>
+                </div>
+            </div>
+
+            <!-- Claim Box -->
+            <div class="bg-black/40 p-6 rounded-xl border border-white/10 max-w-2xl mx-auto flex flex-col items-center">
+                <img src="erweima2.jpg" alt="微信二维码" class="w-24 h-24 rounded-lg mb-3 shadow-lg">
+                <span class="text-xs text-gray-400 mb-3">
+                    扫码或一键复制微信号添加老王队长：
+                </span>
+                <div class="flex items-center space-x-2 bg-black/60 px-4 py-2 rounded-full border border-white/10 w-full max-w-sm justify-between">
+                    <span class="text-sm font-bold text-white tracking-wider font-mono select-all" id="wechat-id">vip20213456</span>
+                    <button onclick="copyWeChat()" class="text-xs bg-military-accent text-military-dark px-3 py-1.5 rounded-full hover:bg-white hover:text-military-dark transition-all duration-200 font-bold active:scale-95 glow-btn">
+                        一键复制微信号
+                    </button>
+                </div>
+            </div>
+        </section>
+
+    </div>
+
+    <!-- Toast Component -->
+    <div id="toast" class="fixed top-6 left-1/2 transform -translate-x-1/2 bg-military-accent text-military-dark px-6 py-3.5 rounded-full font-bold shadow-2xl z-[100] opacity-0 transition-opacity duration-300 pointer-events-none text-center text-xs border border-military">
+        🎉 成功复制微信号，快去微信搜索添加吧！
+    </div>
+
+    <!-- Footer Section -->
+    <footer class="bg-military-dark text-gray-500 py-12 text-center text-xs border-t border-white/5">
+        <div class="max-w-6xl mx-auto px-4">
+            <p>&copy; 2026 老王队长 - 从军官到创业者的转型之路</p>
+            <p class="mt-2 text-gray-600">把日常积累做成习惯，积累 10 年，被动收入十万百万千万</p>
+        </div>
+    </footer>
+
+    <script>
+        function copyWeChat() {
+            const wechatId = document.getElementById('wechat-id').innerText;
+            navigator.clipboard.writeText(wechatId).then(() => {
+                showToast();
+            }).catch(err => {
+                const input = document.createElement('input');
+                input.value = wechatId;
+                document.body.appendChild(input);
+                input.select();
+                document.execCommand('copy');
+                document.body.removeChild(input);
+                showToast();
+            });
+        }
+
+        function copyWeChatAndSignal(resourceName) {
+            const wechatId = document.getElementById('wechat-id').innerText;
+            navigator.clipboard.writeText(wechatId).then(() => {
+                showToastWithMessage(`微信号已复制！添加老王后，私信发送【${resourceName}】即可免费领。`);
+            }).catch(err => {
+                const input = document.createElement('input');
+                input.value = wechatId;
+                document.body.appendChild(input);
+                input.select();
+                document.execCommand('copy');
+                document.body.removeChild(input);
+                showToastWithMessage(`微信号已复制！添加老王后，私信发送【${resourceName}】即可免费领。`);
+            });
+        }
+
+        function showToast() {
+            const toast = document.getElementById('toast');
+            toast.innerText = "🎉 成功复制微信号，快去微信搜索添加吧！";
+            toast.style.opacity = '1';
+            setTimeout(() => {
+                toast.style.opacity = '0';
+            }, 3000);
+        }
+
+        function showToastWithMessage(message) {
+            const toast = document.getElementById('toast');
+            toast.innerText = message;
+            toast.style.opacity = '1';
+            setTimeout(() => {
+                toast.style.opacity = '0';
+            }, 4500);
+        }
+    </script>
+</body>
+
+</html>

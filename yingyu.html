@@ -1,0 +1,782 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>小学单词快速背记</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  
+  <!-- Tailwind 配置 -->
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#4F46E5', // 深紫色作为主色调
+            secondary: '#F97316', // 橙色作为辅助色
+            accent: '#10B981', // 绿色作为强调色
+            light: '#F3F4F6',
+            dark: '#1F2937'
+          },
+          fontFamily: {
+            sans: ['Inter', 'system-ui', 'sans-serif'],
+          },
+        },
+      }
+    }
+  </script>
+  
+  <style type="text/tailwindcss">
+    @layer utilities {
+      .content-auto {
+        content-visibility: auto;
+      }
+      .card-shadow {
+        box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+      }
+      .text-shadow {
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+      .word-appear {
+        animation: wordAppear 0.5s ease-out forwards;
+      }
+      .flip-card {
+        perspective: 1000px;
+        transform-style: preserve-3d;
+      }
+      .flip-card-inner {
+        transition: transform 0.8s;
+        transform-style: preserve-3d;
+      }
+      .flip-card-front, .flip-card-back {
+        backface-visibility: hidden;
+      }
+      .flip-card-back {
+        transform: rotateY(180deg);
+      }
+      .flipped .flip-card-inner {
+        transform: rotateY(180deg);
+      }
+    }
+    
+    @keyframes wordAppear {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body class="bg-gradient-to-br from-light to-blue-50 min-h-screen">
+  <!-- 导航栏 -->
+  <nav class="bg-white/80 backdrop-blur-sm shadow-md fixed w-full z-50 transition-all duration-300" id="navbar">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between h-16">
+        <div class="flex items-center">
+          <a href="#" class="flex-shrink-0 flex items-center">
+            <i class="fa fa-book text-primary text-2xl mr-2"></i>
+            <span class="font-bold text-xl text-primary">单词记忆助手</span>
+          </a>
+          <div class="hidden sm:ml-6 sm:flex sm:space-x-8">
+            <a href="#home" class="border-primary text-dark px-1 pt-1 border-b-2 font-medium">首页</a>
+            <a href="#words" class="border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 px-1 pt-1 border-b-2 font-medium transition-all duration-200">单词库</a>
+            <a href="#learn" class="border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 px-1 pt-1 border-b-2 font-medium transition-all duration-200">学习模式</a>
+            <a href="#quiz" class="border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 px-1 pt-1 border-b-2 font-medium transition-all duration-200">测试</a>
+          </div>
+        </div>
+        <div class="flex items-center">
+          <button id="theme-toggle" class="p-2 rounded-full text-gray-500 hover:text-primary hover:bg-gray-100 transition-colors duration-200">
+            <i class="fa fa-moon-o"></i>
+          </button>
+          <button id="menu-toggle" class="ml-4 block sm:hidden p-2 rounded-md text-gray-500 hover:text-primary hover:bg-gray-100 focus:outline-none">
+            <i class="fa fa-bars"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+    
+    <!-- 移动端菜单 -->
+    <div class="sm:hidden hidden" id="mobile-menu">
+      <div class="px-2 pt-2 pb-3 space-y-1 bg-white/95 shadow-lg">
+        <a href="#home" class="block px-3 py-2 rounded-md text-base font-medium text-primary bg-primary/10">首页</a>
+        <a href="#words" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:bg-gray-100">单词库</a>
+        <a href="#learn" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:bg-gray-100">学习模式</a>
+        <a href="#quiz" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:bg-gray-100">测试</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- 主要内容 -->
+  <main class="pt-20 pb-16">
+    <!-- 英雄区域 -->
+    <section id="home" class="relative overflow-hidden bg-gradient-to-r from-primary/90 to-primary py-16 md:py-24">
+      <div class="absolute inset-0 bg-[url('https://picsum.photos/id/180/1200/800')] bg-cover bg-center opacity-10"></div>
+      <div class="absolute inset-0 bg-gradient-to-t from-primary to-transparent"></div>
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        <div class="text-center">
+          <h1 class="text-[clamp(2.5rem,5vw,4rem)] font-bold text-white leading-tight mb-6 text-shadow">
+            轻松掌握小学英语单词
+          </h1>
+          <p class="text-[clamp(1rem,2vw,1.25rem)] text-white/90 max-w-2xl mx-auto mb-8">
+            采用科学记忆方法，结合视觉和听觉，让孩子在趣味中快速掌握小学阶段必备英语单词。
+          </p>
+          <div class="flex flex-col sm:flex-row justify-center gap-4">
+            <a href="#words" class="inline-flex items-center justify-center px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-secondary hover:bg-secondary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-secondary transition-all duration-200 transform hover:scale-105">
+              <i class="fa fa-book mr-2"></i> 浏览单词库
+            </a>
+            <a href="#learn" class="inline-flex items-center justify-center px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-primary bg-white hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-white transition-all duration-200 transform hover:scale-105">
+              <i class="fa fa-play-circle mr-2"></i> 开始学习
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 单词库区域 -->
+    <section id="words" class="py-16 bg-white">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-12">
+          <h2 class="text-[clamp(1.5rem,3vw,2.5rem)] font-bold text-dark mb-4">精选小学单词库</h2>
+          <p class="text-gray-600 max-w-2xl mx-auto">按照年级分类，包含小学阶段必须掌握的核心词汇，每一个单词都配有发音、例句和图片帮助理解记忆。</p>
+        </div>
+        
+        <!-- 年级选择器 -->
+        <div class="flex flex-wrap justify-center gap-3 mb-10">
+          <button class="grade-btn active px-4 py-2 rounded-full bg-primary text-white font-medium shadow-sm hover:bg-primary/90 transition-all duration-200" data-grade="all">全部</button>
+          <button class="grade-btn px-4 py-2 rounded-full bg-gray-200 text-gray-700 font-medium shadow-sm hover:bg-gray-300 transition-all duration-200" data-grade="1">一年级</button>
+          <button class="grade-btn px-4 py-2 rounded-full bg-gray-200 text-gray-700 font-medium shadow-sm hover:bg-gray-300 transition-all duration-200" data-grade="2">二年级</button>
+          <button class="grade-btn px-4 py-2 rounded-full bg-gray-200 text-gray-700 font-medium shadow-sm hover:bg-gray-300 transition-all duration-200" data-grade="3">三年级</button>
+          <button class="grade-btn px-4 py-2 rounded-full bg-gray-200 text-gray-700 font-medium shadow-sm hover:bg-gray-300 transition-all duration-200" data-grade="4">四年级</button>
+          <button class="grade-btn px-4 py-2 rounded-full bg-gray-200 text-gray-700 font-medium shadow-sm hover:bg-gray-300 transition-all duration-200" data-grade="5">五年级</button>
+          <button class="grade-btn px-4 py-2 rounded-full bg-gray-200 text-gray-700 font-medium shadow-sm hover:bg-gray-300 transition-all duration-200" data-grade="6">六年级</button>
+        </div>
+        
+        <!-- 搜索框 -->
+        <div class="max-w-2xl mx-auto mb-10">
+          <div class="relative">
+            <input type="text" id="word-search" placeholder="搜索单词..." class="w-full px-4 py-3 pl-10 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all duration-200">
+            <i class="fa fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+          </div>
+        </div>
+        
+        <!-- 单词卡片网格 -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6" id="word-grid">
+          <!-- 单词卡片将通过JavaScript动态生成 -->
+        </div>
+        
+        <!-- 加载更多按钮 -->
+        <div class="text-center mt-12">
+          <button id="load-more" class="inline-flex items-center justify-center px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-primary hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-all duration-200 transform hover:scale-105">
+            <i class="fa fa-refresh mr-2"></i> 加载更多单词
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- 学习模式区域 -->
+    <section id="learn" class="py-16 bg-gradient-to-br from-blue-50 to-indigo-50">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-12">
+          <h2 class="text-[clamp(1.5rem,3vw,2.5rem)] font-bold text-dark mb-4">高效学习模式</h2>
+          <p class="text-gray-600 max-w-2xl mx-auto">采用科学的记忆方法，结合视觉、听觉和互动，帮助孩子更高效地记忆单词。</p>
+        </div>
+        
+        <!-- 学习控制区 -->
+        <div class="bg-white rounded-xl shadow-lg p-6 max-w-4xl mx-auto mb-10">
+          <div class="flex flex-col md:flex-row justify-between items-center gap-4 mb-6">
+            <div>
+              <h3 class="text-xl font-semibold text-dark mb-1">学习进度</h3>
+              <div class="w-full bg-gray-200 rounded-full h-2.5">
+                <div class="bg-primary h-2.5 rounded-full" style="width: 30%"></div>
+              </div>
+              <p class="text-sm text-gray-500 mt-1">已学习: <span class="font-medium">15</span> / 50 个单词</p>
+            </div>
+            
+            <div class="flex flex-wrap gap-3">
+              <button class="px-4 py-2 bg-gray-200 rounded-lg hover:bg-gray-300 transition-colors duration-200">
+                <i class="fa fa-volume-up mr-1"></i> 发音
+              </button>
+              <button class="px-4 py-2 bg-gray-200 rounded-lg hover:bg-gray-300 transition-colors duration-200">
+                <i class="fa fa-star-o mr-1"></i> 收藏
+              </button>
+              <button class="px-4 py-2 bg-gray-200 rounded-lg hover:bg-gray-300 transition-colors duration-200">
+                <i class="fa fa-repeat mr-1"></i> 重复
+              </button>
+            </div>
+          </div>
+          
+          <!-- 单词学习卡片 -->
+          <div class="flip-card w-full h-[300px] md:h-[400px] mb-6 cursor-pointer" id="learning-card">
+            <div class="flip-card-inner w-full h-full relative">
+              <div class="flip-card-front w-full h-full absolute bg-white rounded-xl shadow-lg border border-gray-100 flex flex-col items-center justify-center p-6">
+                <div class="text-sm text-gray-500 mb-2">三年级 · 动物类</div>
+                <h3 class="text-[clamp(2rem,5vw,3rem)] font-bold text-primary mb-4 word-appear">elephant</h3>
+                <p class="text-lg text-gray-700">点击卡片查看释义</p>
+                <div class="mt-auto">
+                  <span class="text-xs text-gray-400">15 / 50</span>
+                </div>
+              </div>
+              <div class="flip-card-back w-full h-full absolute bg-white rounded-xl shadow-lg border border-gray-100 flex flex-col items-center justify-center p-6">
+                <div class="text-sm text-gray-500 mb-2">三年级 · 动物类</div>
+                <h3 class="text-[clamp(2rem,5vw,3rem)] font-bold text-primary mb-2 word-appear">elephant</h3>
+                <p class="text-lg text-gray-700 font-medium mb-4">大象</p>
+                <p class="text-gray-600 italic mb-6">"An elephant has a long nose called a trunk."</p>
+                <div class="bg-gray-100 rounded-lg overflow-hidden w-full max-w-xs mb-6">
+                  <img src="https://picsum.photos/id/237/400/300" alt="大象图片" class="w-full h-40 object-cover">
+                </div>
+                <div class="mt-auto">
+                  <span class="text-xs text-gray-400">15 / 50</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- 学习导航按钮 -->
+          <div class="flex justify-between">
+            <button class="px-6 py-3 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors duration-200">
+              <i class="fa fa-arrow-left mr-1"></i> 上一个
+            </button>
+            <button class="px-6 py-3 bg-secondary text-white rounded-lg hover:bg-secondary/90 transition-colors duration-200">
+              下一个 <i class="fa fa-arrow-right ml-1"></i>
+            </button>
+          </div>
+        </div>
+        
+        <!-- 学习模式选择 -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div class="bg-white rounded-xl shadow-md p-6 border-t-4 border-primary hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
+            <div class="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mb-4">
+              <i class="fa fa-flip-card text-primary text-xl"></i>
+            </div>
+            <h3 class="text-xl font-semibold text-dark mb-2">单词卡模式</h3>
+            <p class="text-gray-600 mb-4">通过翻转卡片记忆单词拼写、释义和发音，适合基础学习阶段。</p>
+            <a href="#" class="text-primary font-medium inline-flex items-center">
+              开始使用 <i class="fa fa-arrow-right ml-1"></i>
+            </a>
+          </div>
+          
+          <div class="bg-white rounded-xl shadow-md p-6 border-t-4 border-secondary hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
+            <div class="w-12 h-12 bg-secondary/10 rounded-full flex items-center justify-center mb-4">
+              <i class="fa fa-puzzle-piece text-secondary text-xl"></i>
+            </div>
+            <h3 class="text-xl font-semibold text-dark mb-2">拼图游戏</h3>
+            <p class="text-gray-600 mb-4">将打乱的字母重新组合成正确的单词，在游戏中加深记忆。</p>
+            <a href="#" class="text-secondary font-medium inline-flex items-center">
+              开始使用 <i class="fa fa-arrow-right ml-1"></i>
+            </a>
+          </div>
+          
+          <div class="bg-white rounded-xl shadow-md p-6 border-t-4 border-accent hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
+            <div class="w-12 h-12 bg-accent/10 rounded-full flex items-center justify-center mb-4">
+              <i class="fa fa-quiz text-accent text-xl"></i>
+            </div>
+            <h3 class="text-xl font-semibold text-dark mb-2">单词测验</h3>
+            <p class="text-gray-600 mb-4">通过选择题、填空题等多种形式测试单词掌握程度。</p>
+            <a href="#" class="text-accent font-medium inline-flex items-center">
+              开始使用 <i class="fa fa-arrow-right ml-1"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 测试区域 -->
+    <section id="quiz" class="py-16 bg-white">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-12">
+          <h2 class="text-[clamp(1.5rem,3vw,2.5rem)] font-bold text-dark mb-4">单词测试</h2>
+          <p class="text-gray-600 max-w-2xl mx-auto">通过多种测试方式检验学习成果，巩固记忆效果。</p>
+        </div>
+        
+        <!-- 测试类型选择 -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+          <div class="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl shadow-md p-6 hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1 cursor-pointer">
+            <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mb-4">
+              <i class="fa fa-check-square-o text-primary text-2xl"></i>
+            </div>
+            <h3 class="text-xl font-semibold text-dark mb-2">选择题</h3>
+            <p class="text-gray-600">从多个选项中选择正确的单词释义或拼写。</p>
+            <div class="mt-4">
+              <span class="text-xs text-gray-500">难度: </span>
+              <div class="inline-flex">
+                <i class="fa fa-star text-yellow-400"></i>
+                <i class="fa fa-star text-yellow-400"></i>
+                <i class="fa fa-star-o text-gray-300"></i>
+                <i class="fa fa-star-o text-gray-300"></i>
+                <i class="fa fa-star-o text-gray-300"></i>
+              </div>
+            </div>
+          </div>
+          
+          <div class="bg-gradient-to-br from-orange-50 to-orange-100 rounded-xl shadow-md p-6 hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1 cursor-pointer">
+            <div class="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mb-4">
+              <i class="fa fa-pencil text-secondary text-2xl"></i>
+            </div>
+            <h3 class="text-xl font-semibold text-dark mb-2">拼写题</h3>
+            <p class="text-gray-600">根据给出的中文释义拼写正确的英文单词。</p>
+            <div class="mt-4">
+              <span class="text-xs text-gray-500">难度: </span>
+              <div class="inline-flex">
+                <i class="fa fa-star text-yellow-400"></i>
+                <i class="fa fa-star text-yellow-400"></i>
+                <i class="fa fa-star text-yellow-400"></i>
+                <i class="fa fa-star-o text-gray-300"></i>
+                <i class="fa fa-star-o text-gray-300"></i>
+              </div>
+            </div>
+          </div>
+          
+          <div class="bg-gradient-to-br from-green-50 to-green-100 rounded-xl shadow-md p-6 hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1 cursor-pointer">
+            <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mb-4">
+              <i class="fa fa-microphone text-accent text-2xl"></i>
+            </div>
+            <h3 class="text-xl font-semibold text-dark mb-2">听力题</h3>
+            <p class="text-gray-600">根据听到的单词发音选择正确的选项。</p>
+            <div class="mt-4">
+              <span class="text-xs text-gray-500">难度: </span>
+              <div class="inline-flex">
+                <i class="fa fa-star text-yellow-400"></i>
+                <i class="fa fa-star text-yellow-400"></i>
+                <i class="fa fa-star text-yellow-400"></i>
+                <i class="fa fa-star text-yellow-400"></i>
+                <i class="fa fa-star-o text-gray-300"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- 示例测试题目 -->
+        <div class="bg-gray-50 rounded-xl p-6 max-w-3xl mx-auto">
+          <div class="flex justify-between items-center mb-6">
+            <h3 class="text-xl font-semibold text-dark">选择题示例</h3>
+            <div class="text-sm text-gray-500">
+              <span id="current-question">1</span> / <span id="total-questions">10</span>
+            </div>
+          </div>
+          
+          <div class="mb-6">
+            <p class="text-lg font-medium mb-4">“苹果”的正确英文单词是？</p>
+            
+            <div class="space-y-3" id="quiz-options">
+              <button class="w-full text-left px-4 py-3 rounded-lg border border-gray-200 hover:border-primary hover:bg-primary/5 transition-colors duration-200 quiz-option">
+                <span class="inline-block w-6 h-6 rounded-full border border-gray-300 mr-2 flex items-center justify-center">A</span>
+                <span>appel</span>
+              </button>
+              <button class="w-full text-left px-4 py-3 rounded-lg border border-gray-200 hover:border-primary hover:bg-primary/5 transition-colors duration-200 quiz-option">
+                <span class="inline-block w-6 h-6 rounded-full border border-gray-300 mr-2 flex items-center justify-center">B</span>
+                <span>apple</span>
+              </button>
+              <button class="w-full text-left px-4 py-3 rounded-lg border border-gray-200 hover:border-primary hover:bg-primary/5 transition-colors duration-200 quiz-option">
+                <span class="inline-block w-6 h-6 rounded-full border border-gray-300 mr-2 flex items-center justify-center">C</span>
+                <span>aplle</span>
+              </button>
+              <button class="w-full text-left px-4 py-3 rounded-lg border border-gray-200 hover:border-primary hover:bg-primary/5 transition-colors duration-200 quiz-option">
+                <span class="inline-block w-6 h-6 rounded-full border border-gray-300 mr-2 flex items-center justify-center">D</span>
+                <span>appel</span>
+              </button>
+            </div>
+          </div>
+          
+          <div class="flex justify-between">
+            <button class="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-100 transition-colors duration-200">
+              上一题
+            </button>
+            <button class="px-6 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors duration-200">
+              下一题
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 学习统计区域 -->
+    <section class="py-16 bg-gradient-to-br from-gray-50 to-gray-100">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-12">
+          <h2 class="text-[clamp(1.5rem,3vw,2.5rem)] font-bold text-dark mb-4">学习统计</h2>
+          <p class="text-gray-600 max-w-2xl mx-auto">追踪学习进度，了解学习情况，激励持续学习。</p>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
+          <div class="bg-white rounded-xl shadow-md p-6 border-l-4 border-primary">
+            <div class="flex items-center justify-between mb-4">
+              <h3 class="text-lg font-medium text-gray-700">已学习单词</h3>
+              <i class="fa fa-book text-primary text-xl"></i>
+            </div>
+            <p class="text-3xl font-bold text-dark mb-1">128</p>
+            <p class="text-sm text-gray-500">本周增长 12 个</p>
+          </div>
+          
+          <div class="bg-white rounded-xl shadow-md p-6 border-l-4 border-secondary">
+            <div class="flex items-center justify-between mb-4">
+              <h3 class="text-lg font-medium text-gray-700">学习天数</h3>
+              <i class="fa fa-calendar-check-o text-secondary text-xl"></i>
+            </div>
+            <p class="text-3xl font-bold text-dark mb-1">18</p>
+            <p class="text-sm text-gray-500">连续学习 5 天</p>
+          </div>
+          
+          <div class="bg-white rounded-xl shadow-md p-6 border-l-4 border-accent">
+            <div class="flex items-center justify-between mb-4">
+              <h3 class="text-lg font-medium text-gray-700">测验正确率</h3>
+              <i class="fa fa-line-chart text-accent text-xl"></i>
+            </div>
+            <p class="text-3xl font-bold text-dark mb-1">82%</p>
+            <p class="text-sm text-gray-500">较上周提高 5%</p>
+          </div>
+          
+          <div class="bg-white rounded-xl shadow-md p-6 border-l-4 border-purple-500">
+            <div class="flex items-center justify-between mb-4">
+              <h3 class="text-lg font-medium text-gray-700">学习时长</h3>
+              <i class="fa fa-clock-o text-purple-500 text-xl"></i>
+            </div>
+            <p class="text-3xl font-bold text-dark mb-1">4.5h</p>
+            <p class="text-sm text-gray-500">本周累计学习时间</p>
+          </div>
+        </div>
+        
+        <!-- 图表区域 -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div class="bg-white rounded-xl shadow-md p-6">
+            <h3 class="text-lg font-semibold text-dark mb-4">每日学习量</h3>
+            <div class="h-64">
+              <!-- 图表将通过JavaScript渲染 -->
+              <canvas id="daily-study-chart"></canvas>
+            </div>
+          </div>
+          
+          <div class="bg-white rounded-xl shadow-md p-6">
+            <h3 class="text-lg font-semibold text-dark mb-4">单词掌握情况</h3>
+            <div class="h-64">
+              <!-- 图表将通过JavaScript渲染 -->
+              <canvas id="word-mastery-chart"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 订阅区域 -->
+    <section class="py-16 bg-primary">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <h2 class="text-[clamp(1.5rem,3vw,2.5rem)] font-bold text-white mb-4">可联系我们获取更多学习资源</h2>
+            </li>
+          </ul>
+        </div>
+      </div>
+      
+      <div class="border-t border-gray-800 pt-8">
+        <div class="flex flex-col md:flex-row justify-between items-center">
+          <p class="text-gray-500 text-sm mb-4 md:mb-0">© 2025 单词记忆助手. 保留所有权利.</p>
+          <div class="flex space-x-6">
+            <a href="#" class="text-gray-500 hover:text-white text-sm transition-colors duration-200">隐私政策</a>
+            <a href="#" class="text-gray-500 hover:text-white text-sm transition-colors duration-200">使用条款</a>
+            <a href="#" class="text-gray-500 hover:text-white text-sm transition-colors duration-200">Cookie 政策</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- JavaScript -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.8/dist/chart.umd.min.js"></script>
+  <script>
+    // 单词数据
+    const words = [
+      { id: 1, grade: "1", word: "apple", translation: "苹果", category: "水果", example: "I like to eat apples.", image: "https://picsum.photos/id/1080/400/300" },
+      { id: 2, grade: "1", word: "banana", translation: "香蕉", category: "水果", example: "Bananas are yellow.", image: "https://picsum.photos/id/1080/400/300" },
+      { id: 3, grade: "1", word: "cat", translation: "猫", category: "动物", example: "The cat is sleeping.", image: "https://picsum.photos/id/237/400/300" },
+      { id: 4, grade: "1", word: "dog", translation: "狗", category: "动物", example: "My dog is very friendly.", image: "https://picsum.photos/id/1025/400/300" },
+      { id: 5, grade: "2", word: "elephant", translation: "大象", category: "动物", example: "An elephant has a long nose.", image: "https://picsum.photos/id/1024/400/300" },
+      { id: 6, grade: "2", word: "fish", translation: "鱼", category: "动物", example: "Fish live in water.", image: "https://picsum.photos/id/1062/400/300" },
+      { id: 7, grade: "2", word: "grape", translation: "葡萄", category: "水果", example: "I like purple grapes.", image: "https://picsum.photos/id/1080/400/300" },
+      { id: 8, grade: "2", word: "hat", translation: "帽子", category: "物品", example: "This hat is very nice.", image: "https://picsum.photos/id/1070/400/300" },
+      { id: 9, grade: "3", word: "ice-cream", translation: "冰淇淋", category: "食物", example: "I want an ice-cream.", image: "https://picsum.photos/id/1080/400/300" },
+      { id: 10, grade: "3", word: "juice", translation: "果汁", category: "饮品", example: "I like to drink orange juice.", image: "https://picsum.photos/id/1080/400/300" },
+      { id: 11, grade: "3", word: "kite", translation: "风筝", category: "物品", example: "We can fly a kite in the park.", image: "https://picsum.photos/id/1076/400/300" },
+      { id: 12, grade: "3", word: "lion", translation: "狮子", category: "动物", example: "The lion is the king of the jungle.", image: "https://picsum.photos/id/1074/400/300" },
+      { id: 13, grade: "4", word: "monkey", translation: "猴子", category: "动物", example: "Monkeys like to eat bananas.", image: "https://picsum.photos/id/1079/400/300" },
+      { id: 14, grade: "4", word: "nose", translation: "鼻子", category: "身体部位", example: "We can smell with our nose.", image: "https://picsum.photos/id/1071/400/300" },
+      { id: 15, grade: "4", word: "orange", translation: "橙子", category: "水果", example: "An orange is orange.", image: "https://picsum.photos/id/1080/400/300" },
+      { id: 16, grade: "4", word: "pen", translation: "钢笔", category: "学习用品", example: "I write with a pen.", image: "https://picsum.photos/id/1060/400/300" },
+      { id: 17, grade: "5", word: "queen", translation: "女王", category: "人物", example: "The queen lives in a beautiful palace.", image: "https://picsum.photos/id/1062/400/300" },
+      { id: 18, grade: "5", word: "rabbit", translation: "兔子", category: "动物", example: "Rabbits have long ears.", image: "https://picsum.photos/id/1077/400/300" },
+      { id: 19, grade: "5", word: "sun", translation: "太阳", category: "自然", example: "The sun gives us light and heat.", image: "https://picsum.photos/id/1059/400/300" },
+      { id: 20, grade: "5", word: "table", translation: "桌子", category: "家具", example: "There is a book on the table.", image: "https://picsum.photos/id/1067/400/300" },
+      { id: 21, grade: "6", word: "umbrella", translation: "雨伞", category: "物品", example: "Take an umbrella. It's raining.", image: "https://picsum.photos/id/1065/400/300" },
+      { id: 22, grade: "6", word: "violin", translation: "小提琴", category: "乐器", example: "She can play the violin.", image: "https://picsum.photos/id/1068/400/300" },
+      { id: 23, grade: "6", word: "water", translation: "水", category: "物质", example: "We need to drink water every day.", image: "https://picsum.photos/id/1063/400/300" },
+      { id: 24, grade: "6", word: "box", translation: "盒子", category: "物品", example: "Put the toys in the box.", image: "https://picsum.photos/id/1069/400/300" },
+      { id: 25, grade: "6", word: "yellow", translation: "黄色", category: "颜色", example: "Bananas are yellow.", image: "https://picsum.photos/id/1073/400/300" },
+      { id: 26, grade: "6", word: "zoo", translation: "动物园", category: "场所", example: "We can see many animals in the zoo.", image: "https://picsum.photos/id/1066/400/300" }
+    ];
+
+    // DOM加载完成后执行
+    document.addEventListener('DOMContentLoaded', function() {
+      // 初始化单词库
+      renderWordGrid(words);
+      
+      // 初始化学习卡片
+      initLearningCard();
+      
+      // 初始化图表
+      initCharts();
+      
+      // 导航菜单切换
+      const menuToggle = document.getElementById('menu-toggle');
+      const mobileMenu = document.getElementById('mobile-menu');
+      
+      menuToggle.addEventListener('click', function() {
+        mobileMenu.classList.toggle('hidden');
+      });
+      
+      // 年级筛选
+      const gradeBtns = document.querySelectorAll('.grade-btn');
+      
+      gradeBtns.forEach(btn => {
+        btn.addEventListener('click', function() {
+          // 移除所有按钮的active状态
+          gradeBtns.forEach(b => {
+            b.classList.remove('active', 'bg-primary', 'text-white');
+            b.classList.add('bg-gray-200', 'text-gray-700');
+          });
+          
+          // 添加当前按钮的active状态
+          this.classList.add('active', 'bg-primary', 'text-white');
+          this.classList.remove('bg-gray-200', 'text-gray-700');
+          
+          // 筛选单词
+          const grade = this.dataset.grade;
+          let filteredWords;
+          
+          if (grade === 'all') {
+            filteredWords = words;
+          } else {
+            filteredWords = words.filter(word => word.grade === grade);
+          }
+          
+          renderWordGrid(filteredWords);
+        });
+      });
+      
+      // 单词搜索
+      const wordSearch = document.getElementById('word-search');
+      
+      wordSearch.addEventListener('input', function() {
+        const searchTerm = this.value.toLowerCase().trim();
+        
+        if (searchTerm === '') {
+          renderWordGrid(words);
+          return;
+        }
+        
+        const filteredWords = words.filter(word => 
+          word.word.toLowerCase().includes(searchTerm) || 
+          word.translation.toLowerCase().includes(searchTerm) ||
+          word.category.toLowerCase().includes(searchTerm)
+        );
+        
+        renderWordGrid(filteredWords);
+      });
+      
+      // 学习卡片翻转
+      const learningCard = document.getElementById('learning-card');
+      
+      learningCard.addEventListener('click', function() {
+        this.classList.toggle('flipped');
+      });
+      
+      // 测验选项点击
+      const quizOptions = document.querySelectorAll('.quiz-option');
+      
+      quizOptions.forEach(option => {
+        option.addEventListener('click', function() {
+          // 移除所有选项的选中状态
+          quizOptions.forEach(opt => {
+            opt.classList.remove('bg-primary/10', 'border-primary');
+            opt.classList.add('border-gray-200');
+          });
+          
+          // 添加当前选项的选中状态
+          this.classList.add('bg-primary/10', 'border-primary');
+          this.classList.remove('border-gray-200');
+        });
+      });
+      
+      // 导航栏滚动效果
+      const navbar = document.getElementById('navbar');
+      
+      window.addEventListener('scroll', function() {
+        if (window.scrollY > 100) {
+          navbar.classList.add('bg-white', 'shadow-md');
+          navbar.classList.remove('bg-white/80');
+        } else {
+          navbar.classList.remove('bg-white', 'shadow-md');
+          navbar.classList.add('bg-white/80');
+        }
+      });
+      
+      // 平滑滚动
+      document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+          e.preventDefault();
+          
+          const targetId = this.getAttribute('href');
+          const targetElement = document.querySelector(targetId);
+          
+          if (targetElement) {
+            window.scrollTo({
+              top: targetElement.offsetTop - 80,
+              behavior: 'smooth'
+            });
+            
+            // 如果是移动设备，点击导航后关闭菜单
+            if (window.innerWidth < 640) {
+              mobileMenu.classList.add('hidden');
+            }
+          }
+        });
+      });
+    });
+    
+    // 渲染单词网格
+    function renderWordGrid(wordList) {
+      const wordGrid = document.getElementById('word-grid');
+      wordGrid.innerHTML = '';
+      
+      if (wordList.length === 0) {
+        wordGrid.innerHTML = `
+          <div class="col-span-full text-center py-12">
+            <i class="fa fa-search text-gray-400 text-5xl mb-4"></i>
+            <p class="text-gray-500">未找到匹配的单词</p>
+          </div>
+        `;
+        return;
+      }
+      
+      wordList.forEach(word => {
+        const card = document.createElement('div');
+        card.className = 'bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1';
+        card.innerHTML = `
+          <div class="bg-gray-100 h-40 overflow-hidden">
+            <img src="${word.image}" alt="${word.word}图片" class="w-full h-full object-cover">
+          </div>
+          <div class="p-4">
+            <div class="flex justify-between items-center mb-2">
+              <span class="text-xs font-medium bg-blue-100 text-blue-800 px-2.5 py-0.5 rounded">${word.category}</span>
+              <span class="text-xs font-medium bg-purple-100 text-purple-800 px-2.5 py-0.5 rounded">${word.grade}年级</span>
+            </div>
+            <h3 class="font-bold text-lg text-dark mb-1">${word.word}</h3>
+            <p class="text-gray-600 mb-3">${word.translation}</p>
+            <div class="flex justify-between items-center">
+              <button class="text-primary hover:text-primary/80 transition-colors duration-200">
+                <i class="fa fa-volume-up mr-1"></i> 发音
+              </button>
+              <button class="text-gray-500 hover:text-primary transition-colors duration-200">
+                <i class="fa fa-star-o"></i>
+              </button>
+            </div>
+          </div>
+        `;
+        
+        wordGrid.appendChild(card);
+      });
+    }
+    
+    // 初始化学习卡片
+    function initLearningCard() {
+      // 这里可以添加更多逻辑，比如随机选择单词等
+    }
+    
+    // 初始化图表
+    function initCharts() {
+      // 每日学习量图表
+      const dailyCtx = document.getElementById('daily-study-chart').getContext('2d');
+      new Chart(dailyCtx, {
+        type: 'bar',
+        data: {
+          labels: ['周一', '周二', '周三', '周四', '周五', '周六', '周日'],
+          datasets: [{
+            label: '学习单词数量',
+            data: [12, 19, 15, 10, 8, 20, 16],
+            backgroundColor: [
+              'rgba(79, 70, 229, 0.6)',
+              'rgba(79, 70, 229, 0.6)',
+              'rgba(79, 70, 229, 0.6)',
+              'rgba(79, 70, 229, 0.6)',
+              'rgba(79, 70, 229, 0.6)',
+              'rgba(79, 70, 229, 0.9)',
+              'rgba(79, 70, 229, 0.7)'
+            ],
+            borderColor: [
+              'rgba(79, 70, 229, 1)',
+              'rgba(79, 70, 229, 1)',
+              'rgba(79, 70, 229, 1)',
+              'rgba(79, 70, 229, 1)',
+              'rgba(79, 70, 229, 1)',
+              'rgba(79, 70, 229, 1)',
+              'rgba(79, 70, 229, 1)'
+            ],
+            borderWidth: 1
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            y: {
+              beginAtZero: true,
+              grid: {
+                display: true,
+                color: 'rgba(0, 0, 0, 0.05)'
+              }
+            },
+            x: {
+              grid: {
+                display: false
+              }
+            }
+          },
+          plugins: {
+            legend: {
+              display: false
+            }
+          }
+        }
+      });
+      
+      // 单词掌握情况图表
+      const masteryCtx = document.getElementById('word-mastery-chart').getContext('2d');
+      new Chart(masteryCtx, {
+        type: 'doughnut',
+        data: {
+          labels: ['已掌握', '学习中', '未学习'],
+          datasets: [{
+            data: [65, 25, 10],
+            backgroundColor: [
+              'rgba(16, 185, 129, 0.8)',
+              'rgba(249, 115, 22, 0.8)',
+              'rgba(209, 213, 219, 0.8)'
+            ],
+            borderColor: [
+              'rgba(16, 185, 129, 1)',
+              'rgba(249, 115, 22, 1)',
+              'rgba(209, 213, 219, 1)'
+            ],
+            borderWidth: 1
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              position: 'right'
+            }
+          }
+        }
+      });
+    }
+  </script>
+</body>
+</html>
+    

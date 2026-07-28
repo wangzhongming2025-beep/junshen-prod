@@ -1,0 +1,1115 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>智慧家庭教育平台 - 促进家庭和谐，培养优秀孩子</title>
+    <meta name="description" content="专业的家庭教育平台，帮助孩子远离电子产品，培养运动习惯、阅读兴趣和良好品格，建立和谐亲子关系">
+    <meta name="keywords" content="家庭教育,亲子教育,习惯培养,阅读兴趣,运动计划,积分激励">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-green: #10b981;
+            --secondary-green: #34d399;
+            --accent-orange: #f59e0b;
+            --soft-green: #ecfdf5;
+            --dark-green: #047857;
+            --text-primary: #1f2937;
+            --text-secondary: #6b7280;
+            --text-light: #9ca3af;
+            --bg-primary: #ffffff;
+            --bg-secondary: #f9fafb;
+            --bg-gradient: linear-gradient(135deg, #10b981 0%, #34d399 100%);
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+            --border-radius: 12px;
+            --border-radius-lg: 16px;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --error: #ef4444;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+
+        /* 头部 */
+        .header {
+            background: var(--bg-gradient);
+            color: white;
+            padding: 2rem 0;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="white" opacity="0.1"><circle cx="50" cy="50" r="2"/></svg>') repeat;
+            background-size: 20px 20px;
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        /* 导航 */
+        .nav-tabs {
+            display: flex;
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-md);
+            margin: 2rem 0;
+            overflow-x: auto;
+        }
+
+        .nav-tab {
+            flex: 1;
+            padding: 1rem 1.5rem;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+            color: var(--text-secondary);
+        }
+
+        .nav-tab.active {
+            background: var(--primary-green);
+            color: white;
+        }
+
+        .nav-tab:hover:not(.active) {
+            background: var(--soft-green);
+            color: var(--primary-green);
+        }
+
+        /* 内容区域 */
+        .content-area {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .content-area.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* 卡片样式 */
+        .card {
+            background: white;
+            border-radius: var(--border-radius-lg);
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow-md);
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            box-shadow: var(--shadow-lg);
+            transform: translateY(-2px);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .card-icon {
+            width: 50px;
+            height: 50px;
+            background: var(--soft-green);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: var(--primary-green);
+        }
+
+        .card-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        /* 积分系统 */
+        .points-display {
+            background: var(--soft-green);
+            padding: 1.5rem;
+            border-radius: var(--border-radius);
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .points-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--primary-green);
+            display: block;
+        }
+
+        .points-label {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+        }
+
+        /* 任务列表 */
+        .task-list {
+            space-y: 1rem;
+        }
+
+        .task-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            background: var(--bg-secondary);
+            border-radius: var(--border-radius);
+            margin-bottom: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .task-item:hover {
+            background: var(--soft-green);
+        }
+
+        .task-checkbox {
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--primary-green);
+            border-radius: 4px;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .task-checkbox.checked {
+            background: var(--primary-green);
+        }
+
+        .task-checkbox.checked::after {
+            content: '✓';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .task-content {
+            flex: 1;
+        }
+
+        .task-title {
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .task-description {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .task-points {
+            background: var(--accent-orange);
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.875rem;
+            font-weight: 600;
+        }
+
+        /* 运动计划 */
+        .exercise-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .exercise-card {
+            background: var(--bg-secondary);
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .exercise-card:hover {
+            background: var(--soft-green);
+            transform: translateY(-2px);
+        }
+
+        .exercise-icon {
+            font-size: 3rem;
+            color: var(--primary-green);
+            margin-bottom: 1rem;
+        }
+
+        .exercise-title {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .exercise-duration {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+
+        .exercise-points {
+            background: var(--primary-green);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-weight: 600;
+        }
+
+        /* 阅读追踪 */
+        .reading-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: var(--soft-green);
+            padding: 1.5rem;
+            border-radius: var(--border-radius);
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary-green);
+            display: block;
+        }
+
+        .stat-label {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        /* 零花钱管理 */
+        .allowance-tracker {
+            background: var(--bg-secondary);
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+        }
+
+        .allowance-balance {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary-green);
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+
+        .transaction-list {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .transaction-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .transaction-amount {
+            font-weight: 600;
+        }
+
+        .transaction-amount.positive {
+            color: var(--success);
+        }
+
+        .transaction-amount.negative {
+            color: var(--error);
+        }
+
+        /* 家庭约定 */
+        .family-agreements {
+            space-y: 1rem;
+        }
+
+        .agreement-item {
+            background: var(--bg-secondary);
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            border-left: 4px solid var(--primary-green);
+        }
+
+        .agreement-title {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--primary-green);
+        }
+
+        .agreement-content {
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        /* 表单样式 */
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--text-primary);
+        }
+
+        .form-input, .form-select, .form-textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #d1d5db;
+            border-radius: var(--border-radius);
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-input:focus, .form-select:focus, .form-textarea:focus {
+            outline: none;
+            border-color: var(--primary-green);
+            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+        }
+
+        .form-textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 0.75rem 1.5rem;
+            background: var(--primary-green);
+            color: white;
+            border: none;
+            border-radius: var(--border-radius);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            text-align: center;
+        }
+
+        .btn:hover {
+            background: var(--dark-green);
+            transform: translateY(-1px);
+        }
+
+        .btn-secondary {
+            background: var(--accent-orange);
+        }
+
+        .btn-secondary:hover {
+            background: #d97706;
+        }
+
+        /* 进度条 */
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #e5e7eb;
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 0.5rem 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--primary-green);
+            transition: width 0.3s ease;
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .nav-tabs {
+                flex-direction: column;
+            }
+            
+            .nav-tab {
+                text-align: center;
+            }
+            
+            .exercise-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .reading-stats {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* 动画效果 */
+        .fade-in {
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        /* 成就徽章 */
+        .achievement-badge {
+            display: inline-block;
+            background: var(--accent-orange);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            margin: 0.25rem;
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <h1><i class="fas fa-home"></i> 智慧家庭教育平台</h1>
+                <p>促进家庭和谐，培养优秀孩子，远离电子产品，健康快乐成长</p>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <!-- 导航标签 -->
+        <div class="nav-tabs">
+            <button class="nav-tab active" onclick="showTab('dashboard')">
+                <i class="fas fa-chart-line"></i> 家庭仪表板
+            </button>
+            <button class="nav-tab" onclick="showTab('tasks')">
+                <i class="fas fa-tasks"></i> 每日任务
+            </button>
+            <button class="nav-tab" onclick="showTab('exercise')">
+                <i class="fas fa-running"></i> 运动计划
+            </button>
+            <button class="nav-tab" onclick="showTab('reading')">
+                <i class="fas fa-book"></i> 阅读追踪
+            </button>
+            <button class="nav-tab" onclick="showTab('allowance')">
+                <i class="fas fa-piggy-bank"></i> 零花钱管理
+            </button>
+            <button class="nav-tab" onclick="showTab('agreements')">
+                <i class="fas fa-handshake"></i> 家庭约定
+            </button>
+        </div>
+
+        <!-- 仪表板 -->
+        <div id="dashboard" class="content-area active">
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-icon"><i class="fas fa-star"></i></div>
+                    <h2 class="card-title">今日家庭积分</h2>
+                </div>
+                <div class="points-display">
+                    <span class="points-number" id="totalPoints">1250</span>
+                    <span class="points-label">积分</span>
+                </div>
+                <div class="reading-stats">
+                    <div class="stat-card">
+                        <span class="stat-number" id="completedTasks">12</span>
+                        <span class="stat-label">今日完成任务</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-number" id="exerciseMinutes">45</span>
+                        <span class="stat-label">运动分钟</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-number" id="readingPages">28</span>
+                        <span class="stat-label">阅读页数</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-number" id="screenFreeHours">3</span>
+                        <span class="stat-label">远离电子产品小时</span>
+                    </div>
+                </div>
+                <div>
+                    <h3>今日成就</h3>
+                    <div>
+                        <span class="achievement-badge">🏃‍♂️ 运动达人</span>
+                        <span class="achievement-badge">📚 阅读之星</span>
+                        <span class="achievement-badge">💰 理财小能手</span>
+                        <span class="achievement-badge">🎯 任务完成者</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 每日任务 -->
+        <div id="tasks" class="content-area">
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-icon"><i class="fas fa-tasks"></i></div>
+                    <h2 class="card-title">今日任务清单</h2>
+                </div>
+                <div class="task-list" id="taskList">
+                    <div class="task-item">
+                        <div class="task-checkbox" onclick="toggleTask(this)"></div>
+                        <div class="task-content">
+                            <div class="task-title">完成30分钟户外运动</div>
+                            <div class="task-description">可以选择跑步、跳绳、打球等运动</div>
+                        </div>
+                        <div class="task-points">+10分</div>
+                    </div>
+                    <div class="task-item">
+                        <div class="task-checkbox" onclick="toggleTask(this)"></div>
+                        <div class="task-content">
+                            <div class="task-title">阅读30分钟课外书</div>
+                            <div class="task-description">选择喜欢的故事书或科普读物</div>
+                        </div>
+                        <div class="task-points">+15分</div>
+                    </div>
+                    <div class="task-item">
+                        <div class="task-checkbox" onclick="toggleTask(this)"></div>
+                        <div class="task-content">
+                            <div class="task-title">帮助家人做家务</div>
+                            <div class="task-description">整理房间、洗碗或帮忙做饭</div>
+                        </div>
+                        <div class="task-points">+8分</div>
+                    </div>
+                    <div class="task-item">
+                        <div class="task-checkbox" onclick="toggleTask(this)"></div>
+                        <div class="task-content">
+                            <div class="task-title">限制电子产品使用时间</div>
+                            <div class="task-description">每天不超过1小时游戏或视频时间</div>
+                        </div>
+                        <div class="task-points">+12分</div>
+                    </div>
+                    <div class="task-item">
+                        <div class="task-checkbox" onclick="toggleTask(this)"></div>
+                        <div class="task-content">
+                            <div class="task-title">完成家庭作业</div>
+                            <div class="task-description">按时完成学校布置的作业</div>
+                        </div>
+                        <div class="task-points">+10分</div>
+                    </div>
+                </div>
+                <button class="btn" onclick="addTask()">添加新任务</button>
+            </div>
+        </div>
+
+        <!-- 运动计划 -->
+        <div id="exercise" class="content-area">
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-icon"><i class="fas fa-running"></i></div>
+                    <h2 class="card-title">每日运动计划</h2>
+                </div>
+                <div class="exercise-grid">
+                    <div class="exercise-card">
+                        <div class="exercise-icon">🏃‍♂️</div>
+                        <div class="exercise-title">晨间跑步</div>
+                        <div class="exercise-duration">20分钟</div>
+                        <div class="exercise-points">+10分</div>
+                    </div>
+                    <div class="exercise-card">
+                        <div class="exercise-icon">🤸‍♀️</div>
+                        <div class="exercise-title">体操运动</div>
+                        <div class="exercise-duration">15分钟</div>
+                        <div class="exercise-points">+8分</div>
+                    </div>
+                    <div class="exercise-card">
+                        <div class="exercise-icon">⚽</div>
+                        <div class="exercise-title">球类运动</div>
+                        <div class="exercise-duration">30分钟</div>
+                        <div class="exercise-points">+15分</div>
+                    </div>
+                    <div class="exercise-card">
+                        <div class="exercise-icon">🧘‍♂️</div>
+                        <div class="exercise-title">瑜伽伸展</div>
+                        <div class="exercise-duration">10分钟</div>
+                        <div class="exercise-points">+5分</div>
+                    </div>
+                    <div class="exercise-card">
+                        <div class="exercise-icon">🚴‍♂️</div>
+                        <div class="exercise-title">骑自行车</div>
+                        <div class="exercise-duration">30分钟</div>
+                        <div class="exercise-points">+12分</div>
+                    </div>
+                    <div class="exercise-card">
+                        <div class="exercise-icon">🏊‍♂️</div>
+                        <div class="exercise-title">游泳运动</div>
+                        <div class="exercise-duration">45分钟</div>
+                        <div class="exercise-points">+20分</div>
+                    </div>
+                </div>
+                <div style="margin-top: 2rem;">
+                    <h3>本周运动目标</h3>
+                    <div style="margin: 1rem 0;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                            <span>每日运动30分钟</span>
+                            <span id="exerciseProgress">4/7天</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 57%;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 阅读追踪 -->
+        <div id="reading" class="content-area">
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-icon"><i class="fas fa-book"></i></div>
+                    <h2 class="card-title">阅读追踪系统</h2>
+                </div>
+                <div class="reading-stats">
+                    <div class="stat-card">
+                        <span class="stat-number" id="booksRead">5</span>
+                        <span class="stat-label">本月已读书籍</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-number" id="totalPages">280</span>
+                        <span class="stat-label">总阅读页数</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-number" id="readingDays">15</span>
+                        <span class="stat-label">连续阅读天数</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-number" id="avgMinutes">30</span>
+                        <span class="stat-label">平均阅读时间(分钟)</span>
+                    </div>
+                </div>
+                <div style="margin-top: 2rem;">
+                    <h3>推荐书单</h3>
+                    <div class="task-list">
+                        <div class="task-item">
+                            <div class="task-content">
+                                <div class="task-title">《小王子》</div>
+                                <div class="task-description">经典童话故事，培养想象力和同理心</div>
+                            </div>
+                            <div class="task-points">+20分</div>
+                        </div>
+                        <div class="task-item">
+                            <div class="task-content">
+                                <div class="task-title">《十万个为什么》</div>
+                                <div class="task-description">科普读物，激发科学兴趣</div>
+                            </div>
+                            <div class="task-points">+25分</div>
+                        </div>
+                        <div class="task-item">
+                            <div class="task-content">
+                                <div class="task-title">《西游记》青少年版</div>
+                                <div class="task-description">经典文学，培养传统文化素养</div>
+                            </div>
+                            <div class="task-points">+30分</div>
+                        </div>
+                    </div>
+                </div>
+                <button class="btn" onclick="addReadingRecord()">记录今日阅读</button>
+            </div>
+        </div>
+
+        <!-- 零花钱管理 -->
+        <div id="allowance" class="content-area">
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-icon"><i class="fas fa-piggy-bank"></i></div>
+                    <h2 class="card-title">零花钱管理系统</h2>
+                </div>
+                <div class="allowance-tracker">
+                    <div class="allowance-balance">¥<span id="currentBalance">150.50</span></div>
+                    <div style="text-align: center; margin-bottom: 1rem; color: var(--text-secondary);">
+                        当前余额
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 2rem;">
+                        <button class="btn" onclick="addIncome()">+ 收入</button>
+                        <button class="btn btn-secondary" onclick="addExpense()">- 支出</button>
+                    </div>
+                    <h3>最近交易记录</h3>
+                    <div class="transaction-list" id="transactionList">
+                        <div class="transaction-item">
+                            <div>
+                                <strong>每周零花钱</strong>
+                                <div style="font-size: 0.9rem; color: var(--text-secondary);">2024-01-15</div>
+                            </div>
+                            <div class="transaction-amount positive">+¥50.00</div>
+                        </div>
+                        <div class="transaction-item">
+                            <div>
+                                <strong>购买图书</strong>
+                                <div style="font-size: 0.9rem; color: var(--text-secondary);">2024-01-14</div>
+                            </div>
+                            <div class="transaction-amount negative">-¥25.00</div>
+                        </div>
+                        <div class="transaction-item">
+                            <div>
+                                <strong>做家务奖励</strong>
+                                <div style="font-size: 0.9rem; color: var(--text-secondary);">2024-01-13</div>
+                            </div>
+                            <div class="transaction-amount positive">+¥10.00</div>
+                        </div>
+                    </div>
+                </div>
+                <div style="margin-top: 2rem;">
+                    <h3>理财小贴士</h3>
+                    <ul style="color: var(--text-secondary); line-height: 1.8;">
+                        <li>• 将零花钱的30%用于储蓄</li>
+                        <li>• 购买前思考3天，避免冲动消费</li>
+                        <li>• 为重要目标设立储蓄计划</li>
+                        <li>• 学会比较价格，寻找优惠</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- 家庭约定 -->
+        <div id="agreements" class="content-area">
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-icon"><i class="fas fa-handshake"></i></div>
+                    <h2 class="card-title">家庭和谐约定</h2>
+                </div>
+                <div class="family-agreements">
+                    <div class="agreement-item">
+                        <div class="agreement-title">电子产品使用约定</div>
+                        <div class="agreement-content">
+                            <strong>约定内容：</strong>每天使用电子产品时间不超过1小时，完成作业和任务后才能使用。<br>
+                            <strong>奖励机制：</strong>每减少30分钟使用时间，获得额外5积分奖励。<br>
+                            <strong>家庭监督：</strong>家长和孩子共同监督，相互提醒。
+                        </div>
+                    </div>
+                    <div class="agreement-item">
+                        <div class="agreement-title">家庭沟通约定</div>
+                        <div class="agreement-content">
+                            <strong>约定内容：</strong>每天晚餐时间分享当天收获和感受，每周家庭会议讨论进步和改进。<br>
+                            <strong>执行方式：</strong>轮流分享，认真倾听，不打断他人发言。<br>
+                            <strong>积分奖励：</strong>主动分享获得3积分，提出建设性建议获得5积分。
+                        </div>
+                    </div>
+                    <div class="agreement-item">
+                        <div class="agreement-title">家务分担约定</div>
+                        <div class="agreement-content">
+                            <strong>约定内容：</strong>根据年龄分担适当家务，培养责任感和独立能力。<br>
+                            <strong>任务分配：</strong>整理房间、帮忙做饭、照顾弟妹、垃圾分类等。<br>
+                            <strong>奖励标准：</strong>完成日常家务获得8积分，额外帮助获得10积分。
+                        </div>
+                    </div>
+                    <div class="agreement-item">
+                        <div class="agreement-title">学习目标约定</div>
+                        <div class="agreement-content">
+                            <strong>约定内容：</strong>按时完成作业，主动预习复习，遇到问题及时请教。<br>
+                            <strong>检查机制：</strong>每周检查学习进度，每月评估学习效果。<br>
+                            <strong>激励机制：</strong>完成学习目标获得10积分，超额完成获得额外奖励。
+                        </div>
+                    </div>
+                    <div class="agreement-item">
+                        <div class="agreement-title">健康生活约定</div>
+                        <div class="agreement-content">
+                            <strong>约定内容：</strong>规律作息，均衡饮食，适量运动，保持积极心态。<br>
+                            <strong>具体标准：</strong>每天运动30分钟，晚上9点前睡觉，多吃蔬菜水果。<br>
+                            <strong>健康奖励：</strong>坚持健康生活一周获得20积分，形成好习惯获得特别奖励。
+                        </div>
+                    </div>
+                </div>
+                <button class="btn" onclick="addAgreement()">添加新约定</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 全局变量
+        let totalPoints = 1250;
+        let currentBalance = 150.50;
+        let completedTasks = 12;
+        let exerciseDays = 4;
+
+        // 切换标签页
+        function showTab(tabName) {
+            // 隐藏所有内容区域
+            const contents = document.querySelectorAll('.content-area');
+            contents.forEach(content => content.classList.remove('active'));
+            
+            // 移除所有标签的active类
+            const tabs = document.querySelectorAll('.nav-tab');
+            tabs.forEach(tab => tab.classList.remove('active'));
+            
+            // 显示选中的内容区域
+            document.getElementById(tabName).classList.add('active');
+            
+            // 激活对应的标签
+            event.target.classList.add('active');
+        }
+
+        // 切换任务完成状态
+        function toggleTask(checkbox) {
+            checkbox.classList.toggle('checked');
+            const taskItem = checkbox.closest('.task-item');
+            const pointsText = taskItem.querySelector('.task-points').textContent;
+            const points = parseInt(pointsText.replace('+', '').replace('分', ''));
+            
+            if (checkbox.classList.contains('checked')) {
+                totalPoints += points;
+                completedTasks++;
+            } else {
+                totalPoints -= points;
+                completedTasks--;
+            }
+            
+            updateDashboard();
+            showNotification(checkbox.classList.contains('checked') ? `获得 ${points} 积分！` : `扣除 ${points} 积分`);
+        }
+
+        // 更新仪表板数据
+        function updateDashboard() {
+            document.getElementById('totalPoints').textContent = totalPoints;
+            document.getElementById('completedTasks').textContent = completedTasks;
+            document.getElementById('exerciseProgress').textContent = `${exerciseDays}/7天`;
+            
+            const exerciseProgress = document.querySelector('#exercise .progress-fill');
+            if (exerciseProgress) {
+                exerciseProgress.style.width = `${(exerciseDays / 7) * 100}%`;
+            }
+        }
+
+        // 添加新任务
+        function addTask() {
+            const title = prompt('请输入任务标题：');
+            const description = prompt('请输入任务描述：');
+            const points = prompt('请输入积分奖励：');
+            
+            if (title && description && points) {
+                const taskList = document.getElementById('taskList');
+                const newTask = document.createElement('div');
+                newTask.className = 'task-item';
+                newTask.innerHTML = `
+                    <div class="task-checkbox" onclick="toggleTask(this)"></div>
+                    <div class="task-content">
+                        <div class="task-title">${title}</div>
+                        <div class="task-description">${description}</div>
+                    </div>
+                    <div class="task-points">+${points}分</div>
+                `;
+                taskList.appendChild(newTask);
+                showNotification('新任务已添加！');
+            }
+        }
+
+        // 记录阅读
+        function addReadingRecord() {
+            const book = prompt('请输入书名：');
+            const pages = prompt('请输入阅读页数：');
+            const minutes = prompt('请输入阅读时间（分钟）：');
+            
+            if (book && pages && minutes) {
+                const points = Math.floor(parseInt(pages) / 10) + Math.floor(parseInt(minutes) / 5);
+                totalPoints += points;
+                
+                // 更新阅读统计
+                document.getElementById('booksRead').textContent = parseInt(document.getElementById('booksRead').textContent) + 1;
+                document.getElementById('totalPages').textContent = parseInt(document.getElementById('totalPages').textContent) + parseInt(pages);
+                document.getElementById('readingDays').textContent = parseInt(document.getElementById('readingDays').textContent) + 1;
+                
+                updateDashboard();
+                showNotification(`阅读记录已添加，获得 ${points} 积分！`);
+            }
+        }
+
+        // 添加收入
+        function addIncome() {
+            const source = prompt('收入来源：');
+            const amount = prompt('收入金额：');
+            
+            if (source && amount) {
+                currentBalance += parseFloat(amount);
+                document.getElementById('currentBalance').textContent = currentBalance.toFixed(2);
+                
+                const transactionList = document.getElementById('transactionList');
+                const newTransaction = document.createElement('div');
+                newTransaction.className = 'transaction-item';
+                newTransaction.innerHTML = `
+                    <div>
+                        <strong>${source}</strong>
+                        <div style="font-size: 0.9rem; color: var(--text-secondary);">${new Date().toLocaleDateString()}</div>
+                    </div>
+                    <div class="transaction-amount positive">+¥${parseFloat(amount).toFixed(2)}</div>
+                `;
+                transactionList.insertBefore(newTransaction, transactionList.firstChild);
+                showNotification('收入已记录！');
+            }
+        }
+
+        // 添加支出
+        function addExpense() {
+            const item = prompt('支出项目：');
+            const amount = prompt('支出金额：');
+            
+            if (item && amount) {
+                currentBalance -= parseFloat(amount);
+                document.getElementById('currentBalance').textContent = currentBalance.toFixed(2);
+                
+                const transactionList = document.getElementById('transactionList');
+                const newTransaction = document.createElement('div');
+                newTransaction.className = 'transaction-item';
+                newTransaction.innerHTML = `
+                    <div>
+                        <strong>${item}</strong>
+                        <div style="font-size: 0.9rem; color: var(--text-secondary);">${new Date().toLocaleDateString()}</div>
+                    </div>
+                    <div class="transaction-amount negative">-¥${parseFloat(amount).toFixed(2)}</div>
+                `;
+                transactionList.insertBefore(newTransaction, transactionList.firstChild);
+                showNotification('支出已记录！');
+            }
+        }
+
+        // 添加家庭约定
+        function addAgreement() {
+            const title = prompt('约定标题：');
+            const content = prompt('约定内容：');
+            
+            if (title && content) {
+                const agreements = document.querySelector('.family-agreements');
+                const newAgreement = document.createElement('div');
+                newAgreement.className = 'agreement-item';
+                newAgreement.innerHTML = `
+                    <div class="agreement-title">${title}</div>
+                    <div class="agreement-content">${content}</div>
+                `;
+                agreements.appendChild(newAgreement);
+                showNotification('新约定已添加！');
+            }
+        }
+
+        // 显示通知
+        function showNotification(message) {
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: var(--primary-green);
+                color: white;
+                padding: 1rem 2rem;
+                border-radius: var(--border-radius);
+                box-shadow: var(--shadow-lg);
+                z-index: 1000;
+                animation: fadeIn 0.3s ease;
+            `;
+            notification.textContent = message;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.remove();
+            }, 3000);
+        }
+
+        // 页面加载完成后的初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            updateDashboard();
+            
+            // 添加一些示例数据
+            const today = new Date();
+            const dayOfWeek = today.getDay();
+            
+            // 根据星期几设置一些初始数据
+            if (dayOfWeek >= 1 && dayOfWeek <= 5) {
+                // 工作日
+                document.querySelectorAll('.task-item').forEach((item, index) => {
+                    if (index < 3) {
+                        item.querySelector('.task-checkbox').classList.add('checked');
+                    }
+                });
+            }
+        });
+
+        // 键盘快捷键
+        document.addEventListener('keydown', function(e) {
+            if (e.ctrlKey) {
+                switch(e.key) {
+                    case '1':
+                        e.preventDefault();
+                        showTab('dashboard');
+                        break;
+                    case '2':
+                        e.preventDefault();
+                        showTab('tasks');
+                        break;
+                    case '3':
+                        e.preventDefault();
+                        showTab('exercise');
+                        break;
+                    case '4':
+                        e.preventDefault();
+                        showTab('reading');
+                        break;
+                    case '5':
+                        e.preventDefault();
+                        showTab('allowance');
+                        break;
+                    case '6':
+                        e.preventDefault();
+                        showTab('agreements');
+                        break;
+                }
+            }
+        });
+    </script>
+</body>
+</html>

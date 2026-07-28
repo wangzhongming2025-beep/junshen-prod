@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PDF转Word工具</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/pdf-parse@1.1.1/dist/pdf-parse.min.js"></script>
+    <script src="https://unpkg.com/docx@7.7.0/build/index.js"></script>
+</head>
+<body>
+    <div class="container">
+        <h1>PDF转Word工具</h1>
+        <form id="uploadForm">
+            <input type="file" id="pdfFile" accept=".pdf" required>
+            <button type="submit">转换</button>
+        </form>
+        <div id="status"></div>
+        <a id="downloadLink" style="display: none;">下载Word文件</a>
+    </div>
+    <script src="app.js"></script>
+</body>
+</html>

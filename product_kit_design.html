@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Military Kit Poster</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Black+Ops+One&family=Noto+Sans+SC:wght@700;900&display=swap');
+
+        :root {
+            --bg-color: #050505;
+            --cyber-blue: #00BFFF;
+            --neon-green: #39FF14;
+            --grid-color: rgba(0, 191, 255, 0.1);
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            width: 1200px;
+            height: 800px;
+            background-color: var(--bg-color);
+            background-image:
+                linear-gradient(var(--grid-color) 1px, transparent 1px),
+                linear-gradient(90deg, var(--grid-color) 1px, transparent 1px);
+            background-size: 50px 50px;
+            font-family: 'Noto Sans SC', sans-serif;
+            color: white;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .container {
+            position: relative;
+            width: 1000px;
+            height: 700px;
+            border: 2px solid var(--cyber-blue);
+            box-shadow: 0 0 20px rgba(0, 191, 255, 0.2);
+            /* Corner decorations */
+            background:
+                linear-gradient(to right, var(--neon-green) 4px, transparent 4px) 0 0,
+                linear-gradient(to bottom, var(--neon-green) 4px, transparent 4px) 0 0,
+                linear-gradient(to left, var(--neon-green) 4px, transparent 4px) 100% 0,
+                linear-gradient(to bottom, var(--neon-green) 4px, transparent 4px) 100% 0,
+                linear-gradient(to right, var(--neon-green) 4px, transparent 4px) 0 100%,
+                linear-gradient(to top, var(--neon-green) 4px, transparent 4px) 0 100%,
+                linear-gradient(to left, var(--neon-green) 4px, transparent 4px) 100% 100%,
+                linear-gradient(to top, var(--neon-green) 4px, transparent 4px) 100% 100%;
+            background-repeat: no-repeat;
+            background-size: 40px 40px;
+        }
+
+        /* Object Placeholders (Wireframes) */
+        .item {
+            position: absolute;
+            border: 2px solid rgba(255, 255, 255, 0.5);
+            background: rgba(0, 20, 40, 0.6);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: rgba(255, 255, 255, 0.3);
+            font-family: 'Black Ops One', cursive;
+            transition: all 0.3s ease;
+        }
+
+        .item:hover {
+            border-color: var(--cyber-blue);
+            box-shadow: 0 0 15px var(--cyber-blue);
+        }
+
+        /* 1. iPad */
+        #ipad {
+            top: 100px;
+            left: 100px;
+            width: 300px;
+            height: 220px;
+            border-radius: 10px;
+            border-color: var(--cyber-blue);
+        }
+
+        #ipad .screen {
+            width: 90%;
+            height: 85%;
+            border: 1px solid var(--cyber-blue);
+            background: rgba(0, 191, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Brainwave animation simulated */
+        .wave {
+            position: absolute;
+            width: 200%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, var(--cyber-blue), transparent);
+            opacity: 0.3;
+            animation: scan 2s infinite linear;
+        }
+
+        @keyframes scan {
+            from {
+                left: -100%;
+            }
+
+            to {
+                left: 100%;
+            }
+        }
+
+        /* 2. Flipper */
+        #flipper {
+            top: 400px;
+            left: 150px;
+            width: 200px;
+            height: 100px;
+            border-radius: 50px;
+            /* shape hint */
+            border: 2px solid var(--neon-green);
+            background: transparent;
+        }
+
+        #flipper::before,
+        #flipper::after {
+            content: '';
+            position: absolute;
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            border: 4px solid var(--neon-green);
+            top: 6px;
+        }
+
+        #flipper::before {
+            left: 10px;
+        }
+
+        #flipper::after {
+            right: 10px;
+        }
+
+        /* 3. Manual */
+        #manual {
+            top: 100px;
+            right: 150px;
+            width: 200px;
+            height: 280px;
+            background: rgba(20, 20, 20, 0.8);
+            border: 1px dashed white;
+        }
+
+        #manual::after {
+            content: 'TOP SECRET';
+            color: red;
+            border: 2px solid red;
+            padding: 5px;
+            transform: rotate(-15deg);
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        /* 4. Box */
+        #box {
+            bottom: 100px;
+            right: 150px;
+            width: 300px;
+            height: 200px;
+            border: 4px solid #555;
+            background: repeating-linear-gradient(45deg,
+                    #222,
+                    #222 10px,
+                    #333 10px,
+                    #333 20px);
+        }
+
+        #box::before {
+            content: 'AMMO TYPE: KNOWLEDGE';
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            font-size: 10px;
+            color: #aaa;
+        }
+
+        /* Text Annotations (The Core Request) */
+        .annotation {
+            position: absolute;
+            background: rgba(0, 0, 0, 0.8);
+            border: 1px solid var(--cyber-blue);
+            padding: 10px 20px;
+            font-size: 18px;
+            font-weight: 900;
+            color: white;
+            text-transform: uppercase;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.9);
+            z-index: 10;
+        }
+
+        .annotation h3 {
+            margin: 0;
+            font-size: 24px;
+            color: var(--neon-green);
+            text-shadow: 0 0 5px var(--neon-green);
+            margin-bottom: 5px;
+        }
+
+        .annotation p {
+            margin: 0;
+            font-size: 16px;
+            color: #ddd;
+        }
+
+        .blue-tag {
+            color: var(--cyber-blue) !important;
+            text-shadow: 0 0 5px var(--cyber-blue) !important;
+        }
+
+        /* Leader Lines */
+        .line {
+            position: absolute;
+            background: white;
+            height: 2px;
+            width: 100px;
+            z-index: 5;
+        }
+
+        .dot {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background: var(--neon-green);
+            border-radius: 50%;
+            box-shadow: 0 0 10px var(--neon-green);
+        }
+
+        /* Layout Positions */
+        /* iPad Note */
+        #note-ipad {
+            top: 60px;
+            left: 450px;
+        }
+
+        #line-ipad {
+            top: 120px;
+            left: 400px;
+            width: 50px;
+            transform: rotate(160deg);
+        }
+
+        /* Flipper Note */
+        #note-flipper {
+            top: 520px;
+            left: 180px;
+        }
+
+        #line-flipper {
+            top: 510px;
+            left: 240px;
+            width: 50px;
+            transform: rotate(90deg);
+            background: var(--neon-green);
+        }
+
+        /* Manual Note */
+        #note-manual {
+            top: 80px;
+            right: 400px;
+            text-align: right;
+        }
+
+        #line-manual {
+            top: 180px;
+            right: 350px;
+            width: 50px;
+        }
+
+        /* Box Note */
+        #note-box {
+            bottom: 150px;
+            right: 480px;
+            text-align: right;
+        }
+
+        #line-box {
+            bottom: 200px;
+            right: 450px;
+            width: 30px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <!-- Decoration -->
+        <div style="position: absolute; top: 20px; left: 20px; color: var(--neon-green); font-family: monospace;">
+            SYS.STATUS: ONLINE</div>
+        <div
+            style="position: absolute; bottom: 20px; right: 20px; color: var(--cyber-blue); font-family: 'Black Ops One'; font-size: 40px;">
+            2980</div>
+
+        <!-- Items -->
+        <div id="ipad" class="item">
+            <div class="screen">
+                <div class="wave"></div>BRAINWAVE<br>MONITOR
+            </div>
+        </div>
+
+        <div id="flipper" class="item">
+        </div>
+
+        <div id="manual" class="item">
+            PLAN
+        </div>
+
+        <div id="box" class="item">
+        </div>
+
+
+        <!-- Annotations -->
+
+        <!-- iPad -->
+        <div id="note-ipad" class="annotation">
+            <h3>【作战指挥室系统】</h3>
+            <p>连长实时监控脑波数据</p>
+        </div>
+
+        <!-- Flipper -->
+        <div id="note-flipper" class="annotation" style="border-color: var(--neon-green);">
+            <h3>【特种兵主武器】</h3>
+            <p>调节灵敏度强化器</p>
+        </div>
+
+        <!-- Manual -->
+        <div id="note-manual" class="annotation" style="border-color: #fff;">
+            <h3 class="blue-tag">【内部作战地图】</h3>
+            <p>脑科学视觉SOP手册</p>
+        </div>
+
+        <!-- Box -->
+        <div id="note-box" class="annotation">
+            <h3 class="blue-tag">【入伍军火箱】</h3>
+            <p>专属仪式感交付</p>
+        </div>
+
+    </div>
+
+</body>
+
+</html>

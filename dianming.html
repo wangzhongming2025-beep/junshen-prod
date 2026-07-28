@@ -1,0 +1,1250 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>球形点名系统</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/three@0.132.2/build/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.132.2/examples/js/controls/OrbitControls.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#3B82F6',
+                        secondary: '#10B981',
+                        accent: '#8B5CF6',
+                        dark: '#1E293B',
+                        light: '#F8FAFC'
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                    },
+                    animation: {
+                'pulse-slow': 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                'float': 'float 2s ease-in-out infinite',
+                'float-fast': 'float 1.5s ease-in-out infinite',
+                'shine': 'shine 1.5s ease-in-out infinite alternate',
+                'bounce-slow': 'bounce 1.5s infinite',
+                'glow': 'glow 2s ease-in-out infinite',
+                'rotate-slow': 'rotate 20s linear infinite',
+                'scale-pulse': 'scale-pulse 3s ease-in-out infinite'
+            },
+            keyframes: {
+                float: {
+                    '0%, 100%': { transform: 'translateY(0)' },
+                    '50%': { transform: 'translateY(-10px)' }
+                },
+                shine: {
+                    '0%': { boxShadow: '0 0 0 0 rgba(59, 130, 246, 0.4)' },
+                    '100%': { boxShadow: '0 0 0 20px rgba(59, 130, 246, 0)' }
+                },
+                glow: {
+                    '0%, 100%': { boxShadow: '0 0 10px rgba(139, 92, 246, 0.5)' },
+                    '50%': { boxShadow: '0 0 20px rgba(139, 92, 246, 0.8), 0 0 30px rgba(139, 92, 246, 0.5)' }
+                },
+                rotate: {
+                    '0%': { transform: 'rotate(0deg)' },
+                    '100%': { transform: 'rotate(360deg)' }
+                },
+                'scale-pulse': {
+                    '0%, 100%': { transform: 'scale(1)' },
+                    '50%': { transform: 'scale(1.05)' }
+                }
+            }
+                },
+            }
+        }
+    </script>
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .card-glass {
+                backdrop-filter: blur(16px);
+                background: rgba(255, 255, 255, 0.75);
+                border: 1px solid rgba(255, 255, 255, 0.4);
+                box-shadow: 0 8px 32px rgba(31, 38, 135, 0.15);
+                transition: all 0.3s ease;
+            }
+            .card-glass:hover {
+                box-shadow: 0 12px 48px rgba(31, 38, 135, 0.25);
+                transform: translateY(-4px);
+            }
+            .bg-gradient-blue {
+                background: linear-gradient(135deg, #EFF6FF 0%, #DBEAFE 50%, #EFF6FF 100%);
+                background-size: 400% 400%;
+                animation: gradient 15s ease infinite;
+            }
+            @keyframes gradient {
+                0% { background-position: 0% 50%; }
+                50% { background-position: 100% 50%; }
+                100% { background-position: 0% 50%; }
+            }
+            .text-shadow {
+                text-shadow: 0 2px 8px rgba(0, 0, 0, 0.15), 0 0 10px rgba(59, 130, 246, 0.2);
+            }
+            .text-shadow-glow {
+                text-shadow: 0 0 10px rgba(139, 92, 246, 0.5), 0 0 20px rgba(139, 92, 246, 0.3);
+            }
+            .shadow-soft {
+                box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            }
+            .shadow-glow {
+                box-shadow: 0 0 25px rgba(139, 92, 246, 0.3);
+            }
+            .sphere-container {
+                position: relative;
+                width: 100%;
+                aspect-ratio: 1 / 1;
+                max-width: 500px;
+                max-height: 500px;
+                border-radius: 50%;
+                background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 70%);
+                overflow: visible;
+            }
+            .sphere-container::before {
+                content: '';
+                position: absolute;
+                top: -20px;
+                left: -20px;
+                right: -20px;
+                bottom: -20px;
+                background: radial-gradient(circle, rgba(139, 92, 246, 0.1) 0%, rgba(139, 92, 246, 0) 70%);
+                border-radius: 50%;
+                z-index: -1;
+                animation: pulse 3s ease-in-out infinite;
+            }
+            .name-tag {
+                position: absolute;
+                background: rgba(59, 130, 246, 0.95);
+                color: white;
+                padding: 4px 8px;
+                border-radius: 6px;
+                font-size: 12px;
+                white-space: nowrap;
+                pointer-events: none;
+                transform: translate(-50%, -120%);
+                z-index: 10;
+                transition: all 0.3s ease;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            }
+            .name-tag::after {
+                content: '';
+                position: absolute;
+                top: 100%;
+                left: 50%;
+                transform: translateX(-50%);
+                border-left: 5px solid transparent;
+                border-right: 5px solid transparent;
+                border-top: 5px solid rgba(59, 130, 246, 0.95);
+            }
+            .selected {
+                animation: bounce-slow 1.5s infinite;
+                filter: drop-shadow(0 0 8px rgba(255, 165, 0, 0.8));
+            }
+            .particle {
+                position: absolute;
+                border-radius: 50%;
+                background: radial-gradient(circle, rgba(139, 92, 246, 0.8) 0%, rgba(139, 92, 246, 0.2) 100%);
+                animation: float 3s ease-in-out infinite;
+                z-index: -1;
+            }
+        }
+    </style>
+</head>
+<body class="min-h-screen bg-gradient-blue font-sans text-dark">
+    <div class="container mx-auto px-4 py-8 max-w-7xl">
+        <!-- 标题区域 -->
+        <header class="text-center mb-12 relative">
+            <div id="particles-container" class="absolute inset-0 -z-10 overflow-hidden"></div>
+            <h1 class="text-[clamp(2.5rem,6vw,3.5rem)] font-bold text-primary mb-4 text-shadow-glow animate-float-fast">球形点名系统</h1>
+            <p class="text-dark/80 text-lg max-w-3xl mx-auto">
+                3D可视化点名工具，让点名过程更加生动有趣
+            </p>
+        </header>
+
+        <div class="grid grid-cols-1 lg:grid-cols-5 gap-8 mb-10">
+            <!-- 左侧控制面板 -->
+            <div class="lg:col-span-2 space-y-6">
+                <!-- 名单管理 -->
+                <div class="card-glass rounded-2xl p-6 shadow-soft animate-float">
+                    <h2 class="text-xl font-bold mb-4">名单管理</h2>
+                    <div class="space-y-4">
+                        <!-- 导入名单 -->
+                        <div>
+                            <label class="block text-sm font-medium text-dark/80 mb-2">导入名单</label>
+                            <div class="relative">
+                                <input type="file" id="fileInput" accept=".txt,.csv" class="hidden">
+                                <label for="fileInput" class="flex items-center justify-center w-full bg-white border border-gray-300 rounded-lg px-4 py-3 text-sm font-medium text-dark/80 hover:bg-gray-50 cursor-pointer transition-all">
+                                    <i class="fa fa-upload mr-2 text-primary"></i>
+                                    <span>选择文件上传 (.txt 或 .csv)</span>
+                                </label>
+                                <p id="fileName" class="mt-2 text-sm text-dark/60">未选择文件</p>
+                            </div>
+                        </div>
+
+                        <!-- 手动添加 -->
+                        <div>
+                            <label class="block text-sm font-medium text-dark/80 mb-2">添加成员</label>
+                            <div class="flex gap-2">
+                                <input type="text" id="nameInput" placeholder="输入姓名" class="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary/50 focus:border-primary outline-none">
+                                <button id="addNameBtn" class="bg-primary hover:bg-primary/90 text-white px-4 py-2 rounded-lg transition-all">
+                                    <i class="fa fa-plus"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- 名单列表 -->
+                        <div>
+                            <div class="flex justify-between items-center mb-2">
+                                <label class="block text-sm font-medium text-dark/80">当前名单</label>
+                                <button id="clearNamesBtn" class="text-sm text-danger hover:text-danger/80 transition-colors">
+                                    <i class="fa fa-trash-o mr-1"></i>清空
+                                </button>
+                            </div>
+                            <div class="relative max-h-60 overflow-y-auto bg-white/80 rounded-lg p-3 border border-gray-200">
+                                <ul id="nameList" class="space-y-1">
+                                    <!-- 名单将动态添加 -->
+                                    <li class="text-dark/60 text-center py-4">名单为空，请导入或手动添加</li>
+                                </ul>
+                                <div class="absolute bottom-0 left-0 right-0 h-8 bg-gradient-to-t from-white/80 to-transparent pointer-events-none"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 点名设置 -->
+                <div class="card-glass rounded-2xl p-6 shadow-soft">
+                    <h2 class="text-xl font-bold mb-4">点名设置</h2>
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-dark/80 mb-2">抽取数量</label>
+                            <div class="flex items-center gap-3">
+                                <input type="range" id="countRange" min="1" max="10" value="1" class="w-full accent-primary">
+                                <span id="countValue" class="text-sm font-medium min-w-[2rem] text-center">1</span>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-dark/80 mb-2">抽取模式</label>
+                            <select id="modeSelect" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary/50 focus:border-primary outline-none">
+                                <option value="random">随机抽取</option>
+                                <option value="sequential">顺序抽取</option>
+                                <option value="weighted">权重抽取</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="flex items-center gap-2 text-sm font-medium cursor-pointer">
+                                <input type="checkbox" id="removeSelected" class="rounded text-primary focus:ring-primary/50">
+                                <span>抽取后移除已选人员</span>
+                            </label>
+                        </div>
+
+                        <div>
+                            <label class="flex items-center gap-2 text-sm font-medium cursor-pointer">
+                                <input type="checkbox" id="showHistory" class="rounded text-primary focus:ring-primary/50">
+                                <span>显示历史抽取记录</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 右侧球体展示 -->
+            <div class="lg:col-span-3">
+                <div class="card-glass rounded-2xl p-6 shadow-soft h-full">
+                    <div class="flex justify-between items-center mb-6">
+                        <h2 class="text-xl font-bold">3D球体点名</h2>
+                        <div class="flex gap-3">
+                            <button id="resetViewBtn" class="bg-light hover:bg-light/80 text-dark px-3 py-2 rounded-lg text-sm transition-all">
+                                <i class="fa fa-refresh mr-1"></i>重置视图
+                            </button>
+                            <button id="toggleFullscreenBtn" class="bg-light hover:bg-light/80 text-dark px-3 py-2 rounded-lg text-sm transition-all">
+                                <i class="fa fa-expand mr-1"></i>全屏
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- 球体容器 -->
+                    <div class="relative mx-auto sphere-container mb-6" id="sphereContainer">
+                        <!-- Three.js 渲染器将在这里添加 -->
+                        <div class="absolute inset-0 flex items-center justify-center text-dark/40" id="loadingIndicator">
+                            <div class="text-center">
+                                <div class="inline-block w-10 h-10 border-4 border-primary/30 border-t-primary rounded-full animate-spin mb-2"></div>
+                                <p>加载中...</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 控制按钮 -->
+                    <div class="flex flex-wrap justify-center gap-4 mb-6">
+                        <button id="startBtn" class="bg-primary hover:bg-primary/90 text-white px-8 py-3 rounded-lg font-medium transition-all transform hover:scale-105 shadow-lg animate-shine text-shadow">
+                            <i class="fa fa-random mr-2"></i>开始点名
+                        </button>
+                        <button id="pauseBtn" class="bg-warning hover:bg-warning/90 text-white px-6 py-3 rounded-lg font-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                            <i class="fa fa-pause mr-2"></i>暂停
+                        </button>
+                        <button id="exportBtn" class="bg-secondary hover:bg-secondary/90 text-white px-6 py-3 rounded-lg font-medium transition-all">
+                            <i class="fa fa-download mr-2"></i>导出结果
+                        </button>
+                    </div>
+
+                    <!-- 结果展示 -->
+                    <div id="resultSection" class="hidden">
+                        <h3 class="text-lg font-bold mb-3">点名结果</h3>
+                        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
+                            <!-- 结果将动态添加 -->
+                        </div>
+                    </div>
+
+                    <!-- 历史记录 -->
+                    <div id="historySection" class="mt-6 hidden">
+                        <h3 class="text-lg font-bold mb-3">历史记录</h3>
+                        <div class="bg-white/80 rounded-lg p-3 max-h-40 overflow-y-auto border border-gray-200">
+                            <ul id="historyList" class="space-y-2">
+                                <!-- 历史记录将动态添加 -->
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 使用说明 -->
+        <div class="card-glass rounded-2xl p-6 shadow-soft mb-8 animate-float">
+            <h2 class="text-xl font-bold mb-4">使用说明</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div class="bg-light/80 rounded-lg p-4">
+                    <div class="bg-primary/20 rounded-full w-10 h-10 flex items-center justify-center mb-3">
+                        <i class="fa fa-upload text-primary"></i>
+                    </div>
+                    <h3 class="font-semibold mb-2">导入名单</h3>
+                    <p class="text-sm text-dark/70">上传.txt或.csv文件导入名单，每行一个名字。也可以手动添加成员。</p>
+                </div>
+                <div class="bg-light/80 rounded-lg p-4">
+                    <div class="bg-primary/20 rounded-full w-10 h-10 flex items-center justify-center mb-3">
+                        <i class="fa fa-sliders text-primary"></i>
+                    </div>
+                    <h3 class="font-semibold mb-2">设置参数</h3>
+                    <p class="text-sm text-dark/70">调整抽取数量、模式等参数，根据需要自定义点名方式。</p>
+                </div>
+                <div class="bg-light/80 rounded-lg p-4">
+                    <div class="bg-primary/20 rounded-full w-10 h-10 flex items-center justify-center mb-3">
+                        <i class="fa fa-play text-primary"></i>
+                    </div>
+                    <h3 class="font-semibold mb-2">开始点名</h3>
+                    <p class="text-sm text-dark/70">点击开始按钮，观察球体旋转并自动选择成员。可以随时暂停。</p>
+                </div>
+                <div class="bg-light/80 rounded-lg p-4">
+                    <div class="bg-primary/20 rounded-full w-10 h-10 flex items-center justify-center mb-3">
+                        <i class="fa fa-download text-primary"></i>
+                    </div>
+                    <h3 class="font-semibold mb-2">导出结果</h3>
+                    <p class="text-sm text-dark/70">完成点名后，可以导出结果，方便记录和后续使用。</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 页脚 -->
+        <footer class="w-full text-center text-dark/60 py-6">
+            <p class="text-sm">© 2023 球形点名系统 - 让点名变得有趣高效</p>
+        </footer>
+    </div>
+
+    <!-- 模态框 -->
+    <div id="resultModal" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-2xl max-w-md w-full p-6 transform transition-all scale-95 opacity-0" id="modalContent">
+            <div class="text-center mb-4">
+                <h3 class="text-xl font-bold text-primary mb-2">点名结果</h3>
+                <p class="text-dark/70" id="modalResultTime"></p>
+            </div>
+            <div id="modalResultList" class="mb-6 space-y-2">
+                <!-- 结果将动态添加 -->
+            </div>
+            <div class="flex justify-center gap-3">
+                <button id="modalCloseBtn" class="bg-gray-200 hover:bg-gray-300 text-dark px-4 py-2 rounded-lg transition-all">
+                    关闭
+                </button>
+                <button id="modalExportBtn" class="bg-primary hover:bg-primary/90 text-white px-4 py-2 rounded-lg transition-all">
+                    <i class="fa fa-download mr-1"></i>导出
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // DOM元素
+        const fileInput = document.getElementById('fileInput');
+        const fileName = document.getElementById('fileName');
+        const nameInput = document.getElementById('nameInput');
+        const addNameBtn = document.getElementById('addNameBtn');
+        const clearNamesBtn = document.getElementById('clearNamesBtn');
+        const nameList = document.getElementById('nameList');
+        const countRange = document.getElementById('countRange');
+        const countValue = document.getElementById('countValue');
+        const modeSelect = document.getElementById('modeSelect');
+        const removeSelected = document.getElementById('removeSelected');
+        const showHistory = document.getElementById('showHistory');
+        const historySection = document.getElementById('historySection');
+        const historyList = document.getElementById('historyList');
+        const startBtn = document.getElementById('startBtn');
+        const pauseBtn = document.getElementById('pauseBtn');
+        const exportBtn = document.getElementById('exportBtn');
+        const resetViewBtn = document.getElementById('resetViewBtn');
+        const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
+        const sphereContainer = document.getElementById('sphereContainer');
+        const loadingIndicator = document.getElementById('loadingIndicator');
+        const resultSection = document.getElementById('resultSection');
+        const resultModal = document.getElementById('resultModal');
+        const modalContent = document.getElementById('modalContent');
+        const modalResultTime = document.getElementById('modalResultTime');
+        const modalResultList = document.getElementById('modalResultList');
+        const modalCloseBtn = document.getElementById('modalCloseBtn');
+        const modalExportBtn = document.getElementById('modalExportBtn');
+
+        // 全局变量
+        let names = [];
+        let selectedNames = [];
+        let抽取历史 = [];
+        let isAnimating = false;
+        let animationSpeed = 0.01;
+        let sphereAnimationId = null;
+        
+        // Three.js 变量
+        let scene, camera, renderer, controls;
+        let sphere, sphereGeometry, sphereMaterial;
+        let points = [];
+        let nameTags = [];
+
+        // 初始化
+        function init() {
+            // 绑定事件监听
+            bindEvents();
+            
+            // 初始化 Three.js
+            initThreeJS();
+            
+            // 加载默认数据
+            loadDefaultNames();
+            
+            // 创建粒子效果
+            createParticles();
+            
+            // 定期更新粒子效果
+            setInterval(createParticles, 15000);
+        }
+
+        // 绑定事件监听
+        function bindEvents() {
+            // 文件上传
+            fileInput.addEventListener('change', handleFileUpload);
+            
+            // 添加/清空名称
+            addNameBtn.addEventListener('click', addName);
+            nameInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') addName();
+            });
+            clearNamesBtn.addEventListener('click', clearNames);
+            
+            // 抽取数量调整
+            countRange.addEventListener('input', () => {
+                countValue.textContent = countRange.value;
+            });
+            
+            // 显示历史记录
+            showHistory.addEventListener('change', () => {
+                historySection.classList.toggle('hidden', !showHistory.checked);
+            });
+            
+            // 点名控制
+            startBtn.addEventListener('click', startSelection);
+            pauseBtn.addEventListener('click', pauseSelection);
+            
+            // 导出结果
+            exportBtn.addEventListener('click', exportResults);
+            modalExportBtn.addEventListener('click', exportResults);
+            
+            // 视图控制
+            resetViewBtn.addEventListener('click', resetView);
+            toggleFullscreenBtn.addEventListener('click', toggleFullscreen);
+            
+            // 模态框控制
+            modalCloseBtn.addEventListener('click', closeModal);
+            resultModal.addEventListener('click', (e) => {
+                if (e.target === resultModal) closeModal();
+            });
+            
+            // 窗口大小调整
+            window.addEventListener('resize', onWindowResize);
+        }
+
+        // 处理文件上传
+        function handleFileUpload(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+            
+            fileName.textContent = file.name;
+            
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                const content = event.target.result;
+                const newNames = content.split(/[\r\n,]+/).filter(name => name.trim());
+                
+                // 添加新名称，避免重复
+                newNames.forEach(name => {
+                    const trimmedName = name.trim();
+                    if (trimmedName && !names.includes(trimmedName)) {
+                        names.push(trimmedName);
+                    }
+                });
+                
+                updateNameList();
+                updateSphere();
+            };
+            reader.readAsText(file);
+        }
+
+        // 添加名称
+        function addName() {
+            const name = nameInput.value.trim();
+            if (name && !names.includes(name)) {
+                names.push(name);
+                nameInput.value = '';
+                updateNameList();
+                updateSphere();
+            }
+        }
+
+        // 清空名称
+        function clearNames() {
+            if (confirm('确定要清空所有名单吗？')) {
+                names = [];
+                updateNameList();
+                updateSphere();
+            }
+        }
+
+        // 更新名称列表
+        function updateNameList() {
+            nameList.innerHTML = '';
+            
+            if (names.length === 0) {
+                const emptyItem = document.createElement('li');
+                emptyItem.className = 'text-dark/60 text-center py-4';
+                emptyItem.textContent = '名单为空，请导入或手动添加';
+                nameList.appendChild(emptyItem);
+            } else {
+                names.forEach((name, index) => {
+                    const listItem = document.createElement('li');
+                    listItem.className = 'flex items-center justify-between px-2 py-1 hover:bg-gray-100 rounded';
+                    
+                    const nameSpan = document.createElement('span');
+                    nameSpan.textContent = name;
+                    
+                    const deleteBtn = document.createElement('button');
+                    deleteBtn.className = 'text-danger hover:text-danger/80 transition-colors';
+                    deleteBtn.innerHTML = '<i class="fa fa-times"></i>';
+                    deleteBtn.addEventListener('click', () => {
+                        names.splice(index, 1);
+                        updateNameList();
+                        updateSphere();
+                    });
+                    
+                    listItem.appendChild(nameSpan);
+                    listItem.appendChild(deleteBtn);
+                    nameList.appendChild(listItem);
+                });
+            }
+        }
+
+        // 初始化 Three.js
+        function initThreeJS() {
+            // 创建场景
+            scene = new THREE.Scene();
+            scene.background = new THREE.Color(0xffffff);
+            
+            // 创建相机
+            camera = new THREE.PerspectiveCamera(75, 1, 0.1, 1000);
+            camera.position.z = 300;
+            
+            // 创建渲染器
+            renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+            renderer.setSize(sphereContainer.clientWidth, sphereContainer.clientHeight);
+            renderer.setPixelRatio(window.devicePixelRatio);
+            sphereContainer.appendChild(renderer.domElement);
+            
+            // 创建控制器
+            controls = new THREE.OrbitControls(camera, renderer.domElement);
+            controls.enableDamping = true;
+            controls.dampingFactor = 0.08; // 增加阻尼因子使旋转更平滑
+            controls.enableZoom = true;
+            controls.autoRotate = false;
+            controls.autoRotateSpeed = 2; // 增加默认旋转速度
+            controls.minDistance = 200; // 设置最小缩放距离
+            controls.maxDistance = 500; // 设置最大缩放距离
+            
+            // 添加环境光
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+            scene.add(ambientLight);
+            
+            // 添加方向光
+            const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
+            directionalLight.position.set(1, 1, 1);
+            scene.add(directionalLight);
+            
+            // 隐藏加载指示器
+            loadingIndicator.style.display = 'none';
+            
+            // 添加额外的环境光和点光源
+            const pointLight1 = new THREE.PointLight(0x3B82F6, 1, 300);
+            pointLight1.position.set(100, 100, 100);
+            scene.add(pointLight1);
+            
+            const pointLight2 = new THREE.PointLight(0x8B5CF6, 1, 300);
+            pointLight2.position.set(-100, -100, 100);
+            scene.add(pointLight2);
+            
+            // 开始渲染
+            animate();
+        }
+
+        // 动画循环
+        function animate() {
+            requestAnimationFrame(animate);
+            
+            controls.update();
+            
+            // 更新点标签位置
+            updateNameTags();
+            
+            renderer.render(scene, camera);
+        }
+
+        // 更新名称标签位置
+        function updateNameTags() {
+            nameTags.forEach((tag, index) => {
+                if (points[index]) {
+                    const vector = points[index].position.clone().project(camera);
+                    
+                    // 计算屏幕坐标
+                    const x = (vector.x * 0.5 + 0.5) * sphereContainer.clientWidth;
+                    const y = (-vector.y * 0.5 + 0.5) * sphereContainer.clientHeight;
+                    
+                    // 更新标签位置
+                    tag.style.left = `${x}px`;
+                    tag.style.top = `${y}px`;
+                    
+                    // 检查点是否在相机前面
+                    const isVisible = vector.z < 1;
+                    tag.style.display = isVisible ? 'block' : 'none';
+                }
+            });
+        }
+
+        // 更新球体
+            function updateSphere() {
+                // 清除现有点
+                points.forEach(point => scene.remove(point));
+                points = [];
+                
+                // 清除现有标签
+                nameTags.forEach(tag => tag.remove());
+                nameTags = [];
+                
+                // 如果没有名称，退出
+                if (names.length === 0) return;
+                
+                // 创建装饰性球体
+                if (sphere) {
+                    scene.remove(sphere);
+                }
+                
+                // 创建半透明的基础球体
+                const sphereGeometry = new THREE.SphereGeometry(100, 32, 32);
+                const sphereMaterial = new THREE.MeshBasicMaterial({
+                    color: 0x8B5CF6,
+                    transparent: true,
+                    opacity: 0.1,
+                    wireframe: true,
+                    wireframeLinewidth: 1
+                });
+                sphere = new THREE.Mesh(sphereGeometry, sphereMaterial);
+                scene.add(sphere);
+                
+                // 创建新点
+                const radius = 100;
+                
+                for (let i = 0; i < names.length; i++) {
+                    // 使用黄金螺旋算法分布点，并添加一些随机性
+                    const y = 1 - (i / (names.length - 1)) * 2;
+                    const radiusAtY = Math.sqrt(1 - y * y);
+                    const theta = Math.PI * 2 * i * 0.618033988749895; // 黄金比例
+                    const x = Math.cos(theta) * radiusAtY;
+                    const z = Math.sin(theta) * radiusAtY;
+                    
+                    // 添加小的随机偏移使分布更自然
+                    const offsetX = (Math.random() - 0.5) * 0.1;
+                    const offsetY = (Math.random() - 0.5) * 0.1;
+                    const offsetZ = (Math.random() - 0.5) * 0.1;
+                    
+                    // 创建点材质，使用径向渐变效果
+                    const pointMaterial = new THREE.MeshBasicMaterial({ 
+                        color: 0x3B82F6,
+                        transparent: true,
+                        opacity: 0.9,
+                        emissive: new THREE.Color(0x3B82F6),
+                        emissiveIntensity: 0.2
+                    });
+                    
+                    // 创建圆形几何体，增加边数使点更圆润
+                    const pointGeometry = new THREE.CircleGeometry(3, 16);
+                    
+                    // 创建点网格
+                    const point = new THREE.Mesh(pointGeometry, pointMaterial);
+                    point.position.set(
+                        (x + offsetX) * radius,
+                        (y + offsetY) * radius,
+                        (z + offsetZ) * radius
+                    );
+                    point.lookAt(camera.position);
+                    
+                    // 添加到场景
+                    scene.add(point);
+                    points.push(point);
+                    
+                    // 创建名称标签
+                    const nameTag = document.createElement('div');
+                    nameTag.className = 'name-tag';
+                    nameTag.textContent = names[i];
+                    sphereContainer.appendChild(nameTag);
+                    nameTags.push(nameTag);
+                }
+            }
+
+        // 创建粒子效果
+            function createParticles() {
+                const container = document.getElementById('particles-container');
+                if (!container) return;
+                
+                // 清空现有粒子
+                container.innerHTML = '';
+                
+                // 创建20个粒子
+                for (let i = 0; i < 20; i++) {
+                    const particle = document.createElement('div');
+                    particle.className = 'particle';
+                    
+                    // 随机大小
+                    const size = Math.random() * 10 + 5;
+                    particle.style.width = `${size}px`;
+                    particle.style.height = `${size}px`;
+                    
+                    // 随机位置
+                    particle.style.left = `${Math.random() * 100}%`;
+                    particle.style.top = `${Math.random() * 100}%`;
+                    
+                    // 随机透明度
+                    particle.style.opacity = Math.random() * 0.5 + 0.2;
+                    
+                    // 随机延迟和持续时间
+                    particle.style.animationDelay = `${Math.random() * 5}s`;
+                    particle.style.animationDuration = `${Math.random() * 3 + 2}s`;
+                    
+                    container.appendChild(particle);
+                }
+            }
+
+            // 开始选择
+            function startSelection() {
+                if (names.length === 0) {
+                    alert('请先添加或导入名单');
+                    return;
+                }
+                
+                if (isAnimating) return;
+                
+                isAnimating = true;
+                startBtn.disabled = true;
+                pauseBtn.disabled = false;
+                
+                // 根据选择模式开始动画
+                const mode = modeSelect.value;
+                const count = parseInt(countRange.value);
+                
+                // 加速球体旋转
+                controls.autoRotate = true;
+                controls.autoRotateSpeed = 15; // 提高旋转速度
+                
+                // 为每个点添加随机运动
+                points.forEach(point => {
+                    point.userData.originalPosition = point.position.clone();
+                    point.userData.randomOffset = new THREE.Vector3(
+                        (Math.random() - 0.5) * 20,
+                        (Math.random() - 0.5) * 20,
+                        (Math.random() - 0.5) * 20
+                    );
+                });
+                
+                // 添加视觉效果
+                sphereContainer.classList.add('shadow-glow');
+                
+                // 设置动画持续时间
+                const duration = 2000 + Math.random() * 1000; // 缩短动画时间
+                
+                // 添加动态效果的动画循环
+                let startTime = Date.now();
+                const animateSelection = () => {
+                    if (!isAnimating) return;
+                    
+                    const elapsed = Date.now() - startTime;
+                    const progress = elapsed / duration;
+                    
+                    // 根据进度调整点的位置和大小
+                    points.forEach(point => {
+                        if (point.userData.originalPosition) {
+                            const offset = point.userData.randomOffset.clone();
+                            // 点的运动振幅随时间变化
+                            const amplitude = Math.sin(progress * Math.PI) * 0.8;
+                            offset.multiplyScalar(amplitude);
+                            
+                            // 应用偏移
+                            point.position.copy(point.userData.originalPosition).add(offset);
+                            
+                            // 呼吸效果
+                            const scale = 1 + Math.sin(progress * Math.PI * 3) * 0.3;
+                            point.scale.set(scale, scale, scale);
+                        }
+                    });
+                    
+                    if (progress < 1) {
+                        sphereAnimationId = requestAnimationFrame(animateSelection);
+                    }
+                };
+                
+                sphereAnimationId = requestAnimationFrame(animateSelection);
+                
+                // 动画结束后选择结果
+                setTimeout(() => {
+                    finishSelection(count, mode);
+                }, duration);
+            }
+
+        // 暂停选择
+        function pauseSelection() {
+            if (!isAnimating) return;
+            
+            isAnimating = false;
+            startBtn.disabled = false;
+            pauseBtn.disabled = true;
+            
+            // 立即选择结果
+            const count = parseInt(countRange.value);
+            const mode = modeSelect.value;
+            finishSelection(count, mode);
+        }
+
+        // 完成选择
+            function finishSelection(count, mode) {
+                isAnimating = false;
+                startBtn.disabled = false;
+                pauseBtn.disabled = true;
+                
+                // 停止动画循环
+                if (sphereAnimationId) {
+                    cancelAnimationFrame(sphereAnimationId);
+                    sphereAnimationId = null;
+                }
+                
+                // 减速球体旋转
+                controls.autoRotate = false;
+                
+                // 移除视觉效果
+                sphereContainer.classList.remove('shadow-glow');
+                
+                // 确保抽取数量不超过可用数量
+                const availableCount = Math.min(count, names.length);
+                selectedNames = [];
+                
+                // 根据模式选择
+                switch (mode) {
+                    case 'random':
+                        // 随机选择
+                        const shuffled = [...names].sort(() => 0.5 - Math.random());
+                        selectedNames = shuffled.slice(0, availableCount);
+                        break;
+                        
+                    case 'sequential':
+                        // 顺序选择
+                        selectedNames = names.slice(0, availableCount);
+                        break;
+                        
+                    case 'weighted':
+                        // 权重选择（简化版，实际应用中可以有更复杂的权重算法）
+                        const weighted = [];
+                        for (let i = 0; i < names.length; i++) {
+                            // 计算权重（示例：根据名称长度）
+                            const weight = Math.max(1, 5 - names[i].length % 5);
+                            for (let j = 0; j < weight; j++) {
+                                weighted.push(names[i]);
+                            }
+                        }
+                        
+                        // 去重
+                        const uniqueSelected = new Set();
+                        while (uniqueSelected.size < availableCount && uniqueSelected.size < names.length) {
+                            const randomIndex = Math.floor(Math.random() * weighted.length);
+                            uniqueSelected.add(weighted[randomIndex]);
+                        }
+                        selectedNames = Array.from(uniqueSelected);
+                        break;
+                }
+                
+                // 移除已选人员（如果启用）
+                if (removeSelected.checked) {
+                    names = names.filter(name => !selectedNames.includes(name));
+                    updateNameList();
+                    updateSphere();
+                }
+                
+                // 为选中的结果添加入场动画
+                setTimeout(() => {
+                    // 高亮显示选中的点
+                    highlightSelectedPoints();
+                    
+                    // 添加选中动画效果
+                    selectedNames.forEach((name, index) => {
+                        setTimeout(() => {
+                            const pointIndex = names.indexOf(name);
+                            if (pointIndex !== -1 && points[pointIndex]) {
+                                // 选中点的弹跳动画
+                                const point = points[pointIndex];
+                                const originalPosition = point.position.clone();
+                                
+                                let bounceCount = 0;
+                                const bounce = () => {
+                                    bounceCount++;
+                                    if (bounceCount < 5) {
+                                        const height = 30 - bounceCount * 5;
+                                        const delay = 50;
+                                        
+                                        // 上弹
+                                        setTimeout(() => {
+                                            if (point) {
+                                                point.position.y = originalPosition.y + height;
+                                                
+                                                // 下落
+                                                setTimeout(() => {
+                                                    if (point) {
+                                                        point.position.copy(originalPosition);
+                                                        bounce();
+                                                    }
+                                                }, delay);
+                                            }
+                                        }, delay);
+                                    }
+                                };
+                                
+                                bounce();
+                            }
+                        }, index * 200);
+                    });
+                    
+                    // 显示结果
+                    showResults();
+                    
+                    // 保存历史记录
+                    saveToHistory();
+                }, 500);
+            }
+
+        // 高亮显示选中的点
+            function highlightSelectedPoints() {
+                points.forEach((point, index) => {
+                    const name = names[index];
+                    if (selectedNames.includes(name)) {
+                        // 高亮选中的点
+                        point.material.color.set(0xFFA500); // 橙色
+                        point.material.opacity = 1;
+                        point.scale.set(2, 2, 2); // 增大尺寸
+                        
+                        // 添加发光效果
+                        point.material.emissive = new THREE.Color(0xFFA500);
+                        point.material.emissiveIntensity = 0.5;
+                        
+                        // 高亮对应的标签
+                        if (nameTags[index]) {
+                            nameTags[index].classList.add('selected');
+                            nameTags[index].style.backgroundColor = 'rgba(255, 165, 0, 0.95)';
+                            nameTags[index].style.fontWeight = 'bold';
+                            nameTags[index].style.padding = '6px 10px';
+                            nameTags[index].style.fontSize = '14px';
+                        }
+                    } else {
+                        // 重置其他点
+                        point.material.color.set(0x3B82F6); // 蓝色
+                        point.material.opacity = 0.4; // 降低透明度使选中点更突出
+                        point.material.emissiveIntensity = 0;
+                        point.scale.set(1, 1, 1);
+                        
+                        // 重置其他标签
+                        if (nameTags[index]) {
+                            nameTags[index].classList.remove('selected');
+                            nameTags[index].style.backgroundColor = 'rgba(59, 130, 246, 0.9)';
+                            nameTags[index].style.fontWeight = 'normal';
+                            nameTags[index].style.padding = '4px 8px';
+                            nameTags[index].style.fontSize = '12px';
+                        }
+                    }
+                });
+            }
+
+        // 显示结果
+            function showResults() {
+                // 显示结果区域
+                resultSection.innerHTML = '';
+                resultSection.classList.remove('hidden');
+                
+                const h3 = document.createElement('h3');
+                h3.className = 'text-lg font-bold mb-4 text-shadow';
+                h3.textContent = '点名结果';
+                resultSection.appendChild(h3);
+                
+                const grid = document.createElement('div');
+                grid.className = 'grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4';
+                resultSection.appendChild(grid);
+                
+                // 添加结果卡片，使用动画逐个显示
+                selectedNames.forEach((name, index) => {
+                    const card = document.createElement('div');
+                    card.className = 'bg-warning/20 rounded-lg p-4 text-center shadow-glow transform opacity-0 scale-90 transition-all duration-300';
+                    card.innerHTML = `
+                        <div class="text-warning font-bold mb-2 text-shadow">#${index + 1}</div>
+                        <div class="font-medium text-lg">${name}</div>
+                    `;
+                    grid.appendChild(card);
+                    
+                    // 添加入场动画
+                    setTimeout(() => {
+                        card.classList.remove('opacity-0', 'scale-90');
+                        card.classList.add('opacity-100', 'scale-100', 'animate-float');
+                    }, index * 150);
+                });
+                
+                // 显示模态框
+                showModal();
+            }
+
+        // 显示模态框
+            function showModal() {
+                // 设置模态框内容
+                const now = new Date();
+                modalResultTime.textContent = `抽取时间：${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')} ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')}`;
+                
+                modalResultList.innerHTML = '';
+                
+                // 添加背景装饰
+                const modalBg = document.createElement('div');
+                modalBg.className = 'absolute inset-0 -z-10 rounded-2xl overflow-hidden';
+                modalBg.innerHTML = `
+                    <div class="absolute inset-0 bg-gradient-to-br from-primary/10 to-accent/10"></div>
+                    <div class="absolute -top-20 -right-20 w-40 h-40 bg-primary/20 rounded-full blur-2xl"></div>
+                    <div class="absolute -bottom-20 -left-20 w-40 h-40 bg-accent/20 rounded-full blur-2xl"></div>
+                `;
+                modalContent.appendChild(modalBg);
+                
+                // 添加结果项，使用动画
+                selectedNames.forEach((name, index) => {
+                    const item = document.createElement('div');
+                    item.className = 'bg-white/70 backdrop-blur-sm rounded-xl p-3 flex items-center justify-between shadow-sm opacity-0 transform translate-y-4 transition-all duration-300';
+                    item.innerHTML = `
+                        <span class="font-medium text-lg">${name}</span>
+                        <span class="bg-warning text-white px-3 py-1 rounded-full font-bold text-shadow">#${index + 1}</span>
+                    `;
+                    modalResultList.appendChild(item);
+                    
+                    // 添加入场动画
+                    setTimeout(() => {
+                        item.classList.remove('opacity-0', 'translate-y-4');
+                        item.classList.add('opacity-100', 'translate-y-0');
+                    }, index * 200);
+                });
+                
+                // 显示模态框
+                resultModal.classList.remove('hidden');
+                setTimeout(() => {
+                    modalContent.classList.remove('scale-95', 'opacity-0');
+                    modalContent.classList.add('scale-100', 'opacity-100', 'animate-scale-pulse');
+                }, 10);
+            }
+
+        // 关闭模态框
+        function closeModal() {
+            modalContent.classList.remove('scale-100', 'opacity-100');
+            modalContent.classList.add('scale-95', 'opacity-0');
+            
+            setTimeout(() => {
+                resultModal.classList.add('hidden');
+            }, 300);
+        }
+
+        // 导出结果
+        function exportResults() {
+            if (selectedNames.length === 0) return;
+            
+            const now = new Date();
+            const timestamp = `${now.getFullYear()}${String(now.getMonth() + 1).padStart(2, '0')}${String(now.getDate()).padStart(2, '0')}_${String(now.getHours()).padStart(2, '0')}${String(now.getMinutes()).padStart(2, '0')}`;
+            const content = `点名结果 (${now.toLocaleString()})\n\n${selectedNames.join('\n')}`;
+            
+            // 创建下载链接
+            const blob = new Blob([content], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `点名结果_${timestamp}.txt`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            // 如果从模态框导出，关闭模态框
+            if (!resultModal.classList.contains('hidden')) {
+                closeModal();
+            }
+        }
+
+        // 保存到历史记录
+        function saveToHistory() {
+            const now = new Date();
+            const historyItem = {
+                time: now.toLocaleString(),
+                names: [...selectedNames]
+            };
+            
+            抽取历史.unshift(historyItem);
+            
+            // 限制历史记录数量
+            if (抽取历史.length > 10) {
+                抽取历史.pop();
+            }
+            
+            // 更新历史记录显示
+            updateHistoryDisplay();
+        }
+
+        // 更新历史记录显示
+        function updateHistoryDisplay() {
+            if (!showHistory.checked) return;
+            
+            historyList.innerHTML = '';
+            
+            抽取历史.forEach(item => {
+                const li = document.createElement('li');
+                li.className = 'border-b border-gray-200 pb-2';
+                
+                const timeSpan = document.createElement('div');
+                timeSpan.className = 'text-sm text-dark/60 mb-1';
+                timeSpan.textContent = item.time;
+                
+                const namesDiv = document.createElement('div');
+                namesDiv.className = 'flex flex-wrap gap-2';
+                
+                item.names.forEach(name => {
+                    const nameSpan = document.createElement('span');
+                    nameSpan.className = 'bg-primary/10 text-primary text-xs px-2 py-1 rounded';
+                    nameSpan.textContent = name;
+                    namesDiv.appendChild(nameSpan);
+                });
+                
+                li.appendChild(timeSpan);
+                li.appendChild(namesDiv);
+                historyList.appendChild(li);
+            });
+        }
+
+        // 重置视图
+            function resetView() {
+                camera.position.set(0, 0, 300);
+                controls.reset();
+                
+                // 重置所有点
+                points.forEach(point => {
+                    point.material.color.set(0x3B82F6);
+                    point.material.opacity = 0.9;
+                    point.material.emissiveIntensity = 0.2;
+                    point.scale.set(1, 1, 1);
+                    
+                    // 重置位置
+                    if (point.userData.originalPosition) {
+                        point.position.copy(point.userData.originalPosition);
+                    }
+                });
+                
+                // 重置所有标签
+                nameTags.forEach(tag => {
+                    tag.classList.remove('selected');
+                    tag.style.backgroundColor = 'rgba(59, 130, 246, 0.9)';
+                    tag.style.fontWeight = 'normal';
+                    tag.style.padding = '4px 8px';
+                    tag.style.fontSize = '12px';
+                });
+                
+                // 移除视觉效果
+                sphereContainer.classList.remove('shadow-glow');
+                
+                // 隐藏结果
+                resultSection.classList.add('hidden');
+            }
+
+        // 切换全屏
+        function toggleFullscreen() {
+            if (!document.fullscreenElement) {
+                if (sphereContainer.requestFullscreen) {
+                    sphereContainer.requestFullscreen();
+                } else if (sphereContainer.webkitRequestFullscreen) {
+                    sphereContainer.webkitRequestFullscreen();
+                } else if (sphereContainer.msRequestFullscreen) {
+                    sphereContainer.msRequestFullscreen();
+                }
+                toggleFullscreenBtn.innerHTML = '<i class="fa fa-compress mr-1"></i>退出全屏';
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                } else if (document.webkitExitFullscreen) {
+                    document.webkitExitFullscreen();
+                } else if (document.msExitFullscreen) {
+                    document.msExitFullscreen();
+                }
+                toggleFullscreenBtn.innerHTML = '<i class="fa fa-expand mr-1"></i>全屏';
+            }
+        }
+
+        // 窗口大小调整处理
+        function onWindowResize() {
+            if (renderer && camera) {
+                const width = sphereContainer.clientWidth;
+                const height = sphereContainer.clientHeight;
+                
+                camera.aspect = width / height;
+                camera.updateProjectionMatrix();
+                
+                renderer.setSize(width, height);
+            }
+        }
+
+        // 加载默认数据
+        function loadDefaultNames() {
+            const defaultNames = ['张三', '李四', '王五', '赵六', '钱七', '孙八', '周九', '吴十', '郑十一', '王十二', '李十三', '张十四', '刘十五'];
+            names = [...defaultNames];
+            updateNameList();
+            
+            // 延迟更新球体，确保 Three.js 已初始化
+            setTimeout(updateSphere, 100);
+        }
+
+        // 页面加载完成后初始化
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>

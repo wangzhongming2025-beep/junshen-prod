@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GEO 生成式引擎优化咨询服务 - 抢占 AI 时代流量高地 | 老王队长</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Noto+Sans+SC:wght@300;400;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Outfit', 'Noto Sans SC', 'sans-serif'],
+                    },
+                    colors: {
+                        geo: {
+                            light: '#00f2ff', // Neon Cyan
+                            DEFAULT: '#0891b2',
+                            dark: '#030712', // Dark slate
+                            accent: '#f59e0b', // Amber/gold accent
+                            glass: 'rgba(15, 23, 42, 0.75)',
+                            border: 'rgba(0, 242, 255, 0.15)'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #030712;
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(8, 145, 178, 0.12) 0%, transparent 40%),
+                radial-gradient(circle at 90% 80%, rgba(245, 158, 11, 0.02) 0%, transparent 35%);
+        }
+        .glow-text {
+            text-shadow: 0 0 12px rgba(0, 242, 255, 0.4);
+        }
+        .glow-text-amber {
+            text-shadow: 0 0 10px rgba(245, 158, 11, 0.3);
+        }
+        .glass-card {
+            background: rgba(15, 23, 42, 0.65);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.03);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .glass-card:hover {
+            border-color: rgba(0, 242, 255, 0.3);
+            box-shadow: 0 15px 35px rgba(0, 242, 255, 0.08);
+            transform: translateY(-4px);
+        }
+        .glow-btn {
+            box-shadow: 0 4px 15px rgba(0, 242, 255, 0.2);
+            transition: all 0.3s ease;
+        }
+        .glow-btn:hover {
+            box-shadow: 0 8px 25px rgba(0, 242, 255, 0.45);
+        }
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #030712;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #0891b2;
+            border-radius: 3px;
+        }
+    </style>
+</head>
+
+<body class="text-gray-300 antialiased pb-24 md:pb-8">
+
+    <!-- Top Navigation Bar -->
+    <nav class="bg-geo-dark/95 border-b border-white/5 py-4 px-6 sticky top-0 z-50 backdrop-blur-md">
+        <div class="max-w-6xl mx-auto flex justify-between items-center">
+            <a href="index.html" class="flex items-center space-x-2 text-white hover:text-geo-light transition-colors">
+                <i class="fas fa-arrow-left"></i>
+                <span class="font-bold">返回主页</span>
+            </a>
+            <div class="text-lg font-bold tracking-wider text-geo-light glow-text">
+                <i class="fas fa-search-plus mr-2"></i>GEO 生成式引擎优化
+            </div>
+            <a href="#contact" class="bg-geo-light text-geo-dark px-4 py-1.5 rounded-full font-bold text-sm hover:bg-white transition-all">
+                立即咨询
+            </a>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <header class="relative overflow-hidden py-16 md:py-24 border-b border-white/5 bg-gradient-to-b from-slate-900/60 to-transparent">
+        <div class="absolute inset-0 bg-[radial-gradient(rgba(0,242,255,0.04)_1px,transparent_1px)] [background-size:20px_20px] pointer-events-none"></div>
+        <div class="max-w-4xl mx-auto px-6 text-center relative z-10 flex flex-col items-center">
+            <span class="bg-geo-light/10 text-geo-light border border-geo-light/20 text-xs px-3.5 py-1 rounded-full font-semibold tracking-wider uppercase mb-4 inline-block">
+                Generative Engine Optimization · 流量革命
+            </span>
+            <h1 class="text-3xl md:text-5xl font-extrabold tracking-wide text-white mb-6 leading-tight">
+                让品牌在 ChatGPT、DeepSeek 及国内外各大 AI 回答中被优先推荐
+            </h1>
+            <p class="text-base md:text-lg text-gray-400 max-w-2xl leading-relaxed">
+                传统搜索引擎正在被 AI 问答吃掉。GEO 帮助企业优化底层数据，让 ChatGPT、DeepSeek、豆包、元宝、Kimi、Gemini、Google AI Overviews 等主流 AI 引擎优先抓取并推荐您的业务。
+            </p>
+        </div>
+    </header>
+
+    <!-- Main Content Container -->
+    <main class="max-w-6xl mx-auto px-4 md:px-6 py-10 space-y-16">
+
+        <!-- 1. What is GEO & Comparison Section -->
+        <section class="space-y-6">
+            <div class="text-center max-w-2xl mx-auto">
+                <h2 class="text-2xl font-bold text-white glow-text">什么是 GEO？</h2>
+                <p class="text-xs text-gray-500 mt-2">GEO (Generative Engine Optimization) 是继传统 SEO 之后，AI 时代最关键的流量阵地。</p>
+            </div>
+
+            <!-- Stats Highlight -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 bg-geo-light/5 border border-geo-light/10 rounded-2xl p-6 max-w-4xl mx-auto">
+                <div class="p-4 border-b md:border-b-0 md:border-r border-white/5 space-y-2">
+                    <div class="text-sm font-bold text-geo-light"><i class="fas fa-chart-line mr-2"></i>AI 引擎覆盖率大爆发</div>
+                    <p class="text-xs text-gray-400 leading-relaxed">
+                        Semrush 数据显示，2025 年下半年起，Google AI Overviews 稳定覆盖了 <strong>15% 左右</strong> 的日常搜索查询，AI 回答已成为主导入口。
+                    </p>
+                </div>
+                <div class="p-4 space-y-2">
+                    <div class="text-sm font-bold text-geo-accent"><i class="fas fa-exclamation-triangle mr-2"></i>点击率断崖式下滑</div>
+                    <p class="text-xs text-gray-400 leading-relaxed">
+                        Pew Research 数据显示，用户看到 AI 摘要时，点击下方传统蓝色网页链接的概率从 <strong>15% 暴跌至 8%</strong>。传统搜索流量正在急剧缩水！
+                    </p>
+                </div>
+            </div>
+
+            <!-- Comparison Table -->
+            <div class="overflow-x-auto w-full max-w-4xl mx-auto rounded-xl border border-white/5 bg-black/40">
+                <table class="w-full text-left border-collapse text-xs">
+                    <thead>
+                        <tr class="border-b border-white/10 bg-geo-dark/50 text-white font-bold">
+                            <th class="p-4 w-1/4">维度</th>
+                            <th class="p-4 w-3/8 text-geo-light">SEO (传统搜索优化)</th>
+                            <th class="p-4 w-3/8 text-geo-accent">GEO (生成式引擎优化)</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-white/5 text-gray-400">
+                        <tr>
+                            <td class="p-4 font-semibold text-white">终极目标</td>
+                            <td class="p-4">网页在搜索引擎检索中排名靠前（抢占前三行）</td>
+                            <td class="p-4 text-white">品牌在 AI 生成的回答中被提及、引用和优先推荐</td>
+                        </tr>
+                        <tr>
+                            <td class="p-4 font-semibold text-white">优化对象</td>
+                            <td class="p-4">关键词密度、反向链接、页面权重 (PageRank)、加载速度</td>
+                            <td class="p-4 text-white">实体清晰度、内容可提取性、引用权威源、Schema结构化数据</td>
+                        </tr>
+                        <tr>
+                            <td class="p-4 font-semibold text-white">结果呈现</td>
+                            <td class="p-4">蓝色链接列表、元描述摘要</td>
+                            <td class="p-4 text-white">AI 回答中的直接提及、产品推荐列表、内联引用脚注</td>
+                        </tr>
+                        <tr>
+                            <td class="p-4 font-semibold text-white">衡量指标</td>
+                            <td class="p-4">网页排名、自然点击率、跳出率、UV流量</td>
+                            <td class="p-4 text-white">AI 可见度评分、品牌提及率、引用份额 (Share of Voice)</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- 2. Technology & Architecture (How GEO Works) -->
+        <section class="space-y-8">
+            <div class="text-center max-w-2xl mx-auto">
+                <h2 class="text-2xl font-bold text-white glow-text">硬核拆解：GEO 工具的技术层级</h2>
+                <p class="text-xs text-gray-500 mt-2">成熟的 GEO 产品通常包含四个技术基石，老王队长团队深谙其底座搭建逻辑：</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6 max-w-5xl mx-auto">
+                <!-- Layer 1 -->
+                <div class="glass-card p-5 rounded-xl space-y-3">
+                    <div class="text-xs font-bold text-geo-light font-mono">第 1 层：数据采集</div>
+                    <p class="text-[11px] text-gray-400 leading-relaxed">
+                        <strong>混合采集技术</strong><br>
+                        支持 API 规模化调用、真实浏览器 UI 自动化模拟（规避反爬抓取 DOM），以及自有网站 AI 爬虫（GPTBot, ClaudeBot等）日志追溯分析。
+                    </p>
+                </div>
+                <!-- Layer 2 -->
+                <div class="glass-card p-5 rounded-xl space-y-3">
+                    <div class="text-xs font-bold text-geo-light font-mono">第 2 层：分析引擎</div>
+                    <p class="text-[11px] text-gray-400 leading-relaxed">
+                        <strong>情感与引用剖析</strong><br>
+                        利用 NLP 模型判定 AI 对提及品牌的情感倾向（正/中/负），识别品牌关联实体属性，计算特定行业下的 Share of Voice 提及率。
+                    </p>
+                </div>
+                <!-- Layer 3 -->
+                <div class="glass-card p-5 rounded-xl space-y-3">
+                    <div class="text-xs font-bold text-geo-light font-mono">第 3 层：优化建议</div>
+                    <p class="text-[11px] text-gray-400 leading-relaxed">
+                        <strong>可提取性审计</strong><br>
+                        评估网页结构，检测 Schema.org 标记完整度，提供问答内容智能对齐与核心权威媒体发布指引，增加被抓取权重。
+                    </p>
+                </div>
+                <!-- Layer 4 -->
+                <div class="glass-card p-5 rounded-xl space-y-3">
+                    <div class="text-xs font-bold text-geo-light font-mono">第 4 层：自动执行</div>
+                    <p class="text-[11px] text-gray-400 leading-relaxed">
+                        <strong>自动化闭环</strong><br>
+                        自动生成符合 LLM 抓取特性的 FAQ / 产品对比面，自动修补 JSON-LD 结构化代码，大幅加速预渲染页面提交 AI 爬虫的收录进程。
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 3. GEO Verticals (Our Consultancy) -->
+        <section class="space-y-8">
+            <div class="text-center max-w-2xl mx-auto">
+                <h2 class="text-2xl font-bold text-white glow-text">老王队长 GEO 深度咨询与落地场景</h2>
+                <p class="text-xs text-gray-500 mt-2">我们不搞虚无缥缈的概念，针对四个具有超强商业变现潜力的垂直场景提供定制化 GEO 落地服务：</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
+                <!-- Vertical 1 -->
+                <div class="glass-card p-6 rounded-xl flex items-start space-x-4">
+                    <div class="text-geo-light text-2xl mt-1"><i class="fas fa-shopping-cart"></i></div>
+                    <div class="space-y-1.5">
+                        <h4 class="font-bold text-white text-sm">电商跨境 GEO</h4>
+                        <p class="text-[11px] text-gray-400 leading-relaxed">
+                            针对 Amazon、Shopify 商家，优化商品参数与真实评价的结构可提取性，让用户在 AI 中提问 “推荐几款高性价比的XX” 时，您的商品赫然在列并被标注购买引用链接。
+                        </p>
+                    </div>
+                </div>
+                <!-- Vertical 2 -->
+                <div class="glass-card p-6 rounded-xl flex items-start space-x-4">
+                    <div class="text-geo-light text-2xl mt-1"><i class="fas fa-map-marker-alt"></i></div>
+                    <div class="space-y-1.5">
+                        <h4 class="font-bold text-white text-sm">本地商家服务 GEO</h4>
+                        <p class="text-[11px] text-gray-400 leading-relaxed">
+                            协助中小型实体（餐厅、牙医诊所、律所等）进行区域性 AI 搜索可见度优化，确保用户在向 AI 提问 “昆明附近最好的XX是哪家” 时能高频获得首推。
+                        </p>
+                    </div>
+                </div>
+                <!-- Vertical 3 -->
+                <div class="glass-card p-6 rounded-xl flex items-start space-x-4">
+                    <div class="text-geo-light text-2xl mt-1"><i class="fas fa-laptop-code"></i></div>
+                    <div class="space-y-1.5">
+                        <h4 class="font-bold text-white text-sm">B2B SaaS 软件 GEO</h4>
+                        <p class="text-[11px] text-gray-400 leading-relaxed">
+                            为高客单价的软件及企业服务公司服务。在 AI 承担软件选型对比（如 “A软件和B软件有什么区别，哪个适合中小团队”）时，保障品牌优势被客观公允、高权重地展示。
+                        </p>
+                    </div>
+                </div>
+                <!-- Vertical 4 -->
+                <div class="glass-card p-6 rounded-xl flex items-start space-x-4">
+                    <div class="text-geo-light text-2xl mt-1"><i class="fas fa-newspaper"></i></div>
+                    <div class="space-y-1.5">
+                        <h4 class="font-bold text-white text-sm">垂直媒体/内容站 GEO</h4>
+                        <p class="text-[11px] text-gray-400 leading-relaxed">
+                            优化独立博客或新闻媒体的内容提取格式，使其高度契合国内外主流大模型的引文引用（Citation）规范，源源不断地从 ChatGPT、DeepSeek、豆包等 AI 问答页面分流长尾精准访客。
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 4. Contact Section -->
+        <section id="contact" class="bg-gradient-to-br from-slate-900 to-geo-dark/50 border border-geo-light/20 rounded-3xl p-8 md:p-12 text-center shadow-[0_0_50px_rgba(0,242,255,0.05)] max-w-4xl mx-auto">
+            <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-geo-light/10 text-geo-light border border-geo-light/30 mb-4 shadow-[0_0_10px_rgba(0,242,255,0.1)]">
+                <i class="fas fa-handshake-angle mr-1.5 animate-pulse"></i> 专属红利期 (Limited Opportunity)
+            </span>
+            <h2 class="text-2xl md:text-3xl font-bold mb-4 text-white glow-text">预约 15 分钟免费 GEO 可见度初步诊断</h2>
+            <p class="text-gray-400 text-sm max-w-xl mx-auto mb-8 leading-relaxed">
+                不想让传统网站流量死在 AI 时代？添加老王队长微信，我们将为您做一次快速的 AI 可见度与抓取链路诊断，助您赢在起跑线。
+            </p>
+            
+            <div class="flex flex-col md:flex-row justify-center items-center gap-8">
+                <!-- QR Code -->
+                <div class="bg-white/5 p-4 rounded-xl border border-geo-light/10 w-48">
+                    <img src="erweima2.jpg" alt="微信二维码" class="w-36 h-36 mx-auto rounded-lg mb-2">
+                    <span class="text-xs text-gray-400">微信扫码联系</span>
+                </div>
+                <!-- Contact Action -->
+                <div class="text-left flex flex-col justify-center space-y-4">
+                    <div>
+                        <div class="text-xs text-gray-400">老王队长微信号</div>
+                        <div class="text-lg font-bold text-geo-light tracking-wider font-mono" id="wechat-geo">vip20213456</div>
+                    </div>
+                    <button onclick="copyWeChatId()" class="bg-geo-light text-geo-dark hover:bg-white font-bold py-2.5 px-6 rounded-full shadow-[0_0_20px_rgba(0,242,255,0.2)] transition-all active:scale-95 text-sm">
+                        <i class="fas fa-copy mr-1"></i>复制微信号直接添加
+                    </button>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Toast Component -->
+    <div id="toast" class="fixed top-5 left-1/2 transform -translate-x-1/2 bg-geo-light text-geo-dark px-6 py-3 rounded-full font-bold shadow-2xl z-[100] opacity-0 transition-opacity duration-300 pointer-events-none text-center text-sm border border-geo-light">
+        🎉 成功复制微信号，快去微信搜索添加吧！
+    </div>
+
+    <!-- Footer Section -->
+    <footer class="bg-geo-dark text-gray-500 py-12 text-center text-xs border-t border-white/5">
+        <div class="max-w-6xl mx-auto px-4">
+            <p>&copy; 2026 老王队长 - 从军官到创业者的转型之路</p>
+            <p class="mt-2 text-geo-light/60">抢先布局 AI 时代，掌握不可逆的流量先机</p>
+        </div>
+    </footer>
+
+    <script>
+        function copyWeChatId() {
+            const wechatId = document.getElementById('wechat-geo').innerText;
+            navigator.clipboard.writeText(wechatId).then(() => {
+                showToast();
+            }).catch(err => {
+                const input = document.createElement('input');
+                input.value = wechatId;
+                document.body.appendChild(input);
+                input.select();
+                document.execCommand('copy');
+                document.body.removeChild(input);
+                showToast();
+            });
+        }
+
+        function showToast() {
+            const toast = document.getElementById('toast');
+            toast.style.opacity = '1';
+            setTimeout(() => {
+                toast.style.opacity = '0';
+            }, 3000);
+        }
+    </script>
+</body>
+
+</html>

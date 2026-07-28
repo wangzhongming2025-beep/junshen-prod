@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>个人护眼周报 - AI 护眼卫士</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --primary: #00f2ff;
+            --warning: #ff3e3e;
+            --safe: #00ff88;
+            --bg: #0b0e14;
+            --glass: rgba(255, 255, 255, 0.05);
+        }
+
+        body {
+            margin: 0;
+            padding: 20px;
+            background-color: var(--bg);
+            color: white;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        }
+
+        .report-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .report-header h1 {
+            font-size: 32px;
+            letter-spacing: 2px;
+        }
+
+        .date-range {
+            opacity: 0.6;
+            font-size: 14px;
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .chart-card {
+            background: var(--glass);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 25px;
+            backdrop-filter: blur(10px);
+        }
+
+        .chart-title {
+            font-size: 18px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .chart-title span {
+            color: var(--primary);
+            font-weight: bold;
+        }
+
+        .score-summary {
+            grid-column: span 2;
+            display: flex;
+            justify-content: space-around;
+            background: linear-gradient(135deg, rgba(0, 242, 255, 0.1), rgba(112, 0, 255, 0.1));
+            padding: 30px;
+            border-radius: 25px;
+            border: 1px solid rgba(0, 242, 255, 0.2);
+            margin-bottom: 20px;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-val {
+            font-size: 36px;
+            font-weight: 800;
+            color: var(--primary);
+        }
+
+        .stat-label {
+            font-size: 12px;
+            opacity: 0.6;
+            margin-top: 5px;
+        }
+
+        .diagnosis {
+            grid-column: span 2;
+            background: rgba(0, 255, 136, 0.05);
+            border: 1px solid rgba(0, 255, 136, 0.2);
+            padding: 20px;
+            border-radius: 20px;
+            margin-top: 20px;
+        }
+
+        .diagnosis h3 {
+            color: var(--safe);
+            margin-bottom: 10px;
+        }
+
+        .diagnosis p {
+            font-size: 14px;
+            opacity: 0.8;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="report-header">
+        <h1>VIEWING <span style="color:var(--primary)">ANALYTICS</span></h1>
+        <p class="date-range">监测周期：2026.01.05 - 2026.01.11</p>
+    </div>
+
+    <div class="dashboard-grid">
+        <div class="score-summary">
+            <div class="stat-item">
+                <div class="stat-val">88</div>
+                <div class="stat-label">综合健康得分</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-val">6.5h</div>
+                <div class="stat-label">日均使用时长</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-val">12次</div>
+                <div class="stat-label">平均/分钟眨眼</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-val">15°</div>
+                <div class="stat-label">坐姿平均偏斜</div>
+            </div>
+        </div>
+
+        <div class="chart-card">
+            <div class="chart-title"><span>📊</span> 每日用眼压力走势</div>
+            <canvas id="timeChart"></canvas>
+        </div>
+
+        <div class="chart-card">
+            <div class="chart-title"><span>🧘</span> 坐姿异常统计</div>
+            <canvas id="poseChart"></canvas>
+        </div>
+
+        <div class="diagnosis">
+            <h3>🔍 专家评估报告：</h3>
+            <p>本周您的主要风险点在于<strong>下午 3-5 点</strong>期间坐姿明显下滑，伴随眨眼频率下降（最低降至 6BPM），这显示该时刻您处于极度疲劳状态。建议在该时间段强制进行 5
+                分钟眼部放松。距离保持较好，平均 42cm，请继续保持。</p>
+        </div>
+    </div>
+
+    <script>
+        // 用眼时长图表
+        new Chart(document.getElementById('timeChart'), {
+            type: 'line',
+            data: {
+                labels: ['周一', '周二', '周三', '周四', '周五', '周六', '周日'],
+                datasets: [{
+                    label: '使用时长 (小时)',
+                    data: [5.5, 7.2, 8.0, 6.4, 7.5, 4.2, 3.8],
+                    borderColor: '#00f2ff',
+                    backgroundColor: 'rgba(0, 242, 255, 0.1)',
+                    fill: true,
+                    tension: 0.4
+                }]
+            },
+            options: {
+                plugins: { legend: { display: false } },
+                scales: {
+                    y: { grid: { color: 'rgba(255,255,255,0.05)' }, border: { display: false } },
+                    x: { grid: { display: false } }
+                }
+            }
+        });
+
+        // 坐姿异常分布
+        new Chart(document.getElementById('poseChart'), {
+            type: 'doughnut',
+            data: {
+                labels: ['坐姿标准', '轻微偏斜', '严重驼背/低头'],
+                datasets: [{
+                    data: [65, 20, 15],
+                    backgroundColor: ['#00ff88', '#ffd700', '#ff3e3e'],
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                plugins: { legend: { position: 'bottom', labels: { color: '#fff' } } },
+                cutout: '70%'
+            }
+        });
+    </script>
+</body>
+
+</html>

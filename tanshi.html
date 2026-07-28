@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>痰湿体质自测表</title>
+    <style>
+        body {
+            font-family: 'Microsoft YaHei', Arial, sans-serif;
+            line-height: 1.6;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            color: #333;
+        }
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        h2 {
+            color: #3498db;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 5px;
+            margin-top: 30px;
+        }
+        .test-item {
+            margin-bottom: 15px;
+            padding: 10px;
+            background-color: #f9f9f9;
+            border-radius: 5px;
+        }
+        .question {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        .options {
+            margin-left: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            cursor: pointer;
+        }
+        button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            display: block;
+            margin: 30px auto;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #2980b9;
+        }
+        #result {
+            display: none;
+            background-color: #e8f4fc;
+            padding: 20px;
+            border-radius: 5px;
+            margin-top: 30px;
+            border-left: 5px solid #3498db;
+        }
+        .advice {
+            background-color: #e8f8f0;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 20px;
+            border-left: 5px solid #2ecc71;
+        }
+        .score-info {
+            margin-top: 20px;
+            font-style: italic;
+            color: #7f8c8d;
+        }
+    </style>
+</head>
+<body>
+    <h1>痰湿体质自测表</h1>
+    <p>请根据您近一年的身体状况，选择最符合的选项。本测试将帮助您判断是否属于痰湿体质。</p>
+    
+    <div id="testForm">
+        <h2>一、体型与外貌特征</h2>
+        <div class="test-item">
+            <div class="question">1. 您的体型属于：</div>
+            <div class="options">
+                <label><input type="radio" name="q1" value="0"> 偏瘦</label>
+                <label><input type="radio" name="q1" value="1"> 正常</label>
+                <label><input type="radio" name="q1" value="2"> 偏胖，肌肉松软</label>
+                <label><input type="radio" name="q1" value="3"> 明显肥胖，尤其是腹部肥满松软</label>
+            </div>
+        </div>
+        
+        <div class="test-item">
+            <div class="question">2. 您的面部皮肤状况：</div>
+            <div class="options">
+                <label><input type="radio" name="q2" value="0"> 干燥或偏干</label>
+                <label><input type="radio" name="q2" value="1"> 正常</label>
+                <label><input type="radio" name="q2" value="2"> 油腻，尤其是T区</label>
+                <label><input type="radio" name="q2" value="3"> 非常油腻，常有痤疮</label>
+            </div>
+        </div>
+        
+        <div class="test-item">
+            <div class="question">3. 您的眼睑状况：</div>
+            <div class="options">
+                <label><input type="radio" name="q3" value="0"> 正常</label>
+                <label><input type="radio" name="q3" value="1"> 轻微浮肿</label>
+                <label><input type="radio" name="q3" value="2"> 明显浮肿，尤其是早晨</label>
+                <label><input type="radio" name="q3" value="3"> 长期浮肿，眼袋明显</label>
+            </div>
+        </div>
+        
+        <h2>二、身体感觉与分泌物</h2>
+        <div class="test-item">
+            <div class="question">4. 您是否经常感到身体沉重、困倦：</div>
+            <div class="options">
+                <label><input type="radio" name="q4" value="0"> 几乎没有</label>
+                <label><input type="radio" name="q4" value="1"> 偶尔</label>
+                <label><input type="radio" name="q4" value="2"> 经常</label>
+                <label><input type="radio" name="q4" value="3"> 总是如此</label>
+            </div>
+        </div>
+        
+        <div class="test-item">
+            <div class="question">5. 您的口中感觉：</div>
+            <div class="options">
+                <label><input type="radio" name="q5" value="0"> 清爽</label>
+                <label><input type="radio" name="q5" value="1"> 偶尔发粘</label>
+                <label><input type="radio" name="q5" value="2"> 经常发粘或有甜味</label>
+                <label><input type="radio" name="q5" value="3"> 总是粘腻，有异味</label>
+            </div>
+        </div>
+        
+        <div class="test-item">
+            <div class="question">6. 您的痰液情况：</div>
+            <div class="options">
+                <label><input type="radio" name="q6" value="0"> 很少或没有痰</label>
+                <label><input type="radio" name="q6" value="1"> 偶尔有少量痰</label>
+                <label><input type="radio" name="q6" value="2"> 经常有痰，量中等</label>
+                <label><input type="radio" name="q6" value="3"> 痰量多，容易咳出</label>
+            </div>
+        </div>
+        
+        <div class="test-item">
+            <div class="question">7. 您的汗液情况：</div>
+            <div class="options">
+                <label><input type="radio" name="q7" value="0"> 出汗正常</label>
+                <label><input type="radio" name="q7" value="1"> 出汗稍多</label>
+                <label><input type="radio" name="q7" value="2"> 出汗多而粘</label>
+                <label><input type="radio" name="q7" value="3"> 大汗淋漓，汗液粘腻</label>
+            </div>
+        </div>
+        
+        <h2>三、消化系统状况</h2>
+        <div class="test-item">
+            <div class="question">8. 您的食欲情况：</div>
+            <div class="options">
+                <label><input type="radio" name="q8" value="0"> 正常</label>
+                <label><input type="radio" name="q8" value="1"> 食欲一般</label>
+                <label><input type="radio" name="q8" value="2"> 食欲旺盛，容易饿</label>
+                <label><input type="radio" name="q8" value="3"> 食欲不振，吃一点就饱</label>
+            </div>
+        </div>
+        
+        <div class="test-item">
+            <div class="question">9. 您的大便情况：</div>
+            <div class="options">
+                <label><input type="radio" name="q9" value="0"> 成形，排便顺畅</label>
+                <label><input type="radio" name="q9" value="1"> 偶尔不成形</label>
+                <label><input type="radio" name="q9" value="2"> 经常不成形，粘马桶</label>
+                <label><input type="radio" name="q9" value="3"> 长期不成形，排便不爽</label>
+            </div>
+        </div>
+        
+        <div class="test-item">
+            <div class="question">10. 您是否有腹胀感：</div>
+            <div class="options">
+                <label><input type="radio" name="q10" value="0"> 几乎没有</label>
+                <label><input type="radio" name="q10" value="1"> 偶尔</label>
+                <label><input type="radio" name="q10" value="2"> 经常，尤其是饭后</label>
+                <label><input type="radio" name="q10" value="3"> 总是腹胀，影响生活</label>
+            </div>
+        </div>
+        
+        <h2>四、其他症状</h2>
+        <div class="test-item">
+            <div class="question">11. 您的睡眠情况：</div>
+            <div class="options">
+                <label><input type="radio" name="q11" value="0"> 睡眠良好</label>
+                <label><input type="radio" name="q11" value="1"> 偶尔睡眠不佳</label>
+                <label><input type="radio" name="q11" value="2"> 经常嗜睡或睡眠质量差</label>
+                <label><input type="radio" name="q11" value="3"> 严重嗜睡或失眠</label>
+            </div>
+        </div>
+        
+        <div class="test-item">
+            <div class="question">12. 您是否容易头晕：</div>
+            <div class="options">
+                <label><input type="radio" name="q12" value="0"> 几乎没有</label>
+                <label><input type="radio" name="q12" value="1"> 偶尔</label>
+                <label><input type="radio" name="q12" value="2"> 经常</label>
+                <label><input type="radio" name="q12" value="3"> 总是头晕</label>
+            </div>
+        </div>
+        
+        <div class="test-item">
+            <div class="question">13. 您关节的感觉：</div>
+            <div class="options">
+                <label><input type="radio" name="q13" value="0"> 正常</label>
+                <label><input type="radio" name="q13" value="1"> 偶尔酸痛</label>
+                <label><input type="radio" name="q13" value="2"> 经常酸痛沉重</label>
+                <label><input type="radio" name="q13" value="3"> 关节明显沉重疼痛</label>
+            </div>
+        </div>
+        
+        <div class="test-item">
+            <div class="question">14. 您对潮湿环境的反应：</div>
+            <div class="options">
+                <label><input type="radio" name="q14" value="0"> 适应良好</label>
+                <label><input type="radio" name="q14" value="1"> 稍有不适</label>
+                <label><input type="radio" name="q14" value="2"> 明显不适</label>
+                <label><input type="radio" name="q14" value="3"> 非常难受</label>
+            </div>
+        </div>
+        
+        <div class="test-item">
+            <div class="question">15. 您的舌苔情况：</div>
+            <div class="options">
+                <label><input type="radio" name="q15" value="0"> 薄白苔</label>
+                <label><input type="radio" name="q15" value="1"> 稍厚白苔</label>
+                <label><input type="radio" name="q15" value="2"> 厚白腻苔</label>
+                <label><input type="radio" name="q15" value="3"> 厚腻苔，可能有齿痕</label>
+            </div>
+        </div>
+        
+        <button type="button" onclick="calculateScore()">查看测试结果</button>
+    </div>
+    
+    <div id="result">
+        <h2>您的测试结果</h2>
+        <div id="resultText"></div>
+        <div class="advice" id="adviceText"></div>
+        <div class="score-info" id="scoreInfo"></div>
+    </div>
+    
+    <script>
+        function calculateScore() {
+            // 获取所有问题的分数
+            let totalScore = 0;
+            for (let i = 1; i <= 15; i++) {
+                const selectedOption = document.querySelector(`input[name="q${i}"]:checked`);
+                if (selectedOption) {
+                    totalScore += parseInt(selectedOption.value);
+                } else {
+                    alert(`请回答问题 ${i}`);
+                    return;
+                }
+            }
+            
+            // 显示结果
+            document.getElementById('result').style.display = 'block';
+            const resultText = document.getElementById('resultText');
+            const adviceText = document.getElementById('adviceText');
+            const scoreInfo = document.getElementById('scoreInfo');
+            
+            scoreInfo.innerHTML = `您的总得分: ${totalScore}分 (最高可能得分: 45分)`;
+            
+            if (totalScore <= 10) {
+                resultText.innerHTML = "<p>您的痰湿体质特征不明显，属于基本正常体质。</p>";
+                adviceText.innerHTML = `
+                    <h3>保持建议：</h3>
+                    <ul>
+                        <li>继续保持均衡饮食和适量运动</li>
+                        <li>避免过度摄入油腻、甜食和冷饮</li>
+                        <li>注意环境湿度，保持居住环境干燥通风</li>
+                    </ul>
+                `;
+            } else if (totalScore <= 20) {
+                resultText.innerHTML = "<p>您有轻度痰湿体质倾向，需要注意调理。</p>";
+                adviceText.innerHTML = `
+                    <h3>调理建议：</h3>
+                    <ul>
+                        <li><strong>饮食调理：</strong>减少油腻、甜食、冷饮和奶制品的摄入；多吃薏米、赤小豆、山药、冬瓜等利湿食物</li>
+                        <li><strong>运动建议：</strong>增加有氧运动，如快走、游泳等，每周至少3次，每次30分钟</li>
+                        <li><strong>生活习惯：</strong>避免熬夜，保持规律作息；注意保暖，避免受凉</li>
+                        <li><strong>中医调理：</strong>可考虑服用茯苓、白术、陈皮等健脾祛湿的中药</li>
+                    </ul>
+                `;
+            } else if (totalScore <= 30) {
+                resultText.innerHTML = "<p>您有明显的痰湿体质特征，需要积极调理。</p>";
+                adviceText.innerHTML = `
+                    <h3>调理建议：</h3>
+                    <ul>
+                        <li><strong>饮食调理：</strong>严格控制油腻、甜食、冷饮和奶制品；主食可部分替换为薏米、糙米等；多吃萝卜、冬瓜、芹菜等蔬菜</li>
+                        <li><strong>运动建议：</strong>必须增加运动量，建议每天运动30-60分钟，可选择快走、游泳、太极拳等</li>
+                        <li><strong>生活习惯：</strong>保证充足睡眠但避免过度睡眠；保持居住环境干燥；避免久坐</li>
+                        <li><strong>中医调理：</strong>建议咨询中医师，可能需要服用健脾祛湿的中药方剂，如二陈汤、平胃散等</li>
+                        <li><strong>情绪调节：</strong>保持心情舒畅，避免过度思虑</li>
+                    </ul>
+                `;
+            } else {
+                resultText.innerHTML = "<p>您的痰湿体质特征非常明显，建议尽快就医并全面调理。</p>";
+                adviceText.innerHTML = `
+                    <h3>调理建议：</h3>
+                    <ul>
+                        <li><strong>就医建议：</strong>建议尽快就医，进行全面检查，可能需要中西医结合治疗</li>
+                        <li><strong>饮食调理：</strong>严格遵循祛湿饮食原则，避免所有生冷、油腻、甜食；可采用间歇性轻断食</li>
+                        <li><strong>运动建议：</strong>必须坚持每天运动，建议在专业人士指导下制定运动计划</li>
+                        <li><strong>中医调理：</strong>需要长期中医调理，可能需要针灸、拔罐等辅助疗法</li>
+                        <li><strong>生活习惯：</strong>全面调整生活方式，包括作息、居住环境、工作习惯等</li>
+                        <li><strong>监测指标：</strong>定期监测体重、腰围、血压、血脂等指标</li>
+                    </ul>
+                `;
+            }
+            
+            // 滚动到结果部分
+            document.getElementById('result').scrollIntoView({ behavior: 'smooth' });
+        }
+    </script>
+</body>
+</html>

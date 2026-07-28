@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI 护眼卫士 - 智能工具箱</title>
+    <style>
+        :root {
+            --primary: #00f2ff;
+            --accent: #7000ff;
+            --bg: #05070a;
+            --card-bg: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --text-main: #e0e6ed;
+            --text-dim: #94a3b8;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background-color: var(--bg);
+            color: var(--text-main);
+            overflow: hidden;
+            height: 100vh;
+            display: flex;
+        }
+
+        /* 背景装饰 */
+        .bg-glow {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background:
+                radial-gradient(circle at 10% 10%, rgba(0, 242, 255, 0.05) 0%, transparent 40%),
+                radial-gradient(circle at 90% 90%, rgba(112, 0, 255, 0.05) 0%, transparent 40%);
+        }
+
+        /* 侧边栏 */
+        aside {
+            width: 280px;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(20px);
+            border-right: 1px solid var(--glass-border);
+            display: flex;
+            flex-direction: column;
+            padding: 30px 20px;
+            z-index: 10;
+        }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 40px;
+            padding: 0 10px;
+        }
+
+        .logo-icon {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 0 20px rgba(0, 242, 255, 0.3);
+        }
+
+        .logo-text {
+            font-size: 20px;
+            font-weight: 800;
+            letter-spacing: 1px;
+            background: linear-gradient(to right, #fff, var(--primary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        nav {
+            flex: 1;
+        }
+
+        .nav-label {
+            font-size: 11px;
+            text-transform: uppercase;
+            color: var(--text-dim);
+            letter-spacing: 2px;
+            margin-bottom: 20px;
+            padding-left: 10px;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 16px;
+            border-radius: 12px;
+            color: var(--text-dim);
+            text-decoration: none;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            margin-bottom: 8px;
+            cursor: pointer;
+            border: 1px solid transparent;
+        }
+
+        .nav-item:hover {
+            color: var(--primary);
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .nav-item.active {
+            color: white;
+            background: rgba(0, 242, 255, 0.1);
+            border: 1px solid rgba(0, 242, 255, 0.2);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .nav-item i {
+            font-size: 18px;
+        }
+
+        /* 主内容区 */
+        main {
+            flex: 1;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        header {
+            height: 80px;
+            padding: 0 40px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid var(--glass-border);
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        .tool-title h2 {
+            font-size: 22px;
+            font-weight: 600;
+        }
+
+        .tool-status {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .status-pill {
+            padding: 6px 14px;
+            border-radius: 20px;
+            background: rgba(0, 255, 136, 0.1);
+            color: var(--safe);
+            font-size: 12px;
+            border: 1px solid rgba(0, 255, 136, 0.2);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .status-dot {
+            width: 6px;
+            height: 6px;
+            background: var(--safe);
+            border-radius: 50%;
+            box-shadow: 0 0 10px var(--safe);
+        }
+
+        /* 嵌入容器 */
+        .content-frame {
+            flex: 1;
+            width: 100%;
+            height: 100%;
+            border: none;
+            background: transparent;
+        }
+
+        .empty-state {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            padding: 40px;
+            text-align: center;
+        }
+
+        .empty-state h3 {
+            font-size: 24px;
+            margin-bottom: 10px;
+            color: var(--primary);
+        }
+
+        .empty-state p {
+            color: var(--text-dim);
+            max-width: 400px;
+        }
+
+        /* 移动端提示 */
+        @media (max-width: 768px) {
+            aside {
+                width: 80px;
+                padding: 20px 10px;
+            }
+
+            .logo-text,
+            .nav-item span,
+            .nav-label {
+                display: none;
+            }
+
+            .nav-item {
+                justify-content: center;
+                padding: 16px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="bg-glow"></div>
+
+    <aside>
+        <div class="logo-section">
+            <div class="logo-icon">👁️</div>
+            <div class="logo-text">AI 护眼卫士</div>
+        </div>
+
+        <nav>
+            <div class="nav-label">核心检测</div>
+            <div class="nav-item active" onclick="loadTool('eye_detector.html', 'AI 视力侦探 Pro')">
+                <i>🔍</i>
+                <span>视力侦探 Pro</span>
+            </div>
+
+            <div class="nav-label">辅助工具</div>
+            <div class="nav-item" onclick="loadTool('eye_exercises.html', '眼部放松操')">
+                <i>🧘</i>
+                <span>眼部放松操</span>
+            </div>
+            <div class="nav-item" onclick="loadTool('eye_report.html', '个人护眼周报')">
+                <i>📊</i>
+                <span>护眼报告周报</span>
+            </div>
+            <div class="nav-item" onclick="loadTool('color_test.html', '色盲/色弱检测')">
+                <i>🎨</i>
+                <span>色盲/色弱检测</span>
+            </div>
+        </nav>
+
+        <div class="nav-item" style="margin-top: auto; border-top: 1px solid var(--glass-border); padding-top: 20px;">
+            <i>⚙️</i>
+            <span>系统设置</span>
+        </div>
+    </aside>
+
+    <main>
+        <header>
+            <div class="tool-title">
+                <h2 id="current-tool-name">AI 视力侦探 Pro</h2>
+            </div>
+            <div class="tool-status">
+                <div class="status-pill">
+                    <div class="status-dot"></div>
+                    系统运行正常
+                </div>
+            </div>
+        </header>
+
+        <!-- 嵌入容器 -->
+        <div id="iframe-container" style="flex: 1; position: relative; width: 100%; height: 100%;">
+            <iframe id="tool-frame" class="content-frame" src="eye_detector.html"
+                allow="camera *; microphone *; notifications *; display-capture *; accelerometer; gyroscope; magnetometer; autoplay;"
+                style="width: 100%; height: 100%; border: none;"></iframe>
+
+            <!-- 权限引导层 -->
+            <div id="permission-guide"
+                style="display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); flex-direction: column; align-items: center; justify-content: center; text-align: center; color: white; padding: 20px; z-index: 100;">
+                <h3 style="color: var(--warning); margin-bottom: 15px;">⚠️ 摄像头权限被拒绝</h3>
+                <p style="margin-bottom: 10px; opacity: 0.8;">系统无法获取摄像头画面，请按以下步骤操作：</p>
+                <div style="text-align: left; display: inline-block; margin-bottom: 20px; line-height: 1.8;">
+                    1. 检查浏览器地址栏右侧是否有 <b>摄像头禁止图标</b><br>
+                    2. 点击它并选择“<b>始终允许</b>”<br>
+                    3. 点击下方的“<b>立即重试</b>”按钮
+                </div>
+                <button class="btn" onclick="retryCamera()">立即重试</button>
+            </div>
+        </div>
+
+        <div id="empty-state" class="empty-state">
+            <h3>工具开发中...</h3>
+            <p>我们正在为您准备更多的护眼工具，敬请期待！</p>
+        </div>
+    </main>
+
+    <script>
+        function loadTool(url, name) {
+            const frame = document.getElementById('tool-frame');
+            const empty = document.getElementById('empty-state');
+            const title = document.getElementById('current-tool-name');
+            const guide = document.getElementById('permission-guide');
+
+            // 更新菜单状态
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            event.currentTarget.classList.add('active');
+
+            // 隐藏权限引导
+            guide.style.display = 'none';
+
+            if (url) {
+                frame.style.display = 'block';
+                empty.style.display = 'none';
+                frame.src = url;
+                title.innerText = name;
+            } else {
+                frame.style.display = 'none';
+                empty.style.display = 'flex';
+                title.innerText = '敬请期待';
+            }
+        }
+
+        function retryCamera() {
+            const frame = document.getElementById('tool-frame');
+            frame.src = frame.src; // 刷新 iframe 触发重新请求
+            document.getElementById('permission-guide').style.display = 'none';
+        }
+
+        // 监听来自 iframe 的错误 (如果 iframe 内部捕获了错误并向外 postMessage)
+        window.addEventListener('message', (event) => {
+            if (event.data === 'camera_error') {
+                document.getElementById('permission-guide').style.display = 'flex';
+            }
+        });
+    </script>
+</body>
+
+</html>

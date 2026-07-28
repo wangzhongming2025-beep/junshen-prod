@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI 视力侦探 Pro Max - 姿势增强版</title>
+    <style>
+        :root {
+            --primary: #00f2ff;
+            --warning: #ff3e3e;
+            --safe: #00ff88;
+            --bg: #0b0e14;
+            --glass: rgba(255, 255, 255, 0.05);
+            --gold: #ffd700;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: var(--bg);
+            color: white;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+
+        /* 顶部诊断面板 */
+        .diagnosis-pane {
+            position: fixed;
+            top: 20px;
+            width: 850px;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--primary);
+            border-radius: 24px;
+            padding: 15px 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 100;
+            box-shadow: 0 15px 50px rgba(0, 0, 0, 0.6);
+        }
+
+        .score-circle {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            border: 4px solid var(--safe);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-weight: 900;
+            background: rgba(0, 255, 136, 0.1);
+            transition: all 0.5s;
+        }
+
+        .advice-box {
+            flex: 1;
+            margin-left: 25px;
+        }
+
+        .advice-title {
+            color: var(--primary);
+            font-size: 15px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .advice-text {
+            font-size: 13.5px;
+            color: #eee;
+            line-height: 1.4;
+        }
+
+        /* 视频容器 */
+        .container {
+            position: relative;
+            width: 640px;
+            height: 480px;
+            border-radius: 30px;
+            overflow: hidden;
+            box-shadow: 0 0 60px rgba(0, 242, 255, 0.15);
+            border: 1px solid rgba(0, 242, 255, 0.2);
+            margin-top: 100px;
+        }
+
+        #input_video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transform: scaleX(-1);
+        }
+
+        #output_canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            transform: scaleX(-1);
+        }
+
+        /* HUD */
+        .hud {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            right: 15px;
+            bottom: 15px;
+            pointer-events: none;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 8px;
+            width: 100%;
+        }
+
+        .metric-card {
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(15px);
+            padding: 12px 2px;
+            border-radius: 18px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .metric-card.alert {
+            border-color: var(--warning);
+            background: rgba(255, 62, 62, 0.15);
+            animation: shake 0.5s infinite;
+        }
+
+        @keyframes shake {
+            0% {
+                transform: translate(0);
+            }
+
+            25% {
+                transform: translate(-1px, 1px);
+            }
+
+            75% {
+                transform: translate(1px, -1px);
+            }
+
+            100% {
+                transform: translate(0);
+            }
+        }
+
+        .metric-val {
+            font-size: 20px;
+            font-weight: 800;
+            color: var(--primary);
+        }
+
+        .metric-card.alert .metric-val {
+            color: var(--warning);
+        }
+
+        .metric-label {
+            font-size: 9px;
+            opacity: 0.7;
+            margin-top: 4px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* 警告层 */
+        #warning-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 62, 62, 0.3);
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+            animation: pulse 0.5s infinite alternate;
+        }
+
+        @keyframes pulse {
+            from {
+                opacity: 0.2;
+            }
+
+            to {
+                opacity: 0.6;
+            }
+        }
+
+        .warning-tag {
+            background: white;
+            color: red;
+            padding: 15px 30px;
+            border-radius: 40px;
+            font-weight: bold;
+            font-size: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        /* 控制 */
+        .controls-panel {
+            margin-top: 25px;
+            width: 640px;
+            background: var(--glass);
+            padding: 18px;
+            border-radius: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .btn {
+            background: var(--primary);
+            color: #000;
+            border: none;
+            padding: 10px 22px;
+            border-radius: 12px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 242, 255, 0.4);
+        }
+
+        .select-input {
+            background: #1a1a1a;
+            color: #fff;
+            border: 1px solid var(--primary);
+            border-radius: 8px;
+            padding: 8px;
+            outline: none;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="diagnosis-pane">
+        <div class="score-circle" id="health-score-ui">
+            <span style="font-size: 10px; opacity: 0.7;">HEALTH</span>
+            <span id="score-val">100</span>
+        </div>
+        <div class="advice-box">
+            <div class="advice-title">🚀 坐姿与视觉实时评估系统</div>
+            <div class="advice-text" id="advice-content">为了获得精准坐姿检测，请坐正后点击“40cm 校准”按钮，系统将记录您的标准姿态。</div>
+        </div>
+        <button class="btn" style="background:none; border:1px solid var(--primary); color:var(--primary);"
+            onclick="requestNotificationPermission()">开启提醒</button>
+    </div>
+
+    <div class="container">
+        <video id="input_video" playsinline muted></video>
+        <canvas id="output_canvas"></canvas>
+        <div id="warning-overlay">
+            <div class="warning-tag" id="warning-text">⚠️ 姿势异常：请立即调整</div>
+        </div>
+        <div class="hud">
+            <div class="metrics-grid">
+                <div class="metric-card" id="card-dist">
+                    <div class="metric-val" id="val-dist">--</div>
+                    <div class="metric-label">距离(cm)</div>
+                </div>
+                <div class="metric-card" id="card-pos">
+                    <div class="metric-val" id="val-pos">GOOD</div>
+                    <div class="metric-label">姿势状态</div>
+                </div>
+                <div class="metric-card" id="card-blink">
+                    <div class="metric-val" id="val-blink">0</div>
+                    <div class="metric-label">眨眼/min</div>
+                </div>
+                <div class="metric-card" id="card-light">
+                    <div class="metric-val" id="val-light">--</div>
+                    <div class="metric-label">光照强度</div>
+                </div>
+                <div class="metric-card" id="card-time">
+                    <div class="metric-val" id="val-time">00:00</div>
+                    <div class="metric-label">用眼时长</div>
+                </div>
+            </div>
+            <div style="display: flex; justify-content: space-between; font-size: 10px; padding: 0 5px;">
+                <div id="fps-display">FPS: 0</div>
+                <div>POSE SENSOR: ACTIVE</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="controls-panel">
+        <div style="display: flex; gap: 15px; justify-content: center; align-items: center;">
+            <button class="btn" onclick="calibrate()">40cm 正姿校准</button>
+            <button class="btn" style="background:#444; color:white;" onclick="resetTimer()">重置数据</button>
+            <div style="display: flex; align-items: center; gap: 8px;">
+                <span style="font-size: 13px;">语音：</span>
+                <select id="sound-select" class="select-input">
+                    <option value="voice">合成真人语音</option>
+                    <option value="sine">电子报警</option>
+                    <option value="none">完全静音</option>
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/face_mesh.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js"
+        crossorigin="anonymous"></script>
+
+    <script>
+        const videoElement = document.getElementById('input_video');
+        const canvasElement = document.getElementById('output_canvas');
+        const canvasCtx = canvasElement.getContext('2d');
+        const warningOverlay = document.getElementById('warning-overlay');
+        const warningText = document.getElementById('warning-text');
+        const adviceUI = document.getElementById('advice-content');
+        const scoreValUI = document.getElementById('score-val');
+        const scoreCircle = document.getElementById('health-score-ui');
+
+        let calibPixelDist = 0;
+        let calibFaceY = 0; // 校准时的面部中心位置
+        let lastTimestamp = Date.now();
+        let startTime = null;
+        let totalSeconds = 0;
+        let blinkList = [];
+        let isEyeClosed = false;
+        let lastAlertTime = 0;
+
+        // 音频系统
+        let audioCtx = null;
+        function initAudio() { if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)(); }
+
+        // 眨眼检测
+        function checkBlink(landmarks) {
+            const avgDist = (Math.abs(landmarks[159].y - landmarks[145].y) + Math.abs(landmarks[386].y - landmarks[374].y)) / 2;
+            if (avgDist < 0.015 && !isEyeClosed) {
+                isEyeClosed = true; blinkList.push(Date.now());
+            } else if (avgDist > 0.02) {
+                isEyeClosed = false;
+            }
+            blinkList = blinkList.filter(t => Date.now() - t < 60000);
+            document.getElementById('val-blink').innerText = blinkList.length;
+        }
+
+        // 亮度计算
+        const lightCanvas = document.createElement('canvas');
+        const lightCtx = lightCanvas.getContext('2d', { willReadFrequently: true });
+        lightCanvas.width = 10; lightCanvas.height = 10;
+        function getLight() {
+            lightCtx.drawImage(videoElement, 0, 0, 10, 10);
+            const d = lightCtx.getImageData(0, 0, 10, 10).data;
+            let s = 0; for (let i = 0; i < d.length; i += 4) s += (d[i] + d[i + 1] + d[i + 2]) / 3;
+            return Math.round(s / 2.55); // 0-100
+        }
+
+        function generateAdvice(dist, tilt, slouch, bpm, light, time) {
+            let score = 100;
+            let tips = [];
+            let isCrit = false;
+            let alertMsg = "";
+
+            // 1. 距离逻辑
+            if (dist < 35 && dist > 1) { score -= 30; tips.push("视距过近，瞳孔调节异常。"); isCrit = true; alertMsg = "请退后一点"; }
+
+            // 2. 坐姿逻辑 - 歪头
+            if (Math.abs(tilt) > 15) { score -= 20; tips.push("检测到歪头坐姿，脊柱压力增加。"); isCrit = true; alertMsg = "姿势矫正：不要歪头"; }
+
+            // 3. 坐姿逻辑 - 驼背下沉 (检测 Y 轴偏移)
+            if (slouch > 0.12) { score -= 25; tips.push("检测到低头或身体下沉（驼背），请挺直腰背。"); isCrit = true; alertMsg = "请不要趴着看，挺直腰背"; }
+
+            // 4. 生理逻辑
+            if (bpm < 7 && bpm > 0) { score -= 15; tips.push("眨眼频率严重过低，建议有意识眨眼。"); }
+            if (light < 35) { score -= 15; tips.push("环境光线不足，对比度过压。"); }
+            if (time > 1200) { score -= 30; tips.push("已连续工作20分钟，请立即远眺！"); isCrit = true; alertMsg = "用眼超时，请休息一下"; }
+
+            // 更新 UI
+            score = Math.max(score, 0);
+            scoreValUI.innerText = score;
+            scoreCircle.style.borderColor = score > 80 ? 'var(--safe)' : (score > 50 ? 'var(--gold)' : 'var(--warning)');
+            scoreCircle.style.background = score > 80 ? 'rgba(0, 255, 136, 0.1)' : (score > 50 ? 'rgba(255, 215, 0, 0.1)' : 'rgba(255, 62, 62, 0.1)');
+
+            adviceUI.innerText = tips.length > 0 ? tips[0] : "当前各项指标良好，请保持标准正姿。";
+
+            document.getElementById('card-pos').classList.toggle('alert', Math.abs(tilt) > 15 || slouch > 0.12);
+            document.getElementById('val-pos').innerText = (Math.abs(tilt) > 15 || slouch > 0.12) ? "BAD" : "GOOD";
+
+            if (isCrit) {
+                warningOverlay.style.display = 'flex';
+                warningText.innerText = "⚠️ " + alertMsg;
+                if (Date.now() - lastAlertTime > 8000) triggerSound(alertMsg);
+            } else {
+                warningOverlay.style.display = 'none';
+            }
+        }
+
+        function triggerSound(text) {
+            const mode = document.getElementById('sound-select').value;
+            if (mode === 'none') return;
+            initAudio();
+            lastAlertTime = Date.now();
+            if (mode === 'voice') {
+                const u = new SpeechSynthesisUtterance(text); u.lang = 'zh-CN'; u.rate = 1.1; window.speechSynthesis.speak(u);
+            } else {
+                const o = audioCtx.createOscillator(); const g = audioCtx.createGain();
+                o.connect(g); g.connect(audioCtx.destination);
+                o.frequency.setValueAtTime(800, audioCtx.currentTime); o.frequency.exponentialRampToValueAtTime(400, audioCtx.currentTime + 0.5);
+                g.gain.setValueAtTime(0.1, audioCtx.currentTime); g.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.5);
+                o.start(); o.stop(audioCtx.currentTime + 0.5);
+            }
+            if (Notification.permission === 'granted' && document.visibilityState !== 'visible') {
+                new Notification("姿势预警", { body: text, tag: 'pose-alert' });
+            }
+        }
+
+        function onResults(results) {
+            const now = Date.now();
+            document.getElementById('fps-display').innerText = `FPS: ${Math.round(1000 / (now - lastTimestamp))}`;
+            lastTimestamp = now;
+
+            canvasCtx.save();
+            canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
+            const light = getLight();
+            document.getElementById('val-light').innerText = light;
+
+            let curDist = 0, curTilt = 0, slouchY = 0;
+
+            if (results.multiFaceLandmarks && results.multiFaceLandmarks.length > 0) {
+                const l = results.multiFaceLandmarks[0];
+                checkBlink(l);
+
+                // 核心坐标点：33/263 内眼角
+                const pxDist = Math.sqrt(Math.pow((l[33].x - l[263].x) * 640, 2) + Math.pow((l[33].y - l[263].y) * 480, 2));
+                if (calibPixelDist > 0) curDist = Math.round(40 * (calibPixelDist / pxDist));
+                curTilt = Math.round(Math.atan2(l[263].y - l[33].y, l[263].x - l[33].x) * (180 / Math.PI));
+
+                // 坐姿高度监测 ( slouch )
+                const faceCenterY = (l[33].y + l[263].y) / 2;
+                if (calibFaceY > 0) slouchY = faceCenterY - calibFaceY; // 越大代表越往下趴
+
+                document.getElementById('val-dist').innerText = curDist || "--";
+                document.getElementById('card-dist').classList.toggle('alert', curDist < 35 && curDist > 0);
+
+                if (!startTime) startTime = Date.now();
+                totalSeconds = Math.floor((Date.now() - startTime) / 1000);
+
+                // 仅在前台绘制以加速
+                if (document.visibilityState === 'visible') {
+                    drawConnectors(canvasCtx, l, FACEMESH_TESSELATION, { color: '#00f2ff25', lineWidth: 0.5 });
+                }
+            } else {
+                startTime = null; totalSeconds = 0;
+            }
+
+            const mins = Math.floor(totalSeconds / 60);
+            document.getElementById('val-time').innerText = `${mins.toString().padStart(2, '0')}:${(totalSeconds % 60).toString().padStart(2, '0')}`;
+
+            generateAdvice(curDist, curTilt, slouchY, blinkList.length, light, totalSeconds);
+            canvasCtx.restore();
+        }
+
+        const faceMesh = new FaceMesh({ locateFile: f => `https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/${f}` });
+        faceMesh.setOptions({ maxNumFaces: 1, refineLandmarks: true, minDetectionConfidence: 0.5, minTrackingConfidence: 0.5 });
+        faceMesh.onResults(onResults);
+
+        const camera = new Camera(videoElement, {
+            onFrame: async () => { await faceMesh.send({ image: videoElement }); },
+            width: 640, height: 480
+        });
+
+        // 捕获摄像头启动错误
+        camera.start().catch(err => {
+            console.error("Camera failed:", err);
+            if (window.parent !== window) {
+                window.parent.postMessage('camera_error', '*');
+            }
+        });
+
+        function calibrate() {
+            const h = r => {
+                if (r.multiFaceLandmarks && r.multiFaceLandmarks.length > 0) {
+                    const l = r.multiFaceLandmarks[0];
+                    calibPixelDist = Math.sqrt(Math.pow((l[33].x - l[263].x) * 640, 2) + Math.pow((l[33].y - l[263].y) * 480, 2));
+                    calibFaceY = (l[33].y + l[263].y) / 2;
+                    alert("校准动作已记录：当前位置已被设为“标准坐姿”基准。");
+                    faceMesh.onResults(onResults);
+                }
+            };
+            faceMesh.onResults(h);
+        }
+
+        function resetTimer() { startTime = Date.now(); totalSeconds = 0; blinkList = []; }
+        function requestNotificationPermission() { initAudio(); Notification.requestPermission(); }
+        canvasElement.width = 640; canvasElement.height = 480;
+    </script>
+</body>
+
+</html>

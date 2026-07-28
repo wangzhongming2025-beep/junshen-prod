@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>实战成功案例库 - 老王队长 | 一人企业 AI 提效</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Noto+Sans+SC:wght@300;400;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Outfit', 'Noto Sans SC', 'sans-serif'],
+                    },
+                    colors: {
+                        military: {
+                            light: '#5c7065',
+                            DEFAULT: '#2f3b35', // Deep military green
+                            dark: '#141a17',
+                            accent: '#ffd700', // Gold accent
+                            glass: 'rgba(20, 26, 23, 0.75)',
+                            border: 'rgba(255, 215, 0, 0.15)'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #0b0f0d;
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(47, 59, 53, 0.15) 0%, transparent 40%),
+                radial-gradient(circle at 90% 80%, rgba(255, 215, 0, 0.03) 0%, transparent 35%);
+        }
+        .glow-text-gold {
+            text-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
+        }
+        .glass-card {
+            background: rgba(20, 26, 23, 0.65);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.03);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .glow-btn {
+            box-shadow: 0 4px 15px rgba(255, 215, 0, 0.2);
+            transition: all 0.3s ease;
+        }
+        .glow-btn:hover {
+            box-shadow: 0 8px 25px rgba(255, 215, 0, 0.45);
+        }
+    </style>
+</head>
+
+<body class="text-gray-300 antialiased pb-24 md:pb-12">
+
+    <!-- Top Navigation Bar -->
+    <nav class="bg-military-dark/95 border-b border-white/5 py-4 px-6 sticky top-0 z-50 backdrop-blur-md">
+        <div class="max-w-6xl mx-auto flex justify-between items-center">
+            <a href="index.html" class="flex items-center space-x-2 text-white hover:text-military-accent transition-colors">
+                <i class="fas fa-arrow-left"></i>
+                <span class="font-bold">返回主页</span>
+            </a>
+            <div class="text-lg font-bold tracking-wider text-military-accent glow-text-gold">
+                <i class="fas fa-trophy mr-2"></i>实战成功案例库
+            </div>
+            <a href="index.html#contact-section" class="bg-military-accent text-military-dark px-4 py-1.5 rounded-full font-bold text-sm hover:bg-white transition-all">
+                预约诊断
+            </a>
+        </div>
+    </nav>
+
+    <!-- Header / Hero Section -->
+    <header class="relative overflow-hidden py-12 md:py-16 border-b border-white/5 bg-gradient-to-b from-military-dark to-transparent">
+        <div class="absolute inset-0 bg-[radial-gradient(rgba(255,215,0,0.05)_1px,transparent_1px)] [background-size:20px_20px] pointer-events-none"></div>
+        <div class="max-w-4xl mx-auto px-6 text-center relative z-10 flex flex-col items-center">
+            <span class="bg-military-accent/10 text-military-accent border border-military-accent/20 text-xs px-3.5 py-1 rounded-full font-semibold tracking-wider uppercase mb-4 inline-block">
+                真实学员反馈 / 数据与聊天截图见证
+            </span>
+            <h1 class="text-3xl md:text-4xl font-extrabold tracking-wide text-white mb-4 glow-text-gold">
+                用实战成果说话
+            </h1>
+            <p class="text-xs md:text-sm text-gray-400 max-w-xl leading-relaxed">
+                不谈虚无的概念，只看真实的落地。在这里，我们记录了学员和客户在一人企业提效、AI辅助建站与流量冷启动中的真实蜕变。
+            </p>
+        </div>
+    </header>
+
+    <!-- Main Content Container -->
+    <main class="max-w-5xl mx-auto px-4 md:px-6 py-8 space-y-8">
+
+        <!-- Grid of Cases -->
+        <div class="grid grid-cols-1 gap-6">
+
+            <!-- Case 1: Xianyu Exposure -->
+            <div class="glass-card p-6 rounded-2xl border border-white/5 flex flex-col md:flex-row gap-6 items-center md:items-start">
+                <div class="w-48 md:w-56 shrink-0 flex justify-center bg-black/40 p-2.5 rounded-xl border border-white/5">
+                    <img src="case1.jpg" alt="闲鱼曝光激增反馈" class="rounded-lg object-contain max-h-[380px] hover:scale-[1.02] transition-transform duration-300 cursor-zoom-in shadow-lg shadow-black" onclick="openImageModal(this.src)">
+                </div>
+                <div class="flex-1 flex flex-col justify-between h-full space-y-4">
+                    <div>
+                        <div class="flex items-center space-x-2.5">
+                            <span class="bg-military-accent/20 text-military-accent border border-military-accent/30 text-xs px-2.5 py-0.5 rounded font-bold">
+                                流量冷启动
+                            </span>
+                            <span class="text-xs text-gray-500">2026年6月案例</span>
+                        </div>
+                        <h3 class="text-lg md:text-xl font-bold text-white mt-3 mb-2">闲鱼自动化铺货：店铺流量实现零的突破</h3>
+                        <p class="text-xs md:text-sm text-gray-400 leading-relaxed space-y-2">
+                            <strong>学员背景</strong>：零代码与零运营基础的创业者，尝试通过闲鱼进行小微电商变现，但苦于没有自然曝光，不知道如何选品和测试。<br><br>
+                            <strong>教练赋能</strong>：老王队长对其进行了 1对1 陪跑，指导其配置「自动化选品与铺货流」，利用 AI 和量化机制快速上传有爆款潜质的产品。<br><br>
+                            <strong>实战成效</strong>：起步首周即突破闲鱼冷启动，<strong>店铺单日曝光量迅速稳定在数百次</strong>，拿到精准咨询，成功跑通副业流量闭环。
+                        </p>
+                    </div>
+                    <div class="bg-black/30 p-3 rounded-xl border border-white/5 text-xs text-military-accent italic flex items-center">
+                        <i class="far fa-comment-dots mr-2 text-sm"></i> 学员聊天实录：“现在我的曝光一天就几百”
+                    </div>
+                </div>
+            </div>
+
+            <!-- Case 2: AI Web Page Builder -->
+            <div class="glass-card p-6 rounded-2xl border border-white/5 flex flex-col md:flex-row gap-6 items-center md:items-start">
+                <div class="w-48 md:w-56 shrink-0 flex justify-center bg-black/40 p-2.5 rounded-xl border border-white/5">
+                    <img src="case2.jpg" alt="主页上线反馈" class="rounded-lg object-contain max-h-[380px] hover:scale-[1.02] transition-transform duration-300 cursor-zoom-in shadow-lg shadow-black" onclick="openImageModal(this.src)">
+                </div>
+                <div class="flex-1 flex flex-col justify-between h-full space-y-4">
+                    <div>
+                        <div class="flex items-center space-x-2.5">
+                            <span class="bg-purple-500/20 text-purple-400 border border-purple-500/30 text-xs px-2.5 py-0.5 rounded font-bold">
+                                AI 零代码建站
+                            </span>
+                            <span class="text-xs text-gray-500">2026年6月案例</span>
+                        </div>
+                        <h3 class="text-lg md:text-xl font-bold text-white mt-3 mb-2">超级个体官网：零基础学员 3 天独立建站上线</h3>
+                        <p class="text-xs md:text-sm text-gray-400 leading-relaxed space-y-2">
+                            <strong>学员背景</strong>：无任何网页开发、HTML 代码或服务器部署基础，急需搭建个人专属的 IP 品牌展示主页。<br><br>
+                            <strong>教练赋能</strong>：在老王队长的 1对1 编程陪跑下，学员学会利用大模型工具辅助生成 standard 网页代码，并通过 Vercel 平台实现全球 CDN 一键免费部署与独立域名绑定。<br><br>
+                            <strong>实战成效</strong>：<strong>仅用时 3 天</strong>，学员人生中第一个专属 IP 官网网页成功上线并正常访问，彻底告别了慢速和不便。
+                        </p>
+                    </div>
+                    <div class="bg-black/30 p-3 rounded-xl border border-white/5 text-xs text-military-accent italic flex items-center">
+                        <i class="far fa-comment-dots mr-2 text-sm"></i> 学员聊天实录：“第一个自己的网页做成并且上线了”
+                    </div>
+                </div>
+            </div>
+
+            <!-- Case 3: Offline Physical Store Traffic & Conversion -->
+            <div class="glass-card p-6 rounded-2xl border border-white/5 flex flex-col md:flex-row gap-6 items-center md:items-start">
+                <div class="w-48 md:w-56 shrink-0 flex justify-center bg-black/40 p-2.5 rounded-xl border border-white/5">
+                    <img src="case3.jpg" alt="线下实体店引流成交" class="rounded-lg object-contain max-h-[380px] hover:scale-[1.02] transition-transform duration-300 cursor-zoom-in shadow-lg shadow-black" onclick="openImageModal(this.src)">
+                </div>
+                <div class="flex-1 flex flex-col justify-between h-full space-y-4">
+                    <div>
+                        <div class="flex items-center space-x-2.5">
+                            <span class="bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-xs px-2.5 py-0.5 rounded font-bold">
+                                实体店引流成交
+                            </span>
+                            <span class="text-xs text-gray-500">2026年6月案例</span>
+                        </div>
+                        <h3 class="text-lg md:text-xl font-bold text-white mt-3 mb-2">同城实体引流：精准流量获取与话术方案优化</h3>
+                        <p class="text-xs md:text-sm text-gray-400 leading-relaxed space-y-2">
+                            <strong>学员背景</strong>：传统同城实体店主，希望通过抖音、视频号等平台矩阵运营引流突破传统地域局限，获得更精准的客户咨询。<br><br>
+                            <strong>教练赋能</strong>：老王队长对其进行了同城实体短视频获客规划，并针对短视频精准引流客户与传统老客户介绍客户的特点，指导其采用差异化的话术与方案调整。<br><br>
+                            <strong>实战成效</strong>：学员快速跑通矩阵打法，<strong>当天即成功成交 1000 元客单</strong>，并开始深度优化转化方案与获客漏斗。
+                        </p>
+                    </div>
+                    <div class="bg-black/30 p-3 rounded-xl border border-white/5 text-xs text-military-accent italic flex items-center">
+                        <i class="far fa-comment-dots mr-2 text-sm"></i> 学员聊天实录：“不过今天成交了 1000 元，所以我得调整话术和方案”
+                    </div>
+                </div>
+            </div>
+
+            <!-- Case 4: Enterprise AI Content & Customer Service Factory -->
+            <div class="glass-card p-6 rounded-2xl border border-white/5 flex flex-col md:flex-row gap-6 items-center md:items-start">
+                <div class="w-48 md:w-56 shrink-0 flex justify-center bg-black/40 p-2.5 rounded-xl border border-white/5">
+                    <img src="case4.jpg" alt="企业AI智能客服与内容工厂架构" class="rounded-lg object-contain max-h-[380px] hover:scale-[1.02] transition-transform duration-300 cursor-zoom-in shadow-lg shadow-black" onclick="openImageModal(this.src)">
+                </div>
+                <div class="flex-1 flex flex-col justify-between h-full space-y-4">
+                    <div>
+                        <div class="flex items-center space-x-2.5">
+                            <span class="bg-blue-500/20 text-blue-400 border border-blue-500/30 text-xs px-2.5 py-0.5 rounded font-bold">
+                                智能内容工厂
+                            </span>
+                            <span class="text-xs text-gray-500">2026年6月案例</span>
+                        </div>
+                        <h3 class="text-lg md:text-xl font-bold text-white mt-3 mb-2">企业私域内容工厂：企微 AI 客服与自动化管理系统</h3>
+                        <p class="text-xs md:text-sm text-gray-400 leading-relaxed space-y-2">
+                            <strong>学员背景</strong>：一人企业与私域运营团队，每日面临海量咨询与重复性的意向匹配、SOP跟进，传统人工效率低下，渴望搭建专属自动化“内容答复与跟进工厂”。<br><br>
+                            <strong>教练赋能</strong>：老王队长带教其设计并落地了全栈「企微 AI 智能客服/内容引擎」，采用前端 React 看板管理（包括会话监控、SOP话术库编辑、AI人设配置）+ 后端 Express + SQLite + Drizzle 架构，通过 webhook 自动回调与 AI 引擎挂载实现意向识别和 SOP 匹配回复。<br><br>
+                            <strong>实战成效</strong>：<strong>成功构建自动化内容与话术输出工厂</strong>，日常高频重复性咨询实现 90% 自动托管与 AI 意图判定，同时融合人工无缝接管警报，大幅提升私域成交转化效率与生产力。
+                        </p>
+                    </div>
+                    <div class="bg-black/30 p-3 rounded-xl border border-white/5 text-xs text-military-accent italic flex items-center">
+                        <i class="far fa-comment-dots mr-2 text-sm"></i> 项目架构：“企微回调 -> AI核心处理(意向识别/SOP匹配) -> 自动回复，并搭载 React 商户管理后台”
+                    </div>
+                </div>
+            </div>
+
+            <!-- Case 5: Zero-Cost Short Video Side Hustle Monetization -->
+            <div class="glass-card p-6 rounded-2xl border border-white/5 flex flex-col md:flex-row gap-6 items-center md:items-start">
+                <div class="w-48 md:w-56 shrink-0 flex justify-center bg-black/40 p-2.5 rounded-xl border border-white/5">
+                    <img src="case5.jpg" alt="短视频副业分发变现反馈" class="rounded-lg object-contain max-h-[380px] hover:scale-[1.02] transition-transform duration-300 cursor-zoom-in shadow-lg shadow-black" onclick="openImageModal(this.src)">
+                </div>
+                <div class="flex-1 flex flex-col justify-between h-full space-y-4">
+                    <div>
+                        <div class="flex items-center space-x-2.5">
+                            <span class="bg-amber-500/20 text-amber-400 border border-amber-500/30 text-xs px-2.5 py-0.5 rounded font-bold">
+                                副业流量变现
+                            </span>
+                            <span class="text-xs text-gray-500">2026年6月案例</span>
+                        </div>
+                        <h3 class="text-lg md:text-xl font-bold text-white mt-3 mb-2">低门槛副业实战：纯免费视频分发与变现闭环</h3>
+                        <p class="text-xs md:text-sm text-gray-400 leading-relaxed space-y-2">
+                            <strong>学员背景</strong>：零成本起步的小白副业创业者，缺乏原创视频制作能力与运营经验，希望能快速跑通轻资产变现流。<br><br>
+                            <strong>教练赋能</strong>：老王队长为其提供高转化的免费优质短视频素材支持，并带教其核心复发机制——当某条视频跑出初始流量后，通过「二次重发爆款视频」与「评论区引流互动」实现流量精准复利。<br><br>
+                            <strong>实战成效</strong>：学员通过重发爆款素材，流量再次爆发，<strong>日均持续产出稳定收益，在极短时间内累计变现数百元</strong>，跑通了零门槛、低成本的副业增长闭环。
+                        </p>
+                    </div>
+                    <div class="bg-black/30 p-3 rounded-xl border border-white/5 text-xs text-military-accent italic flex items-center">
+                        <i class="far fa-comment-dots mr-2 text-sm"></i> 学员聊天实录：“我这段时间赚了有几百块钱了，我特别开心，谢谢老师了”
+                    </div>
+                </div>
+            </div>
+
+            <!-- Case 6: High-Ticket AI Programming Contract -->
+            <div class="glass-card p-6 rounded-2xl border border-white/5 flex flex-col md:flex-row gap-6 items-center md:items-start">
+                <div class="w-48 md:w-56 shrink-0 flex justify-center bg-black/40 p-2.5 rounded-xl border border-white/5">
+                    <img src="case6.jpg" alt="AI编程接高客单大单成交反馈" class="rounded-lg object-contain max-h-[380px] hover:scale-[1.02] transition-transform duration-300 cursor-zoom-in shadow-lg shadow-black" onclick="openImageModal(this.src)">
+                </div>
+                <div class="flex-1 flex flex-col justify-between h-full space-y-4">
+                    <div>
+                        <div class="flex items-center space-x-2.5">
+                            <span class="bg-red-500/20 text-red-400 border border-red-500/30 text-xs px-2.5 py-0.5 rounded font-bold">
+                                AI 编程大单
+                            </span>
+                            <span class="text-xs text-gray-500">2026年6月案例</span>
+                        </div>
+                        <h3 class="text-lg md:text-xl font-bold text-white mt-3 mb-2">高客单实战：AI 辅助全平台（安卓+苹果+桌面）App 快速开发</h3>
+                        <p class="text-xs md:text-sm text-gray-400 leading-relaxed space-y-2">
+                            <strong>项目背景</strong>：企业客户急需在极短时间内定制一套跨平台系统，包含 Android、iOS 以及桌面端应用，供内部高效运转使用。<br><br>
+                            <strong>教练赋能</strong>：老王队长运用前沿的 AI 编程技术栈（大模型代码辅助与跨平台轻量框架），为其设计了免去繁琐原生开发的极速落地路径，将研发周期压缩至传统开发方式的 1/5。<br><br>
+                            <strong>实战成效</strong>：<strong>成功签下 80,000 元客单开发合同</strong>，并在 2 周内快速交付包含安卓、苹果及电脑端在内的全平台 App 成果，证明了 AI 编程完全具备承接高客单、大体量企业大单的商业化技术实力。
+                        </p>
+                    </div>
+                    <div class="bg-black/30 p-3 rounded-xl border border-white/5 text-xs text-military-accent italic flex items-center">
+                        <i class="far fa-comment-dots mr-2 text-sm"></i> 学员聊天实录：“做出安卓的，苹果的，电脑的app，一共是8万。预计两周可以做出来。怎么付款？签约启动付50%...”
+                    </div>
+                </div>
+            </div>
+
+            <!-- Case 7: Minimalist Short Video IP Growth (Dui Lian Pai) -->
+            <div class="glass-card p-6 rounded-2xl border border-white/5 flex flex-col md:flex-row gap-6 items-center md:items-start">
+                <div class="w-48 md:w-56 shrink-0 flex flex-col gap-2.5 bg-black/40 p-2.5 rounded-xl border border-white/5">
+                    <img src="case7_1.jpg" alt="怼脸拍账号视频数据" class="rounded-lg object-contain max-h-[200px] hover:scale-[1.02] transition-transform duration-300 cursor-zoom-in shadow-md shadow-black" onclick="openImageModal(this.src)">
+                    <img src="case7_2.jpg" alt="视频号关注量激增" class="rounded-lg object-contain max-h-[160px] hover:scale-[1.02] transition-transform duration-300 cursor-zoom-in shadow-md shadow-black" onclick="openImageModal(this.src)">
+                </div>
+                <div class="flex-1 flex flex-col justify-between h-full space-y-4">
+                    <div>
+                        <div class="flex items-center space-x-2.5">
+                            <span class="bg-teal-500/20 text-teal-400 border border-teal-500/30 text-xs px-2.5 py-0.5 rounded font-bold">
+                                短视频IP孵化
+                            </span>
+                            <span class="text-xs text-gray-500">2026年6月案例</span>
+                        </div>
+                        <h3 class="text-lg md:text-xl font-bold text-white mt-3 mb-2">极简短视频实战：“怼脸拍”个人IP打造与精准粉丝增长</h3>
+                        <p class="text-xs md:text-sm text-gray-400 leading-relaxed space-y-2">
+                            <strong>痛点背景</strong>：内容创作者面临高昂的视频拍摄与剪辑门槛（如布光、高端相机、多机位），导致难以开启持续的个人IP内容输出。<br><br>
+                            <strong>教练赋能</strong>：老王队长带教其采用极致轻量化的“怼脸拍”实战方法。视频制作无需精细布光，把重点放在“高价值干货输出”和“强视觉黄金文案字幕设计”（如“护眼不练脑等于白费”等爆款封面标题）来迅速吸引受众。<br><br>
+                            <strong>实战成效</strong>：依靠此极简方案，账号在极短周期内<strong>迅速累积 4200+ 精准关注、获得 7000+ 点赞</strong>，单日新增关注及咨询量爆发式上升，实现了超轻量级IP跑通。
+                        </p>
+                    </div>
+                    <div class="bg-black/30 p-3 rounded-xl border border-white/5 text-xs text-military-accent italic flex items-center">
+                        <i class="far fa-comment-dots mr-2 text-sm"></i> 运营反馈：依靠高频且垂直的“怼脸拍”输出，账号已迈入日均稳定引流与精准咨询的孵化正轨。
+                    </div>
+                </div>
+            </div>
+
+            <!-- Case 8: AI-Planned Viral Video -->
+            <div class="glass-card p-6 rounded-2xl border border-white/5 flex flex-col md:flex-row gap-6 items-center md:items-start">
+                <div class="w-48 md:w-56 shrink-0 flex justify-center bg-black/40 p-2.5 rounded-xl border border-white/5">
+                    <img src="case8.jpg" alt="AI智能选题策划爆款数据" class="rounded-lg object-contain max-h-[380px] hover:scale-[1.02] transition-transform duration-300 cursor-zoom-in shadow-lg shadow-black" onclick="openImageModal(this.src)">
+                </div>
+                <div class="flex-1 flex flex-col justify-between h-full space-y-4">
+                    <div>
+                        <div class="flex items-center space-x-2.5">
+                            <span class="bg-rose-500/20 text-rose-400 border border-rose-500/30 text-xs px-2.5 py-0.5 rounded font-bold">
+                                AI 选题策划
+                            </span>
+                            <span class="text-xs text-gray-500">2026年6月案例</span>
+                        </div>
+                        <h3 class="text-lg md:text-xl font-bold text-white mt-3 mb-2">AI 智能选题策划：短视频单视频累计播放突破 100 万</h3>
+                        <p class="text-xs md:text-sm text-gray-400 leading-relaxed space-y-2">
+                            <strong>痛点背景</strong>：创作者时常陷入创作枯竭、选题偏离受众刚需的窘境，导致发布的多条视频播放量始终在低位徘徊，转化困难。<br><br>
+                            <strong>教练赋能</strong>：指导学员通过老王专有的“AI 智能选题与文案挂载模型”，结合垂直人群的底层搜索痛点进行科学化选题策划，智能匹配目标用户在评论区及搜索的黄金痛点。<br><br>
+                            <strong>实战成效</strong>：经由 AI 策划产出的选题视频一经推出迅速引爆流量，<strong>累计播放量直接突破 100 万（1,000,000+）大关</strong>，单日涌入大量关注通知，成功用 AI 技术打破流量瓶颈，实现规模化曝光。
+                        </p>
+                    </div>
+                    <div class="bg-black/30 p-3 rounded-xl border border-white/5 text-xs text-military-accent italic flex items-center">
+                        <i class="far fa-comment-dots mr-2 text-sm"></i> 视频号消息提示：“累计视频播放量突破100万”
+                    </div>
+                </div>
+            </div>
+
+            <!-- Case 9: AI CRM User Management & Automation -->
+            <div class="glass-card p-6 rounded-2xl border border-white/5 flex flex-col md:flex-row gap-6 items-center md:items-start">
+                <div class="w-48 md:w-56 shrink-0 flex flex-col gap-2.5 bg-black/40 p-2.5 rounded-xl border border-white/5">
+                    <img src="case9_1.jpg" alt="AI自动跟进CRM与顾问建议" class="rounded-lg object-contain max-h-[220px] hover:scale-[1.02] transition-transform duration-300 cursor-zoom-in shadow-md shadow-black" onclick="openImageModal(this.src)">
+                    <img src="case9_2.jpg" alt="飞书多维表格客户管理CRM" class="rounded-lg object-contain max-h-[140px] hover:scale-[1.02] transition-transform duration-300 cursor-zoom-in shadow-md shadow-black" onclick="openImageModal(this.src)">
+                </div>
+                <div class="flex-1 flex flex-col justify-between h-full space-y-4">
+                    <div>
+                        <div class="flex items-center space-x-2.5">
+                            <span class="bg-indigo-500/20 text-indigo-400 border border-indigo-500/30 text-xs px-2.5 py-0.5 rounded font-bold">
+                                流程与工具自动化
+                            </span>
+                            <span class="text-xs text-gray-500">2026年6月案例</span>
+                        </div>
+                        <h3 class="text-lg md:text-xl font-bold text-white mt-3 mb-2">AI 智能客户管理系统：飞书 CRM 自动化更新与交付诊断助手</h3>
+                        <p class="text-xs md:text-sm text-gray-400 leading-relaxed space-y-2">
+                            <strong>痛点背景</strong>：自由职业者/独立教师每天服务多名客户，难以做到及时且结构化地在飞书多维表格中更新跟进状态，容易导致客户流失及交付成果断档。<br><br>
+                            <strong>教练赋能</strong>：老王队长为其部署了专属的「AI 智能飞书 CRM 助手」。学员在微信聊天中仅需口语化输入或采用快捷字段（如“客户：xxx | 渠道：xxx | 业务：xxx...”），AI 便会在后台自动同步并分类更新至飞书多维表格。同时，AI 还会作为交付教练，自动分析聊天记录中的交付进度，给学员提出具体的验证动作建议（例如提示向这 3 个特定的用户发送回访消息，并提示具体的打分与转介绍策略）。<br><br>
+                            <strong>实战成效</strong>：<strong>完全打通了口语对话到飞书结构化数据的自动流转</strong>，学员无需再手动做 Excel 表格跟进，CRM 管理成本降为零，同时通过 AI 智能跟进建议有效提升了老客户复购率与裂变转化率。
+                        </p>
+                    </div>
+                    <div class="bg-black/30 p-3 rounded-xl border border-white/5 text-xs text-military-accent italic flex items-center">
+                        <i class="far fa-comment-dots mr-2 text-sm"></i> 流程反馈：“CRM已更新，现在10条记录...回到你的问题：如何验证交付成果？建议你给这3个人各发一条消息...”
+                    </div>
+                </div>
+            </div>
+
+            <!-- Case 10: High-End B2B Foreign Trade Website -->
+            <div class="glass-card p-6 rounded-2xl border border-white/5 flex flex-col md:flex-row gap-6 items-center md:items-start">
+                <div class="w-48 md:w-56 shrink-0 flex justify-center bg-black/40 p-2.5 rounded-xl border border-white/5">
+                    <img src="case10.jpg" alt="欧美高端B2B外贸建站反馈" class="rounded-lg object-contain max-h-[380px] hover:scale-[1.02] transition-transform duration-300 cursor-zoom-in shadow-lg shadow-black" onclick="openImageModal(this.src)">
+                </div>
+                <div class="flex-1 flex flex-col justify-between h-full space-y-4">
+                    <div>
+                        <div class="flex items-center space-x-2.5">
+                            <span class="bg-cyan-500/20 text-cyan-400 border border-cyan-500/30 text-xs px-2.5 py-0.5 rounded font-bold">
+                                品牌出海建站
+                            </span>
+                            <span class="text-xs text-gray-500">2026年6月案例</span>
+                        </div>
+                        <h3 class="text-lg md:text-xl font-bold text-white mt-3 mb-2">欧美高端 B2B 外贸网站定制：国际化标准布局与高效开发交付</h3>
+                        <p class="text-xs md:text-sm text-gray-400 leading-relaxed space-y-2">
+                            <strong>痛点背景</strong>：传统外贸出口企业在建立海外官网时，常因不熟悉欧美本土化视觉偏好（如导航栏全大写写法等欧美标志性设计规范），导致搭建的站点难以博取海外客户的信任，开发周期也长。<br><br>
+                            <strong>教练赋能</strong>：老王队长运用 AI 极速响应式建站流程，从内容架构布局、国际化排版规范、到多端（PC与移动端）字体与间距细节进行了精准适配，为品牌出海量身定做高转化视觉载体。<br><br>
+                            <strong>实战成效</strong>：网站交付质量与高效率超出客户预期，收获极佳反馈（“你的内容布局非常合理，也很专业、高端...效率很高，我接受了”），验证了通过 AI 工具赋能外贸出海企业官网快速、高品质上线的极强商业价值。
+                        </p>
+                    </div>
+                    <div class="bg-black/30 p-3 rounded-xl border border-white/5 text-xs text-military-accent italic flex items-center">
+                        <i class="far fa-comment-dots mr-2 text-sm"></i> 客户评价：“布局合理、非常专业、高端的外贸B2B网站...你效率很高，我接受了。”
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        </div>
+
+        <!-- Call to Action Card -->
+        <section class="bg-gradient-to-r from-military via-military-dark to-black border border-military-border/30 rounded-2xl p-6 md:p-8 text-center relative overflow-hidden">
+            <div class="absolute inset-0 bg-[radial-gradient(rgba(255,215,0,0.02)_1px,transparent_1px)] [background-size:15px_15px]"></div>
+            <h2 class="text-xl md:text-2xl font-extrabold mb-4 text-white glow-text-gold">也想跑通您的商业闭环？</h2>
+            <p class="mb-6 opacity-90 max-w-xl mx-auto text-xs md:text-sm text-gray-300 leading-relaxed">
+                无论是想利用 AI 提升个人与团队 5 倍工作效率，还是想快速开发自己的小程序/网站并上线，老王队长都能为您定制最接地气的实战方案。
+            </p>
+            <div class="bg-black/40 p-5 rounded-xl border border-white/10 max-w-md mx-auto flex flex-col items-center">
+                <img src="erweima2.jpg" alt="微信二维码" class="w-24 h-24 rounded-lg mb-3 shadow-lg">
+                <span class="text-xs text-gray-400 mb-3">
+                    扫码或复制微信号，预约 15分钟 免费商业与技术诊断：
+                </span>
+                <div class="flex items-center space-x-2 bg-black/60 px-4 py-2 rounded-full border border-white/10 w-full justify-between">
+                    <span class="text-sm font-bold text-white tracking-wider font-mono select-all" id="wechat-id">vip20213456</span>
+                    <button onclick="copyWeChat()" class="text-xs bg-military-accent text-military-dark px-3 py-1.5 rounded-full hover:bg-white hover:text-military-dark transition-all duration-200 font-bold active:scale-95 glow-btn">
+                        一键复制
+                    </button>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Toast Component -->
+    <div id="toast" class="fixed top-6 left-1/2 transform -translate-x-1/2 bg-military-accent text-military-dark px-6 py-3.5 rounded-full font-bold shadow-2xl z-[100] opacity-0 transition-opacity duration-300 pointer-events-none text-center text-xs border border-military">
+        🎉 微信复制成功，请添加老王沟通！
+    </div>
+
+    <!-- Lightbox Image Modal -->
+    <div id="image-modal" class="hidden fixed inset-0 bg-black/95 backdrop-blur-sm z-[100] flex justify-center items-center p-4 cursor-zoom-out" onclick="closeImageModal()">
+        <div class="relative max-w-5xl max-h-full">
+            <img id="image-modal-src" src="" alt="预览图" class="rounded-lg max-h-[92vh] object-contain border border-white/10 shadow-2xl">
+            <button class="absolute -top-10 right-0 text-white hover:text-military-accent text-3xl" onclick="closeImageModal()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- Footer Section -->
+    <footer class="bg-military-dark text-gray-500 py-12 text-center text-xs border-t border-white/5">
+        <div class="max-w-6xl mx-auto px-4">
+            <p>&copy; 2026 老王队长 - 从军官到创业者的转型之路</p>
+        </div>
+    </footer>
+
+    <script>
+        function openImageModal(src) {
+            const modal = document.getElementById('image-modal');
+            const modalImg = document.getElementById('image-modal-src');
+            modal.classList.remove('hidden');
+            modalImg.src = src;
+        }
+
+        function closeImageModal() {
+            document.getElementById('image-modal').classList.add('hidden');
+        }
+
+        function copyWeChat() {
+            const wechatId = document.getElementById('wechat-id').innerText;
+            navigator.clipboard.writeText(wechatId).then(() => {
+                showToast();
+            }).catch(err => {
+                const input = document.createElement('input');
+                input.value = wechatId;
+                document.body.appendChild(input);
+                input.select();
+                document.execCommand('copy');
+                document.body.removeChild(input);
+                showToast();
+            });
+        }
+
+        function showToast() {
+            const toast = document.getElementById('toast');
+            toast.style.opacity = '1';
+            setTimeout(() => {
+                toast.style.opacity = '0';
+            }, 3000);
+        }
+    </script>
+</body>
+
+</html>

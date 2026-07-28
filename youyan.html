@@ -1,0 +1,906 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>右眼单眼弱视训练系统</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#4F46E5',
+                        secondary: '#10B981',
+                        warning: '#F59E0B',
+                        danger: '#EF4444',
+                        dark: '#1E293B',
+                        light: '#F8FAFC'
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                    },
+                    animation: {
+                        'fade-in': 'fadeIn 0.5s ease-in-out',
+                        'slide-up': 'slideUp 0.6s ease-out',
+                        'pulse-slow': 'pulse 3s infinite',
+                        'bounce-slow': 'bounce 2s infinite',
+                        'float': 'float 3s ease-in-out infinite',
+                        'shine': 'shine 1.5s ease-in-out infinite alternate'
+                    },
+                    keyframes: {
+                        fadeIn: {
+                            '0%': { opacity: '0' },
+                            '100%': { opacity: '1' }
+                        },
+                        slideUp: {
+                            '0%': { transform: 'translateY(20px)', opacity: '0' },
+                            '100%': { transform: 'translateY(0)', opacity: '1' }
+                        },
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-10px)' }
+                        },
+                        shine: {
+                            '0%': { transform: 'scale(0.95)', opacity: '0.8' },
+                            '100%': { transform: 'scale(1.05)', opacity: '1' }
+                        }
+                    }
+                },
+            }
+        }
+    </script>
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .card-glass {
+                backdrop-filter: blur(12px);
+                background: rgba(255, 255, 255, 0.7);
+                border: 1px solid rgba(255, 255, 255, 0.2);
+            }
+            .bg-gradient-blue {
+                background: linear-gradient(135deg, #EEF2FF 0%, #E0E7FF 50%, #EEF2FF 100%);
+            }
+            .shadow-soft {
+                box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            }
+            .text-shadow {
+                text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            }
+            .training-area {
+                position: relative;
+                width: 100%;
+                aspect-ratio: 1 / 1;
+                max-width: 500px;
+                max-height: 500px;
+            }
+            .cover-eye {
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 50%;
+                height: 100%;
+                background-color: rgba(0, 0, 0, 0.8);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                color: white;
+                font-size: 1.5rem;
+                z-index: 10;
+            }
+            .grid-pattern {
+                background-size: 20px 20px;
+                background-image: 
+                    linear-gradient(to right, rgba(79, 70, 229, 0.1) 1px, transparent 1px),
+                    linear-gradient(to bottom, rgba(79, 70, 229, 0.1) 1px, transparent 1px);
+            }
+        }
+    </style>
+</head>
+<body class="min-h-screen bg-gradient-blue font-sans text-dark">
+    <div class="container mx-auto px-4 py-8 max-w-6xl">
+        <!-- 标题区域 -->
+        <header class="text-center mb-10 animate-fade-in">
+            <h1 class="text-[clamp(1.8rem,4vw,2.5rem)] font-bold text-primary mb-3 text-shadow">右眼单眼弱视训练系统</h1>
+            <p class="text-dark/70 text-lg max-w-3xl mx-auto">
+                专业的视觉训练工具，帮助改善右眼视力，提高视觉功能和生活质量
+            </p>
+        </header>
+
+        <!-- 遮盖提示 -->
+        <div class="card-glass rounded-2xl p-6 shadow-soft mb-8 animate-slide-up">
+            <div class="flex items-start gap-4">
+                <div class="bg-warning/20 rounded-full p-3 text-warning">
+                    <i class="fa fa-eye text-xl"></i>
+                </div>
+                <div>
+                    <h2 class="text-xl font-bold mb-2">训练前准备</h2>
+                    <p class="text-dark/80 mb-4">在开始训练前，请确保遮盖左眼（使用眼罩或手），仅用右眼进行训练。每天建议训练2-3次，每次10-15分钟。</p>
+                    <div class="flex flex-wrap gap-3">
+                        <button id="showLeftCoverBtn" class="bg-warning hover:bg-warning/90 text-white px-4 py-2 rounded-lg font-medium transition-all">
+                            <i class="fa fa-eye-slash mr-2"></i>显示/隐藏左眼遮盖
+                        </button>
+                        <button id="startTimerBtn" class="bg-primary hover:bg-primary/90 text-white px-4 py-2 rounded-lg font-medium transition-all">
+                            <i class="fa fa-clock-o mr-2"></i>开始计时
+                        </button>
+                        <div id="timerDisplay" class="hidden items-center gap-2 px-4 py-2 bg-light rounded-lg">
+                            <i class="fa fa-clock-o text-primary"></i>
+                            <span id="timerText">00:00</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 训练区域 -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-10">
+            <!-- 左侧：训练模式选择 -->
+            <div class="lg:col-span-1">
+                <div class="card-glass rounded-2xl p-6 shadow-soft h-full">
+                    <h2 class="text-xl font-bold mb-4">训练模式</h2>
+                    <div class="space-y-3">
+                        <button id="patternTrainingBtn" class="w-full bg-primary text-white rounded-lg p-4 text-left transition-all flex items-center justify-between">
+                            <div class="flex items-center gap-3">
+                                <i class="fa fa-picture-o text-xl"></i>
+                                <span>视觉刺激训练</span>
+                            </div>
+                            <i class="fa fa-chevron-right"></i>
+                        </button>
+                        <button id="trackingTrainingBtn" class="w-full bg-light hover:bg-light/80 text-dark rounded-lg p-4 text-left transition-all flex items-center justify-between">
+                            <div class="flex items-center gap-3">
+                                <i class="fa fa-arrows text-xl"></i>
+                                <span>眼球追踪训练</span>
+                            </div>
+                            <i class="fa fa-chevron-right"></i>
+                        </button>
+                        <button id="contrastTrainingBtn" class="w-full bg-light hover:bg-light/80 text-dark rounded-lg p-4 text-left transition-all flex items-center justify-between">
+                            <div class="flex items-center gap-3">
+                                <i class="fa fa-adjust text-xl"></i>
+                                <span>对比敏感度训练</span>
+                            </div>
+                            <i class="fa fa-chevron-right"></i>
+                        </button>
+                        <button id="acuityTrainingBtn" class="w-full bg-light hover:bg-light/80 text-dark rounded-lg p-4 text-left transition-all flex items-center justify-between">
+                            <div class="flex items-center gap-3">
+                                <i class="fa fa-eye text-xl"></i>
+                                <span>视力敏锐度训练</span>
+                            </div>
+                            <i class="fa fa-chevron-right"></i>
+                        </button>
+                    </div>
+
+                    <div class="mt-8">
+                        <h3 class="text-lg font-semibold mb-3">训练设置</h3>
+                        <div class="space-y-4">
+                            <div>
+                                <label for="difficulty" class="block text-sm font-medium text-dark/80 mb-1">难度级别</label>
+                                <select id="difficulty" class="w-full px-3 py-2 rounded-lg border border-gray-200 focus:ring-2 focus:ring-primary/50 focus:border-primary outline-none">
+                                    <option value="easy">初级</option>
+                                    <option value="medium" selected>中级</option>
+                                    <option value="hard">高级</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label for="duration" class="block text-sm font-medium text-dark/80 mb-1">每次训练时长（分钟）</label>
+                                <input type="range" id="duration" min="5" max="20" value="10" class="w-full accent-primary">
+                                <div class="flex justify-between text-xs text-dark/60 mt-1">
+                                    <span>5分钟</span>
+                                    <span id="durationValue">10分钟</span>
+                                    <span>20分钟</span>
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-dark/80 mb-2">对比度设置</label>
+                                <input type="range" id="contrast" min="30" max="100" value="70" class="w-full accent-primary">
+                                <div class="flex justify-between text-xs text-dark/60 mt-1">
+                                    <span>低对比度</span>
+                                    <span id="contrastValue">70%</span>
+                                    <span>高对比度</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 右侧：训练显示区域 -->
+            <div class="lg:col-span-2">
+                <div class="card-glass rounded-2xl p-6 shadow-soft h-full">
+                    <div class="flex justify-between items-center mb-4">
+                        <h2 class="text-xl font-bold">视觉刺激训练</h2>
+                        <div class="flex gap-2">
+                            <button id="pauseBtn" class="bg-warning hover:bg-warning/90 text-white px-3 py-1.5 rounded-lg text-sm transition-all">
+                                <i class="fa fa-pause mr-1"></i>暂停
+                            </button>
+                            <button id="resetBtn" class="bg-danger hover:bg-danger/90 text-white px-3 py-1.5 rounded-lg text-sm transition-all">
+                                <i class="fa fa-refresh mr-1"></i>重置
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- 训练区域 -->
+                    <div class="relative bg-white rounded-xl overflow-hidden shadow-inner border border-gray-100 mb-4">
+                        <!-- 左眼遮盖层 -->
+                        <div id="leftCover" class="cover-eye" style="display: none;">
+                            <div class="text-center">
+                                <i class="fa fa-eye-slash text-4xl mb-2"></i>
+                                <p>左眼遮盖区域</p>
+                            </div>
+                        </div>
+
+                        <!-- 训练内容区域 -->
+                        <div class="training-area mx-auto grid-pattern relative">
+                            <!-- 视觉刺激训练内容 -->
+                            <div id="patternTrainingArea" class="w-full h-full flex items-center justify-center">
+                                <div class="grid grid-cols-3 gap-4 w-4/5 h-4/5">
+                                    <div class="pattern-item bg-primary/10 rounded-lg flex items-center justify-center animate-shine cursor-pointer">
+                                        <i class="fa fa-star text-primary text-3xl"></i>
+                                    </div>
+                                    <div class="pattern-item bg-primary/10 rounded-lg flex items-center justify-center cursor-pointer">
+                                        <i class="fa fa-circle text-primary text-3xl"></i>
+                                    </div>
+                                    <div class="pattern-item bg-primary/10 rounded-lg flex items-center justify-center cursor-pointer">
+                                        <i class="fa fa-square text-primary text-3xl"></i>
+                                    </div>
+                                    <div class="pattern-item bg-primary/10 rounded-lg flex items-center justify-center cursor-pointer">
+                                        <i class="fa fa-triangle text-primary text-3xl"></i>
+                                    </div>
+                                    <div class="pattern-item bg-primary/10 rounded-lg flex items-center justify-center animate-shine cursor-pointer">
+                                        <i class="fa fa-heart text-primary text-3xl"></i>
+                                    </div>
+                                    <div class="pattern-item bg-primary/10 rounded-lg flex items-center justify-center cursor-pointer">
+                                        <i class="fa fa-diamond text-primary text-3xl"></i>
+                                    </div>
+                                    <div class="pattern-item bg-primary/10 rounded-lg flex items-center justify-center cursor-pointer">
+                                        <i class="fa fa-bolt text-primary text-3xl"></i>
+                                    </div>
+                                    <div class="pattern-item bg-primary/10 rounded-lg flex items-center justify-center cursor-pointer">
+                                        <i class="fa fa-leaf text-primary text-3xl"></i>
+                                    </div>
+                                    <div class="pattern-item bg-primary/10 rounded-lg flex items-center justify-center animate-shine cursor-pointer">
+                                        <i class="fa fa-key text-primary text-3xl"></i>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 其他训练模式区域（默认隐藏） -->
+                            <div id="trackingTrainingArea" class="w-full h-full hidden">
+                                <!-- 眼球追踪训练内容将在这里动态生成 -->
+                            </div>
+                            <div id="contrastTrainingArea" class="w-full h-full hidden">
+                                <!-- 对比敏感度训练内容将在这里动态生成 -->
+                            </div>
+                            <div id="acuityTrainingArea" class="w-full h-full hidden">
+                                <!-- 视力敏锐度训练内容将在这里动态生成 -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-light/80 rounded-lg p-4">
+                        <h3 class="font-semibold mb-2">训练指导</h3>
+                        <p class="text-dark/70 text-sm">请专注注视闪烁的图形，当看到图形闪烁时，立即点击它。这个练习可以帮助提高右眼的视觉感知能力和反应速度。</p>
+                        <div class="mt-3 grid grid-cols-2 gap-3">
+                            <div class="bg-primary/5 rounded-lg p-3 text-sm">
+                                <span class="font-medium text-primary">训练进度:</span> <span id="progressValue">0%</span>
+                            </div>
+                            <div class="bg-primary/5 rounded-lg p-3 text-sm">
+                                <span class="font-medium text-primary">当前得分:</span> <span id="scoreValue">0</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 训练计划和统计 -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-10">
+            <!-- 训练计划 -->
+            <div class="card-glass rounded-2xl p-6 shadow-soft">
+                <h2 class="text-xl font-bold mb-4">训练计划</h2>
+                <div class="space-y-3">
+                    <div class="flex items-center justify-between p-3 bg-light/80 rounded-lg">
+                        <div class="flex items-center gap-3">
+                            <div class="bg-primary/20 rounded-full p-2">
+                                <i class="fa fa-check text-primary"></i>
+                            </div>
+                            <span>视觉刺激训练 - 10分钟</span>
+                        </div>
+                        <span class="text-sm text-green-500">已完成</span>
+                    </div>
+                    <div class="flex items-center justify-between p-3 bg-light/80 rounded-lg">
+                        <div class="flex items-center gap-3">
+                            <div class="bg-warning/20 rounded-full p-2">
+                                <i class="fa fa-clock-o text-warning"></i>
+                            </div>
+                            <span>眼球追踪训练 - 10分钟</span>
+                        </div>
+                        <span class="text-sm text-warning">进行中</span>
+                    </div>
+                    <div class="flex items-center justify-between p-3 bg-light/80 rounded-lg">
+                        <div class="flex items-center gap-3">
+                            <div class="bg-gray-200 rounded-full p-2">
+                                <i class="fa fa-circle-o text-gray-500"></i>
+                            </div>
+                            <span>对比敏感度训练 - 10分钟</span>
+                        </div>
+                        <span class="text-sm text-gray-500">未开始</span>
+                    </div>
+                    <div class="flex items-center justify-between p-3 bg-light/80 rounded-lg">
+                        <div class="flex items-center gap-3">
+                            <div class="bg-gray-200 rounded-full p-2">
+                                <i class="fa fa-circle-o text-gray-500"></i>
+                            </div>
+                            <span>视力敏锐度训练 - 10分钟</span>
+                        </div>
+                        <span class="text-sm text-gray-500">未开始</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 训练统计 -->
+            <div class="card-glass rounded-2xl p-6 shadow-soft">
+                <h2 class="text-xl font-bold mb-4">训练统计</h2>
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="bg-light/80 rounded-lg p-4 text-center">
+                        <p class="text-dark/70 text-sm mb-1">本周训练</p>
+                        <p class="text-3xl font-bold text-primary">5</p>
+                        <p class="text-dark/60 text-xs">次</p>
+                    </div>
+                    <div class="bg-light/80 rounded-lg p-4 text-center">
+                        <p class="text-dark/70 text-sm mb-1">本月训练</p>
+                        <p class="text-3xl font-bold text-primary">18</p>
+                        <p class="text-dark/60 text-xs">次</p>
+                    </div>
+                    <div class="bg-light/80 rounded-lg p-4 text-center">
+                        <p class="text-dark/70 text-sm mb-1">总训练时长</p>
+                        <p class="text-3xl font-bold text-primary">12</p>
+                        <p class="text-dark/60 text-xs">小时</p>
+                    </div>
+                    <div class="bg-light/80 rounded-lg p-4 text-center">
+                        <p class="text-dark/70 text-sm mb-1">视力提升</p>
+                        <p class="text-3xl font-bold text-secondary">+0.1</p>
+                        <p class="text-dark/60 text-xs">屈光度</p>
+                    </div>
+                </div>
+                <div class="mt-4 bg-light/80 rounded-lg p-4">
+                    <p class="text-sm font-medium mb-2">近期训练趋势</p>
+                    <div class="w-full h-24 bg-gray-100 rounded-lg overflow-hidden">
+                        <div class="flex h-full items-end">
+                            <div class="flex-1 bg-primary/30 mx-1 rounded-t-lg transition-all duration-500" style="height: 40%"></div>
+                            <div class="flex-1 bg-primary/30 mx-1 rounded-t-lg transition-all duration-500" style="height: 60%"></div>
+                            <div class="flex-1 bg-primary/30 mx-1 rounded-t-lg transition-all duration-500" style="height: 30%"></div>
+                            <div class="flex-1 bg-primary/30 mx-1 rounded-t-lg transition-all duration-500" style="height: 70%"></div>
+                            <div class="flex-1 bg-primary/30 mx-1 rounded-t-lg transition-all duration-500" style="height: 50%"></div>
+                            <div class="flex-1 bg-primary/80 mx-1 rounded-t-lg transition-all duration-500" style="height: 80%"></div>
+                            <div class="flex-1 bg-primary/80 mx-1 rounded-t-lg transition-all duration-500" style="height: 90%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 护眼建议 -->
+        <div class="card-glass rounded-2xl p-6 shadow-soft mb-10">
+            <h2 class="text-xl font-bold mb-4">弱视训练小贴士</h2>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div class="bg-light/80 rounded-lg p-4">
+                    <div class="bg-primary/20 rounded-full w-10 h-10 flex items-center justify-center mb-3">
+                        <i class="fa fa-calendar-check-o text-primary"></i>
+                    </div>
+                    <h3 class="font-semibold mb-2">坚持训练</h3>
+                    <p class="text-sm text-dark/70">每天坚持训练是提高视力的关键，建议固定时间段进行训练。</p>
+                </div>
+                <div class="bg-light/80 rounded-lg p-4">
+                    <div class="bg-primary/20 rounded-full w-10 h-10 flex items-center justify-center mb-3">
+                        <i class="fa fa-tint text-primary"></i>
+                    </div>
+                    <h3 class="font-semibold mb-2">保持湿润</h3>
+                    <p class="text-sm text-dark/70">训练过程中注意眨眼，保持眼睛湿润，避免干涩不适。</p>
+                </div>
+                <div class="bg-light/80 rounded-lg p-4">
+                    <div class="bg-primary/20 rounded-full w-10 h-10 flex items-center justify-center mb-3">
+                        <i class="fa fa-eye text-primary"></i>
+                    </div>
+                    <h3 class="font-semibold mb-2">正确遮盖</h3>
+                    <p class="text-sm text-dark/70">确保遮盖健眼（左眼）彻底，避免偷看，影响训练效果。</p>
+                </div>
+                <div class="bg-light/80 rounded-lg p-4">
+                    <div class="bg-primary/20 rounded-full w-10 h-10 flex items-center justify-center mb-3">
+                        <i class="fa fa-refresh text-primary"></i>
+                    </div>
+                    <h3 class="font-semibold mb-2">适当休息</h3>
+                    <p class="text-sm text-dark/70">每训练20-30分钟，让眼睛休息5分钟，避免过度疲劳。</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 页脚 -->
+        <footer class="w-full text-center text-dark/60 py-6">
+            <p class="text-sm mb-2">本训练系统仅供参考，具体训练方案请遵医嘱</p>
+            <p class="text-xs">© 2023 右眼单眼弱视训练系统 - 用心呵护您的视力健康</p>
+        </footer>
+    </div>
+
+    <script>
+        // DOM元素
+        const showLeftCoverBtn = document.getElementById('showLeftCoverBtn');
+        const leftCover = document.getElementById('leftCover');
+        const startTimerBtn = document.getElementById('startTimerBtn');
+        const timerDisplay = document.getElementById('timerDisplay');
+        const timerText = document.getElementById('timerText');
+        const durationRange = document.getElementById('duration');
+        const durationValue = document.getElementById('durationValue');
+        const contrastRange = document.getElementById('contrast');
+        const contrastValue = document.getElementById('contrastValue');
+        const progressValue = document.getElementById('progressValue');
+        const scoreValue = document.getElementById('scoreValue');
+        const pauseBtn = document.getElementById('pauseBtn');
+        const resetBtn = document.getElementById('resetBtn');
+        const patternTrainingBtn = document.getElementById('patternTrainingBtn');
+        const trackingTrainingBtn = document.getElementById('trackingTrainingBtn');
+        const contrastTrainingBtn = document.getElementById('contrastTrainingBtn');
+        const acuityTrainingBtn = document.getElementById('acuityTrainingBtn');
+        const patternTrainingArea = document.getElementById('patternTrainingArea');
+        const trackingTrainingArea = document.getElementById('trackingTrainingArea');
+        const contrastTrainingArea = document.getElementById('contrastTrainingArea');
+        const acuityTrainingArea = document.getElementById('acuityTrainingArea');
+        const patternItems = document.querySelectorAll('.pattern-item');
+
+        // 全局变量
+        let timerInterval;
+        let isTimerRunning = false;
+        let seconds = 0;
+        let trainingMinutes = 10;
+        let isPaused = false;
+        let currentScore = 0;
+        let currentTrainingMode = 'pattern';
+
+        // 初始化
+        function init() {
+            // 设置默认训练时长显示
+            durationValue.textContent = `${trainingMinutes}分钟`;
+            contrastValue.textContent = `${contrastRange.value}%`;
+            
+            // 绑定事件监听
+            bindEvents();
+            
+            // 初始化训练内容
+            initPatternTraining();
+        }
+
+        // 绑定事件监听
+        function bindEvents() {
+            // 左眼遮盖切换
+            showLeftCoverBtn.addEventListener('click', toggleLeftCover);
+            
+            // 计时器控制
+            startTimerBtn.addEventListener('click', toggleTimer);
+            
+            // 训练时长和对比度调整
+            durationRange.addEventListener('input', updateDuration);
+            contrastRange.addEventListener('input', updateContrast);
+            
+            // 训练模式切换
+            patternTrainingBtn.addEventListener('click', () => switchTrainingMode('pattern'));
+            trackingTrainingBtn.addEventListener('click', () => switchTrainingMode('tracking'));
+            contrastTrainingBtn.addEventListener('click', () => switchTrainingMode('contrast'));
+            acuityTrainingBtn.addEventListener('click', () => switchTrainingMode('acuity'));
+            
+            // 训练控制
+            pauseBtn.addEventListener('click', togglePause);
+            resetBtn.addEventListener('click', resetTraining);
+            
+            // 视觉刺激训练项目点击
+            patternItems.forEach(item => {
+                item.addEventListener('click', () => handlePatternClick(item));
+            });
+        }
+
+        // 切换左眼遮盖
+        function toggleLeftCover() {
+            leftCover.style.display = leftCover.style.display === 'none' ? 'flex' : 'none';
+        }
+
+        // 切换计时器
+        function toggleTimer() {
+            if (isTimerRunning) {
+                clearInterval(timerInterval);
+                startTimerBtn.innerHTML = '<i class="fa fa-play mr-2"></i>继续计时';
+            } else {
+                timerInterval = setInterval(updateTimer, 1000);
+                startTimerBtn.innerHTML = '<i class="fa fa-pause mr-2"></i>暂停计时';
+                timerDisplay.classList.remove('hidden');
+                timerDisplay.classList.add('flex');
+            }
+            isTimerRunning = !isTimerRunning;
+        }
+
+        // 更新计时器显示
+        function updateTimer() {
+            seconds++;
+            const minutes = Math.floor(seconds / 60);
+            const remainingSeconds = seconds % 60;
+            timerText.textContent = `${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
+            
+            // 更新进度
+            const totalSeconds = trainingMinutes * 60;
+            const progress = Math.min(100, Math.round((seconds / totalSeconds) * 100));
+            progressValue.textContent = `${progress}%`;
+            
+            // 训练时间结束
+            if (seconds >= totalSeconds) {
+                clearInterval(timerInterval);
+                isTimerRunning = false;
+                startTimerBtn.innerHTML = '<i class="fa fa-clock-o mr-2"></i>开始计时';
+                alert('训练时间结束！恭喜您完成了今天的训练。');
+            }
+        }
+
+        // 更新训练时长
+        function updateDuration() {
+            trainingMinutes = parseInt(durationRange.value);
+            durationValue.textContent = `${trainingMinutes}分钟`;
+        }
+
+        // 更新对比度
+        function updateContrast() {
+            const contrast = contrastRange.value;
+            contrastValue.textContent = `${contrast}%`;
+            
+            // 应用对比度到训练元素
+            if (currentTrainingMode === 'pattern') {
+                patternItems.forEach(item => {
+                    item.style.opacity = contrast / 100;
+                });
+            }
+        }
+
+        // 切换训练模式
+        function switchTrainingMode(mode) {
+            // 更新当前模式
+            currentTrainingMode = mode;
+            
+            // 重置所有按钮样式
+            [patternTrainingBtn, trackingTrainingBtn, contrastTrainingBtn, acuityTrainingBtn].forEach(btn => {
+                btn.className = 'w-full bg-light hover:bg-light/80 text-dark rounded-lg p-4 text-left transition-all flex items-center justify-between';
+            });
+            
+            // 隐藏所有训练区域
+            [patternTrainingArea, trackingTrainingArea, contrastTrainingArea, acuityTrainingArea].forEach(area => {
+                area.classList.add('hidden');
+            });
+            
+            // 激活选中的模式
+            switch(mode) {
+                case 'pattern':
+                    patternTrainingBtn.className = 'w-full bg-primary text-white rounded-lg p-4 text-left transition-all flex items-center justify-between';
+                    patternTrainingArea.classList.remove('hidden');
+                    break;
+                case 'tracking':
+                    trackingTrainingBtn.className = 'w-full bg-primary text-white rounded-lg p-4 text-left transition-all flex items-center justify-between';
+                    trackingTrainingArea.classList.remove('hidden');
+                    initTrackingTraining();
+                    break;
+                case 'contrast':
+                    contrastTrainingBtn.className = 'w-full bg-primary text-white rounded-lg p-4 text-left transition-all flex items-center justify-between';
+                    contrastTrainingArea.classList.remove('hidden');
+                    initContrastTraining();
+                    break;
+                case 'acuity':
+                    acuityTrainingBtn.className = 'w-full bg-primary text-white rounded-lg p-4 text-left transition-all flex items-center justify-between';
+                    acuityTrainingArea.classList.remove('hidden');
+                    initAcuityTraining();
+                    break;
+            }
+            
+            // 重置训练
+            resetTraining();
+        }
+
+        // 切换暂停状态
+        function togglePause() {
+            isPaused = !isPaused;
+            pauseBtn.innerHTML = isPaused ? '<i class="fa fa-play mr-1"></i>继续' : '<i class="fa fa-pause mr-1"></i>暂停';
+            
+            // 暂停/继续计时器
+            if (isTimerRunning) {
+                if (isPaused) {
+                    clearInterval(timerInterval);
+                } else {
+                    timerInterval = setInterval(updateTimer, 1000);
+                }
+            }
+        }
+
+        // 重置训练
+        function resetTraining() {
+            // 重置计时器
+            clearInterval(timerInterval);
+            isTimerRunning = false;
+            seconds = 0;
+            timerText.textContent = '00:00';
+            startTimerBtn.innerHTML = '<i class="fa fa-clock-o mr-2"></i>开始计时';
+            timerDisplay.classList.add('hidden');
+            timerDisplay.classList.remove('flex');
+            
+            // 重置暂停状态
+            isPaused = false;
+            pauseBtn.innerHTML = '<i class="fa fa-pause mr-1"></i>暂停';
+            
+            // 重置分数和进度
+            currentScore = 0;
+            scoreValue.textContent = '0';
+            progressValue.textContent = '0%';
+            
+            // 根据当前模式重置训练内容
+            switch(currentTrainingMode) {
+                case 'pattern':
+                    initPatternTraining();
+                    break;
+                case 'tracking':
+                    initTrackingTraining();
+                    break;
+                case 'contrast':
+                    initContrastTraining();
+                    break;
+                case 'acuity':
+                    initAcuityTraining();
+                    break;
+            }
+        }
+
+        // 初始化视觉刺激训练
+        function initPatternTraining() {
+            // 随机选择一些图形进行闪烁
+            patternItems.forEach(item => {
+                item.classList.remove('animate-shine');
+                item.classList.remove('bg-primary/30');
+                item.classList.add('bg-primary/10');
+            });
+            
+            // 随机选择2-3个图形进行闪烁
+            const activeCount = Math.floor(Math.random() * 2) + 2;
+            const shuffledItems = Array.from(patternItems).sort(() => 0.5 - Math.random());
+            
+            for (let i = 0; i < activeCount; i++) {
+                shuffledItems[i].classList.add('animate-shine');
+                shuffledItems[i].classList.remove('bg-primary/10');
+                shuffledItems[i].classList.add('bg-primary/30');
+            }
+            
+            // 每3-5秒重新选择闪烁的图形
+            setTimeout(() => {
+                if (!isPaused) {
+                    initPatternTraining();
+                }
+            }, Math.floor(Math.random() * 2000) + 3000);
+        }
+
+        // 处理图形点击
+        function handlePatternClick(item) {
+            if (isPaused) return;
+            
+            // 检查是否是闪烁的图形
+            if (item.classList.contains('animate-shine')) {
+                // 增加分数
+                currentScore += 10;
+                scoreValue.textContent = currentScore;
+                
+                // 视觉反馈
+                item.classList.add('bg-green-100');
+                setTimeout(() => {
+                    item.classList.remove('bg-green-100');
+                }, 300);
+                
+                // 重新生成闪烁图形
+                initPatternTraining();
+            } else {
+                // 错误点击，减少分数
+                currentScore = Math.max(0, currentScore - 5);
+                scoreValue.textContent = currentScore;
+                
+                // 视觉反馈
+                item.classList.add('bg-red-100');
+                setTimeout(() => {
+                    item.classList.remove('bg-red-100');
+                }, 300);
+            }
+        }
+
+        // 初始化眼球追踪训练
+        function initTrackingTraining() {
+            trackingTrainingArea.innerHTML = '';
+            
+            // 创建移动目标
+            const target = document.createElement('div');
+            target.className = 'absolute bg-primary rounded-full w-10 h-10 animate-pulse-slow cursor-pointer';
+            target.style.left = '50%';
+            target.style.top = '50%';
+            target.style.transform = 'translate(-50%, -50%)';
+            
+            // 添加点击事件
+            target.addEventListener('click', () => {
+                if (!isPaused) {
+                    // 增加分数
+                    currentScore += 15;
+                    scoreValue.textContent = currentScore;
+                    
+                    // 移动到新位置
+                    moveTarget(target);
+                }
+            });
+            
+            trackingTrainingArea.appendChild(target);
+            
+            // 开始移动目标
+            moveTarget(target);
+        }
+
+        // 移动目标
+        function moveTarget(target) {
+            if (isPaused) return;
+            
+            // 随机新位置
+            const newX = Math.floor(Math.random() * 70) + 15; // 15-85%的范围
+            const newY = Math.floor(Math.random() * 70) + 15;
+            
+            // 移动持续时间（难度控制）
+            const difficulty = document.getElementById('difficulty').value;
+            let duration = 2000; // 中等难度
+            if (difficulty === 'easy') duration = 3000;
+            if (difficulty === 'hard') duration = 1000;
+            
+            // 平滑移动
+            target.style.transition = `left ${duration}ms ease-in-out, top ${duration}ms ease-in-out`;
+            target.style.left = `${newX}%`;
+            target.style.top = `${newY}%`;
+            
+            // 定时移动到新位置
+            setTimeout(() => {
+                if (!isPaused) {
+                    moveTarget(target);
+                }
+            }, duration + 500);
+        }
+
+        // 初始化对比敏感度训练
+        function initContrastTraining() {
+            contrastTrainingArea.innerHTML = '';
+            
+            // 创建多个不同对比度的字母
+            const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+            const container = document.createElement('div');
+            container.className = 'w-full h-full grid grid-cols-5 grid-rows-5 gap-2 p-4';
+            
+            for (let i = 0; i < 25; i++) {
+                const cell = document.createElement('div');
+                const letter = letters[Math.floor(Math.random() * letters.length)];
+                const opacity = (Math.floor(Math.random() * 7) + 3) / 10; // 0.3-1.0的透明度
+                
+                cell.className = 'flex items-center justify-center bg-gray-100 rounded-lg cursor-pointer transition-all';
+                cell.style.color = `rgba(79, 70, 229, ${opacity})`;
+                cell.innerHTML = `<span class="text-2xl font-bold">${letter}</span>`;
+                
+                // 点击事件
+                cell.addEventListener('click', () => {
+                    if (!isPaused) {
+                        // 根据透明度给予不同分数
+                        const score = Math.floor(opacity * 20);
+                        currentScore += score;
+                        scoreValue.textContent = currentScore;
+                        
+                        // 视觉反馈
+                        cell.classList.add('bg-primary/20');
+                        setTimeout(() => {
+                            initContrastTraining(); // 重新生成
+                        }, 500);
+                    }
+                });
+                
+                container.appendChild(cell);
+            }
+            
+            contrastTrainingArea.appendChild(container);
+        }
+
+        // 初始化视力敏锐度训练
+        function initAcuityTraining() {
+            acuityTrainingArea.innerHTML = '';
+            
+            // 创建视力表样式的训练区域
+            const container = document.createElement('div');
+            container.className = 'w-full h-full flex flex-col justify-center items-center p-8';
+            
+            // 根据难度生成不同大小的字符行
+            const difficulty = document.getElementById('difficulty').value;
+            let lineCount = 5;
+            let startSize = 'text-4xl';
+            let sizeDecrement = ['text-3xl', 'text-2xl', 'text-xl', 'text-lg', 'text-base'];
+            
+            if (difficulty === 'easy') {
+                lineCount = 4;
+                sizeDecrement = ['text-3xl', 'text-2xl', 'text-xl'];
+            } else if (difficulty === 'hard') {
+                lineCount = 6;
+                sizeDecrement = ['text-3xl', 'text-2xl', 'text-xl', 'text-lg', 'text-base', 'text-sm'];
+            }
+            
+            // 生成E字视力表样式的行
+            for (let i = 0; i < lineCount; i++) {
+                const line = document.createElement('div');
+                line.className = 'flex items-center justify-center gap-8 mb-6';
+                
+                // 每行3个E字，随机方向
+                for (let j = 0; j < 3; j++) {
+                    const directions = ['↑', '↓', '←', '→'];
+                    const direction = directions[Math.floor(Math.random() * directions.length)];
+                    const eSize = i === 0 ? startSize : sizeDecrement[i-1];
+                    
+                    const eChar = document.createElement('div');
+                    eChar.className = `${eSize} font-bold bg-gray-100 px-4 py-2 rounded-lg cursor-pointer transition-all`;
+                    eChar.textContent = `E ${direction}`;
+                    
+                    // 点击事件
+                    eChar.addEventListener('click', () => {
+                        if (!isPaused) {
+                            // 根据行位置给予不同分数
+                            const score = (lineCount - i) * 10;
+                            currentScore += score;
+                            scoreValue.textContent = currentScore;
+                            
+                            // 视觉反馈
+                            eChar.classList.add('bg-primary/20');
+                            
+                            // 3秒后重新生成该行
+                            setTimeout(() => {
+                                line.replaceChild(createNewEChar(eSize), eChar);
+                            }, 1000);
+                        }
+                    });
+                    
+                    line.appendChild(eChar);
+                }
+                
+                container.appendChild(line);
+            }
+            
+            // 创建新的E字元素
+            function createNewEChar(size) {
+                const directions = ['↑', '↓', '←', '→'];
+                const direction = directions[Math.floor(Math.random() * directions.length)];
+                
+                const eChar = document.createElement('div');
+                eChar.className = `${size} font-bold bg-gray-100 px-4 py-2 rounded-lg cursor-pointer transition-all`;
+                eChar.textContent = `E ${direction}`;
+                
+                // 点击事件
+                eChar.addEventListener('click', () => {
+                    if (!isPaused) {
+                        // 根据大小给予不同分数
+                        let score = 10;
+                        if (size === 'text-3xl') score = 20;
+                        else if (size === 'text-2xl') score = 30;
+                        else if (size === 'text-xl') score = 40;
+                        else if (size === 'text-lg') score = 50;
+                        else if (size === 'text-base') score = 60;
+                        else if (size === 'text-sm') score = 70;
+                        
+                        currentScore += score;
+                        scoreValue.textContent = currentScore;
+                        
+                        // 视觉反馈
+                        eChar.classList.add('bg-primary/20');
+                    }
+                });
+                
+                return eChar;
+            }
+            
+            acuityTrainingArea.appendChild(container);
+        }
+
+        // 页面加载完成后初始化
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>

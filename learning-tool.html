@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>P1 - 第一性原理学习助手</title>
+<style>
+  :root {
+    --bg: #0a0a0a;
+    --card: #141414;
+    --border: #2a2a2a;
+    --text: #e5e5e5;
+    --dim: #888;
+    --accent: #ff6b35;
+    --green: #00c853;
+    --red: #ff3d00;
+    --blue: #2196f3;
+    --radius: 12px;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    padding: 20px;
+    max-width: 500px;
+    margin: 0 auto;
+  }
+  h1 {
+    font-size: 22px;
+    font-weight: 700;
+    margin-bottom: 4px;
+    letter-spacing: -0.5px;
+  }
+  .subtitle {
+    font-size: 13px;
+    color: var(--dim);
+    margin-bottom: 24px;
+  }
+  .tabs {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 20px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 4px;
+  }
+  .tab {
+    flex-shrink: 0;
+    padding: 8px 14px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 500;
+    background: var(--card);
+    border: 1px solid var(--border);
+    color: var(--dim);
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .tab.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+  .panel { display: none; }
+  .panel.active { display: block; }
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px;
+    margin-bottom: 16px;
+  }
+  .card h2 {
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 12px;
+    color: #fff;
+  }
+  .card p {
+    font-size: 13px;
+    color: var(--dim);
+    margin-bottom: 16px;
+    line-height: 1.6;
+  }
+  label {
+    display: block;
+    font-size: 12px;
+    color: var(--dim);
+    margin-bottom: 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  input, textarea, select {
+    width: 100%;
+    padding: 10px 14px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: var(--bg);
+    color: var(--text);
+    font-size: 14px;
+    font-family: inherit;
+    resize: vertical;
+  }
+  textarea { min-height: 80px; }
+  button {
+    width: 100%;
+    padding: 12px;
+    border-radius: 8px;
+    border: none;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: inherit;
+  }
+  .btn-primary { background: var(--accent); color: #fff; margin-top: 12px; }
+  .btn-primary:hover { opacity: 0.9; }
+  .btn-outline { background: transparent; border: 1px solid var(--border); color: var(--text); margin-top: 8px; }
+  .result-box {
+    margin-top: 16px;
+    padding: 14px;
+    border-radius: 8px;
+    background: var(--bg);
+    border-left: 3px solid var(--accent);
+    font-size: 13px;
+    line-height: 1.6;
+    display: none;
+  }
+  .result-box.show { display: block; }
+  .result-box .verdict {
+    font-size: 15px;
+    font-weight: 600;
+    margin-bottom: 6px;
+  }
+  .result-box .verdict.pass { color: var(--green); }
+  .result-box .verdict.warn { color: var(--accent); }
+  .result-box .verdict.fail { color: var(--red); }
+
+  /* Timer */
+  .timer-display {
+    font-size: 56px;
+    font-weight: 700;
+    text-align: center;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -2px;
+    margin: 20px 0;
+    color: #fff;
+  }
+  .timer-controls {
+    display: flex;
+    gap: 10px;
+  }
+  .timer-controls button { flex: 1; }
+  .timer-status {
+    text-align: center;
+    font-size: 13px;
+    color: var(--dim);
+    margin-top: 10px;
+  }
+  .phase-indicator {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    margin-bottom: 16px;
+  }
+  .phase-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--border);
+  }
+  .phase-dot.work { background: var(--accent); }
+  .phase-dot.break { background: var(--green); }
+  .phase-dot.done { background: var(--dim); }
+
+  /* self-check */
+  .check-option {
+    display: block;
+    padding: 12px 14px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    margin-bottom: 8px;
+    cursor: pointer;
+    font-size: 13px;
+    transition: all 0.15s;
+  }
+  .check-option.selected { border-color: var(--accent); background: rgba(255,107,53,0.1); }
+  .score-bar {
+    height: 6px;
+    border-radius: 3px;
+    background: var(--border);
+    margin-top: 12px;
+    overflow: hidden;
+  }
+  .score-fill {
+    height: 100%;
+    border-radius: 3px;
+    background: var(--accent);
+    transition: width 0.5s ease;
+  }
+
+  /* subject cards */
+  .subject-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+  .subject-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px;
+    cursor: pointer;
+  }
+  .subject-card h3 { font-size: 14px; margin-bottom: 4px; }
+  .subject-card p { font-size: 11px; color: var(--dim); margin: 0; }
+  .subject-card.active { border-color: var(--accent); }
+</style>
+</head>
+<body>
+<h1>P1 学习助手</h1>
+<p class="subtitle">作业白痴指数检测 · 番茄钟 · 知识自检 · 方法卡片</p>
+
+<div class="tabs">
+  <div class="tab active" data-panel="audit">质疑作业</div>
+  <div class="tab" data-panel="timer">番茄钟</div>
+  <div class="tab" data-panel="preview">预习</div>
+  <div class="tab" data-panel="selfcheck">自检</div>
+  <div class="tab" data-panel="methods">方法库</div>
+</div>
+
+<!-- Panel 1: 作业质疑 -->
+<div class="panel active" id="panel-audit">
+  <div class="card">
+    <h2>作业白痴指数检测</h2>
+    <p>五步算法第一步：这道题在验证什么？值不值得花时间？</p>
+    <label>学科</label>
+    <select id="audit-subject">
+      <option value="math">数学/物理</option>
+      <option value="lang">语文/英语</option>
+      <option value="history">历史/政治</option>
+      <option value="geo">地理/生物</option>
+      <option value="other">其他</option>
+    </select>
+    <label style="margin-top:12px">作业内容（一句话描述）</label>
+    <input id="audit-content" placeholder="例：抄写生字10遍">
+    <label style="margin-top:12px">预计耗时（分钟）</label>
+    <input id="audit-time" type="number" placeholder="30" min="1">
+    <button class="btn-primary" onclick="auditHomework()">检测</button>
+    <div class="result-box" id="audit-result"></div>
+  </div>
+</div>
+
+<!-- Panel 2: 番茄钟 -->
+<div class="panel" id="panel-timer">
+  <div class="card">
+    <h2>25分钟专注 · 环境即算法</h2>
+    <div class="phase-indicator" id="phase-dots">
+      <div class="phase-dot"></div><div class="phase-dot"></div><div class="phase-dot"></div><div class="phase-dot"></div>
+    </div>
+    <div class="timer-display" id="timer-display">25:00</div>
+    <div class="timer-status" id="timer-status">按开始进入专注模式</div>
+    <div class="timer-controls">
+      <button class="btn-outline" id="btn-reset" onclick="resetTimer()">重置</button>
+      <button class="btn-primary" id="btn-start" onclick="toggleTimer()">开始</button>
+    </div>
+  </div>
+</div>
+
+<!-- Panel 3: 预习 -->
+<div class="panel" id="panel-preview">
+  <div class="card">
+    <h2>30分钟预习 · 只产生问题</h2>
+    <p>不看结论只看标题。写下你好奇的问题，带进课堂。</p>
+    <label>明天要学什么？</label>
+    <input id="preview-topic" placeholder="例：浮力">
+    <label style="margin-top:12px">我的问题（至少3个）</label>
+    <textarea id="preview-questions" placeholder="1. 为什么铁块沉下去，铁船能浮起来？&#10;2. 浮力和物体形状有关系吗？&#10;3. ..."></textarea>
+    <button class="btn-primary" onclick="savePreview()">保存并生成问题卡</button>
+    <div class="result-box" id="preview-result"></div>
+  </div>
+</div>
+
+<!-- Panel 4: 自检 -->
+<div class="panel" id="panel-selfcheck">
+  <div class="card">
+    <h2>知识自检器</h2>
+    <p>写完作业后问自己：比一小时前多懂了什么？</p>
+    <label>刚学了什么概念？</label>
+    <input id="check-concept" placeholder="例：牛顿第二定律">
+    <label style="margin-top:12px">用一句话给完全不懂的人解释</label>
+    <textarea id="check-explain" placeholder="力越大加速度越大，质量越大加速度越小——就像推购物车"></textarea>
+    <label style="margin-top:12px">理解程度</label>
+    <div id="check-options">
+      <div class="check-option" data-score="3">能教给别人，举出3个生活中的例子</div>
+      <div class="check-option" data-score="2">自己懂了，但解释起来有点费劲</div>
+      <div class="check-option" data-score="1">能做题，但说不清为什么</div>
+      <div class="check-option" data-score="0">只记住了名字和公式</div>
+    </div>
+    <button class="btn-primary" onclick="runSelfCheck()">检测</button>
+    <div class="result-box" id="selfcheck-result"></div>
+    <div class="score-bar"><div class="score-fill" id="score-fill" style="width:0%"></div></div>
+    <p style="text-align:center;font-size:12px;color:var(--dim);margin-top:6px;">累计自检得分：<span id="total-score">0</span>/<span id="total-max">0</span></p>
+  </div>
+</div>
+
+<!-- Panel 5: 方法库 -->
+<div class="panel" id="panel-methods">
+  <div class="subject-grid">
+    <div class="subject-card active" onclick="showMethod('math')">
+      <h3>数学/物理</h3>
+      <p>公式是现象的描述，不是创造者</p>
+    </div>
+    <div class="subject-card" onclick="showMethod('lang')">
+      <h3>语文/英语</h3>
+      <p>意义驱动输入，语法自动跟上</p>
+    </div>
+    <div class="subject-card" onclick="showMethod('history')">
+      <h3>历史/政治</h3>
+      <p>画因果链，不背散装知识点</p>
+    </div>
+    <div class="subject-card" onclick="showMethod('geo')">
+      <h3>地理/生物</h3>
+      <p>空间逻辑 > 文字记忆</p>
+    </div>
+  </div>
+  <div class="card" id="method-detail" style="margin-top:12px;">
+    <h2 id="method-title">数学/物理</h2>
+    <p id="method-body">拿到一道数学题，不要急着代公式。先问"这道题在现实里对应什么场景？"如果找不到场景，这道题本身可能就不值得做。物理量之间的关系不是公式规定的——现实世界本来就长这样，公式只是把它写下来。</p>
+  </div>
+</div>
+
+<script>
+// Tab switching
+document.querySelectorAll('.tab').forEach(t => {
+  t.addEventListener('click', () => {
+    document.querySelectorAll('.tab').forEach(x => x.classList.remove('active'));
+    document.querySelectorAll('.panel').forEach(x => x.classList.remove('active'));
+    t.classList.add('active');
+    document.getElementById('panel-' + t.dataset.panel).classList.add('active');
+  });
+});
+
+// --- Audit ---
+function auditHomework() {
+  const subject = document.getElementById('audit-subject').value;
+  const content = document.getElementById('audit-content').value.trim();
+  const time = parseInt(document.getElementById('audit-time').value) || 30;
+  if (!content) { alert('请描述作业内容'); return; }
+
+  const box = document.getElementById('audit-result');
+  let verdict, cls, advice;
+
+  const roteKeywords = ['抄写', '罚写', '背诵', '默写', '抄十', '罚抄', '反复读', '重复'];
+  const isRote = roteKeywords.some(k => content.includes(k));
+
+  if (time > 60) {
+    verdict = '白痴指数：高';
+    cls = 'fail';
+    advice = '超过60分钟的单项作业，边际学习效果趋近于零。建议拆分——把必须理解的部分先做（15分钟），机械抄写部分口头过一遍（5分钟）。把省下的45分钟还给孩子的睡眠或运动。';
+  } else if (isRote && time > 20) {
+    verdict = '白痴指数：中高';
+    cls = 'warn';
+    advice = '纯抄写类作业的渐近极限——你花30分钟抄10遍，记住的只是肌肉动作，不是意义。用费曼法：让孩子口述一遍这个内容给家长听，2分钟的效果超过20分钟抄写。';
+  } else if (isRote && time <= 20) {
+    verdict = '可接受，但注意方法';
+    cls = 'warn';
+    advice = '短时间的抄写对书写规范有一点价值，但不要把"写完了"误判为"学会了"。写完后问孩子："这句话是什么意思？"如果答不出来，说明只是手在动，脑没动。';
+  } else {
+    verdict = '白痴指数：正常';
+    cls = 'pass';
+    advice = '这份作业看起来是在验证理解而非机械执行。确保孩子先理解再做，而不是边查书边填空——后者是伪装成作业的翻书训练，白花时间。';
+  }
+
+  box.innerHTML = `<div class="verdict ${cls}">${verdict}</div><p>${advice}</p>`;
+  box.classList.add('show');
+}
+
+// --- Timer ---
+let timerInterval = null;
+let timerSeconds = 25 * 60;
+let isBreak = false;
+let pomodoroCount = 0;
+let isRunning = false;
+
+function updateTimerDisplay() {
+  const m = Math.floor(timerSeconds / 60);
+  const s = timerSeconds % 60;
+  document.getElementById('timer-display').textContent = String(m).padStart(2,'0') + ':' + String(s).padStart(2,'0');
+}
+
+function updatePhaseDots() {
+  const dots = document.querySelectorAll('#phase-dots .phase-dot');
+  dots.forEach((d, i) => {
+    d.className = 'phase-dot';
+    if (i < pomodoroCount) d.classList.add('done');
+  });
+}
+
+function toggleTimer() {
+  const btn = document.getElementById('btn-start');
+  if (isRunning) {
+    clearInterval(timerInterval);
+    isRunning = false;
+    btn.textContent = '继续';
+    document.getElementById('timer-status').textContent = '已暂停';
+    return;
+  }
+  isRunning = true;
+  btn.textContent = '暂停';
+  document.getElementById('timer-status').textContent = isBreak ? '休息中 · 离开座位' : '专注中 · 不看手机';
+
+  timerInterval = setInterval(() => {
+    timerSeconds--;
+    updateTimerDisplay();
+    if (timerSeconds <= 0) {
+      clearInterval(timerInterval);
+      isRunning = false;
+      document.getElementById('btn-start').textContent = '开始';
+
+      if (!isBreak) {
+        pomodoroCount++;
+        updatePhaseDots();
+        isBreak = true;
+        timerSeconds = 5 * 60;
+        document.getElementById('timer-status').textContent = '番茄完成！休息5分钟';
+      } else {
+        isBreak = false;
+        timerSeconds = 25 * 60;
+        document.getElementById('timer-status').textContent = '休息结束，开始下一个番茄';
+      }
+      updateTimerDisplay();
+    }
+  }, 1000);
+}
+
+function resetTimer() {
+  clearInterval(timerInterval);
+  isRunning = false;
+  isBreak = false;
+  timerSeconds = 25 * 60;
+  pomodoroCount = 0;
+  document.getElementById('btn-start').textContent = '开始';
+  document.getElementById('timer-status').textContent = '按开始进入专注模式';
+  updateTimerDisplay();
+  updatePhaseDots();
+}
+
+// --- Preview ---
+function savePreview() {
+  const topic = document.getElementById('preview-topic').value.trim();
+  const questions = document.getElementById('preview-questions').value.trim();
+  const box = document.getElementById('preview-result');
+
+  if (!topic) { box.innerHTML = '<div class="verdict warn">还没写明天要学什么</div>'; box.classList.add('show'); return; }
+  if (!questions || questions.split('\n').filter(l => l.trim()).length < 2) {
+    box.innerHTML = '<div class="verdict warn">至少写2个问题。记住：预习只看问题不看答案。</div>';
+    box.classList.add('show'); return;
+  }
+
+  const qCount = questions.split('\n').filter(l => l.trim()).length;
+  box.innerHTML = `<div class="verdict pass">问题卡已生成</div>
+    <p>明天带着 <strong>${qCount} 个问题</strong> 走进「${topic}」的课堂。你的大脑会自动搜索答案——这叫主动学习，效率是被动听的3倍。</p>
+    <p style="color:var(--dim);margin-top:8px;">⚠ 别提前看课本答案。好奇心是最好的预习工具。</p>`;
+  box.classList.add('show');
+}
+
+// --- Self Check ---
+let selectedScore = -1;
+let totalScore = 0;
+let totalMax = 0;
+
+document.querySelectorAll('#check-options .check-option').forEach(opt => {
+  opt.addEventListener('click', () => {
+    document.querySelectorAll('#check-options .check-option').forEach(x => x.classList.remove('selected'));
+    opt.classList.add('selected');
+    selectedScore = parseInt(opt.dataset.score);
+  });
+});
+
+function runSelfCheck() {
+  const concept = document.getElementById('check-concept').value.trim();
+  const explain = document.getElementById('check-explain').value.trim();
+  const box = document.getElementById('selfcheck-result');
+
+  if (!concept) { box.innerHTML = '<div class="verdict warn">先写下概念名称</div>'; box.classList.add('show'); return; }
+  if (!explain || explain.length < 8) {
+    box.innerHTML = '<div class="verdict warn">用一句话解释。如果你自己都说不清，那不是真懂。</div>';
+    box.classList.add('show'); return;
+  }
+  if (selectedScore < 0) {
+    box.innerHTML = '<div class="verdict warn">选一个理解程度</div>';
+    box.classList.add('show'); return;
+  }
+
+  totalScore += selectedScore;
+  totalMax += 3;
+  document.getElementById('total-score').textContent = totalScore;
+  document.getElementById('total-max').textContent = totalMax;
+  const pct = totalMax > 0 ? Math.round((totalScore / totalMax) * 100) : 0;
+  document.getElementById('score-fill').style.width = pct + '%';
+
+  let verdict, cls;
+  if (selectedScore === 3) { verdict = '你真的懂了 — 能教给别人的才是真理解'; cls = 'pass'; }
+  else if (selectedScore === 2) { verdict = '接近了 — 再找一个人讲一遍，讲的过程中卡住的地方就是你的盲区'; cls = 'warn'; }
+  else if (selectedScore === 1) { verdict = '会做题不算懂 — 会做题但说不清原理 = 在靠模式匹配，不是靠理解。回头重新看推导过程。'; cls = 'warn'; }
+  else { verdict = '没真的学 — 记住名字不等于理解。从零开始重新学这个概念的推导过程，不要看答案。'; cls = 'fail'; }
+
+  box.innerHTML = `<div class="verdict ${cls}">${verdict}</div><p>「${concept}」：${explain}</p>`;
+  box.classList.add('show');
+  selectedScore = -1;
+  document.querySelectorAll('#check-options .check-option').forEach(x => x.classList.remove('selected'));
+  document.getElementById('check-explain').value = '';
+}
+
+// --- Methods ---
+const methods = {
+  math: {
+    title: '数学/物理',
+    body: '拿到一道数学题，不要急着代公式。先问"这道题在现实里对应什么场景？"如果找不到场景，这道题本身可能就不值得做。物理量之间的关系不是公式规定的——现实世界本来就长这样，公式只是把它写下来。让孩子先看到现象，再写公式。'
+  },
+  lang: {
+    title: '语文/英语',
+    body: '语言的渐近极限是传递意义。语法规则只是社会约定，不是物理定律。正确顺序：先大量输入（读有意思的东西），然后在输出中自然校准。用孩子真正感兴趣的内容替代枯燥习题——喜欢恐龙？找英文恐龙纪录片字幕。意义驱动输入，语法自动跟上。'
+  },
+  history: {
+    title: '历史/政治',
+    body: '背"1840年鸦片战争"没有意义。有意义的是：为什么是1840年？之前发生了什么？之后导致了什么？让孩子画因果链——不是列日期，是画"A导致B导致C"。每加一个新事件，问"这让因果链条变得更合理还是更奇怪？"奇怪的地方就是该深挖的地方。'
+  },
+  geo: {
+    title: '地理/生物',
+    body: '热带雨林为什么在赤道？因为太阳辐射最强，蒸发量最大，上升气流形成对流降雨。理解了这个，整个气候带分布你不用背，自己能推出来。生物同理——细胞不是一张需要背的图，它是3D的、动态的工厂。线粒体是发电站，细胞膜是门禁系统。用空间逻辑替代文字记忆。'
+  }
+};
+
+function showMethod(key) {
+  document.querySelectorAll('.subject-card').forEach(c => c.classList.remove('active'));
+  event.currentTarget.classList.add('active');
+  document.getElementById('method-title').textContent = methods[key].title;
+  document.getElementById('method-body').textContent = methods[key].body;
+}
+</script>
+</body>
+</html>

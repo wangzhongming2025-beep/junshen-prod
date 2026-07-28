@@ -1,0 +1,905 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>专业斜视训练系统 - 眼位矫正与视觉训练</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px;
+            margin-bottom: 30px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+        }
+
+        .header h1 {
+            color: #2c3e50;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .header p {
+            color: #7f8c8d;
+            font-size: 1.2em;
+        }
+
+        .training-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .training-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .training-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+        }
+
+        .training-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .card-icon {
+            font-size: 2.5em;
+            margin-right: 15px;
+            color: #667eea;
+        }
+
+        .card-title {
+            font-size: 1.5em;
+            color: #2c3e50;
+            font-weight: 600;
+        }
+
+        .training-area {
+            min-height: 200px;
+            border: 2px dashed #bdc3c7;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 20px 0;
+            position: relative;
+            overflow: hidden;
+            background: linear-gradient(45deg, #f8f9fa, #e9ecef);
+        }
+
+        .controls {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin: 20px 0;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+        }
+
+        .btn-primary {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-secondary {
+            background: #95a5a6;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #7f8c8d;
+            transform: translateY(-2px);
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #ecf0f1;
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 15px 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 15px;
+            background: rgba(102, 126, 234, 0.1);
+            border-radius: 10px;
+        }
+
+        .stat-value {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .stat-label {
+            font-size: 0.9em;
+            color: #7f8c8d;
+            margin-top: 5px;
+        }
+
+        /* 斜视训练专用样式 */
+        .eye-target {
+            width: 40px;
+            height: 40px;
+            background: #e74c3c;
+            border-radius: 50%;
+            position: absolute;
+            transition: all 0.5s ease;
+            box-shadow: 0 0 20px rgba(231, 76, 60, 0.5);
+        }
+
+        .convergence-line {
+            width: 2px;
+            height: 100px;
+            background: #3498db;
+            position: absolute;
+            transition: all 0.3s ease;
+        }
+
+        .fusion-image {
+            width: 60px;
+            height: 60px;
+            border: 3px solid #2ecc71;
+            border-radius: 50%;
+            display: inline-block;
+            margin: 10px;
+            transition: all 0.3s ease;
+            background: linear-gradient(45deg, #2ecc71, #27ae60);
+        }
+
+        .fusion-image.active {
+            transform: scale(1.2);
+            box-shadow: 0 0 30px rgba(46, 204, 113, 0.6);
+        }
+
+        .stereo-depth {
+            width: 100%;
+            height: 200px;
+            position: relative;
+            background: radial-gradient(circle, rgba(52, 152, 219, 0.3), transparent);
+            border-radius: 15px;
+            overflow: hidden;
+        }
+
+        .depth-object {
+            width: 30px;
+            height: 30px;
+            background: #e74c3c;
+            border-radius: 50%;
+            position: absolute;
+            transition: all 0.5s ease;
+            cursor: pointer;
+        }
+
+        .timer {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #e74c3c;
+            text-align: center;
+            margin: 10px 0;
+        }
+
+        .instructions {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 20px;
+            border-radius: 15px;
+            margin: 20px 0;
+            border-left: 5px solid #667eea;
+        }
+
+        .instructions h3 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+
+        .instructions ul {
+            margin-left: 20px;
+        }
+
+        .instructions li {
+            margin: 5px 0;
+            color: #34495e;
+        }
+
+        .warning {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            color: #856404;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+
+        .warning strong {
+            color: #856404;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+            
+            .header h1 {
+                font-size: 2em;
+            }
+            
+            .training-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            
+            .training-card {
+                padding: 20px;
+            }
+            
+            .controls {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 10% auto;
+            padding: 30px;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .close:hover {
+            color: #000;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1><i class="fas fa-eye"></i> 专业斜视训练系统</h1>
+            <p>科学训练 · 精准矫正 · 个性化方案</p>
+        </div>
+
+        <div class="instructions">
+            <h3><i class="fas fa-info-circle"></i> 训练前必读</h3>
+            <ul>
+                <li>每日训练2-3次，每次10-15分钟</li>
+                <li>保持30-40cm的合适距离</li>
+                <li>训练时保持头部稳定，仅用眼睛追踪</li>
+                <li>如出现不适立即停止并咨询医生</li>
+                <li>建议配合专业医疗指导使用</li>
+            </ul>
+        </div>
+
+        <div class="warning">
+            <strong><i class="fas fa-exclamation-triangle"></i> 重要提醒：</strong>
+            本训练系统适用于斜视康复辅助训练，不能替代专业医疗诊断和治疗。如有严重斜视症状，请务必咨询专业眼科医生。
+        </div>
+
+        <div class="training-grid">
+            <!-- 眼球运动训练 -->
+            <div class="training-card">
+                <div class="card-header">
+                    <i class="fas fa-crosshairs card-icon"></i>
+                    <h3 class="card-title">眼球运动训练</h3>
+                </div>
+                <p>通过追踪移动目标，改善眼外肌协调性，适用于内斜视、外斜视等各类斜视。</p>
+                
+                <div class="training-area" id="eyeMovementArea">
+                    <div class="eye-target" id="movingTarget"></div>
+                </div>
+
+                <div class="controls">
+                    <button class="btn btn-primary" onclick="startEyeMovement()">开始训练</button>
+                    <button class="btn btn-secondary" onclick="stopTraining('eyeMovement')">停止</button>
+                </div>
+
+                <div class="stats">
+                    <div class="stat-item">
+                        <div class="stat-value" id="eyeMovementScore">0</div>
+                        <div class="stat-label">追踪次数</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="eyeMovementAccuracy">0%</div>
+                        <div class="stat-label">准确率</div>
+                    </div>
+                </div>
+
+                <div class="progress-bar">
+                    <div class="progress-fill" id="eyeMovementProgress"></div>
+                </div>
+                <div class="timer" id="eyeMovementTimer">00:00</div>
+            </div>
+
+            <!-- 集合训练 -->
+            <div class="training-card">
+                <div class="card-header">
+                    <i class="fas fa-arrows-alt-h card-icon"></i>
+                    <h3 class="card-title">集合训练</h3>
+                </div>
+                <p>训练双眼集合能力，改善外斜视和集合不足，增强双眼协同功能。</p>
+                
+                <div class="training-area" id="convergenceArea">
+                    <div class="convergence-line" id="leftLine"></div>
+                    <div class="convergence-line" id="rightLine"></div>
+                </div>
+
+                <div class="controls">
+                    <button class="btn btn-primary" onclick="startConvergence()">开始训练</button>
+                    <button class="btn btn-secondary" onclick="stopTraining('convergence')">停止</button>
+                </div>
+
+                <div class="stats">
+                    <div class="stat-item">
+                        <div class="stat-value" id="convergenceScore">0</div>
+                        <div class="stat-label">集合次数</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="convergenceDepth">0cm</div>
+                        <div class="stat-label">集合深度</div>
+                    </div>
+                </div>
+
+                <div class="progress-bar">
+                    <div class="progress-fill" id="convergenceProgress"></div>
+                </div>
+                <div class="timer" id="convergenceTimer">00:00</div>
+            </div>
+
+            <!-- 融合训练 -->
+            <div class="training-card">
+                <div class="card-header">
+                    <i class="fas fa-eye card-icon"></i>
+                    <h3 class="card-title">双眼融合训练</h3>
+                </div>
+                <p>通过立体图像训练，改善双眼融合功能，适用于斜视术后康复和预防复发。</p>
+                
+                <div class="training-area" id="fusionArea">
+                    <div class="fusion-image" id="fusionLeft"></div>
+                    <div class="fusion-image" id="fusionRight"></div>
+                </div>
+
+                <div class="controls">
+                    <button class="btn btn-primary" onclick="startFusion()">开始训练</button>
+                    <button class="btn btn-secondary" onclick="stopTraining('fusion')">停止</button>
+                </div>
+
+                <div class="stats">
+                    <div class="stat-item">
+                        <div class="stat-value" id="fusionScore">0</div>
+                        <div class="stat-label">融合次数</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="fusionTime">0s</div>
+                        <div class="stat-label">融合时长</div>
+                    </div>
+                </div>
+
+                <div class="progress-bar">
+                    <div class="progress-fill" id="fusionProgress"></div>
+                </div>
+                <div class="timer" id="fusionTimer">00:00</div>
+            </div>
+
+            <!-- 立体视觉训练 -->
+            <div class="training-card">
+                <div class="card-header">
+                    <i class="fas fa-cube card-icon"></i>
+                    <h3 class="card-title">立体视觉训练</h3>
+                </div>
+                <p>通过深度感知训练，改善立体视觉功能，适用于斜视导致的立体视缺失。</p>
+                
+                <div class="training-area">
+                    <div class="stereo-depth" id="stereoArea">
+                        <div class="depth-object" id="stereoObject"></div>
+                    </div>
+                </div>
+
+                <div class="controls">
+                    <button class="btn btn-primary" onclick="startStereo()">开始训练</button>
+                    <button class="btn btn-secondary" onclick="stopTraining('stereo')">停止</button>
+                </div>
+
+                <div class="stats">
+                    <div class="stat-item">
+                        <div class="stat-value" id="stereoScore">0</div>
+                        <div class="stat-label">识别次数</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="stereoAccuracy">0%</div>
+                        <div class="stat-label">准确率</div>
+                    </div>
+                </div>
+
+                <div class="progress-bar">
+                    <div class="progress-fill" id="stereoProgress"></div>
+                </div>
+                <div class="timer" id="stereoTimer">00:00</div>
+            </div>
+        </div>
+
+        <!-- 训练记录 -->
+        <div class="training-card">
+            <div class="card-header">
+                <i class="fas fa-chart-line card-icon"></i>
+                <h3 class="card-title">训练记录与进度</h3>
+            </div>
+            <div class="stats">
+                <div class="stat-item">
+                    <div class="stat-value" id="totalTrainingDays">0</div>
+                    <div class="stat-label">训练天数</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="totalTrainingTime">0分钟</div>
+                    <div class="stat-label">总训练时长</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="improvementRate">0%</div>
+                    <div class="stat-label">改善率</div>
+                </div>
+            </div>
+            <button class="btn btn-primary" onclick="exportReport()">导出训练报告</button>
+            <button class="btn btn-secondary" onclick="resetProgress()">重置进度</button>
+        </div>
+    </div>
+
+    <!-- 训练完成弹窗 -->
+    <div id="completionModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h2><i class="fas fa-trophy"></i> 训练完成！</h2>
+            <p>恭喜您完成了本次训练！</p>
+            <div id="modalStats"></div>
+            <button class="btn btn-primary" onclick="closeModal()">继续训练</button>
+        </div>
+    </div>
+
+    <script>
+        // 全局变量
+        let trainingIntervals = {};
+        let trainingStats = {
+            eyeMovement: { score: 0, accuracy: 0, time: 0 },
+            convergence: { score: 0, depth: 0, time: 0 },
+            fusion: { score: 0, time: 0 },
+            stereo: { score: 0, accuracy: 0, time: 0 }
+        };
+
+        // 从本地存储加载数据
+        function loadTrainingData() {
+            const saved = localStorage.getItem('strabismusTraining');
+            if (saved) {
+                trainingStats = JSON.parse(saved);
+                updateAllStats();
+            }
+        }
+
+        // 保存训练数据
+        function saveTrainingData() {
+            localStorage.setItem('strabismusTraining', JSON.stringify(trainingStats));
+        }
+
+        // 眼球运动训练
+        function startEyeMovement() {
+            const area = document.getElementById('eyeMovementArea');
+            const target = document.getElementById('movingTarget');
+            let score = 0;
+            let startTime = Date.now();
+
+            if (trainingIntervals.eyeMovement) {
+                clearInterval(trainingIntervals.eyeMovement);
+            }
+
+            function moveTarget() {
+                const maxX = area.offsetWidth - 40;
+                const maxY = area.offsetHeight - 40;
+                const newX = Math.random() * maxX;
+                const newY = Math.random() * maxY;
+                
+                target.style.left = newX + 'px';
+                target.style.top = newY + 'px';
+                
+                score++;
+                trainingStats.eyeMovement.score = score;
+                trainingStats.eyeMovement.time = Math.floor((Date.now() - startTime) / 1000);
+                
+                updateEyeMovementStats();
+            }
+
+            moveTarget();
+            trainingIntervals.eyeMovement = setInterval(moveTarget, 2000);
+            startTimer('eyeMovementTimer', trainingIntervals.eyeMovement);
+        }
+
+        // 集合训练
+        function startConvergence() {
+            const leftLine = document.getElementById('leftLine');
+            const rightLine = document.getElementById('rightLine');
+            let score = 0;
+            let startTime = Date.now();
+            let direction = 1;
+
+            if (trainingIntervals.convergence) {
+                clearInterval(trainingIntervals.convergence);
+            }
+
+            function moveLines() {
+                const currentLeft = parseInt(leftLine.style.left || '0');
+                const currentRight = parseInt(rightLine.style.right || '0');
+                
+                leftLine.style.left = (currentLeft + direction * 5) + 'px';
+                rightLine.style.right = (currentRight + direction * 5) + 'px';
+                
+                if (Math.abs(currentLeft) > 100 || Math.abs(currentRight) > 100) {
+                    direction *= -1;
+                    score++;
+                    trainingStats.convergence.score = score;
+                    trainingStats.convergence.time = Math.floor((Date.now() - startTime) / 1000);
+                    updateConvergenceStats();
+                }
+            }
+
+            trainingIntervals.convergence = setInterval(moveLines, 100);
+            startTimer('convergenceTimer', trainingIntervals.convergence);
+        }
+
+        // 融合训练
+        function startFusion() {
+            const left = document.getElementById('fusionLeft');
+            const right = document.getElementById('fusionRight');
+            let score = 0;
+            let startTime = Date.now();
+
+            if (trainingIntervals.fusion) {
+                clearInterval(trainingIntervals.fusion);
+            }
+
+            function animateFusion() {
+                left.classList.toggle('active');
+                right.classList.toggle('active');
+                
+                score++;
+                trainingStats.fusion.score = score;
+                trainingStats.fusion.time = Math.floor((Date.now() - startTime) / 1000);
+                
+                updateFusionStats();
+            }
+
+            trainingIntervals.fusion = setInterval(animateFusion, 1500);
+            startTimer('fusionTimer', trainingIntervals.fusion);
+        }
+
+        // 立体视觉训练
+        function startStereo() {
+            const object = document.getElementById('stereoObject');
+            const area = document.getElementById('stereoArea');
+            let score = 0;
+            let startTime = Date.now();
+
+            if (trainingIntervals.stereo) {
+                clearInterval(trainingIntervals.stereo);
+            }
+
+            function moveObject() {
+                const maxX = area.offsetWidth - 30;
+                const maxY = area.offsetHeight - 30;
+                const newX = Math.random() * maxX;
+                const newY = Math.random() * maxY;
+                const newZ = Math.random() * 50;
+                
+                object.style.left = newX + 'px';
+                object.style.top = newY + 'px';
+                object.style.transform = `translateZ(${newZ}px)`;
+                
+                score++;
+                trainingStats.stereo.score = score;
+                trainingStats.stereo.time = Math.floor((Date.now() - startTime) / 1000);
+                
+                updateStereoStats();
+            }
+
+            moveObject();
+            trainingIntervals.stereo = setInterval(moveObject, 3000);
+            startTimer('stereoTimer', trainingIntervals.stereo);
+        }
+
+        // 停止训练
+        function stopTraining(type) {
+            if (trainingIntervals[type]) {
+                clearInterval(trainingIntervals[type]);
+                trainingIntervals[type] = null;
+                
+                // 更新总训练时间
+                updateTotalStats();
+                saveTrainingData();
+                
+                // 显示完成弹窗
+                showCompletionModal(type);
+            }
+        }
+
+        // 计时器功能
+        function startTimer(elementId, intervalId) {
+            let seconds = 0;
+            const timer = setInterval(() => {
+                if (!trainingIntervals[Object.keys(trainingIntervals).find(key => trainingIntervals[key] === intervalId)]) {
+                    clearInterval(timer);
+                    return;
+                }
+                seconds++;
+                const mins = Math.floor(seconds / 60);
+                const secs = seconds % 60;
+                document.getElementById(elementId).textContent = 
+                    `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+            }, 1000);
+        }
+
+        // 更新统计信息
+        function updateEyeMovementStats() {
+            document.getElementById('eyeMovementScore').textContent = trainingStats.eyeMovement.score;
+            document.getElementById('eyeMovementAccuracy').textContent = 
+                Math.min(100, trainingStats.eyeMovement.score * 2) + '%';
+            document.getElementById('eyeMovementProgress').style.width = 
+                Math.min(100, trainingStats.eyeMovement.score * 2) + '%';
+        }
+
+        function updateConvergenceStats() {
+            document.getElementById('convergenceScore').textContent = trainingStats.convergence.score;
+            document.getElementById('convergenceDepth').textContent = 
+                Math.min(20, trainingStats.convergence.score / 5) + 'cm';
+            document.getElementById('convergenceProgress').style.width = 
+                Math.min(100, trainingStats.convergence.score * 5) + '%';
+        }
+
+        function updateFusionStats() {
+            document.getElementById('fusionScore').textContent = trainingStats.fusion.score;
+            document.getElementById('fusionTime').textContent = trainingStats.fusion.time + 's';
+            document.getElementById('fusionProgress').style.width = 
+                Math.min(100, trainingStats.fusion.score * 10) + '%';
+        }
+
+        function updateStereoStats() {
+            document.getElementById('stereoScore').textContent = trainingStats.stereo.score;
+            document.getElementById('stereoAccuracy').textContent = 
+                Math.min(100, trainingStats.stereo.score * 5) + '%';
+            document.getElementById('stereoProgress').style.width = 
+                Math.min(100, trainingStats.stereo.score * 5) + '%';
+        }
+
+        function updateAllStats() {
+            updateEyeMovementStats();
+            updateConvergenceStats();
+            updateFusionStats();
+            updateStereoStats();
+            updateTotalStats();
+        }
+
+        function updateTotalStats() {
+            const totalTime = Object.values(trainingStats).reduce((sum, stat) => sum + (stat.time || 0), 0);
+            const totalDays = Math.ceil(totalTime / 60 / 15); // 假设每天训练15分钟
+            
+            document.getElementById('totalTrainingDays').textContent = totalDays;
+            document.getElementById('totalTrainingTime').textContent = Math.ceil(totalTime / 60) + '分钟';
+            document.getElementById('improvementRate').textContent = 
+                Math.min(100, totalDays * 5) + '%';
+        }
+
+        // 显示完成弹窗
+        function showCompletionModal(type) {
+            const modal = document.getElementById('completionModal');
+            const stats = document.getElementById('modalStats');
+            
+            stats.innerHTML = `
+                <div class="stats">
+                    <div class="stat-item">
+                        <div class="stat-value">${trainingStats[type].score}</div>
+                        <div class="stat-label">训练得分</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">${trainingStats[type].time}s</div>
+                        <div class="stat-label">训练时长</div>
+                    </div>
+                </div>
+            `;
+            
+            modal.style.display = 'block';
+        }
+
+        // 关闭弹窗
+        function closeModal() {
+            document.getElementById('completionModal').style.display = 'none';
+        }
+
+        // 导出训练报告
+        function exportReport() {
+            const report = {
+                date: new Date().toISOString(),
+                stats: trainingStats,
+                totalTime: Math.ceil(Object.values(trainingStats).reduce((sum, stat) => sum + (stat.time || 0), 0) / 60),
+                recommendations: generateRecommendations()
+            };
+            
+            const blob = new Blob([JSON.stringify(report, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `斜视训练报告_${new Date().toISOString().split('T')[0]}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        // 生成训练建议
+        function generateRecommendations() {
+            const recommendations = [];
+            const totalTime = Object.values(trainingStats).reduce((sum, stat) => sum + (stat.time || 0), 0);
+            
+            if (totalTime < 300) {
+                recommendations.push("建议增加每日训练时间至15分钟以上");
+            }
+            
+            if (trainingStats.eyeMovement.score < 50) {
+                recommendations.push("眼球运动训练需要加强，建议重点练习");
+            }
+            
+            if (trainingStats.convergence.score < 30) {
+                recommendations.push("集合功能较弱，建议增加集合训练频率");
+            }
+            
+            return recommendations;
+        }
+
+        // 重置进度
+        function resetProgress() {
+            if (confirm('确定要重置所有训练进度吗？此操作不可撤销。')) {
+                trainingStats = {
+                    eyeMovement: { score: 0, accuracy: 0, time: 0 },
+                    convergence: { score: 0, depth: 0, time: 0 },
+                    fusion: { score: 0, time: 0 },
+                    stereo: { score: 0, accuracy: 0, time: 0 }
+                };
+                
+                saveTrainingData();
+                updateAllStats();
+                alert('训练进度已重置！');
+            }
+        }
+
+        // 键盘快捷键
+        document.addEventListener('keydown', (e) => {
+            switch(e.key) {
+                case '1':
+                    startEyeMovement();
+                    break;
+                case '2':
+                    startConvergence();
+                    break;
+                case '3':
+                    startFusion();
+                    break;
+                case '4':
+                    startStereo();
+                    break;
+                case 'Escape':
+                    Object.keys(trainingIntervals).forEach(stopTraining);
+                    break;
+            }
+        });
+
+        // 页面加载时初始化
+        document.addEventListener('DOMContentLoaded', () => {
+            loadTrainingData();
+            
+            // 添加点击空白区域关闭弹窗
+            window.onclick = function(event) {
+                const modal = document.getElementById('completionModal');
+                if (event.target === modal) {
+                    modal.style.display = 'none';
+                }
+            };
+        });
+
+        // 页面卸载前保存数据
+        window.addEventListener('beforeunload', () => {
+            saveTrainingData();
+        });
+    </script>
+</body>
+</html>

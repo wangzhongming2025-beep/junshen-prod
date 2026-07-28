@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3分钟眼部放松操 - AI 护眼卫士</title>
+    <style>
+        :root {
+            --primary: #00f2ff;
+            --bg: #0b0e14;
+            --card-bg: rgba(255, 255, 255, 0.05);
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: var(--bg);
+            color: white;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .exercise-container {
+            width: 600px;
+            text-align: center;
+            background: var(--card-bg);
+            padding: 40px;
+            border-radius: 30px;
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .step-title {
+            font-size: 28px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            color: var(--primary);
+        }
+
+        .step-desc {
+            font-size: 16px;
+            opacity: 0.8;
+            line-height: 1.6;
+            min-height: 50px;
+            margin-bottom: 30px;
+        }
+
+        /* 动画区域 */
+        .animation-zone {
+            width: 300px;
+            height: 300px;
+            margin: 0 auto 30px;
+            position: relative;
+            border-radius: 50%;
+            background: rgba(0, 0, 0, 0.3);
+            border: 2px dashed rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .target-ball {
+            width: 40px;
+            height: 40px;
+            background: radial-gradient(circle at 30% 30%, #fff, var(--primary));
+            border-radius: 50%;
+            position: absolute;
+            box-shadow: 0 0 20px var(--primary);
+        }
+
+        /* 进度条 */
+        .progress-container {
+            width: 100%;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
+            margin-bottom: 30px;
+            position: relative;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: var(--primary);
+            border-radius: 3px;
+            width: 0%;
+            transition: width 0.3s;
+        }
+
+        .timer {
+            font-size: 48px;
+            font-family: monospace;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+
+        .btn {
+            background: var(--primary);
+            color: #000;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 50px;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 18px;
+            transition: all 0.2s;
+        }
+
+        .btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 30px rgba(0, 242, 255, 0.4);
+        }
+
+        /* 不同阶段的动画 */
+        @keyframes float-h {
+
+            0%,
+            100% {
+                left: 20px;
+            }
+
+            50% {
+                left: 240px;
+            }
+        }
+
+        @keyframes float-v {
+
+            0%,
+            100% {
+                top: 20px;
+            }
+
+            50% {
+                top: 240px;
+            }
+        }
+
+        @keyframes rotate-8 {
+            0% {
+                transform: translate(-80px, 0);
+            }
+
+            25% {
+                transform: translate(0, -80px);
+            }
+
+            50% {
+                transform: translate(80px, 0);
+            }
+
+            75% {
+                transform: translate(0, 80px);
+            }
+
+            100% {
+                transform: translate(-80px, 0);
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="exercise-container">
+        <div class="progress-container">
+            <div class="progress-bar" id="p-bar"></div>
+        </div>
+
+        <div id="intro-screen">
+            <h1 class="step-title">👀 3分钟眼部深度放松</h1>
+            <p class="step-desc">该练习包含：远近对焦、8字转眼、极速眨眼和眼肌拉伸。请坐稳，放松肩膀。</p>
+            <button class="btn" onclick="startExercise()">立即开始</button>
+        </div>
+
+        <div id="exercise-screen" style="display: none;">
+            <h2 class="step-title" id="e-title">第一阶段：水平追踪</h2>
+            <p class="step-desc" id="e-desc">眼睛跟随蓝球平行移动，头不要动。</p>
+
+            <div class="animation-zone">
+                <div class="target-ball" id="ball"></div>
+            </div>
+
+            <div class="timer" id="timer">20s</div>
+        </div>
+
+        <div id="finish-screen" style="display: none;">
+            <h1 class="step-title">🎉 放松完成！</h1>
+            <p class="step-desc">你的眼睛现在应该感觉清爽多了。建议每用眼45分钟重复一次。</p>
+            <button class="btn" onclick="location.reload()">再次练习</button>
+        </div>
+    </div>
+
+    <script>
+        const steps = [
+            { title: "第一阶段：水平追踪", desc: "眼睛跟随小球左右平行移动，放松水平眼肌。", anim: "float-h 3s infinite linear", time: 20 },
+            { title: "第二阶段：垂直追踪", desc: "眼睛跟随小球上下平行移动，增强上下调节能力。", anim: "float-v 3s infinite linear", time: 20 },
+            { title: "第三阶段：8字环绕", desc: "眼神绘制“∞”字形轨迹，全方位拉伸眼球肌肉。", anim: "rotate-8 4s infinite linear", time: 30 },
+            { title: "第四阶段：用力闭眼", desc: "用力闭眼3秒再睁开，重复此过程，促进泪液分泌。", anim: "none", time: 20 },
+            { title: "第五阶段：极速眨眼", desc: "快速眨眼20次，湿润角膜，缓解干眼不适。", anim: "none", time: 15 }
+        ];
+
+        let currentStepIdx = 0;
+        let timeLeft = 0;
+        let timerInterval = null;
+
+        function startExercise() {
+            document.getElementById('intro-screen').style.display = 'none';
+            document.getElementById('exercise-screen').style.display = 'block';
+            runStep();
+        }
+
+        function runStep() {
+            if (currentStepIdx >= steps.length) {
+                finish();
+                return;
+            }
+
+            const step = steps[currentStepIdx];
+            document.getElementById('e-title').innerText = step.title;
+            document.getElementById('e-desc').innerText = step.desc;
+            document.getElementById('p-bar').style.width = ((currentStepIdx / steps.length) * 100) + "%";
+
+            const ball = document.getElementById('ball');
+            ball.style.animation = step.anim;
+            ball.style.display = step.anim === 'none' ? 'none' : 'block';
+
+            timeLeft = step.time;
+            updateTimerText();
+
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                updateTimerText();
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    currentStepIdx++;
+                    runStep();
+                }
+            }, 1000);
+        }
+
+        function updateTimerText() {
+            document.getElementById('timer').innerText = timeLeft + "s";
+        }
+
+        function finish() {
+            document.getElementById('exercise-screen').style.display = 'none';
+            document.getElementById('finish-screen').style.display = 'block';
+            document.getElementById('p-bar').style.width = "100%";
+        }
+    </script>
+</body>
+
+</html>

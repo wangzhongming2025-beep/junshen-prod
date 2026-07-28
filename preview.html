@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>网页预览 - 老王队长 AI 工具箱</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Noto+Sans+SC:wght@300;400;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Outfit', 'Noto Sans SC', 'sans-serif'],
+                    },
+                    colors: {
+                        military: {
+                            light: '#5c7065',
+                            DEFAULT: '#2f3b35', // Deep military green
+                            dark: '#141a17',
+                            accent: '#ffd700', // Gold accent
+                            glass: 'rgba(20, 26, 23, 0.95)',
+                            border: 'rgba(255, 215, 0, 0.15)'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        html, body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background-color: #0b0f0d;
+        }
+        .glow-text-gold {
+            text-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
+        }
+        .glass-card {
+            background: rgba(20, 26, 23, 0.65);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.03);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Expired Screen (Hidden by default) -->
+    <div id="expired-screen" class="hidden w-full h-full flex flex-col justify-center items-center p-6 text-gray-300 antialiased text-center relative z-50">
+        <div class="absolute inset-0 bg-[radial-gradient(rgba(255,215,0,0.03)_1px,transparent_1px)] [background-size:20px_20px] pointer-events-none"></div>
+        
+        <div class="glass-card max-w-lg w-full p-8 rounded-2xl border border-red-500/20 space-y-6">
+            <div class="w-16 h-16 bg-red-500/10 border border-red-500/30 rounded-full flex items-center justify-center mx-auto text-red-500 text-3xl">
+                <i class="fas fa-exclamation-triangle"></i>
+            </div>
+            
+            <div class="space-y-2">
+                <h2 class="text-xl md:text-2xl font-extrabold text-white">该临时托管网页已过期 (Expired)</h2>
+                <p class="text-xs text-gray-500">
+                    此链接为老王队长工具箱提供的【72小时免费临时托管体验】，目前已超出托管有效期。
+                </p>
+            </div>
+
+            <!-- Ad / Call to Action -->
+            <div class="bg-military/20 p-4 rounded-xl border border-military-accent/20 text-left space-y-3">
+                <h4 class="text-xs font-bold text-white flex items-center">
+                    <i class="fas fa-crown text-military-accent mr-1.5 animate-pulse"></i> 解锁永久托管与专属短链接：
+                </h4>
+                <p class="text-[11px] text-gray-400 leading-relaxed">
+                    想让您用 AI 写的网页/小程序**永久在线且永不失效**？支持绑定专属域名，享有全球边缘网络加速！
+                </p>
+            </div>
+
+            <div class="bg-black/40 p-4 rounded-xl border border-white/5 space-y-3 flex flex-col items-center">
+                <span class="text-[10px] text-gray-400">
+                    一键复制微信添加老王，咨询永久托管方案：
+                </span>
+                <div class="flex items-center space-x-2 bg-black/60 px-4 py-2 rounded-full border border-white/10 w-full justify-between">
+                    <span class="text-xs font-bold text-white font-mono select-all" id="wechat-id">vip20213456</span>
+                    <button onclick="copyWeChat()" class="text-xs bg-military-accent text-military-dark px-3 py-1 rounded-full hover:bg-white transition-all font-bold active:scale-95">
+                        复制微信号
+                    </button>
+                </div>
+            </div>
+            
+            <a href="html_host.html" class="inline-block text-xs text-military-accent hover:underline">
+                ← 返回 HTML 临时托管工具主页
+            </a>
+        </div>
+    </div>
+
+    <!-- Active Preview Layout -->
+    <div id="preview-layout" class="w-full h-full flex flex-col">
+        <!-- Floating Announcement Bar -->
+        <div id="announcement-bar" class="w-full bg-military-dark border-b border-military-accent/20 px-4 py-2.5 flex justify-between items-center text-xs text-gray-300 select-none shrink-0 relative z-40">
+            <div class="flex items-center space-x-2 truncate">
+                <span class="bg-military-accent/20 text-military-accent border border-military-accent/30 text-[9px] px-2 py-0.5 rounded font-bold">
+                    临时托管预览
+                </span>
+                <span class="truncate text-[11px] text-gray-400" id="time-left">
+                    正在计算有效期...
+                </span>
+            </div>
+            <div class="flex items-center space-x-4 shrink-0">
+                <button onclick="copyWeChat()" class="text-[10px] bg-military-accent text-military-dark px-2.5 py-1 rounded-full font-bold hover:bg-white active:scale-95 transition-all">
+                    👑 获取永久托管 / 独立域名
+                </button>
+                <button onclick="closeBar()" class="text-gray-500 hover:text-white transition-colors" title="关闭横幅">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Rendering IFrame Container -->
+        <div class="flex-1 w-full h-full relative z-10 bg-white">
+            <iframe id="preview-frame" class="w-full h-full border-0" sandbox="allow-scripts allow-same-origin allow-popups"></iframe>
+        </div>
+    </div>
+
+    <!-- Toast Component -->
+    <div id="toast" class="fixed top-6 left-1/2 transform -translate-x-1/2 bg-military-accent text-military-dark px-6 py-3.5 rounded-full font-bold shadow-2xl z-[100] opacity-0 transition-opacity duration-300 pointer-events-none text-center text-xs border border-military">
+        🎉 成功复制微信号，快去微信咨询吧！
+    </div>
+
+    <script>
+        // Base64 to UTF-8
+        function atou(str) {
+            return decodeURIComponent(escape(window.atob(str)));
+        }
+
+        // Parse hash params
+        function getHashParams() {
+            const hash = window.location.hash.substring(1);
+            if (!hash) return null;
+            
+            const params = {};
+            hash.split('&').forEach(item => {
+                const eqIdx = item.indexOf('=');
+                if (eqIdx !== -1) {
+                    const key = item.substring(0, eqIdx);
+                    const val = item.substring(eqIdx + 1);
+                    params[key] = val;
+                }
+            });
+            return params;
+        }
+
+        window.onload = function() {
+            const params = getHashParams();
+            if (!params || !params.t || !params.c) {
+                document.body.innerHTML = `
+                    <div class="w-full h-full flex flex-col justify-center items-center p-6 text-gray-400 text-center">
+                        <i class="fas fa-ban text-4xl text-gray-600 mb-3"></i>
+                        <p class="text-sm">无效的预览链接或缺少代码参数。</p>
+                        <a href="html_host.html" class="mt-4 text-xs text-military-accent hover:underline">返回托管工具页</a>
+                    </div>
+                `;
+                return;
+            }
+
+            const createdTime = parseInt(params.t);
+            const encodedCode = params.c;
+
+            const timePassed = Date.now() - createdTime;
+            const threeDays = 3 * 24 * 60 * 60 * 1000; // 3 days in ms
+
+            if (timePassed > threeDays) {
+                // Show expired screen
+                document.getElementById('preview-layout').classList.add('hidden');
+                document.getElementById('expired-screen').classList.remove('hidden');
+            } else {
+                // Show iframe preview
+                try {
+                    const decodedHtml = atou(encodedCode);
+                    const iframe = document.getElementById('preview-frame');
+                    
+                    // Inject decoded HTML into IFrame
+                    iframe.srcdoc = decodedHtml;
+
+                    // Compute time left
+                    const timeLeftMs = threeDays - timePassed;
+                    const hoursLeft = Math.floor(timeLeftMs / (1000 * 60 * 60));
+                    const minsLeft = Math.floor((timeLeftMs % (1000 * 60 * 60)) / (1000 * 60));
+                    
+                    document.getElementById('time-left').innerText = `距离体验到期还剩: ${hoursLeft} 小时 ${minsLeft} 分钟`;
+                } catch (err) {
+                    document.body.innerHTML = `
+                        <div class="w-full h-full flex flex-col justify-center items-center p-6 text-gray-400 text-center">
+                            <i class="fas fa-bug text-4xl text-gray-600 mb-3"></i>
+                            <p class="text-sm">代码解码失败，请检查是否贴入有效HTML。</p>
+                            <a href="html_host.html" class="mt-4 text-xs text-military-accent hover:underline">重新托管</a>
+                        </div>
+                    `;
+                }
+            }
+        };
+
+        function closeBar() {
+            document.getElementById('announcement-bar').classList.add('hidden');
+        }
+
+        function copyWeChat() {
+            const wechatId = document.getElementById('wechat-id').innerText;
+            navigator.clipboard.writeText(wechatId).then(() => {
+                showToast();
+            }).catch(err => {
+                const input = document.createElement('input');
+                input.value = wechatId;
+                document.body.appendChild(input);
+                input.select();
+                document.execCommand('copy');
+                document.body.removeChild(input);
+                showToast();
+            });
+        }
+
+        function showToast() {
+            const toast = document.getElementById('toast');
+            toast.style.opacity = '1';
+            setTimeout(() => {
+                toast.style.opacity = '0';
+            }, 3000);
+        }
+    </script>
+</body>
+
+</html>

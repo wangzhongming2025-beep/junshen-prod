@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>方块塔 - 可视化教学工具</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#667eea',
+                        secondary: '#764ba2',
+                        accent: '#4facfe',
+                        success: '#43e97b',
+                        info: '#00f2fe',
+                        warning: '#fee140',
+                        danger: '#fa709a'
+                    },
+                    fontFamily: {
+                        sans: ['Microsoft YaHei', 'sans-serif'],
+                    }
+                },
+            }
+        }
+    </script>
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .text-shadow {
+                text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            }
+            .bg-gradient-primary {
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            }
+            .bg-gradient-blue {
+                background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            }
+            .grid-cell {
+                transition: all 0.2s ease;
+            }
+            .grid-cell:hover {
+                transform: scale(1.05);
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            }
+            .cube {
+                position: absolute;
+                transition: all 0.3s ease;
+            }
+        }
+    </style>
+</head>
+<body class="min-h-screen bg-gray-50 font-sans">
+    <!-- 头部 -->
+    <header class="bg-gradient-blue text-white py-6 px-4 shadow-lg">
+        <div class="container mx-auto flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <button onclick="window.location.href='xiaoxue.html'" class="hover:bg-white/20 p-2 rounded-full transition-colors">
+                    <i class="fa fa-arrow-left text-xl"></i>
+                </button>
+                <h1 class="text-2xl md:text-3xl font-bold text-shadow">方块塔</h1>
+            </div>
+            <div class="flex items-center gap-3">
+                <button class="hover:bg-white/20 p-2 rounded-full transition-colors">
+                    <i class="fa fa-question-circle text-xl"></i>
+                </button>
+                <button class="hover:bg-white/20 p-2 rounded-full transition-colors">
+                    <i class="fa fa-cog text-xl"></i>
+                </button>
+            </div>
+        </div>
+        <div class="container mx-auto mt-2 text-center text-white/90">
+            <p>从不同位置观察一个正方体搭成的组合体的形状</p>
+        </div>
+    </header>
+
+    <!-- 主要内容 -->
+    <main class="container mx-auto py-8 px-4">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <!-- 三维视图观察 -->
+            <div class="bg-white rounded-xl shadow-lg p-6">
+                <h2 class="text-xl font-bold text-primary mb-4 text-center">三维视图观察</h2>
+                <div id="3d-view" class="w-full h-64 md:h-80 bg-gray-50 rounded-lg relative overflow-hidden border border-gray-200">
+                    <!-- 3D模型将在这里渲染 -->
+                    <div id="cube-container" class="w-full h-full relative" style="perspective: 1000px;">
+                        <!-- 立方体将在这里动态生成 -->
+                    </div>
+                </div>
+                
+                <div class="mt-6">
+                    <h3 class="text-lg font-semibold text-gray-700 mb-3 text-center">视角切换</h3>
+                    <div class="grid grid-cols-2 gap-2">
+                        <button class="view-btn bg-gray-200 hover:bg-gray-300 py-2 px-4 rounded-lg transition-colors" data-view="left">左面</button>
+                        <button class="view-btn bg-gray-200 hover:bg-gray-300 py-2 px-4 rounded-lg transition-colors" data-view="front">正面</button>
+                        <button class="view-btn bg-gray-200 hover:bg-gray-300 py-2 px-4 rounded-lg transition-colors" data-view="top">上面</button>
+                        <button class="view-btn bg-gray-200 hover:bg-gray-300 py-2 px-4 rounded-lg transition-colors active" data-view="original">原视角</button>
+                    </div>
+                </div>
+                
+                <div class="mt-6">
+                    <h3 class="text-lg font-semibold text-gray-700 mb-3 text-center">模型操作</h3>
+                    <div class="flex justify-center gap-4">
+                        <button class="model-btn bg-gray-200 hover:bg-gray-300 p-2 rounded-full transition-colors" data-action="rotate-left">
+                            <i class="fa fa-rotate-left"></i>
+                        </button>
+                        <button class="model-btn bg-gray-200 hover:bg-gray-300 p-2 rounded-full transition-colors" data-action="rotate-right">
+                            <i class="fa fa-rotate-right"></i>
+                        </button>
+                        <button class="model-btn bg-gray-200 hover:bg-gray-300 p-2 rounded-full transition-colors" data-action="zoom-in">
+                            <i class="fa fa-search-plus"></i>
+                        </button>
+                        <button class="model-btn bg-gray-200 hover:bg-gray-300 p-2 rounded-full transition-colors" data-action="zoom-out">
+                            <i class="fa fa-search-minus"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 俯视图编辑 -->
+            <div class="bg-white rounded-xl shadow-lg p-6">
+                <h2 class="text-xl font-bold text-primary mb-4 text-center">俯视图编辑</h2>
+                <div class="mb-4 text-center">
+                    <p class="text-gray-600">俯视图 (5×5)</p>
+                </div>
+                <div id="top-view-grid" class="grid grid-cols-5 gap-1 w-full max-w-xs mx-auto">
+                    <!-- 网格将在这里动态生成 -->
+                </div>
+                <div class="mt-6 text-center">
+                    <p id="total-cubes" class="text-gray-700">总方块数: 6</p>
+                    <p class="text-sm text-gray-500">点击方格增减方块高度</p>
+                </div>
+                
+                <div class="mt-8 flex flex-col gap-3">
+                    <button id="reset-btn" class="bg-gray-200 hover:bg-gray-300 py-3 px-6 rounded-lg transition-colors font-medium">
+                        <i class="fa fa-refresh mr-2"></i> 重置模型
+                    </button>
+                    <button id="random-btn" class="bg-primary hover:bg-primary/90 text-white py-3 px-6 rounded-lg transition-colors font-medium">
+                        <i class="fa fa-random mr-2"></i> 随机生成
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 教学提示 -->
+        <div class="mt-8 bg-white rounded-xl shadow-lg p-6">
+            <h2 class="text-xl font-bold text-primary mb-4 text-center">教学提示</h2>
+            <div class="prose max-w-none text-gray-700">
+                <p>1. 从不同角度观察由正方体组成的组合体，可以帮助学生建立空间观念。</p>
+                <p>2. 通过编辑俯视图，可以直观地了解不同位置的方块高度。</p>
+                <p>3. 尝试从左面、正面、上面观察同一个组合体，比较它们的形状差异。</p>
+                <p>4. 可以通过旋转和缩放操作，更全面地观察组合体的结构。</p>
+            </div>
+        </div>
+        
+        <!-- 定制提示 -->
+        <div class="mt-8 bg-yellow-50 border border-yellow-200 rounded-xl p-6">
+            <div class="flex items-center gap-3 mb-3">
+                <i class="fa fa-lightbulb-o text-yellow-500 text-xl"></i>
+                <h2 class="text-xl font-bold text-yellow-700">定制更多可视化教学工具</h2>
+            </div>
+            <p class="text-yellow-700">需要定制更多适合您教学需求的可视化工具吗？</p>
+            <p class="text-yellow-700">联系我们，为您打造专属的教学辅助工具！</p>
+            <div class="mt-4">
+                <button class="bg-yellow-500 hover:bg-yellow-600 text-white py-2 px-6 rounded-lg transition-colors font-medium">
+                    <i class="fa fa-envelope mr-2"></i> 联系店主
+                </button>
+            </div>
+        </div>
+    </main>
+
+    <!-- 页脚 -->
+    <footer class="bg-gray-800 text-white py-6 px-4 mt-12">
+        <div class="container mx-auto text-center">
+            <p class="mb-2">© 2026 小学生学习工具集合</p>
+            <p class="text-gray-400 text-sm">专为小学生设计的趣味学习工具</p>
+        </div>
+    </footer>
+
+    <script>
+        // 全局变量
+        let gridSize = 5;
+        let grid = Array(gridSize).fill().map(() => Array(gridSize).fill(0));
+        let currentView = 'original';
+        let rotation = 0;
+        let scale = 1;
+        
+        // 颜色配置
+        const cubeColors = [
+            '#4facfe', // 蓝色
+            '#fa709a', // 粉色
+            '#43e97b', // 绿色
+            '#fee140', // 黄色
+            '#00f2fe'  // 青色
+        ];
+        
+        // DOM 元素
+        const cubeContainer = document.getElementById('cube-container');
+        const topViewGrid = document.getElementById('top-view-grid');
+        const totalCubesElement = document.getElementById('total-cubes');
+        const viewBtns = document.querySelectorAll('.view-btn');
+        const modelBtns = document.querySelectorAll('.model-btn');
+        const resetBtn = document.getElementById('reset-btn');
+        const randomBtn = document.getElementById('random-btn');
+        
+        // 初始化
+        function init() {
+            // 初始化默认网格
+            grid = [
+                [0, 0, 1, 0, 0],
+                [0, 1, 3, 0, 0],
+                [0, 0, 1, 0, 0],
+                [0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0]
+            ];
+            
+            renderTopViewGrid();
+            render3DView();
+            updateTotalCubes();
+            
+            // 绑定事件
+            viewBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    setView(this.dataset.view);
+                });
+            });
+            
+            modelBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    handleModelAction(this.dataset.action);
+                });
+            });
+            
+            resetBtn.addEventListener('click', resetModel);
+            randomBtn.addEventListener('click', randomModel);
+        }
+        
+        // 渲染俯视图网格
+        function renderTopViewGrid() {
+            topViewGrid.innerHTML = '';
+            
+            for (let row = 0; row < gridSize; row++) {
+                for (let col = 0; col < gridSize; col++) {
+                    const cell = document.createElement('div');
+                    const height = grid[row][col];
+                    const color = height > 0 ? cubeColors[height % cubeColors.length] : '#e5e7eb';
+                    
+                    cell.className = 'grid-cell aspect-square flex items-center justify-center rounded cursor-pointer border border-gray-200';
+                    cell.style.backgroundColor = height > 0 ? color : '#f3f4f6';
+                    cell.style.color = height > 0 ? 'white' : '#6b7280';
+                    cell.dataset.row = row;
+                    cell.dataset.col = col;
+                    
+                    if (height > 0) {
+                        cell.textContent = height;
+                    }
+                    
+                    cell.addEventListener('click', function() {
+                        const row = parseInt(this.dataset.row);
+                        const col = parseInt(this.dataset.col);
+                        // 点击增加高度，最大为5
+                        grid[row][col] = (grid[row][col] + 1) % 6;
+                        renderTopViewGrid();
+                        render3DView();
+                        updateTotalCubes();
+                    });
+                    
+                    topViewGrid.appendChild(cell);
+                }
+            }
+        }
+        
+        // 渲染3D视图
+        function render3DView() {
+            cubeContainer.innerHTML = '';
+            
+            const cubeSize = 30;
+            const offsetX = (cubeContainer.clientWidth / 2) - (gridSize * cubeSize / 2);
+            const offsetY = (cubeContainer.clientHeight / 2) - (gridSize * cubeSize / 2);
+            
+            for (let row = 0; row < gridSize; row++) {
+                for (let col = 0; col < gridSize; col++) {
+                    const height = grid[row][col];
+                    
+                    for (let z = 0; z < height; z++) {
+                        const cube = document.createElement('div');
+                        const color = cubeColors[z % cubeColors.length];
+                        
+                        cube.className = 'cube';
+                        cube.style.width = `${cubeSize}px`;
+                        cube.style.height = `${cubeSize}px`;
+                        cube.style.backgroundColor = color;
+                        cube.style.boxShadow = 'inset 0 0 10px rgba(255, 255, 255, 0.3)';
+                        
+                        // 根据当前视图调整位置
+                        let x, y;
+                        
+                        switch (currentView) {
+                            case 'left':
+                                x = offsetX + (gridSize - row - 1) * cubeSize;
+                                y = offsetY + z * cubeSize;
+                                break;
+                            case 'front':
+                                x = offsetX + col * cubeSize;
+                                y = offsetY + z * cubeSize;
+                                break;
+                            case 'top':
+                                x = offsetX + col * cubeSize;
+                                y = offsetY + row * cubeSize;
+                                break;
+                            default: // original
+                                x = offsetX + col * cubeSize - row * cubeSize / 2;
+                                y = offsetY + row * cubeSize / 2 + z * cubeSize;
+                                break;
+                        }
+                        
+                        cube.style.left = `${x}px`;
+                        cube.style.bottom = `${y}px`;
+                        
+                        // 添加旋转和缩放
+                        cube.style.transform = `rotateY(${rotation}deg) scale(${scale})`;
+                        
+                        cubeContainer.appendChild(cube);
+                    }
+                }
+            }
+        }
+        
+        // 更新总方块数
+        function updateTotalCubes() {
+            let total = 0;
+            for (let row = 0; row < gridSize; row++) {
+                for (let col = 0; col < gridSize; col++) {
+                    total += grid[row][col];
+                }
+            }
+            totalCubesElement.textContent = `总方块数: ${total}`;
+        }
+        
+        // 设置视图
+        function setView(view) {
+            currentView = view;
+            
+            // 更新按钮状态
+            viewBtns.forEach(btn => {
+                btn.classList.remove('active', 'bg-primary', 'text-white');
+                btn.classList.add('bg-gray-200', 'hover:bg-gray-300');
+            });
+            
+            const activeBtn = document.querySelector(`.view-btn[data-view="${view}"]`);
+            activeBtn.classList.remove('bg-gray-200', 'hover:bg-gray-300');
+            activeBtn.classList.add('active', 'bg-primary', 'text-white');
+            
+            render3DView();
+        }
+        
+        // 处理模型操作
+        function handleModelAction(action) {
+            switch (action) {
+                case 'rotate-left':
+                    rotation -= 45;
+                    break;
+                case 'rotate-right':
+                    rotation += 45;
+                    break;
+                case 'zoom-in':
+                    scale = Math.min(scale + 0.1, 1.5);
+                    break;
+                case 'zoom-out':
+                    scale = Math.max(scale - 0.1, 0.5);
+                    break;
+            }
+            render3DView();
+        }
+        
+        // 重置模型
+        function resetModel() {
+            grid = Array(gridSize).fill().map(() => Array(gridSize).fill(0));
+            rotation = 0;
+            scale = 1;
+            setView('original');
+            renderTopViewGrid();
+            render3DView();
+            updateTotalCubes();
+        }
+        
+        // 随机生成模型
+        function randomModel() {
+            for (let row = 0; row < gridSize; row++) {
+                for (let col = 0; col < gridSize; col++) {
+                    // 70%的概率为空，30%的概率为1-3
+                    grid[row][col] = Math.random() > 0.7 ? Math.floor(Math.random() * 3) + 1 : 0;
+                }
+            }
+            renderTopViewGrid();
+            render3DView();
+            updateTotalCubes();
+        }
+        
+        // 页面加载完成后初始化
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>

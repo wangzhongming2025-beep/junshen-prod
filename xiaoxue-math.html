@@ -1,0 +1,3149 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>小学双语智能冒险舱 - 一二三年级奥数与PEP英语启蒙 | 快乐脑科学</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800;900&family=Noto+Sans+SC:wght@400;700;900&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Outfit', 'Noto Sans SC', 'sans-serif'],
+                    },
+                    colors: {
+                        pastel: {
+                            blue: '#e0f2fe',
+                            yellow: '#fef3c7',
+                            green: '#dcfce7',
+                            pink: '#fce7f3',
+                            accent: '#f59e0b',
+                            dark: '#1e293b'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #f1f5f9;
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(14, 165, 233, 0.08) 0%, transparent 40%),
+                radial-gradient(circle at 90% 80%, rgba(245, 158, 11, 0.08) 0%, transparent 35%);
+        }
+        .adventure-card {
+            background: #ffffff;
+            border: 2px solid #e2e8f0;
+            box-shadow: 0 8px 0px #e2e8f0;
+            transition: all 0.2s ease-in-out;
+        }
+        .adventure-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 0px #cbd5e1;
+            border-color: #94a3b8;
+        }
+        .adventure-card:active {
+            transform: translateY(4px);
+            box-shadow: 0 4px 0px #cbd5e1;
+        }
+        .card-inner {
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
+        }
+        .card-flipped {
+            transform: rotateY(180deg);
+        }
+        .card-front, .card-back {
+            backface-visibility: hidden;
+        }
+        .card-back {
+            transform: rotateY(180deg);
+        }
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-6px) rotate(-2deg); }
+            75% { transform: translateX(6px) rotate(2deg); }
+        }
+        .animate-shake {
+            animation: shake 0.3s ease-in-out;
+        }
+        @keyframes flashRed {
+            0%, 100% { filter: none; }
+            50% { filter: drop-shadow(0 0 15px rgba(239, 68, 68, 0.8)) sepia(1) saturate(5) hue-rotate(-50deg); }
+        }
+        .animate-flash-red {
+            animation: flashRed 0.4s ease-in-out;
+        }
+    </style>
+</head>
+
+<body class="text-slate-700 antialiased pb-24 text-base">
+
+    <!-- Playful Navigation -->
+    <nav class="bg-sky-100 border-b-4 border-sky-200 py-4 px-6 sticky top-0 z-50">
+        <div class="max-w-6xl mx-auto flex justify-between items-center">
+            <a href="index.html" class="flex items-center space-x-2 text-sky-700 hover:text-sky-900 transition-colors font-extrabold text-base">
+                <i class="fas fa-home"></i>
+                <span>返回主页</span>
+            </a>
+            <div class="text-lg md:text-xl font-black tracking-wider text-sky-800 flex items-center">
+                <i class="fas fa-child text-amber-500 mr-2.5 animate-bounce"></i> <span>小学智能双语冒险舱</span>
+            </div>
+            
+            <!-- Dynamic PDF Textbook cloud selector -->
+            <a id="pdf-textbook-btn" href="/books/三年级上册数学_2022.pdf" target="_blank" class="bg-amber-400 hover:bg-amber-500 text-amber-950 px-5 py-2 rounded-full font-extrabold text-sm transition-all shadow-md">
+                <i class="fas fa-book-open mr-1"></i> 在线数学课本
+            </a>
+        </div>
+    </nav>
+
+    <!-- Subject Switcher -->
+    <div class="max-w-6xl mx-auto px-4 mt-6 flex justify-center">
+        <div class="bg-white border-4 border-slate-200 p-2 rounded-3xl flex space-x-3 shadow-md font-black text-sm md:text-base">
+            <button onclick="switchSubjectMode('math')" id="subject-btn-math" class="px-6 py-3 rounded-2xl transition-all duration-300 bg-sky-500 text-white shadow-lg">📐 趣味数学大冒险</button>
+            <button onclick="switchSubjectMode('english')" id="subject-btn-english" class="px-6 py-3 rounded-2xl transition-all duration-300 text-slate-500 hover:text-slate-900">🔤 英语魔法单词屋</button>
+        </div>
+    </div>
+
+    <!-- Math Grade Selector -->
+    <div class="max-w-6xl mx-auto px-4 mt-4 flex justify-center" id="math-grade-switcher">
+        <div class="bg-white border-2 border-slate-200 p-1.5 rounded-2xl flex space-x-2 shadow-sm font-black text-xs md:text-sm">
+            <button onclick="switchGrade('low')" id="grade-btn-low" class="px-5 py-2 rounded-xl transition-all bg-sky-500 text-white shadow">一二年级 🌟 奥数思维乐园</button>
+            <button onclick="switchGrade('mid')" id="grade-btn-mid" class="px-5 py-2 rounded-xl transition-all text-slate-500 hover:text-slate-900">三年级 ⚔️ 勇者决斗舱</button>
+        </div>
+    </div>
+
+    <!-- RPG Header Dashboard -->
+    <header class="max-w-6xl mx-auto px-4 mt-6">
+        <div class="bg-yellow-50 border-4 border-yellow-200 rounded-3xl p-6 flex flex-col md:flex-row items-center justify-between gap-4 shadow-sm">
+            <div class="flex items-center space-x-4">
+                <div class="w-16 h-16 rounded-full bg-amber-400 border-2 border-white flex items-center justify-center text-amber-950 text-3xl shadow-md" id="avatar-icon-container">
+                    <i class="fas fa-shield-halved" id="current-mascot-avatar"></i>
+                </div>
+                <div class="space-y-1.5">
+                    <div class="flex items-center space-x-3">
+                        <span class="font-black text-slate-800 text-lg" id="rank-title">双语见习勇者</span>
+                        <span class="text-sm bg-amber-400 text-amber-950 px-3 py-1 rounded-full font-black" id="level-label">Lv.1</span>
+                    </div>
+                    <div class="flex items-center space-x-3">
+                        <div class="w-48 bg-slate-200 rounded-full h-4 overflow-hidden border border-slate-300">
+                            <div class="bg-amber-400 h-4 rounded-full transition-all duration-500" id="xp-bar" style="width: 0%"></div>
+                        </div>
+                        <span class="text-xs text-slate-600 font-extrabold font-mono" id="xp-text">0/100 XP</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex space-x-6">
+                <div class="flex items-center space-x-3 bg-white px-5 py-2.5 rounded-2xl border-2 border-slate-200">
+                    <span class="text-amber-500 text-2xl animate-spin"><i class="fas fa-star-half-alt"></i></span>
+                    <div>
+                        <span class="text-xs text-slate-400 block font-black">荣誉成就</span>
+                        <span class="text-sm md:text-base font-black text-slate-800 font-mono" id="stars-count">0 / 30</span>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-3 bg-white px-5 py-2.5 rounded-2xl border-2 border-slate-200">
+                    <span class="text-amber-500 text-2xl"><i class="fas fa-coins"></i></span>
+                    <div>
+                        <span class="text-xs text-slate-400 block font-black">冒险金币</span>
+                        <span class="text-sm md:text-base font-black text-slate-800 font-mono" id="coins-count">0</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="max-w-6xl mx-auto px-4 mt-8 grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+        <!-- Left 2 Cols: Interactive Board -->
+        <div class="lg:col-span-2 space-y-6">
+
+            <!-- ================= SECTION: ENGLISH MAGIC HOUSE ================= -->
+            <section id="english-mode-playroom" class="space-y-6 hidden">
+                
+                <!-- Game Selector tabs -->
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <button onclick="selectEnglishGame(1)" id="eng-tab-1" class="p-4 rounded-2xl border-4 border-slate-200 bg-white hover:bg-slate-50 font-black text-sm flex items-center justify-center space-x-2 transition-all">
+                        <span class="text-red-500 text-lg"><i class="fas fa-palette"></i></span>
+                        <span>🎨 魔法七彩画板 (Colours)</span>
+                    </button>
+                    <button onclick="selectEnglishGame(2)" id="eng-tab-2" class="p-4 rounded-2xl border-4 border-slate-200 bg-white hover:bg-slate-50 font-black text-sm flex items-center justify-center space-x-2 transition-all">
+                        <span class="text-sky-500 text-lg"><i class="fas fa-paw"></i></span>
+                        <span>🦁 幻兽动物园 (Animals)</span>
+                    </button>
+                    <button onclick="selectEnglishGame(3)" id="eng-tab-3" class="p-4 rounded-2xl border-4 border-slate-200 bg-white hover:bg-slate-50 font-black text-sm flex items-center justify-center space-x-2 transition-all">
+                        <span class="text-emerald-500 text-lg"><i class="fas fa-suitcase"></i></span>
+                        <span>🎒 魔法文具包 (Stationery)</span>
+                    </button>
+                </div>
+
+                <div class="bg-white border-4 border-slate-200 rounded-3xl p-6 shadow-sm min-h-[420px] flex flex-col justify-between" id="english-game-box">
+                    
+                    <!-- Eng Game 1: Colours Painting Board -->
+                    <div id="eng-game-1" class="space-y-5">
+                        <div class="border-b border-slate-100 pb-2.5">
+                            <h4 class="font-black text-lg text-slate-800">🎨 魔法七彩画板 (Unit 2 Colours)</h4>
+                            <p class="text-xs text-slate-400">听一听或读一读指令，用画笔涂对相应的颜色吧！</p>
+                        </div>
+                        
+                        <!-- Drawing canvas box -->
+                        <div class="flex flex-col items-center justify-center py-6 bg-slate-50 border-2 border-slate-100 rounded-2xl gap-3">
+                            <div class="w-28 h-28 rounded-full border-4 border-dashed border-slate-300 bg-white flex items-center justify-center text-5xl transition-all duration-500" id="color-painting-duck" style="color: #94a3b8;">
+                                🦆
+                            </div>
+                            <span class="text-sm font-black text-slate-800" id="color-game-instruction">Please color the duck: <span class="text-yellow-500 font-extrabold">YELLOW</span> !</span>
+                        </div>
+
+                        <!-- Colors palettes -->
+                        <div class="flex justify-center gap-3 flex-wrap">
+                            <button onclick="paintColor('yellow', '#facc15')" class="px-5 py-2.5 bg-yellow-400 border-2 border-yellow-600 rounded-xl text-yellow-950 font-black text-xs">YELLOW (黄色)</button>
+                            <button onclick="paintColor('red', '#f87171')" class="px-5 py-2.5 bg-red-400 border-2 border-red-600 rounded-xl text-red-950 font-black text-xs">RED (红色)</button>
+                            <button onclick="paintColor('blue', '#60a5fa')" class="px-5 py-2.5 bg-blue-400 border-2 border-blue-600 rounded-xl text-blue-950 font-black text-xs">BLUE (蓝色)</button>
+                            <button onclick="paintColor('green', '#4ade80')" class="px-5 py-2.5 bg-green-400 border-2 border-green-600 rounded-xl text-green-950 font-black text-xs">GREEN (绿色)</button>
+                        </div>
+                    </div>
+
+                    <!-- Eng Game 2: Animal Matching -->
+                    <div id="eng-game-2" class="space-y-5 hidden">
+                        <div class="border-b border-slate-100 pb-2.5">
+                            <h4 class="font-black text-lg text-slate-800">🦁 幻兽动物园 (Unit 4 We Love Animals)</h4>
+                            <p class="text-xs text-slate-400">听一听动物叫声或单词卡，点击匹配正确的森林幻兽！</p>
+                        </div>
+
+                        <div class="flex flex-col items-center justify-center py-6 bg-sky-50 border-2 border-sky-100 rounded-2xl gap-3">
+                            <button onclick="playAnimalOnomatopoeia()" class="px-6 py-2.5 bg-sky-500 hover:bg-sky-600 text-white font-black rounded-full text-xs shadow-md flex items-center gap-1.5">
+                                <i class="fas fa-volume-up"></i> <span>播放动物魔咒声</span>
+                            </button>
+                            <div class="text-base font-black text-sky-950 font-mono tracking-wider" id="animal-spell-card">PANDA</div>
+                        </div>
+
+                        <!-- Animal icons grid choices -->
+                        <div class="grid grid-cols-2 gap-3" id="animal-grid-choices">
+                            <!-- Populated in JS -->
+                        </div>
+                    </div>
+
+                    <!-- Eng Game 3: Stationery backpack -->
+                    <div id="eng-game-3" class="space-y-5 hidden">
+                        <div class="border-b border-slate-100 pb-2.5">
+                            <h4 class="font-black text-lg text-slate-800">🎒 魔法文具包 (Unit 1 Hello & Stationery)</h4>
+                            <p class="text-xs text-slate-400">把正确的文具塞进开学小书包里，学习整理你的课桌吧！</p>
+                        </div>
+
+                        <div class="flex flex-col md:flex-row items-center justify-around gap-6 py-6 bg-emerald-50 border-2 border-emerald-100 rounded-2xl">
+                            <!-- Backpack visual -->
+                            <div class="w-24 h-24 rounded-2xl bg-white border-2 border-emerald-200 flex flex-col items-center justify-center text-4xl text-emerald-500 shadow relative">
+                                <i class="fas fa-suitcase"></i>
+                                <span class="absolute bottom-1 text-[9px] font-black text-emerald-800" id="backpack-count">0 件文具</span>
+                            </div>
+
+                            <div class="text-center space-y-2 max-w-xs">
+                                <span class="text-xs font-black text-slate-500 block">小书包的呼唤指令：</span>
+                                <div class="bg-emerald-100 border border-emerald-200 rounded-xl p-3 text-sm font-black text-emerald-950" id="stationery-instruction">
+                                    "Put the RULER in my bag!"
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Stationery items grid choices -->
+                        <div class="grid grid-cols-3 gap-3" id="stationery-choices">
+                            <!-- Populated in JS -->
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Leitner Kids Vocab Camp -->
+                <div class="bg-white border-4 border-slate-200 rounded-3xl p-6 shadow-sm space-y-5">
+                    <div class="border-b border-slate-100 pb-3 flex justify-between items-center flex-wrap gap-2">
+                        <div>
+                            <h3 class="font-black text-slate-800 text-lg flex items-center">
+                                <i class="fas fa-cubes text-sky-500 mr-2"></i>三上英语单词累积阁 (Leitner Kids Vocab)
+                            </h3>
+                            <p class="text-xs text-slate-400 mt-1">配合联想音标与例句，将单词从待记移入已熟记，实现终生单词量飞跃！</p>
+                        </div>
+                        <!-- Progress stat bubble -->
+                        <div class="bg-sky-50 border-2 border-sky-200 px-4 py-1.5 rounded-full text-xs font-black text-sky-700 shadow-sm">
+                            已攻克词汇：<span id="eng-accumulated-count">0</span> / 54
+                        </div>
+                    </div>
+
+                    <!-- Leitner Boxes Visual Progress -->
+                    <div class="grid grid-cols-3 gap-2 text-center text-[10px] md:text-xs font-black">
+                        <div class="p-3 bg-red-50 border border-red-200 rounded-2xl text-red-700">
+                            <span class="block text-[14px]">📦 盲盒 1</span>
+                            <span class="block opacity-80 mt-0.5">新词待掌握</span>
+                            <span class="text-[14px] block mt-1" id="box1-count">0</span>
+                        </div>
+                        <div class="p-3 bg-amber-50 border border-amber-200 rounded-2xl text-amber-700">
+                            <span class="block text-[14px]">📦 盲盒 2</span>
+                            <span class="block opacity-80 mt-0.5">熟悉巩固中</span>
+                            <span class="text-[14px] block mt-1" id="box2-count">0</span>
+                        </div>
+                        <div class="p-3 bg-emerald-50 border border-emerald-200 rounded-2xl text-emerald-700">
+                            <span class="block text-[14px]">📦 盲盒 3</span>
+                            <span class="block opacity-80 mt-0.5">已彻底攻克</span>
+                            <span class="text-[14px] block mt-1" id="box3-count">0</span>
+                        </div>
+                    </div>
+
+                    <!-- Interactive Word Card Box -->
+                    <div class="h-56 perspective cursor-pointer" onclick="flipEngVocabCard()">
+                        <div id="eng-vocab-card-inner" class="card-inner w-full h-full relative duration-500">
+                            <!-- Card Front -->
+                            <div class="card-front absolute inset-0 bg-gradient-to-br from-sky-400 to-indigo-500 text-white rounded-3xl p-6 flex flex-col justify-between shadow border border-sky-300">
+                                <div class="flex justify-between items-center">
+                                    <span class="bg-white/20 border border-white/30 text-[10px] px-2.5 py-1 rounded-full font-black"><i class="fas fa-eye-slash mr-1"></i> 新词默写认读</span>
+                                    <span class="text-[10px] text-sky-100 font-bold" id="eng-word-unit">Unit 1</span>
+                                </div>
+                                <div class="text-center space-y-2">
+                                    <h4 class="text-3xl font-black font-mono tracking-wide" id="eng-card-word">PENCIL</h4>
+                                    <p class="text-xs text-sky-100 font-semibold mt-1">你能说出它的中文和拼读吗？点击卡片揭晓！</p>
+                                </div>
+                                <div class="flex justify-between items-center text-xs text-sky-100/90 font-bold">
+                                    <button onclick="playSpeechSynthesizer(); event.stopPropagation();" class="px-3.5 py-1.5 bg-white/25 hover:bg-white/40 rounded-full flex items-center gap-1.5 shadow">
+                                        <i class="fas fa-volume-up animate-pulse"></i> 语音拼读
+                                    </button>
+                                    <span>点击卡片翻牌 ➔</span>
+                                </div>
+                            </div>
+                            <!-- Card Back -->
+                            <div class="card-back absolute inset-0 bg-yellow-50 border-4 border-yellow-200 text-slate-800 rounded-3xl p-6 flex flex-col justify-between shadow">
+                                <span class="bg-amber-400 text-amber-950 text-[10px] px-2.5 py-1 rounded-full font-black self-start">中文注释与释义</span>
+                                <div class="text-center space-y-2">
+                                    <div class="text-2xl font-black text-slate-900" id="eng-card-translation">✏️ 铅笔</div>
+                                    <div class="text-xs font-semibold text-slate-400 italic" id="eng-card-sentence">"This is my pencil."</div>
+                                </div>
+                                <div class="grid grid-cols-2 gap-3 pt-2">
+                                    <button onclick="leitnerFeedback(false); event.stopPropagation();" class="py-2 rounded-xl bg-red-100 hover:bg-red-200 text-red-800 font-black text-xs border border-red-300">
+                                        ❌ 没记住 (Box1)
+                                    </button>
+                                    <button onclick="leitnerFeedback(true); event.stopPropagation();" class="py-2 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-white font-black text-xs shadow-md">
+                                        ✅ 掌握了 (进下一盒)
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+
+            <!-- ================= SECTION: MATH GRADE 1-2 PLAYROOM ================= -->
+            <section id="low-grade-playroom" class="space-y-6">
+                
+                <!-- Game Switch Tabs -->
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <button onclick="selectLowGame(1)" id="low-tab-1" class="p-4 rounded-2xl border-4 border-slate-200 bg-white hover:bg-slate-50 font-black text-sm flex items-center justify-center space-x-2 transition-all">
+                        <span class="text-sky-500 text-lg"><i class="fas fa-people-arrows"></i></span>
+                        <span>👥 排队重叠问题</span>
+                    </button>
+                    <button onclick="selectLowGame(2)" id="low-tab-2" class="p-4 rounded-2xl border-4 border-slate-200 bg-white hover:bg-slate-50 font-black text-sm flex items-center justify-center space-x-2 transition-all">
+                        <span class="text-amber-500 text-lg"><i class="fas fa-scale-balanced"></i></span>
+                        <span>⚖️ 移多补少平衡天平</span>
+                    </button>
+                    <button onclick="selectLowGame(3)" id="low-tab-3" class="p-4 rounded-2xl border-4 border-slate-200 bg-white hover:bg-slate-50 font-black text-sm flex items-center justify-center space-x-2 transition-all">
+                        <span class="text-purple-500 text-lg"><i class="fas fa-bezier-curve"></i></span>
+                        <span>🔮 周期循环规律</span>
+                    </button>
+                </div>
+
+                <!-- Game Box -->
+                <div class="bg-white border-4 border-slate-200 rounded-3xl p-6 shadow-sm min-h-[420px] flex flex-col justify-between" id="low-game-box">
+                    
+                    <!-- Game 1: Queueing Overlaps -->
+                    <div id="low-game-1" class="space-y-6">
+                        <div class="border-b-2 border-slate-100 pb-3">
+                            <div class="flex items-center space-x-2">
+                                <span class="bg-sky-500 text-white text-xs px-2 py-0.5 rounded font-black">奥数专题</span>
+                                <h4 class="font-black text-lg text-slate-800">排队问题演练舱</h4>
+                            </div>
+                            <p class="text-xs text-slate-400 mt-1">从左数、从右数，中间重叠了谁？通过图形看透加减法的本质！</p>
+                        </div>
+
+                        <!-- Queue visual representation -->
+                        <div class="flex flex-col items-center gap-4 py-6 bg-sky-50 rounded-2xl border-2 border-sky-100">
+                            <div class="flex items-center justify-center gap-2 flex-wrap" id="queue-avatars-container">
+                                <!-- Populated in JS -->
+                            </div>
+                            <div class="flex items-center justify-center gap-2 flex-wrap hidden text-xs font-mono font-bold text-sky-700 bg-sky-100 px-4 py-1.5 rounded-full" id="queue-index-guides">
+                                <!-- Guides populated in JS -->
+                            </div>
+                        </div>
+
+                        <div class="bg-amber-50 border border-amber-200 rounded-2xl p-4 text-center font-black text-slate-800 text-sm md:text-base leading-relaxed" id="queue-question-text">
+                            正在构思奥数谜题...
+                        </div>
+
+                        <div class="flex justify-center gap-4">
+                            <button onclick="toggleQueueGuides()" class="px-5 py-2 bg-sky-100 hover:bg-sky-200 text-sky-800 border border-sky-300 font-black rounded-xl text-xs flex items-center gap-1.5">
+                                <i class="fas fa-eye"></i> <span>显示/隐藏位置标尺</span>
+                            </button>
+                        </div>
+
+                        <div class="grid grid-cols-3 gap-3" id="queue-options">
+                            <!-- Options -->
+                        </div>
+                    </div>
+
+                    <!-- Game 2: Cookie Balancing 天平秤 -->
+                    <div id="low-game-2" class="space-y-6 hidden">
+                        <div class="border-b-2 border-slate-100 pb-3">
+                            <div class="flex items-center space-x-2">
+                                <span class="bg-amber-500 text-white text-xs px-2 py-0.5 rounded font-black">奥数专题</span>
+                                <h4 class="font-black text-lg text-slate-800">移多补少天平秤</h4>
+                            </div>
+                            <p class="text-xs text-slate-400 mt-1">两边盘子里的糖果数量不一样，要移动几颗才能达到完美平衡呢？</p>
+                        </div>
+
+                        <!-- Balancing scale visuals -->
+                        <div class="flex flex-col md:flex-row items-center justify-around gap-6 py-6 bg-amber-50/50 rounded-2xl border-2 border-amber-100">
+                            <div class="text-center space-y-2">
+                                <span class="text-xs font-black text-amber-700 block">左盘子 (A) : <strong id="plate-a-count" class="text-lg">0</strong> 颗</span>
+                                <div class="flex flex-wrap max-w-[130px] min-w-[100px] min-h-[80px] bg-white p-3 rounded-xl border border-amber-200 justify-center gap-1 shadow-inner" id="plate-a-candies">
+                                    <!-- Candies left -->
+                                </div>
+                            </div>
+
+                            <div class="flex flex-col items-center">
+                                <span class="text-2xl text-amber-500 animate-pulse"><i class="fas fa-scale-unbalanced" id="scale-balance-icon"></i></span>
+                                <span class="text-[10px] text-slate-400 font-bold mt-2" id="scale-status-text">不平衡</span>
+                            </div>
+
+                            <div class="text-center space-y-2">
+                                <span class="text-xs font-black text-amber-700 block">右盘子 (B) : <strong id="plate-b-count" class="text-lg">0</strong> 颗</span>
+                                <div class="flex flex-wrap max-w-[130px] min-w-[100px] min-h-[80px] bg-white p-3 rounded-xl border border-amber-200 justify-center gap-1 shadow-inner" id="plate-b-candies">
+                                    <!-- Candies right -->
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-amber-100 border border-amber-200 rounded-xl p-4 text-center text-sm font-black text-amber-950" id="balance-question-text">
+                            请问：要从左盘A挪动多少颗糖果到右盘B，两边的糖果数才一样多？
+                        </div>
+
+                        <div class="flex justify-center gap-4">
+                            <button onclick="moveCookie()" class="px-5 py-2 bg-amber-500 hover:bg-amber-600 text-white font-black rounded-xl text-xs flex items-center gap-1">
+                                <i class="fas fa-share-all"></i> <span>向右盘移动一颗 🍬</span>
+                            </button>
+                            <button onclick="checkBalanceSubmit()" class="px-6 py-2 bg-emerald-500 hover:bg-emerald-600 text-white font-black rounded-xl text-xs">确认平衡结果</button>
+                        </div>
+                    </div>
+
+                    <!-- Game 3: Periodic patterns -->
+                    <div id="low-game-3" class="space-y-6 hidden">
+                        <div class="border-b-2 border-slate-100 pb-3">
+                            <div class="flex items-center space-x-2">
+                                <span class="bg-purple-500 text-white text-xs px-2 py-0.5 rounded font-black">奥数专题</span>
+                                <h4 class="font-black text-lg text-slate-800">周期图形魔法链</h4>
+                            </div>
+                            <p class="text-xs text-slate-400 mt-1">发现重复出现的魔法宝石规律，用余数推算未来的宝石形状！</p>
+                        </div>
+
+                        <!-- Periodic chain graphics -->
+                        <div class="flex flex-col items-center justify-center gap-3 py-6 bg-purple-50 rounded-2xl border-2 border-purple-100">
+                            <div class="flex items-center justify-center gap-2.5 flex-wrap p-4 bg-white rounded-xl shadow-inner border border-purple-200" id="magic-chain-gems">
+                                <!-- Gems list -->
+                            </div>
+                            <span class="text-xs font-black text-purple-600 animate-pulse">规律是这样一直循环排列下去的哦...</span>
+                        </div>
+
+                        <div class="bg-purple-100 border border-purple-200 rounded-xl p-4 text-center text-sm font-black text-purple-800" id="cycle-question-text">
+                            找出规律后，请问排列下去的第 15 颗宝石应该是什么颜色？
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-3" id="cycle-options">
+                            <!-- Options filled in JS -->
+                        </div>
+                    </div>
+
+                    <!-- Game 4: Grimoire Challenge -->
+                    <div id="low-game-4" class="space-y-6 hidden">
+                        <div class="border-b-2 border-slate-100 pb-3">
+                            <div class="flex items-center space-x-2">
+                                <span class="bg-amber-500 text-white text-xs px-2 py-0.5 rounded font-black">秘籍参透</span>
+                                <h4 class="font-black text-lg text-slate-800" id="low-grimoire-title">奥数秘籍参透舱</h4>
+                            </div>
+                            <p class="text-xs text-slate-400 mt-1">仔细阅读秘籍问题，选择正确的选项，开启宝箱获取丰厚金币与经验奖励！</p>
+                        </div>
+
+                        <div class="bg-amber-50 border border-amber-200 rounded-2xl p-5 text-center font-black text-slate-800 text-sm md:text-base leading-relaxed" id="low-grimoire-question">
+                            请先在右侧秘籍阁选择一本奥数秘籍开始参透！
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3" id="low-grimoire-options">
+                            <!-- Options -->
+                        </div>
+                    </div>
+
+                </div>
+            </section>
+
+            <!-- ================= SECTION: GRADE 3 RPG BATTLE ================= -->
+            <section id="mid-grade-combat" class="space-y-6 hidden">
+
+                <!-- Winding Level Map Card -->
+                <div class="bg-gradient-to-br from-indigo-950 via-slate-900 to-slate-950 border-4 border-slate-700 rounded-3xl p-6 shadow-2xl relative overflow-hidden text-white">
+                    <div class="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(245,158,11,0.06)_0%,transparent_55%)] pointer-events-none"></div>
+                    <div class="flex justify-between items-center border-b border-slate-700 pb-3 mb-5">
+                        <span class="text-xs font-black bg-amber-500/20 text-amber-400 px-3 py-1 rounded-full border border-amber-500/30">🗺️ 魔法勇者决斗地图</span>
+                        <span class="text-[10px] text-slate-400 font-bold">点击关卡图标直接出征决斗！</span>
+                    </div>
+
+                    <!-- Winding Level Map Grid (S-Curve) -->
+                    <div class="grid grid-cols-3 gap-4 md:gap-5 relative">
+                        <!-- Node 1 -->
+                        <button onclick="selectStage(1)" id="node-1" class="relative p-3 rounded-2xl border-2 border-slate-700 bg-slate-800/80 hover:bg-slate-700 transition-all flex flex-col items-center justify-between text-center min-h-[105px]">
+                            <span class="text-[10px] text-sky-400 font-black">第 1 关</span>
+                            <span class="text-2xl my-1 text-slate-300"><i class="fas fa-ghost"></i></span>
+                            <span class="text-[11px] font-black tracking-tight text-white">时间史莱姆</span>
+                            <div class="flex gap-0.5 justify-center mt-1" id="stars-node-1"></div>
+                        </button>
+                        <!-- Node 2 -->
+                        <button onclick="selectStage(2)" id="node-2" class="relative p-3 rounded-2xl border-2 border-slate-700 bg-slate-800/80 hover:bg-slate-700 transition-all flex flex-col items-center justify-between text-center min-h-[105px]">
+                            <span class="text-[10px] text-sky-400 font-black">第 2 关</span>
+                            <span class="text-2xl my-1 text-slate-300"><i class="fas fa-paw"></i></span>
+                            <span class="text-[11px] font-black tracking-tight text-white">加减松鼠怪</span>
+                            <div class="flex gap-0.5 justify-center mt-1" id="stars-node-2"></div>
+                        </button>
+                        <!-- Node 3 -->
+                        <button onclick="selectStage(3)" id="node-3" class="relative p-3 rounded-2xl border-2 border-slate-700 bg-slate-800/80 hover:bg-slate-700 transition-all flex flex-col items-center justify-between text-center min-h-[105px]">
+                            <span class="text-[10px] text-sky-400 font-black">第 3 关</span>
+                            <span class="text-2xl my-1 text-slate-300"><i class="fas fa-horse"></i></span>
+                            <span class="text-[11px] font-black tracking-tight text-white">测量独角兽</span>
+                            <div class="flex gap-0.5 justify-center mt-1" id="stars-node-3"></div>
+                        </button>
+                        
+                        <!-- Node 6 (S-Curve winding style) -->
+                        <button onclick="selectStage(6)" id="node-6" class="relative p-3 rounded-2xl border-2 border-slate-700 bg-slate-800/80 hover:bg-slate-700 transition-all flex flex-col items-center justify-between text-center min-h-[105px]">
+                            <span class="text-[10px] text-sky-400 font-black">第 6 关</span>
+                            <span class="text-2xl my-1 text-slate-300"><i class="fas fa-bat"></i></span>
+                            <span class="text-[11px] font-black tracking-tight text-white">乘法小蝙蝠</span>
+                            <div class="flex gap-0.5 justify-center mt-1" id="stars-node-6"></div>
+                        </button>
+                        <!-- Node 5 -->
+                        <button onclick="selectStage(5)" id="node-5" class="relative p-3 rounded-2xl border-2 border-slate-700 bg-slate-800/80 hover:bg-slate-700 transition-all flex flex-col items-center justify-between text-center min-h-[105px]">
+                            <span class="text-[10px] text-sky-400 font-black">第 5 关</span>
+                            <span class="text-2xl my-1 text-slate-300"><i class="fas fa-spider"></i></span>
+                            <span class="text-[11px] font-black tracking-tight text-white">倍数蜘蛛精</span>
+                            <div class="flex gap-0.5 justify-center mt-1" id="stars-node-5"></div>
+                        </button>
+                        <!-- Node 4 -->
+                        <button onclick="selectStage(4)" id="node-4" class="relative p-3 rounded-2xl border-2 border-slate-700 bg-slate-800/80 hover:bg-slate-700 transition-all flex flex-col items-center justify-between text-center min-h-[105px]">
+                            <span class="text-[10px] text-sky-400 font-black">第 4 关</span>
+                            <span class="text-2xl my-1 text-slate-300"><i class="fas fa-paw"></i></span>
+                            <span class="text-[11px] font-black tracking-tight text-white">进位狂暴熊</span>
+                            <div class="flex gap-0.5 justify-center mt-1" id="stars-node-4"></div>
+                        </button>
+                        
+                        <!-- Node 7 -->
+                        <button onclick="selectStage(7)" id="node-7" class="relative p-3 rounded-2xl border-2 border-slate-700 bg-slate-800/80 hover:bg-slate-700 transition-all flex flex-col items-center justify-between text-center min-h-[105px]">
+                            <span class="text-[10px] text-sky-400 font-black">第 7 关</span>
+                            <span class="text-2xl my-1 text-slate-300"><i class="fas fa-mountain"></i></span>
+                            <span class="text-[11px] font-black tracking-tight text-white">周长石巨人</span>
+                            <div class="flex gap-0.5 justify-center mt-1" id="stars-node-7"></div>
+                        </button>
+                        <!-- Node 8 -->
+                        <button onclick="selectStage(8)" id="node-8" class="relative p-3 rounded-2xl border-2 border-slate-700 bg-slate-800/80 hover:bg-slate-700 transition-all flex flex-col items-center justify-between text-center min-h-[105px]">
+                            <span class="text-[10px] text-sky-400 font-black">第 8 关</span>
+                            <span class="text-2xl my-1 text-slate-300"><i class="fas fa-dragon"></i></span>
+                            <span class="text-[11px] font-black tracking-tight text-white">分数烈焰龙</span>
+                            <div class="flex gap-0.5 justify-center mt-1" id="stars-node-8"></div>
+                        </button>
+                        <!-- Node 9 -->
+                        <button onclick="selectStage(9)" id="node-9" class="relative p-3 rounded-2xl border-2 border-slate-700 bg-slate-800/80 hover:bg-slate-700 transition-all flex flex-col items-center justify-between text-center min-h-[105px]">
+                            <span class="text-[10px] text-sky-400 font-black">第 9 关</span>
+                            <span class="text-2xl my-1 text-slate-300"><i class="fas fa-circle-dot"></i></span>
+                            <span class="text-[11px] font-black tracking-tight text-white">递推数字怪</span>
+                            <div class="flex gap-0.5 justify-center mt-1" id="stars-node-9"></div>
+                        </button>
+                    </div>
+                </div>
+
+                <section class="bg-slate-900 border-4 border-slate-700 rounded-3xl p-6 shadow-2xl text-white relative overflow-hidden">
+                    <div class="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(56,189,248,0.08)_0%,transparent_70%)] pointer-events-none"></div>
+                    <div class="flex justify-between items-center border-b border-slate-700 pb-3">
+                        <span class="text-xs font-extrabold bg-sky-500/20 text-sky-400 px-3 py-1 rounded-full border border-sky-500/30">⚔️ 勇者决斗竞技场</span>
+                        <span class="text-sm font-black text-yellow-400" id="boss-name-label">首领：时间史莱姆</span>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-4 py-8 items-center relative min-h-[150px]">
+                        <!-- Hero Side -->
+                        <div class="flex flex-col items-center space-y-2" id="hero-sprite">
+                            <div class="w-16 h-16 rounded-full bg-sky-500/20 border-2 border-sky-400 flex items-center justify-center text-sky-300 text-3xl shadow-lg shadow-sky-500/10">
+                                <i class="fas fa-shield-halved" id="combat-mascot-avatar"></i>
+                            </div>
+                            <span class="text-xs font-black text-sky-400">数学小勇者</span>
+                            <div class="w-28 bg-slate-800 rounded-full h-3.5 overflow-hidden border border-slate-600">
+                                <div class="bg-emerald-500 h-full rounded-full transition-all duration-300" id="hero-hp-bar" style="width: 100%"></div>
+                            </div>
+                            <div class="flex items-center space-x-1.5 mt-1">
+                                <span class="text-[10px] font-mono text-slate-400" id="hero-hp-text">HP: 100/100</span>
+                                <button onclick="useHpPotion()" class="bg-red-500 hover:bg-red-600 text-white text-[8px] px-1.5 py-0.5 rounded-full font-bold transition-all shadow" id="combat-use-hp-btn">🧪 回血药水 (<span id="combat-hp-potion-qty">0</span>)</button>
+                            </div>
+                        </div>
+
+                        <!-- Monster Side -->
+                        <div class="flex flex-col items-center space-y-2" id="monster-sprite">
+                            <div class="w-16 h-16 rounded-full bg-red-500/20 border-2 border-red-400 flex items-center justify-center text-red-400 text-3xl shadow-lg shadow-red-500/10">
+                                <i class="fas fa-dragon" id="boss-avatar-icon"></i>
+                            </div>
+                            <span class="text-xs font-black text-red-400" id="boss-name-text">时间史莱姆</span>
+                            <div class="w-28 bg-slate-800 rounded-full h-3.5 overflow-hidden border border-slate-600">
+                                <div class="bg-red-500 h-full rounded-full transition-all duration-300" id="monster-hp-bar" style="width: 100%"></div>
+                            </div>
+                            <span class="text-[10px] font-mono text-slate-400" id="monster-hp-text">HP: 100/100</span>
+                        </div>
+                    </div>
+
+                    <div class="bg-black/50 border border-slate-700 rounded-xl p-3 text-xs text-sky-300 font-mono h-16 overflow-y-auto" id="combat-log">
+                        [系统] 遭遇首领怪！请在下方作答对怪兽释放海量法术！
+                    </div>
+                </section>
+
+                <!-- Dynamic Question and Simulator Area -->
+                <section class="bg-white border-4 border-slate-200 rounded-3xl p-6 shadow-sm space-y-4">
+                    <div class="flex justify-between items-center border-b-2 border-slate-100 pb-2">
+                        <h3 class="font-black text-slate-800 text-base" id="stage-title-text">
+                            正在挑战：第一关 - 时间魔法堡
+                        </h3>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4" id="cards-container">
+                        <!-- Cards populated dynamically -->
+                    </div>
+
+                    <div class="pt-5 border-t-2 border-slate-100 hidden" id="clock-simulator">
+                        <h4 class="font-black text-slate-800 text-base mb-3">⏰ 魔法时钟演练舱</h4>
+                        <div class="bg-sky-50 rounded-2xl p-5 flex flex-col items-center border-2 border-sky-100 gap-4">
+                            <div class="flex justify-around items-center w-full">
+                                <div class="text-center font-black text-sm">
+                                    <span class="text-slate-500 block mb-1">出发时间</span>
+                                    <div class="text-sky-700 text-2xl font-extrabold font-mono" id="start-time-text">08:00</div>
+                                </div>
+                                <i class="fas fa-arrow-right text-sky-400 text-xl"></i>
+                                <div class="text-center font-black text-sm">
+                                    <span class="text-slate-500 block mb-1">到达时间</span>
+                                    <div class="text-sky-700 text-2xl font-extrabold font-mono" id="end-time-text">08:45</div>
+                                </div>
+                            </div>
+                            <input type="range" id="timeSlider" min="0" max="180" value="45" oninput="updateClockSim()" class="accent-sky-500 w-full max-w-sm h-3 bg-slate-200 rounded-lg appearance-none cursor-pointer">
+                            <div class="text-sm text-sky-800 font-extrabold bg-sky-100 border-2 border-sky-200 rounded-xl p-3 text-center w-full max-w-sm" id="time-diff-output">
+                                列车一共行驶了：45分钟
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="pt-5 border-t-2 border-slate-100 hidden" id="perimeter-simulator">
+                        <h4 class="font-black text-slate-800 text-base mb-3">📏 长方形周长拼图建造器</h4>
+                        <div class="bg-emerald-50 rounded-2xl p-5 flex flex-col md:flex-row items-center justify-around border-2 border-emerald-100 gap-4">
+                            <div class="w-36 h-36 flex items-center justify-center bg-white border-2 border-emerald-200 rounded-xl relative">
+                                <div id="rect-shape" class="bg-emerald-500/20 border-2 border-emerald-500 rounded-lg transition-all duration-300 flex items-center justify-center text-xs font-black text-emerald-700" style="width: 80px; height: 60px;">
+                                    周长图形
+                                </div>
+                            </div>
+                            <div class="space-y-3.5 flex-1 max-w-xs text-sm font-bold">
+                                <div class="flex justify-between items-center">
+                                    <span>长 (a): <strong id="rect-w-text" class="text-emerald-600 font-black">8</strong>厘米</span>
+                                    <input type="range" id="rectWSlider" min="4" max="12" value="8" oninput="updatePerimeterSim()" class="accent-emerald-500 w-36">
+                                </div>
+                                <div class="flex justify-between items-center">
+                                    <span>宽 (b): <strong id="rect-h-text" class="text-emerald-600 font-black">6</strong>厘米</span>
+                                    <input type="range" id="rectHSlider" min="3" max="10" value="6" oninput="updatePerimeterSim()" class="accent-emerald-500 w-36">
+                                </div>
+                                <div class="bg-emerald-100 border border-emerald-200 rounded-lg p-2.5 text-center font-mono text-xs md:text-sm text-emerald-800 font-bold" id="perimeter-output">
+                                    周长 C = (8 + 6) × 2 = 28 厘米
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="pt-5 border-t-2 border-slate-100 hidden" id="pizza-simulator">
+                        <h4 class="font-black text-slate-800 text-base mb-3">🍕 披萨等分切割机</h4>
+                        <div class="bg-pink-50 rounded-2xl p-5 flex flex-col md:flex-row items-center justify-around border-2 border-pink-100 gap-4">
+                            <div class="w-36 h-36 relative">
+                                <canvas id="pizzaCanvas" width="144" height="144" class="mx-auto"></canvas>
+                            </div>
+                            <div class="space-y-3.5 flex-1 max-w-xs text-sm font-bold">
+                                <div class="flex justify-between items-center">
+                                    <span>等分数 (分母): <strong id="pizza-den-text" class="text-pink-600 font-black">8</strong>份</span>
+                                    <input type="range" id="pizzaDenSlider" min="2" max="16" step="2" value="8" oninput="updatePizzaSim()" class="accent-pink-500 w-36">
+                                </div>
+                                <div class="flex justify-between items-center">
+                                    <span>涂色数 (分子): <strong id="pizza-num-text" class="text-pink-600 font-black">3</strong>份</span>
+                                    <input type="range" id="pizzaNumSlider" min="1" max="8" value="3" oninput="updatePizzaSim()" class="accent-pink-500 w-36">
+                                </div>
+                                <div class="bg-pink-100 border border-pink-200 rounded-lg p-2.5 text-center font-mono text-xs md:text-sm text-pink-800 font-bold" id="pizza-output">
+                                    涂色部分分数： 3 / 8
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Quest Question Area -->
+                    <div class="bg-amber-50 border-2 border-amber-200 rounded-2xl p-5 mt-4 space-y-4" id="quest-area">
+                        <span class="bg-amber-400 text-amber-950 text-xs px-2.5 py-1 rounded font-black uppercase">战斗算术法术 Quest</span>
+                        <h4 class="font-black text-slate-800 text-base md:text-lg leading-relaxed" id="quest-question">加载中...</h4>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3" id="quest-options-container">
+                            <!-- Options filled dynamically -->
+                        </div>
+                    </div>
+                </section>
+            </section>
+        </div>
+
+        <!-- Right 1 Col: Shop and 30 Grimoire Index -->
+        <div class="space-y-6">
+            
+            <!-- The 30 Olympiad Grimoires Selector -->
+            <section class="bg-white border-4 border-slate-200 rounded-3xl p-6 shadow-sm space-y-3" id="low-grimoire-menu">
+                <h3 class="font-black text-slate-800 text-lg border-b-2 border-slate-100 pb-2 flex items-center">
+                    <i class="fas fa-scroll text-amber-500 mr-2"></i> 二年级30大奥数秘籍阁
+                </h3>
+                <div class="space-y-1.5 max-h-[360px] overflow-y-auto pr-1 text-xs" id="grimoire-list-buttons">
+                    <!-- 30 buttons populated in JS -->
+                </div>
+            </section>
+
+            <!-- Unified Magic Shop Cabin -->
+            <section class="bg-white border-4 border-slate-200 rounded-3xl p-6 shadow-sm space-y-4">
+                <h3 class="font-black text-slate-800 text-lg border-b-2 border-slate-100 pb-2 flex items-center">
+                    <i class="fas fa-store text-amber-500 mr-2 animate-pulse"></i> 脑力魔法小商铺
+                </h3>
+                
+                <!-- Shop Tabs -->
+                <div class="flex border-b border-slate-200 text-xs font-black pb-1 gap-1.5 flex-wrap">
+                    <button onclick="switchShopTab('mascot')" id="shop-tab-mascot" class="flex-grow pb-1.5 border-b-2 border-sky-500 text-sky-600 text-center">🦊 伙伴</button>
+                    <button onclick="switchShopTab('potion')" id="shop-tab-potion" class="flex-grow pb-1.5 border-b-2 border-transparent text-slate-400 text-center">🧪 药水</button>
+                    <button onclick="switchShopTab('skin')" id="shop-tab-skin" class="flex-grow pb-1.5 border-b-2 border-transparent text-slate-400 text-center">👕 皮肤</button>
+                    <button onclick="switchShopTab('gacha')" id="shop-tab-gacha" class="flex-grow pb-1.5 border-b-2 border-transparent text-slate-400 text-center">🎁 抽盲盒</button>
+                </div>
+
+                <!-- Tab content: Mascots -->
+                <div id="shop-content-mascot" class="space-y-3">
+                    <div class="flex items-center justify-between p-3 bg-slate-50 border border-slate-200 rounded-xl">
+                        <div class="flex items-center space-x-2">
+                            <i class="fas fa-cat text-amber-500 text-lg"></i>
+                            <div>
+                                <span class="text-sm font-black block text-slate-800">狐狸阿福</span>
+                                <span class="text-[10px] text-slate-400 block font-semibold">伤害/思维加成 +20%</span>
+                            </div>
+                        </div>
+                        <button onclick="equipMascot('cat')" class="px-3 py-1 bg-amber-400 hover:bg-amber-500 text-amber-950 font-black rounded-lg text-xs" id="equip-btn-cat">装备中</button>
+                    </div>
+
+                    <div class="flex items-center justify-between p-3 bg-slate-50 border border-slate-200 rounded-xl">
+                        <div class="flex items-center space-x-2">
+                            <i class="fas fa-dog text-purple-500 text-lg"></i>
+                            <div>
+                                <span class="text-sm font-black block text-slate-800">熊猫小皮</span>
+                                <span class="text-[10px] text-slate-400 block font-semibold">伤害加成 +40%</span>
+                            </div>
+                        </div>
+                        <button onclick="buyOrEquip('dog', 200)" class="px-3 py-1 bg-sky-500 hover:bg-sky-600 text-white font-black rounded-lg text-xs" id="equip-btn-dog">200 🪙</button>
+                    </div>
+
+                    <div class="flex items-center justify-between p-3 bg-slate-50 border border-slate-200 rounded-xl">
+                        <div class="flex items-center space-x-2">
+                            <i class="fas fa-dragon text-red-500 text-lg"></i>
+                            <div>
+                                <span class="text-sm font-black block text-slate-800">恐龙露露</span>
+                                <span class="text-[10px] text-slate-400 block font-semibold">伤害加成 +60%</span>
+                            </div>
+                        </div>
+                        <button onclick="buyOrEquip('dragon', 500)" class="px-3 py-1 bg-sky-500 hover:bg-sky-600 text-white font-black rounded-lg text-xs" id="equip-btn-dragon">500 🪙</button>
+                    </div>
+                </div>
+
+                <!-- Tab content: Potions -->
+                <div id="shop-content-potion" class="space-y-3 hidden">
+                    <div class="flex items-center justify-between p-3 bg-slate-50 border border-slate-200 rounded-xl">
+                        <div class="flex items-center space-x-2">
+                            <i class="fas fa-flask text-red-500 text-lg"></i>
+                            <div>
+                                <span class="text-sm font-black block text-slate-800">生命治疗药水</span>
+                                <span class="text-[10px] text-slate-400 block font-semibold">决斗中瞬间回满HP (拥有: <span id="owned-hp-potions-text">0</span>)</span>
+                            </div>
+                        </div>
+                        <button onclick="buyPotion('hp', 40)" class="px-3 py-1 bg-sky-500 hover:bg-sky-600 text-white font-black rounded-lg text-xs">40 🪙</button>
+                    </div>
+
+                    <div class="flex items-center justify-between p-3 bg-slate-50 border border-slate-200 rounded-xl">
+                        <div class="flex items-center space-x-2">
+                            <i class="fas fa-wine-glass-empty text-amber-500 text-lg"></i>
+                            <div>
+                                <span class="text-sm font-black block text-slate-800">双倍经验药水</span>
+                                <span class="text-[10px] text-slate-400 block font-semibold">下次答题XP双倍 (拥有: <span id="owned-xp-potions-text">0</span>)</span>
+                            </div>
+                        </div>
+                        <button onclick="buyPotion('xp', 80)" class="px-3 py-1 bg-sky-500 hover:bg-sky-600 text-white font-black rounded-lg text-xs">80 🪙</button>
+                    </div>
+
+                    <div class="flex items-center justify-between p-3 bg-slate-50 border border-slate-200 rounded-xl">
+                        <div class="flex items-center space-x-2">
+                            <i class="fas fa-shield text-emerald-500 text-lg"></i>
+                            <div>
+                                <span class="text-sm font-black block text-slate-800">无敌知识护盾药水</span>
+                                <span class="text-[10px] text-slate-400 block font-semibold">免疫下次答错伤害 (拥有: <span id="owned-shield-potions-text">0</span>)</span>
+                            </div>
+                        </div>
+                        <button onclick="buyPotion('shield', 60)" class="px-3 py-1 bg-sky-500 hover:bg-sky-600 text-white font-black rounded-lg text-xs">60 🪙</button>
+                    </div>
+                </div>
+
+                <!-- Tab content: Skins -->
+                <div id="shop-content-skin" class="space-y-3 hidden">
+                    <div class="flex items-center justify-between p-3 bg-slate-50 border border-slate-200 rounded-xl">
+                        <div class="flex items-center space-x-2">
+                            <i class="fas fa-shield-halved text-sky-500 text-lg"></i>
+                            <div>
+                                <span class="text-sm font-black block text-slate-800">经典勇者盔甲</span>
+                                <span class="text-[10px] text-slate-400 block font-semibold">初始免费外观</span>
+                            </div>
+                        </div>
+                        <button onclick="equipHeroSkin('warrior')" class="px-3 py-1 bg-emerald-500 text-white font-black rounded-lg text-xs" id="skin-btn-warrior">使用中</button>
+                    </div>
+
+                    <div class="flex items-center justify-between p-3 bg-slate-50 border border-slate-200 rounded-xl">
+                        <div class="flex items-center space-x-2">
+                            <i class="fas fa-hat-wizard text-purple-500 text-lg"></i>
+                            <div>
+                                <span class="text-sm font-black block text-slate-800">奥数星空大法师</span>
+                                <span class="text-[10px] text-slate-400 block font-semibold">星空魔法特效装扮</span>
+                            </div>
+                        </div>
+                        <button onclick="buyOrEquipSkin('mage', 300)" class="px-3 py-1 bg-sky-500 hover:bg-sky-600 text-white font-black rounded-lg text-xs" id="skin-btn-mage">300 🪙</button>
+                    </div>
+
+                    <div class="flex items-center justify-between p-3 bg-slate-50 border border-slate-200 rounded-xl">
+                        <div class="flex items-center space-x-2">
+                            <i class="fas fa-robot text-rose-500 text-lg"></i>
+                            <div>
+                                <span class="text-sm font-black block text-slate-800">未来神级赛博骑士</span>
+                                <span class="text-[10px] text-slate-400 block font-semibold">科幻装甲红蓝霓虹特效</span>
+                            </div>
+                        </div>
+                        <button onclick="buyOrEquipSkin('cyber', 550)" class="px-3 py-1 bg-sky-500 hover:bg-sky-600 text-white font-black rounded-lg text-xs" id="skin-btn-cyber">550 🪙</button>
+                    </div>
+                </div>
+
+                <!-- Tab content: Gacha -->
+                <div id="shop-content-gacha" class="space-y-4 hidden text-center">
+                    <div class="p-4 bg-sky-50 border-2 border-sky-100 rounded-2xl space-y-2 relative overflow-hidden">
+                        <div class="text-5xl animate-bounce">🎁</div>
+                        <h4 class="font-black text-sm text-sky-950">魔法知识盲盒抽奖机</h4>
+                        <p class="text-[10px] text-slate-400">消耗冒险金币抽取神秘药水、传说装备、绝版勇者皮肤！</p>
+                    </div>
+
+                    <!-- Gacha Buttons -->
+                    <div class="grid grid-cols-2 gap-3">
+                        <button onclick="drawGacha(1)" class="p-3 bg-amber-400 hover:bg-amber-500 active:scale-95 text-amber-950 font-black text-xs rounded-xl border-b-4 border-amber-600 transition-all">
+                            🎁 单抽盲盒 (10 🪙)
+                        </button>
+                        <button onclick="drawGacha(10)" class="p-3 bg-indigo-600 hover:bg-indigo-700 active:scale-95 text-white font-black text-xs rounded-xl border-b-4 border-indigo-800 transition-all">
+                            🚀 豪华十连抽 (10000 🪙)
+                        </button>
+                    </div>
+
+                    <!-- Gacha Results Log -->
+                    <div class="bg-slate-900 border border-slate-700 rounded-xl p-3 text-left text-[10px] font-mono text-emerald-400 h-28 overflow-y-auto" id="gacha-results-log">
+                        [待机] 准备就绪，请投入金币抽奖...
+                    </div>
+                </div>
+
+                <!-- Equippable Weapons -->
+                <div class="pt-4 border-t border-slate-100">
+                    <h4 class="font-black text-slate-800 text-sm mb-3">🗡️ 武器装备库</h4>
+                    <div class="grid grid-cols-3 gap-2 text-center text-[10px] font-bold">
+                        <button onclick="buyWeapon('sword', 100)" id="weapon-sword" class="p-2 border border-slate-200 bg-slate-50 hover:bg-slate-100 rounded-lg flex flex-col items-center">
+                            <i class="fas fa-sword text-slate-500 text-base mb-1"></i>
+                            <span>测量短剑</span>
+                            <span class="text-slate-400 block" id="wp-price-sword">100 🪙</span>
+                        </button>
+                        <button onclick="buyWeapon('shield', 150)" id="weapon-shield" class="p-2 border border-slate-200 bg-slate-50 hover:bg-slate-100 rounded-lg flex flex-col items-center">
+                            <i class="fas fa-shield text-slate-500 text-base mb-1"></i>
+                            <span>分数巨盾</span>
+                            <span class="text-slate-400 block" id="wp-price-shield">150 🪙</span>
+                        </button>
+                        <button onclick="buyWeapon('staff', 300)" id="weapon-staff" class="p-2 border border-slate-200 bg-slate-50 hover:bg-slate-100 rounded-lg flex flex-col items-center">
+                            <i class="fas fa-wand-magic text-slate-500 text-base mb-1"></i>
+                            <span>时空权杖</span>
+                            <span class="text-slate-400 block" id="wp-price-staff">300 🪙</span>
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Parent banner -->
+            <section class="bg-gradient-to-br from-sky-400 via-sky-500 to-indigo-500 border-4 border-white rounded-3xl p-6 text-center relative overflow-hidden shadow-md text-white">
+                <h3 class="font-black text-lg mb-2">双语思维怎么提高？</h3>
+                <p class="text-xs md:text-sm opacity-90 mb-4 leading-relaxed font-semibold">扫码免费领取老王队长【奥数与小学英语PEP新课标讲义】，预约脑科学诊断！</p>
+                <div class="bg-white/10 p-5 rounded-2xl border border-white/20 max-w-[200px] mx-auto flex flex-col items-center">
+                    <img src="erweima2.jpg" alt="微信" class="w-24 h-24 rounded-lg mb-2 shadow-lg">
+                    <span class="text-xs text-white/90 block font-mono font-bold">微信号：vip20213456</span>
+                </div>
+            </section>
+        </div>
+
+    </main>
+
+    <!-- Victory Celebration Modal -->
+    <div id="victory-modal" class="fixed inset-0 bg-black/60 z-[9999] hidden flex items-center justify-center p-4">
+        <div class="bg-white border-8 border-amber-400 rounded-3xl p-8 max-w-sm w-full text-center space-y-5 shadow-2xl relative transform scale-90 transition-transform duration-300" id="victory-modal-card">
+            <div class="text-6xl animate-bounce">🏆</div>
+            <h3 class="font-black text-2xl text-slate-800" id="victory-title">胜利大捷！</h3>
+            <p class="text-sm font-bold text-slate-600 leading-relaxed" id="victory-message">你成功通过了这次思维挑战！</p>
+            
+            <div class="flex justify-around items-center bg-amber-50 rounded-2xl p-4 border border-amber-200">
+                <div class="text-center">
+                    <span class="text-amber-500 text-2xl block animate-spin"><i class="fas fa-coins"></i></span>
+                    <span class="text-xs text-slate-400 block font-bold">获得金币</span>
+                    <span class="text-sm font-black text-slate-800 font-mono" id="victory-reward-coins">+0</span>
+                </div>
+                <div class="text-center">
+                    <span class="text-sky-500 text-2xl block"><i class="fas fa-star"></i></span>
+                    <span class="text-xs text-slate-400 block font-bold">获得经验</span>
+                    <span class="text-sm font-black text-slate-800 font-mono" id="victory-reward-xp">+0</span>
+                </div>
+            </div>
+
+            <button onclick="closeVictoryModal()" class="w-full py-3 bg-amber-400 hover:bg-amber-500 active:scale-95 text-amber-950 font-black text-base rounded-2xl border-b-4 border-amber-600 transition-all">
+                收下奖励，继续冒险！
+            </button>
+        </div>
+    </div>
+
+    <!-- Confetti Canvas -->
+    <canvas id="confettiCanvas" class="fixed inset-0 pointer-events-none z-[9999] w-full h-full"></canvas>
+
+    <script>
+        // Web Audio API Synthesizer
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+        function playSound(type) {
+            try {
+                if (audioCtx.state === 'suspended') {
+                    audioCtx.resume();
+                }
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+
+                if (type === 'correct') {
+                    const t = audioCtx.currentTime;
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(523.25, t); 
+                    osc.frequency.setValueAtTime(659.25, t + 0.08); 
+                    osc.frequency.setValueAtTime(783.99, t + 0.16); 
+                    osc.frequency.setValueAtTime(1046.5, t + 0.24); 
+                    gain.gain.setValueAtTime(0.15, t);
+                    gain.gain.exponentialRampToValueAtTime(0.01, t + 0.5);
+                    osc.start(t);
+                    osc.stop(t + 0.5);
+                } else if (type === 'wrong') {
+                    const t = audioCtx.currentTime;
+                    osc.type = 'sawtooth';
+                    osc.frequency.setValueAtTime(120, t);
+                    osc.frequency.linearRampToValueAtTime(60, t + 0.4);
+                    gain.gain.setValueAtTime(0.12, t);
+                    gain.gain.exponentialRampToValueAtTime(0.01, t + 0.45);
+                    osc.start(t);
+                    osc.stop(t + 0.45);
+                } else if (type === 'flip') {
+                    const t = audioCtx.currentTime;
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(450, t);
+                    osc.frequency.exponentialRampToValueAtTime(1100, t + 0.08);
+                    gain.gain.setValueAtTime(0.1, t);
+                    gain.gain.exponentialRampToValueAtTime(0.01, t + 0.1);
+                    osc.start(t);
+                    osc.stop(t + 0.1);
+                }
+            } catch(e) {
+                console.log("Audio play error", e);
+            }
+        }
+
+        // 30 Olympiad Grimoires Data Library
+        const grimoiresData = {
+            1: {
+                title: "操作类问题",
+                tip: "口诀：倒推画图找终点，按部就班看演变。",
+                q: "有两桶水，如果从第一桶倒3千克到第二桶，两桶水就一样重。请问原来第一桶水比第二桶水重多少千克？",
+                opts: ["3千克", "6千克", "9千克"],
+                ans: 1,
+                sim: "none"
+            },
+            2: {
+                title: "线段图综合",
+                tip: "口诀：画出线段看长短，多退少补求一份。",
+                q: "红红 and 蓝蓝一共有18支铅笔。红红比蓝蓝多4支。请问蓝蓝有多少支铅笔？",
+                opts: ["7支", "11支", "9支"],
+                ans: 0,
+                sim: "none"
+            },
+            3: {
+                title: "必胜策略",
+                tip: "口诀：控制安全余数线，反向相加凑关键。",
+                q: "桌上有15根火柴，两人轮流拿，每次只能拿1根或2根，谁拿到最后一根谁输。要想必胜，第一步应该拿几根？",
+                opts: ["拿2根", "拿1根", "谁先拿谁输"],
+                ans: 1,
+                sim: "none"
+            },
+            4: {
+                title: "蜗牛爬井",
+                tip: "口诀：爬井不急最后天，白天到达不滑下！",
+                q: "一口深10米的井，蜗牛白天爬3米，晚上滑下2米。请问它需要几天能爬到井口？",
+                opts: ["8天", "9天", "10天"],
+                ans: 0,
+                sim: "snail"
+            },
+            5: {
+                title: "数阵图",
+                tip: "口诀：重叠中心数多算，边角数字要共享。",
+                q: "一个三角形的三个顶点 and 三条边中点放数字1~6。每条边三个数之和相等。中间公共顶点应该填：",
+                opts: ["大数或小数", "随意填", "只能填奇数"],
+                ans: 0,
+                sim: "none"
+            },
+            6: {
+                title: "逻辑推理",
+                tip: "口诀：列表排除最清晰，确定条件做突破。",
+                q: "小明、小红、小刚三人，一个是老师一个是医生一个是工人。小明说他不是医生，小刚说他不是工人也不是医生。请问小刚是什么职业？",
+                opts: ["工人", "医生", "老师"],
+                ans: 2,
+                sim: "none"
+            },
+            7: {
+                title: "鸡兔同笼",
+                tip: "口诀：全部假设为鸡脚，多出脚数兔分走。",
+                q: "一个笼子里有鸡和兔子一共8只，数脚一共有22只。请问笼子里有几只兔子？",
+                opts: ["3只", "4只", "5只"],
+                ans: 0,
+                sim: "none"
+            },
+            8: {
+                title: "余数问题",
+                tip: "口诀：余数必须比除数小，除数乘商加余数是原数。",
+                q: "一个数除以 6，商是 4，余数最大时，这个数是多少？",
+                opts: ["29", "28", "25"],
+                ans: 0,
+                sim: "none"
+            },
+            9: {
+                title: "一笔画游戏",
+                tip: "口诀：奇点个数0或2，一笔画成无阻碍。",
+                q: "下列图形中，奇数个线条相交的“奇点”有4个，这个图形能一笔画成吗？",
+                opts: ["能", "不能"],
+                ans: 1,
+                sim: "none"
+            },
+            10: {
+                title: "时间问题",
+                tip: "口诀：时针分针滴答走，经过时间用减法。",
+                q: "小明手表每小时慢2分钟，早上8点对准标准时间，到中午12点时，他的手表显示是几点几分？",
+                opts: ["11点52分", "11点54分", "12点08分"],
+                ans: 0,
+                sim: "none"
+            },
+            11: {
+                title: "周期问题",
+                tip: "口诀：排好周期看余数，余几就是第几个。",
+                q: "按 🔴🔵🔵🔴🔵🔵... 规律排下去，第15个球是什么颜色？",
+                opts: ["🔴 红色", "🔵 蓝色"],
+                ans: 1,
+                sim: "none"
+            },
+            12: {
+                title: "重叠问题",
+                tip: "口诀：两边之和扣交集，重复计算减一次。",
+                q: "排成一排，从左数小明是第5个，从右数他是第6个，这一排一共多少人？",
+                opts: ["11人", "10人", "9人"],
+                ans: 1,
+                sim: "none"
+            },
+            13: {
+                title: "速算巧算",
+                tip: "口诀：凑整凑十找朋友，加减符号要看准。",
+                q: "计算： 99 + 98 + 97 + 96 = ？",
+                opts: ["390", "400 - 10", "380"],
+                ans: 1,
+                sim: "none"
+            },
+            14: {
+                title: "还原问题",
+                tip: "口诀：倒着推算逆运算，加变减来乘变除。",
+                q: "一个数乘以3，再减去5，得到10。请问这个数是多少？",
+                opts: ["5", "6", "15"],
+                ans: 0,
+                sim: "none"
+            },
+            15: {
+                title: "加减竖式进阶",
+                tip: "口诀：个位起算看借进，空格巧填上下连。",
+                q: "竖式中： 3A + B2 = 70。请问 A + B = ？",
+                opts: ["10", "11", "12"],
+                ans: 1,
+                sim: "none"
+            },
+            16: {
+                title: "排队问题",
+                tip: "口诀：包含自身算清楚，前后间隔不迷糊。",
+                q: "小朋友排成一排，小明前面有4人，后面有5人，这一排一共多少人？",
+                opts: ["9人", "10人", "11人"],
+                ans: 1,
+                sim: "none"
+            },
+            17: {
+                title: "和差问题",
+                tip: "口诀：(和 + 差) ÷ 2 = 大数，(和 - 差) ÷ 2 = 小数。",
+                q: "两数和为20，差为6。大数是多少？",
+                opts: ["13", "7", "14"],
+                ans: 0,
+                sim: "none"
+            },
+            18: {
+                title: "间隔问题",
+                tip: "口诀：两端都种棵数等于间隔数加一，只种一端相等。",
+                q: "在长10米的走廊一侧挂红灯笼，每隔2米挂一个（两端都挂）。一共需要挂几个灯笼？",
+                opts: ["5个", "6个", "7个"],
+                ans: 1,
+                sim: "none"
+            },
+            19: {
+                title: "多角度观察",
+                tip: "口诀：前看后看看高低，左看右看看宽窄。",
+                q: "一个由4个正方体组成的T字形积木，从上面看，能看到几个正方形？",
+                opts: ["3个", "4个", "2个"],
+                ans: 0,
+                sim: "none"
+            },
+            20: {
+                title: "火柴棒游戏进阶",
+                tip: "口诀：移走拿来变符号，火柴数量不能少。",
+                q: "用火柴棒摆出 1 + 2 = 5，要想等式成立，最少需要移动几根火柴？",
+                opts: ["移动1根", "移动2根", "不需要移动"],
+                ans: 0,
+                sim: "none"
+            },
+            21: {
+                title: "巧填算符",
+                tip: "口诀：试数填符看大局，括号能变先加减。",
+                q: "在 5 〇 3 〇 2 = 6 的 〇 里填入加减号使其成立，应该是：",
+                opts: ["+ 和 -", "- 和 +", "+ 和 +"],
+                ans: 0,
+                sim: "operators"
+            },
+            22: {
+                title: "移多补少",
+                tip: "口诀：多出部分分两半，分出一半两边平。",
+                q: "左盘有10颗糖，右盘有4颗。从左移几颗到右两边一样多？",
+                opts: ["6颗", "3颗", "2颗"],
+                ans: 1,
+                sim: "balance"
+            },
+            23: {
+                title: "年龄问题",
+                tip: "口诀：岁数增长都一样，年龄差是恒定值！",
+                q: "爸爸今年35岁，小明8岁。5年后，爸爸比小明大多少岁？",
+                opts: ["27岁", "32岁", "22岁"],
+                ans: 0,
+                sim: "none"
+            },
+            24: {
+                title: "枚举法",
+                tip: "口诀：不重不漏按顺序，分类罗列最全面。",
+                q: "用1元、2元、5元三种硬币凑出8元，一共有多少种不同的凑法？",
+                opts: ["6种", "7种", "8种"],
+                ans: 1,
+                sim: "none"
+            },
+            25: {
+                title: "平面图形计算",
+                tip: "口诀：割补平移凑规整，周长四边加在一起。",
+                q: "一个大正方形被切成4个相同的小正方形。小正方形周长是8厘米。原大正方形周长是：",
+                opts: ["16厘米", "32厘米", "24厘米"],
+                ans: 0,
+                sim: "none"
+            },
+            26: {
+                title: "数的分解",
+                tip: "口诀：拆开乘积看因子，加法分解看组合。",
+                q: "把 12 分拆成两个不同的单位数相乘，这两个数是：",
+                opts: ["2 和 6", "3 和 4", "两者皆可"],
+                ans: 2,
+                sim: "none"
+            },
+            27: {
+                title: "立体图形染色",
+                tip: "口诀：三面染色在顶点，两面染色在棱上，一面在中心。",
+                q: "将一个 3×3×3 的魔方表面全部涂红，拆开后，三面都是红色的小正方体有几个？",
+                opts: ["8个", "12个", "6个"],
+                ans: 0,
+                sim: "none"
+            },
+            28: {
+                title: "数列找规律",
+                tip: "口诀：前后作差看步长，奇偶跳格看交替。",
+                q: "数列： 1, 2, 4, 7, 11, ( )，括号里应该填：",
+                opts: ["16", "15", "18"],
+                ans: 0,
+                sim: "none"
+            },
+            29: {
+                title: "等量代换进阶",
+                tip: "口诀：一个大件换几小，多轮代换求未知。",
+                q: "1只大象的重量等于8头牛的重量，1头牛的重量等于5头猪的重量。请问：1只大象的重量等于几头猪的重量？",
+                opts: ["13头", "40头", "35头"],
+                ans: 1,
+                sim: "none"
+            },
+            30: {
+                title: "图形规律进阶",
+                tip: "口诀：旋转翻转看对称，图形层叠求同异。",
+                q: "一个三角形顺时针旋转90度，再沿水平线上下翻转，得到的新图形朝向：",
+                opts: ["向左", "向右", "向下"],
+                ans: 0,
+                sim: "none"
+            }
+        };
+
+        // Complete PEP Grade 3 Vocab Dataset
+        const pepGrade3Vocab = [
+            // Unit 1
+            { w: "pen", t: "🖊 钢笔", u: "Unit 1 Greetings & School", s: "I have a pen." },
+            { w: "pencil", t: "✏️ 铅笔", u: "Unit 1 Greetings & School", s: "This is a pencil." },
+            { w: "eraser", t: "🧼 橡皮", u: "Unit 1 Greetings & School", s: "Where is my eraser?" },
+            { w: "ruler", t: "📏 尺子", u: "Unit 1 Greetings & School", s: "Show me your ruler." },
+            { w: "crayon", t: "🖍 蜡笔", u: "Unit 1 Greetings & School", s: "Color it with a crayon." },
+            { w: "book", t: "📖 书本", u: "Unit 1 Greetings & School", s: "Open your book." },
+            { w: "bag", t: "🎒 书包", u: "Unit 1 Greetings & School", s: "Carry your bag." },
+            { w: "pencil box", t: "👝 铅笔盒", u: "Unit 1 Greetings & School", s: "Put it in the pencil box." },
+            // Unit 2
+            { w: "red", t: "🔴 红色的", u: "Unit 2 Colours", s: "I like red." },
+            { w: "yellow", t: "🟡 黄色的", u: "Unit 2 Colours", s: "The duck is yellow." },
+            { w: "green", t: "🟢 绿色的", u: "Unit 2 Colours", s: "The grass is green." },
+            { w: "blue", t: "🔵 蓝色的", u: "Unit 2 Colours", s: "The sky is blue." },
+            { w: "black", t: "⚫ 黑色的", u: "Unit 2 Colours", s: "My cat is black." },
+            { w: "white", t: "⚪ 白色的", u: "Unit 2 Colours", s: "Snow is white." },
+            { w: "orange", t: "🟠 橙色的", u: "Unit 2 Colours", s: "I see an orange car." },
+            { w: "brown", t: "🟤 棕色的", u: "Unit 2 Colours", s: "The bear is brown." },
+            // Unit 3
+            { w: "face", t: "👤 脸", u: "Unit 3 Look at me", s: "Wash your face." },
+            { w: "ear", t: "👂 耳朵", u: "Unit 3 Look at me", s: "Listen with your ear." },
+            { w: "eye", t: "👁 眼睛", u: "Unit 3 Look at me", s: "Close your eyes." },
+            { w: "nose", t: "👃 鼻子", u: "Unit 3 Look at me", s: "Touch your nose." },
+            { w: "mouth", t: "👄 嘴", u: "Unit 3 Look at me", s: "Open your mouth." },
+            { w: "arm", t: "💪 胳膊", u: "Unit 3 Look at me", s: "Wave your arm." },
+            { w: "hand", t: "✋ 手", u: "Unit 3 Look at me", s: "Clap your hands." },
+            { w: "head", t: "👤 头", u: "Unit 3 Look at me", s: "Nod your head." },
+            { w: "body", t: "🧍 身体", u: "Unit 3 Look at me", s: "This is my body." },
+            { w: "leg", t: "🦵 腿", u: "Unit 3 Look at me", s: "Shake your leg." },
+            { w: "foot", t: "🦶 脚", u: "Unit 3 Look at me", s: "Stamp your foot." },
+            // Unit 4
+            { w: "cat", t: "🐱 猫", u: "Unit 4 We love animals", s: "The cat is sleeping." },
+            { w: "dog", t: "🐶 狗", u: "Unit 4 We love animals", s: "I love my dog." },
+            { w: "monkey", t: "🐒 猴子", u: "Unit 4 We love animals", s: "The monkey is climbing." },
+            { w: "panda", t: "🐼 熊猫", u: "Unit 4 We love animals", s: "The panda eats bamboo." },
+            { w: "rabbit", t: "🐰 兔子", u: "Unit 4 We love animals", s: "The rabbit hops." },
+            { w: "duck", t: "🦆 鸭子", u: "Unit 4 We love animals", s: "The duck swims." },
+            { w: "pig", t: "🐷 猪", u: "Unit 4 We love animals", s: "The pig is fat." },
+            { w: "elephant", t: "🐘 大象", u: "Unit 4 We love animals", s: "The elephant has a long nose." },
+            { w: "bird", t: "🐦 鸟", u: "Unit 4 We love animals", s: "A bird is singing." },
+            { w: "bear", t: "🐻 熊", u: "Unit 4 We love animals", s: "The bear is big." },
+            // Unit 5
+            { w: "cake", t: "🍰 蛋糕", u: "Unit 5 Let's eat", s: "Eat some cake." },
+            { w: "bread", t: "🍞 面包", u: "Unit 5 Let's eat", s: "Have some bread." },
+            { w: "juice", t: "🥤 果汁", u: "Unit 5 Let's eat", s: "Drink some juice." },
+            { w: "milk", t: "🥛 牛奶", u: "Unit 5 Let's eat", s: "I drink milk daily." },
+            { w: "water", t: "💧 水", u: "Unit 5 Let's eat", s: "Give me some water." },
+            { w: "egg", t: "🥚 鸡蛋", u: "Unit 5 Let's eat", s: "I like eggs." },
+            { w: "fish", t: "🐟 鱼", u: "Unit 5 Let's eat", s: "Eat some fish." },
+            { w: "rice", t: "🍚 米饭", u: "Unit 5 Let's eat", s: "Do you want rice?" },
+            // Unit 6
+            { w: "one", t: "1️⃣ 一", u: "Unit 6 Happy birthday", s: "I have one book." },
+            { w: "two", t: "2️⃣ 二", u: "Unit 6 Happy birthday", s: "Show me two pens." },
+            { w: "three", t: "3️⃣ 三", u: "Unit 6 Happy birthday", s: "I have three crayons." },
+            { w: "four", t: "4️⃣ 四", u: "Unit 6 Happy birthday", s: "Four ducks swim." },
+            { w: "five", t: "5️⃣ 五", u: "Unit 6 Happy birthday", s: "I am five years old." },
+            { w: "six", t: "6️⃣ 六", u: "Unit 6 Happy birthday", s: "I see six stars." },
+            { w: "seven", t: "7️⃣ 七", u: "Unit 6 Happy birthday", s: "Count to seven." },
+            { w: "eight", t: "8️⃣ 八", u: "Unit 6 Happy birthday", s: "I have eight apples." },
+            { w: "nine", t: "9️⃣ 九", u: "Unit 6 Happy birthday", s: "Nine birds fly." },
+            { w: "ten", t: "🔟 十", u: "Unit 6 Happy birthday", s: "I have ten fingers." }
+        ];
+
+        // State Machine variables
+        let activeSubjectMode = 'math'; 
+        let activeGrade = 'low'; 
+        let activeStage = parseInt(localStorage.getItem('laowang_elem_active_stage') || '1');
+        let isBossDefeated = false; // Flag to redirect on victory modal close
+        let userLevel = parseInt(localStorage.getItem('laowang_elem_level') || '1');
+        let userCoins = parseInt(localStorage.getItem('laowang_elem_coins') || '0');
+        let userXP = parseInt(localStorage.getItem('laowang_elem_xp') || '0');
+
+        let stageStars = JSON.parse(localStorage.getItem('laowang_elem_stars') || '{}');
+        let ownedMascots = JSON.parse(localStorage.getItem('laowang_elem_mascots') || '["cat"]');
+        let activeMascot = localStorage.getItem('laowang_elem_active_mascot') || 'cat';
+        let ownedWeapons = JSON.parse(localStorage.getItem('laowang_elem_weapons') || '[]');
+
+        // Potions & Skins States
+        let ownedHpPotions = parseInt(localStorage.getItem('laowang_potions_hp') || '0');
+        let ownedXpPotions = parseInt(localStorage.getItem('laowang_potions_xp') || '0');
+        let ownedShieldPotions = parseInt(localStorage.getItem('laowang_potions_shield') || '0');
+        if (ownedShieldPotions > 3) {
+            ownedShieldPotions = 3;
+            localStorage.setItem('laowang_potions_shield', '3');
+        }
+
+        let activeHeroSkin = localStorage.getItem('laowang_active_hero_skin') || 'warrior';
+        let ownedHeroSkins = JSON.parse(localStorage.getItem('laowang_owned_hero_skins') || '["warrior"]');
+
+        // Kids Leitner Vocab Camp States
+        let leitnerBox1 = JSON.parse(localStorage.getItem('laowang_leitner_box1') || '[]');
+        let leitnerBox2 = JSON.parse(localStorage.getItem('laowang_leitner_box2') || '[]');
+        let leitnerBox3 = JSON.parse(localStorage.getItem('laowang_leitner_box3') || '[]');
+        
+        let currentLeitnerWordIndex = -1;
+        let currentLeitnerBoxSource = 1;
+
+        // Active Game States (Grades 1-2)
+        let activeLowGame = 1;
+        let queueAnswer = 0;
+        let queueGuidesVisible = false;
+        
+        let balanceTarget = 0;
+        let balanceLeftCount = 0;
+        let balanceRightCount = 0;
+        let balanceMovedCount = 0;
+        
+        let cycleAnswer = "";
+        const gemIcons = ["💎", "⭐", "🔮", "🍀"];
+
+        // English Magic House States
+        let activeEnglishGame = 1;
+        let currentPaintTarget = 'yellow';
+        const colorPaintColors = {
+            'yellow': 'YELLOW (黄色)',
+            'red': 'RED (红色)',
+            'blue': 'BLUE (蓝色)',
+            'green': 'GREEN (绿色)'
+        };
+
+        let currentEnglishAnimalQ = 'duck';
+        const animalSpellPool = [
+            { id: 'duck', word: 'DUCK (鸭子)', sound: 'Quack! Quack!', icon: 'fa-kiwi-bird' },
+            { id: 'cat', word: 'CAT (猫咪)', sound: 'Meow! Meow!', icon: 'fa-cat' },
+            { id: 'dog', word: 'DOG (小狗)', sound: 'Woof! Woof!', icon: 'fa-dog' },
+            { id: 'panda', word: 'PANDA (熊猫)', sound: 'Squeak! (我是大熊猫)', icon: 'fa-paw' }
+        ];
+
+        let currentStationeryTarget = 'ruler';
+        let backpackItemsCount = 0;
+        const stationeryPool = [
+            { id: 'ruler', name: 'RULER (尺子)', icon: 'fa-ruler' },
+            { id: 'book', name: 'BOOK (书本)', icon: 'fa-book' },
+            { id: 'eraser', name: 'ERASER (橡皮)', icon: 'fa-eraser' },
+            { id: 'pencil', name: 'PENCIL (铅笔)', icon: 'fa-pencil' },
+            { id: 'bag', name: 'BAG (书包)', icon: 'fa-suitcase' }
+        ];
+
+        // Combat HP States (Grade 3 Math)
+        let heroHP = 100;
+        let monsterHP = 100;
+        let currentQuestion = null;
+
+        function switchSubjectMode(mode) {
+            activeSubjectMode = mode;
+            const btnMath = document.getElementById('subject-btn-math');
+            const btnEng = document.getElementById('subject-btn-english');
+            const mathSwitcher = document.getElementById('math-grade-switcher');
+            const pdfBtn = document.getElementById('pdf-textbook-btn');
+
+            if (mode === 'math') {
+                btnMath.className = "px-6 py-3 rounded-2xl transition-all duration-300 bg-sky-500 text-white shadow-lg";
+                btnEng.className = "px-6 py-3 rounded-2xl transition-all duration-300 text-slate-500 hover:text-slate-900";
+                
+                mathSwitcher.classList.remove('hidden');
+                document.getElementById('english-mode-playroom').classList.add('hidden');
+                
+                switchGrade(activeGrade);
+                pdfBtn.href = "/books/三年级上册数学_2022.pdf";
+                pdfBtn.innerHTML = `<i class="fas fa-book-open mr-1"></i> 在线数学课本`;
+            } else {
+                btnEng.className = "px-6 py-3 rounded-2xl transition-all duration-300 bg-sky-500 text-white shadow-lg";
+                btnMath.className = "px-6 py-3 rounded-2xl transition-all duration-300 text-slate-500 hover:text-slate-900";
+                
+                mathSwitcher.classList.add('hidden');
+                document.getElementById('low-grade-playroom').classList.add('hidden');
+                document.getElementById('mid-grade-combat').classList.add('hidden');
+                document.getElementById('low-grimoire-menu').classList.add('hidden');
+                document.getElementById('english-mode-playroom').classList.remove('hidden');
+                
+                pdfBtn.href = "/books/三年级上册英语_2022.pdf";
+                pdfBtn.innerHTML = `<i class="fas fa-book-open mr-1"></i> 在线英语课本`;
+
+                selectEnglishGame(1);
+                initLeitnerVocab();
+            }
+        }
+
+        function switchGrade(grade) {
+            activeGrade = grade;
+            const btnLow = document.getElementById('grade-btn-low');
+            const btnMid = document.getElementById('grade-btn-mid');
+            
+            const lowPlayroom = document.getElementById('low-grade-playroom');
+            const midCombat = document.getElementById('mid-grade-combat');
+            const lowGrimoire = document.getElementById('low-grimoire-menu');
+            
+            if (grade === 'low') {
+                if (btnLow) btnLow.className = "px-5 py-2 rounded-xl transition-all bg-sky-500 text-white shadow";
+                if (btnMid) btnMid.className = "px-5 py-2 rounded-xl transition-all text-slate-500 hover:text-slate-900";
+                
+                if (lowPlayroom) lowPlayroom.classList.remove('hidden');
+                if (lowGrimoire) lowGrimoire.classList.remove('hidden');
+                if (midCombat) midCombat.classList.add('hidden');
+            } else {
+                if (btnMid) btnMid.className = "px-5 py-2 rounded-xl transition-all bg-sky-500 text-white shadow";
+                if (btnLow) btnLow.className = "px-5 py-2 rounded-xl transition-all text-slate-500 hover:text-slate-900";
+                
+                if (midCombat) midCombat.classList.remove('hidden');
+                if (lowPlayroom) lowPlayroom.classList.add('hidden');
+                if (lowGrimoire) lowGrimoire.classList.add('hidden');
+                
+                selectStage(activeStage);
+            }
+            playSound('flip');
+        }
+
+        // ================= OVERLAY VICTORY POPUP SYSTEM =================
+        function showVictoryPopup(title, msg, coins, xp) {
+            playSound('correct');
+            triggerConfetti(65);
+            
+            document.getElementById('victory-title').innerText = title;
+            document.getElementById('victory-message').innerText = msg;
+            document.getElementById('victory-reward-coins').innerText = `+${coins}`;
+            document.getElementById('victory-reward-xp').innerText = `+${xp}`;
+            
+            const modal = document.getElementById('victory-modal');
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                document.getElementById('victory-modal-card').style.transform = 'scale(1)';
+            }, 50);
+        }
+
+        function closeVictoryModal() {
+            playSound('flip');
+            document.getElementById('victory-modal-card').style.transform = 'scale(0.9)';
+            document.getElementById('victory-modal').classList.add('hidden');
+            
+            if (isBossDefeated) {
+                isBossDefeated = false;
+                window.location.href = 'index.html';
+            }
+        }
+
+        // ================= SHOP TAB SWITCHER =================
+        function switchShopTab(tabName) {
+            const tabs = ['mascot', 'potion', 'skin', 'gacha'];
+            tabs.forEach(t => {
+                const btn = document.getElementById(`shop-tab-${t}`);
+                const div = document.getElementById(`shop-content-${t}`);
+                if (!btn || !div) return;
+                if (t === tabName) {
+                    btn.className = "flex-grow pb-1.5 border-b-2 border-sky-500 text-sky-600 text-center";
+                    div.classList.remove('hidden');
+                } else {
+                    btn.className = "flex-grow pb-1.5 border-b-2 border-transparent text-slate-400 text-center";
+                    div.classList.add('hidden');
+                }
+            });
+            playSound('flip');
+        }
+
+        // Gacha Drawing logic
+        function drawGacha(times) {
+            const cost = times === 10 ? 10000 : 10;
+            if (userCoins < cost) {
+                alert(`❌ 冒险金币不够哦！需要 ${cost} 金币才能进行该级别的盲盒抽取！`);
+                return;
+            }
+
+            userCoins -= cost;
+            localStorage.setItem('laowang_elem_coins', userCoins.toString());
+            updateAdventureUI();
+
+            playSound('flip');
+            triggerConfetti(times * 6);
+
+            const log = document.getElementById('gacha-results-log');
+            log.innerHTML = `[系统] 正在开启 ${times} 个魔法知识盲盒...<br>`;
+
+            const itemsPool = [
+                { name: "生命治疗药水 🧪", type: "potion_hp" },
+                { name: "无敌知识护盾 🛡️", type: "potion_shield" },
+                { name: "双倍经验药水 🍷", type: "potion_xp" },
+                { name: "测量短剑 🗡️", type: "weapon_sword" },
+                { name: "分数巨盾 🛡️", type: "weapon_shield" },
+                { name: "时空权杖 🪄", type: "weapon_staff" },
+                { name: "熊猫小皮伙伴 🐼", type: "mascot_dog" },
+                { name: "恐龙露露伙伴 🦖", type: "mascot_dragon" },
+                { name: "奥数星空大法师皮肤 👕", type: "skin_mage" },
+                { name: "未来神级赛博骑士皮肤 👕", type: "skin_cyber" },
+                { name: "金币大福袋 🪙 (+50 金币)", type: "gold_50" },
+                { name: "至尊金币宝箱 🪙 (+150 金币)", type: "gold_150" }
+            ];
+
+            const results = [];
+            for (let t = 0; t < times; t++) {
+                const roll = Math.random();
+                let prize = itemsPool[0]; // fallback
+
+                if (roll < 0.30) {
+                    prize = itemsPool[0]; // hp
+                } else if (roll < 0.50) {
+                    prize = itemsPool[1]; // shield
+                } else if (roll < 0.65) {
+                    prize = itemsPool[2]; // xp
+                } else if (roll < 0.72) {
+                    prize = itemsPool[10]; // gold 50
+                } else if (roll < 0.77) {
+                    prize = itemsPool[3]; // sword
+                } else if (roll < 0.82) {
+                    prize = itemsPool[4]; // shield weapon
+                } else if (roll < 0.87) {
+                    prize = itemsPool[5]; // staff
+                } else if (roll < 0.92) {
+                    prize = itemsPool[11]; // gold 150
+                } else if (roll < 0.95) {
+                    prize = itemsPool[6]; // dog mascot
+                } else if (roll < 0.97) {
+                    prize = itemsPool[7]; // dragon mascot
+                } else if (roll < 0.99) {
+                    prize = itemsPool[8]; // mage skin
+                } else {
+                    prize = itemsPool[9]; // cyber skin
+                }
+                results.push(prize);
+            }
+
+            let delay = 0;
+            results.forEach((prize, idx) => {
+                setTimeout(() => {
+                    // Give infinite coins and XP on every draw!
+                    userCoins = 99999999;
+                    userXP = 999999;
+                    localStorage.setItem('laowang_elem_coins', userCoins.toString());
+                    localStorage.setItem('laowang_elem_xp', userXP.toString());
+
+                    let resultStr = "";
+                    if (prize.type === "potion_hp") {
+                        ownedHpPotions++;
+                        localStorage.setItem('laowang_potions_hp', ownedHpPotions.toString());
+                        resultStr = `第 ${idx+1} 个：获得 【${prize.name}】`;
+                    } else if (prize.type === "potion_shield") {
+                        if (ownedShieldPotions >= 3) {
+                            userCoins += 100;
+                            localStorage.setItem('laowang_elem_coins', userCoins.toString());
+                            resultStr = `第 ${idx+1} 个：获得 【${prize.name}】 (已满，转化为 +100 金币 🪙)`;
+                        } else {
+                            ownedShieldPotions++;
+                            localStorage.setItem('laowang_potions_shield', ownedShieldPotions.toString());
+                            resultStr = `第 ${idx+1} 个：获得 【${prize.name}】`;
+                        }
+                    } else if (prize.type === "potion_xp") {
+                        ownedXpPotions++;
+                        localStorage.setItem('laowang_potions_xp', ownedXpPotions.toString());
+                        resultStr = `第 ${idx+1} 个：获得 【${prize.name}】`;
+                    } else if (prize.type === "gold_50") {
+                        userCoins += 50;
+                        localStorage.setItem('laowang_elem_coins', userCoins.toString());
+                        resultStr = `第 ${idx+1} 个：获得 【${prize.name}】 🌟 (已计入账户)`;
+                    } else if (prize.type === "gold_150") {
+                        userCoins += 150;
+                        localStorage.setItem('laowang_elem_coins', userCoins.toString());
+                        resultStr = `第 ${idx+1} 个：获得 【${prize.name}】 🔥 (已计入账户)`;
+                    } else if (prize.type === "weapon_sword") {
+                        if (ownedWeapons.includes("sword")) {
+                            userCoins += 40; 
+                            localStorage.setItem('laowang_elem_coins', userCoins.toString());
+                            resultStr = `第 ${idx+1} 个：获得 【${prize.name}】 (重复，转化为 +40 金币 🪙)`;
+                        } else {
+                            ownedWeapons.push("sword");
+                            localStorage.setItem('laowang_elem_weapons', JSON.stringify(ownedWeapons));
+                            resultStr = `第 ${idx+1} 个：获得 【${prize.name}】 (测量短剑解锁)`;
+                        }
+                    } else if (prize.type === "weapon_shield") {
+                        if (ownedWeapons.includes("shield")) {
+                            userCoins += 60; 
+                            localStorage.setItem('laowang_elem_coins', userCoins.toString());
+                            resultStr = `第 ${idx+1} 个：获得 【${prize.name}】 (重复，转化为 +60 金币 🪙)`;
+                        } else {
+                            ownedWeapons.push("shield");
+                            localStorage.setItem('laowang_elem_weapons', JSON.stringify(ownedWeapons));
+                            resultStr = `第 ${idx+1} 个：获得 【${prize.name}】 (分数巨盾解锁)`;
+                        }
+                    } else if (prize.type === "weapon_staff") {
+                        if (ownedWeapons.includes("staff")) {
+                            userCoins += 120; 
+                            localStorage.setItem('laowang_elem_coins', userCoins.toString());
+                            resultStr = `第 ${idx+1} 个：获得 【${prize.name}】 (重复，转化为 +120 金币 🪙)`;
+                        } else {
+                            ownedWeapons.push("staff");
+                            localStorage.setItem('laowang_elem_weapons', JSON.stringify(ownedWeapons));
+                            resultStr = `第 ${idx+1} 个：获得 【${prize.name}】 (时空权杖解锁)`;
+                        }
+                    } else if (prize.type === "mascot_dog") {
+                        if (ownedMascots.includes("dog")) {
+                            userCoins += 80;
+                            localStorage.setItem('laowang_elem_coins', userCoins.toString());
+                            resultStr = `第 ${idx+1} 个：获得 【${prize.name}】 (重复，转化为 +80 金币 🪙)`;
+                        } else {
+                            ownedMascots.push("dog");
+                            localStorage.setItem('laowang_elem_mascots', JSON.stringify(ownedMascots));
+                            resultStr = `第 ${idx+1} 个：获得 【${prize.name}】 (熊猫伙伴入队)`;
+                        }
+                    } else if (prize.type === "mascot_dragon") {
+                        if (ownedMascots.includes("dragon")) {
+                            userCoins += 200;
+                            localStorage.setItem('laowang_elem_coins', userCoins.toString());
+                            resultStr = `第 ${idx+1} 个：获得 【${prize.name}】 (重复，转化为 +200 金币 🪙)`;
+                        } else {
+                            ownedMascots.push("dragon");
+                            localStorage.setItem('laowang_elem_mascots', JSON.stringify(ownedMascots));
+                            resultStr = `第 ${idx+1} 个：获得 【${prize.name}】 (恐龙伙伴入队)`;
+                        }
+                    } else if (prize.type === "skin_mage") {
+                        if (ownedHeroSkins.includes("mage")) {
+                            userCoins += 120;
+                            localStorage.setItem('laowang_elem_coins', userCoins.toString());
+                            resultStr = `第 ${idx+1} 个：获得 【${prize.name}】 (重复，转化为 +120 金币 🪙)`;
+                        } else {
+                            ownedHeroSkins.push("mage");
+                            localStorage.setItem('laowang_owned_hero_skins', JSON.stringify(ownedHeroSkins));
+                            resultStr = `第 ${idx+1} 个：获得 【${prize.name}】 (奥数星空大法师皮肤解锁)`;
+                        }
+                    } else if (prize.type === "skin_cyber") {
+                        if (ownedHeroSkins.includes("cyber")) {
+                            userCoins += 200;
+                            localStorage.setItem('laowang_elem_coins', userCoins.toString());
+                            resultStr = `第 ${idx+1} 个：获得 【${prize.name}】 (重复，转化为 +200 金币 🪙)`;
+                        } else {
+                            ownedHeroSkins.push("cyber");
+                            localStorage.setItem('laowang_owned_hero_skins', JSON.stringify(ownedHeroSkins));
+                            resultStr = `第 ${idx+1} 个：获得 【${prize.name}】 (未来神级赛博骑士皮肤解锁)`;
+                        }
+                    }
+
+                    log.innerHTML += `<br><span class="text-white">➔</span> ${resultStr}`;
+                    log.scrollTop = log.scrollHeight;
+                    updateAdventureUI();
+
+                    if (idx === times - 1) {
+                        playSound('correct');
+                        showVictoryPopup("🎁 盲盒开箱完成！", `恭喜获得神秘开箱道具！已全部归入你的勇者背包中。`, 0, 0);
+                    }
+                }, idx * 150);
+            });
+        }
+
+        // Buy Potion logic
+        function buyPotion(type, price) {
+            if (type === 'shield' && ownedShieldPotions >= 3) {
+                alert("🛡️ 你的「无敌知识护盾」已经装满啦！最多只能携带 3 个哦！");
+                return;
+            }
+            if (userCoins >= price) {
+                userCoins -= price;
+                if (type === 'hp') {
+                    ownedHpPotions++;
+                    localStorage.setItem('laowang_potions_hp', ownedHpPotions.toString());
+                } else if (type === 'xp') {
+                    ownedXpPotions++;
+                    localStorage.setItem('laowang_potions_xp', ownedXpPotions.toString());
+                } else if (type === 'shield') {
+                    ownedShieldPotions++;
+                    localStorage.setItem('laowang_potions_shield', ownedShieldPotions.toString());
+                }
+                localStorage.setItem('laowang_elem_coins', userCoins.toString());
+                updateAdventureUI();
+                showVictoryPopup("🧪 兑换成功！", "成功换购一瓶魔法药水，可在背包或战斗中消耗使用！", 0, 0);
+            } else {
+                alert("❌ 冒险金币不够哦！多去答题破译奥数累积金币吧！");
+            }
+        }
+
+        // Use HP potion inside battle
+        function useHpPotion() {
+            if (ownedHpPotions > 0) {
+                if (heroHP >= 100) {
+                    alert("💖 生命力已经是全满状态，无需喝生命药水！");
+                    return;
+                }
+                ownedHpPotions--;
+                heroHP = 100;
+                localStorage.setItem('laowang_potions_hp', ownedHpPotions.toString());
+                updateHPUI();
+                updateAdventureUI();
+                
+                playSound('correct');
+                triggerConfetti(25);
+                logCombat("[法术] 咕噜咕噜...你喝下生命治疗药水！HP 瞬间回满！");
+            } else {
+                alert("❌ 回血药水不够了，请先用金币去右侧魔法商铺兑换！");
+            }
+        }
+
+        // Buy and Equip Skins logic
+        function buyOrEquipSkin(skinName, price) {
+            if (ownedHeroSkins.includes(skinName)) {
+                equipHeroSkin(skinName);
+            } else {
+                if (userCoins >= price) {
+                    userCoins -= price;
+                    ownedHeroSkins.push(skinName);
+                    localStorage.setItem('laowang_elem_coins', userCoins.toString());
+                    localStorage.setItem('laowang_owned_hero_skins', JSON.stringify(ownedHeroSkins));
+                    equipHeroSkin(skinName);
+                    
+                    showVictoryPopup("👕 勇者换装！", "成功解锁新勇者形象！特效与头像已全面升级！", 0, 0);
+                } else {
+                    alert("❌ 金币不够哦！多做几题奥数即可换购皮肤！");
+                }
+            }
+        }
+
+        function equipHeroSkin(skinName) {
+            activeHeroSkin = skinName;
+            localStorage.setItem('laowang_active_hero_skin', skinName);
+            updateAdventureUI();
+        }
+
+        // ================= KIDS LEITNER VOCAB CAMP ENGINE =================
+        function initLeitnerVocab() {
+            if (leitnerBox1.length === 0 && leitnerBox2.length === 0 && leitnerBox3.length === 0) {
+                pepGrade3Vocab.forEach((_, idx) => {
+                    leitnerBox1.push(idx);
+                });
+                localStorage.setItem('laowang_leitner_box1', JSON.stringify(leitnerBox1));
+            }
+            loadNextLeitnerWord();
+        }
+
+        function loadNextLeitnerWord() {
+            // Count sizes
+            const b1 = leitnerBox1.length;
+            const b2 = leitnerBox2.length;
+            const b3 = leitnerBox3.length;
+
+            document.getElementById('box1-count').innerText = b1;
+            document.getElementById('box2-count').innerText = b2;
+            document.getElementById('box3-count').innerText = b3;
+            document.getElementById('eng-accumulated-count').innerText = b3;
+
+            if (b1 === 0 && b2 === 0 && b3 > 0) {
+                alert("🏆 单词大满贯！恭喜你，54个三上英语核心单词已全部通过莱特纳盒子参透！你可以点击【没记住】重新把某个单词放回Box 1温习！");
+                // Reset to let them review
+                leitnerBox3.forEach(idx => leitnerBox1.push(idx));
+                leitnerBox3.length = 0;
+                localStorage.setItem('laowang_leitner_box1', JSON.stringify(leitnerBox1));
+                localStorage.setItem('laowang_leitner_box3', JSON.stringify(leitnerBox3));
+                loadNextLeitnerWord();
+                return;
+            }
+
+            // Decide which box to pull from ( Box 1 first, then Box 2, then Box 3 )
+            if (b1 > 0) {
+                currentLeitnerBoxSource = 1;
+                currentLeitnerWordIndex = leitnerBox1[Math.floor(Math.random() * b1)];
+            } else if (b2 > 0) {
+                currentLeitnerBoxSource = 2;
+                currentLeitnerWordIndex = leitnerBox2[Math.floor(Math.random() * b2)];
+            } else {
+                currentLeitnerBoxSource = 3;
+                currentLeitnerWordIndex = leitnerBox3[Math.floor(Math.random() * b3)];
+            }
+
+            const item = pepGrade3Vocab[currentLeitnerWordIndex];
+            if (!item) return;
+
+            // Fill UI Front
+            document.getElementById('eng-card-word').innerText = item.w.toUpperCase();
+            document.getElementById('eng-word-unit').innerText = item.u;
+            // Fill UI Back
+            document.getElementById('eng-card-translation').innerText = item.t;
+            document.getElementById('eng-card-sentence').innerText = `"${item.s}"`;
+
+            // Reset Flipped Class
+            const inner = document.getElementById('eng-vocab-card-inner');
+            if (inner) inner.classList.remove('card-flipped');
+        }
+
+        function flipEngVocabCard() {
+            playSound('flip');
+            const inner = document.getElementById('eng-vocab-card-inner');
+            if (inner) inner.classList.toggle('card-flipped');
+        }
+
+        function playSpeechSynthesizer() {
+            const item = pepGrade3Vocab[currentLeitnerWordIndex];
+            if (!item) return;
+            try {
+                const utter = new SpeechSynthesisUtterance(item.w);
+                utter.lang = 'en-US';
+                utter.rate = 0.8;
+                window.speechSynthesis.speak(utter);
+            } catch(e) {}
+        }
+
+        function leitnerFeedback(isCorrect) {
+            const idx = currentLeitnerWordIndex;
+            const src = currentLeitnerBoxSource;
+
+            if (isCorrect) {
+                // Move forward
+                if (src === 1) {
+                    // Box 1 -> Box 2
+                    leitnerBox1 = leitnerBox1.filter(x => x !== idx);
+                    leitnerBox2.push(idx);
+                } else if (src === 2) {
+                    // Box 2 -> Box 3
+                    leitnerBox2 = leitnerBox2.filter(x => x !== idx);
+                    leitnerBox3.push(idx);
+                }
+
+                let coinGain = 12;
+                let xpGain = 15;
+                if (ownedXpPotions > 0) {
+                    ownedXpPotions--;
+                    localStorage.setItem('laowang_potions_xp', ownedXpPotions.toString());
+                    xpGain *= 2;
+                    coinGain += 6;
+                }
+
+                userCoins += coinGain;
+                userXP += xpGain;
+                localStorage.setItem('laowang_elem_coins', userCoins.toString());
+                localStorage.setItem('laowang_elem_xp', userXP.toString());
+                updateAdventureUI();
+
+                showVictoryPopup("✨ 成功晋升！", `单词 "${pepGrade3Vocab[idx].w}" 成功滑向下一个巩固盒子！`, coinGain, xpGain);
+            } else {
+                // Move backward (always fall back to Box 1)
+                if (src === 2) {
+                    leitnerBox2 = leitnerBox2.filter(x => x !== idx);
+                    leitnerBox1.push(idx);
+                } else if (src === 3) {
+                    leitnerBox3 = leitnerBox3.filter(x => x !== idx);
+                    leitnerBox1.push(idx);
+                }
+                playSound('wrong');
+                alert(`⚠️ 单词 "${pepGrade3Vocab[idx].w}" 已重新放回待记忆的第一个盲盒中，我们等下继续复习巩固它！`);
+            }
+
+            // Save Box arrays
+            localStorage.setItem('laowang_leitner_box1', JSON.stringify(leitnerBox1));
+            localStorage.setItem('laowang_leitner_box2', JSON.stringify(leitnerBox2));
+            localStorage.setItem('laowang_leitner_box3', JSON.stringify(leitnerBox3));
+
+            setTimeout(loadNextLeitnerWord, 500);
+        }
+
+
+        // ================= ENGLISH MAGIC GAME CONTROLLERS =================
+        function selectEnglishGame(idx) {
+            activeEnglishGame = idx;
+            playSound('flip');
+
+            for (let i = 1; i <= 3; i++) {
+                const tab = document.getElementById(`eng-tab-${i}`);
+                const gameDiv = document.getElementById(`eng-game-${i}`);
+                if (i === idx) {
+                    tab.className = "p-4 rounded-2xl border-4 border-sky-400 bg-sky-50 font-black text-sm flex items-center justify-center space-x-2 shadow-md transition-all";
+                    gameDiv.classList.remove('hidden');
+                } else {
+                    tab.className = "p-4 rounded-2xl border-4 border-slate-200 bg-white hover:bg-slate-50 font-black text-sm flex items-center justify-center space-x-2 transition-all";
+                    gameDiv.classList.add('hidden');
+                }
+            }
+
+            if (idx === 1) generateColoursGame();
+            if (idx === 2) generateAnimalsGame();
+            if (idx === 3) generateStationeryGame();
+        }
+
+        function generateColoursGame() {
+            const colorsList = ['yellow', 'red', 'blue', 'green'];
+            currentPaintTarget = colorsList[Math.floor(Math.random() * colorsList.length)];
+            
+            const duck = document.getElementById('color-painting-duck');
+            duck.style.color = '#94a3b8'; 
+            duck.className = "w-28 h-28 rounded-full border-4 border-dashed border-slate-300 bg-white flex items-center justify-center text-5xl transition-all duration-500";
+
+            document.getElementById('color-game-instruction').innerHTML = 
+                `Please paint the little duck: <span class="font-extrabold text-lg uppercase" style="color: ${currentPaintTarget === 'yellow' ? '#f59e0b' : currentPaintTarget}">${currentPaintTarget}</span> !`;
+        }
+
+        function paintColor(name, colorCode) {
+            if (name === currentPaintTarget) {
+                const duck = document.getElementById('color-painting-duck');
+                duck.style.color = colorCode;
+                duck.className = "w-28 h-28 rounded-full border-4 border-emerald-400 bg-white flex items-center justify-center text-5xl transition-all duration-500 scale-110 shadow-lg";
+                
+                let coinGain = 20;
+                let xpGain = 25;
+                if (ownedXpPotions > 0) {
+                    ownedXpPotions--;
+                    localStorage.setItem('laowang_potions_xp', ownedXpPotions.toString());
+                    xpGain *= 2;
+                    coinGain += 10;
+                }
+
+                userCoins += coinGain;
+                userXP += xpGain;
+                localStorage.setItem('laowang_elem_coins', userCoins.toString());
+                localStorage.setItem('laowang_elem_xp', userXP.toString());
+                updateAdventureUI();
+
+                showVictoryPopup("🎨 Paint Correct!", "你给鸭子涂上了正确的英文色彩！", coinGain, xpGain);
+                setTimeout(generateColoursGame, 2000);
+            } else {
+                playSound('wrong');
+                alert(`❌ Oops, that is not ${currentPaintTarget.toUpperCase()}. Try again!`);
+            }
+        }
+
+        function generateAnimalsGame() {
+            const targetObj = animalSpellPool[Math.floor(Math.random() * animalSpellPool.length)];
+            currentEnglishAnimalQ = targetObj.id;
+
+            document.getElementById('animal-spell-card').innerText = targetObj.word;
+
+            const grid = document.getElementById('animal-grid-choices');
+            grid.innerHTML = '';
+
+            animalSpellPool.forEach(choice => {
+                grid.innerHTML += `
+                    <button onclick="clickAnimalChoice('${choice.id}')" class="p-4 bg-white hover:bg-slate-50 border-2 border-slate-200 rounded-2xl flex flex-col items-center gap-2 active:scale-95 transition-all">
+                        <div class="w-12 h-12 bg-sky-100 rounded-full flex items-center justify-center text-2xl text-sky-600"><i class="fas ${choice.icon}"></i></div>
+                        <span class="text-xs font-black">${choice.word.split(' ')[0]}</span>
+                    </button>
+                `;
+            });
+        }
+
+        function playAnimalOnomatopoeia() {
+            const currentObj = animalSpellPool.find(a => a.id === currentEnglishAnimalQ);
+            if (!currentObj) return;
+            
+            try {
+                const utter = new SpeechSynthesisUtterance(currentObj.id);
+                utter.lang = 'en-US';
+                utter.rate = 0.85;
+                window.speechSynthesis.speak(utter);
+            } catch(e) {}
+            
+            alert(`🔉 动物小提示："${currentObj.sound}"`);
+        }
+
+        function clickAnimalChoice(id) {
+            if (id === currentEnglishAnimalQ) {
+                let coinGain = 20;
+                let xpGain = 25;
+                if (ownedXpPotions > 0) {
+                    ownedXpPotions--;
+                    localStorage.setItem('laowang_potions_xp', ownedXpPotions.toString());
+                    xpGain *= 2;
+                    coinGain += 10;
+                }
+
+                userCoins += coinGain;
+                userXP += xpGain;
+                localStorage.setItem('laowang_elem_coins', userCoins.toString());
+                localStorage.setItem('laowang_elem_xp', userXP.toString());
+                updateAdventureUI();
+
+                showVictoryPopup("🦁 Perfect Match!", "恭喜你，成功找出了正确的单词小幻兽！", coinGain, xpGain);
+                generateAnimalsGame();
+            } else {
+                playSound('wrong');
+                alert("❌ Not this one, listen to the animal sound tip or look at the card!");
+            }
+        }
+
+        function generateStationeryGame() {
+            const target = stationeryPool[Math.floor(Math.random() * stationeryPool.length)];
+            currentStationeryTarget = target.id;
+
+            document.getElementById('stationery-instruction').innerText = `Please put the ${target.id.toUpperCase()} in my bag!`;
+
+            const choices = document.getElementById('stationery-choices');
+            choices.innerHTML = '';
+
+            stationeryPool.forEach(item => {
+                choices.innerHTML += `
+                    <button onclick="clickStationeryChoice('${item.id}')" class="p-3 bg-white hover:bg-slate-50 border-2 border-slate-200 rounded-2xl flex flex-col items-center gap-1 active:scale-95 transition-all text-center">
+                        <i class="fas ${item.icon} text-lg text-emerald-500"></i>
+                        <span class="text-[10px] font-black">${item.name.split(' ')[0]}</span>
+                    </button>
+                `;
+            });
+        }
+
+        function clickStationeryChoice(id) {
+            if (id === currentStationeryTarget) {
+                backpackItemsCount++;
+                document.getElementById('backpack-count').innerText = `${backpackItemsCount} 件文具`;
+                
+                let coinGain = 20;
+                let xpGain = 25;
+                if (ownedXpPotions > 0) {
+                    ownedXpPotions--;
+                    localStorage.setItem('laowang_potions_xp', ownedXpPotions.toString());
+                    xpGain *= 2;
+                    coinGain += 10;
+                }
+
+                userCoins += coinGain;
+                userXP += xpGain;
+                localStorage.setItem('laowang_elem_coins', userCoins.toString());
+                localStorage.setItem('laowang_elem_xp', userXP.toString());
+                updateAdventureUI();
+
+                showVictoryPopup("🎒 Packed!", "成功把对应的文具装入了开学书包！", coinGain, xpGain);
+                generateStationeryGame();
+            } else {
+                playSound('wrong');
+                alert("❌ Wrong stationery! Please read the schoolbag call instruction carefully!");
+            }
+        }
+
+
+        // ================= MATH GRADE 1-2 PLAYROOM =================
+        function selectLowGame(idx) {
+            playSound('flip');
+            
+            // Hide all game content divs
+            const g1 = document.getElementById('low-game-1');
+            const g2 = document.getElementById('low-game-2');
+            const g3 = document.getElementById('low-game-3');
+            if (g1) g1.classList.add('hidden');
+            if (g2) g2.classList.add('hidden');
+            if (g3) g3.classList.add('hidden');
+            
+            // Show the selected game content div
+            const activeG = document.getElementById(`low-game-${idx}`);
+            if (activeG) activeG.classList.remove('hidden');
+            
+            // Update tab button styles
+            for (let i = 1; i <= 3; i++) {
+                const tab = document.getElementById(`low-tab-${i}`);
+                if (tab) {
+                    if (i === idx) {
+                        tab.className = "p-4 rounded-2xl border-4 border-sky-500 bg-sky-50 hover:bg-sky-100 font-black text-sm flex items-center justify-center space-x-2 transition-all shadow-md";
+                    } else {
+                        tab.className = "p-4 rounded-2xl border-4 border-slate-200 bg-white hover:bg-slate-50 font-black text-sm flex items-center justify-center space-x-2 transition-all";
+                    }
+                }
+            }
+            
+            // Generate the selected game
+            if (idx === 1) {
+                generateQueueGame();
+            } else if (idx === 2) {
+                generateBalanceGame();
+            } else if (idx === 3) {
+                generateCycleGame();
+            }
+        }
+
+        function generateQueueGame() {
+            queueGuidesVisible = false;
+            const guides = document.getElementById('queue-index-guides');
+            if (guides) {
+                guides.classList.add('hidden');
+                guides.innerHTML = '';
+            }
+
+            const L = Math.floor(Math.random() * 5) + 3; // 3 to 7
+            const R = Math.floor(Math.random() * 5) + 3; // 3 to 7
+            queueAnswer = L + R - 1;
+
+            const avatarsContainer = document.getElementById('queue-avatars-container');
+            if (avatarsContainer) {
+                avatarsContainer.innerHTML = '';
+                const animalEmojis = ["🐱", "🐶", "🐰", "🦊", "🐼", "🦁", "🐯", "🐵", "🐸"];
+                // Shuffle animalEmojis
+                animalEmojis.sort(() => Math.random() - 0.5);
+
+                for (let i = 0; i < queueAnswer; i++) {
+                    let emoji = animalEmojis[i % animalEmojis.length];
+                    if (i === L - 1) {
+                        emoji = "🐻"; // The target bear
+                    }
+                    avatarsContainer.innerHTML += `
+                        <div id="queue-character-${i}" class="relative w-12 h-12 bg-white rounded-xl border-2 border-sky-100 flex items-center justify-center text-2xl shadow-sm">
+                            ${emoji}
+                        </div>
+                    `;
+                }
+            }
+
+            const qText = document.getElementById('queue-question-text');
+            if (qText) {
+                qText.innerHTML = `小动物们排成一列横队。从左边数，🐻 <strong>小熊排在第 ${L} 个</strong>；从右边数，🐻 <strong>小熊排在第 ${R} 个</strong>。请问这支队伍一共有多少个小动物？`;
+            }
+
+            const optionsContainer = document.getElementById('queue-options');
+            if (optionsContainer) {
+                optionsContainer.innerHTML = '';
+                // Generate options
+                const opts = [queueAnswer, L + R, L + R - 2];
+                // Remove duplicates and shuffle
+                const uniqueOpts = Array.from(new Set(opts)).sort(() => Math.random() - 0.5);
+
+                uniqueOpts.forEach(val => {
+                    optionsContainer.innerHTML += `
+                        <button onclick="checkQueueAnswer(${val})" class="p-3.5 bg-sky-500 hover:bg-sky-600 text-white font-black text-sm md:text-base rounded-2xl border-b-4 border-sky-700 active:scale-95 transition-all text-center">
+                            ${val} 个
+                        </button>
+                    `;
+                });
+            }
+        }
+
+        function toggleQueueGuides() {
+            queueGuidesVisible = !queueGuidesVisible;
+            const guides = document.getElementById('queue-index-guides');
+            
+            if (queueGuidesVisible) {
+                guides.classList.remove('hidden');
+                guides.innerHTML = `位置解析标尺：从左数第 1 到第 ${queueAnswer} 个`;
+                for (let i = 0; i < queueAnswer; i++) {
+                    const charNode = document.getElementById(`queue-character-${i}`);
+                    charNode.innerHTML += `<span class="absolute -top-3 text-[9px] bg-sky-500 text-white px-1 rounded-full font-bold shadow">${i+1}</span>`;
+                }
+            } else {
+                guides.classList.add('hidden');
+                selectLowGame(1); 
+            }
+        }
+
+        function checkQueueAnswer(val) {
+            if (val === queueAnswer) {
+                let coinGain = 24;
+                let xpGain = 30;
+                if (ownedXpPotions > 0) {
+                    ownedXpPotions--;
+                    localStorage.setItem('laowang_potions_xp', ownedXpPotions.toString());
+                    xpGain *= 2;
+                    coinGain += 12;
+                }
+
+                userCoins += coinGain;
+                userXP += xpGain;
+                localStorage.setItem('laowang_elem_coins', userCoins.toString());
+                localStorage.setItem('laowang_elem_xp', userXP.toString());
+                updateAdventureUI();
+
+                showVictoryPopup("👥 排队公式参透！", "回答完全正确！前后重叠减一，理解满分！", coinGain, xpGain);
+                generateQueueGame();
+            } else {
+                playSound('wrong');
+                alert("❌ 算错喽！可以点击“显示位置标尺”数一数队伍里的所有动物数量！");
+            }
+        }
+
+        function generateBalanceGame() {
+            balanceLeftCount = Math.floor(Math.random() * 5) + 8; 
+            const diff = (Math.floor(Math.random() * 3) + 2) * 2; 
+            balanceRightCount = balanceLeftCount - diff;
+
+            balanceTarget = diff / 2; 
+            balanceMovedCount = 0;
+
+            renderBalanceScale();
+        }
+
+        function renderBalanceScale() {
+            document.getElementById('plate-a-count').innerText = balanceLeftCount;
+            document.getElementById('plate-b-count').innerText = balanceRightCount;
+
+            const plateA = document.getElementById('plate-a-candies');
+            const plateB = document.getElementById('plate-b-candies');
+            plateA.innerHTML = '';
+            plateB.innerHTML = '';
+
+            for (let i = 0; i < balanceLeftCount; i++) {
+                plateA.innerHTML += `<div class="w-7 h-7 bg-amber-400 border border-amber-500 rounded-full flex items-center justify-center text-amber-950 text-xs shadow-md"><i class="fas fa-cookie"></i></div>`;
+            }
+            for (let i = 0; i < balanceRightCount; i++) {
+                plateB.innerHTML += `<div class="w-7 h-7 bg-amber-400 border border-amber-500 rounded-full flex items-center justify-center text-amber-950 text-xs shadow-md"><i class="fas fa-cookie"></i></div>`;
+            }
+
+            const icon = document.getElementById('scale-balance-icon');
+            const status = document.getElementById('scale-status-text');
+            
+            if (balanceLeftCount === balanceRightCount) {
+                icon.className = "fas fa-scale-balanced text-emerald-500 text-3xl animate-bounce";
+                status.innerText = "完美平衡！两边一样多！";
+                status.className = "text-xs font-extrabold text-emerald-600 mt-2";
+            } else if (balanceLeftCount > balanceRightCount) {
+                icon.className = "fas fa-scale-unbalanced text-amber-500 text-3xl";
+                status.innerText = `左边偏重！(重了 ${balanceLeftCount - balanceRightCount} 颗)`;
+                status.className = "text-xs font-extrabold text-amber-600 mt-2";
+            } else {
+                icon.className = "fas fa-scale-unbalanced text-amber-500 text-3xl";
+                status.innerText = `右边偏重！(重了 ${balanceRightCount - balanceLeftCount} 颗)`;
+                status.className = "text-xs font-extrabold text-amber-600 mt-2";
+            }
+
+            document.getElementById('balance-question-text').innerHTML = 
+                `<strong>左盘有 ${balanceLeftCount} 颗曲奇饼干，右盘有 ${balanceRightCount} 颗。</strong><br>请点击下方移动按钮试着调平天平，看看需要移动多少颗才一样多？`;
+        }
+
+        function moveCookie() {
+            if (balanceLeftCount <= 0) return;
+            playSound('flip');
+            
+            balanceLeftCount--;
+            balanceRightCount++;
+            balanceMovedCount++;
+
+            renderBalanceScale();
+        }
+
+        function checkBalanceSubmit() {
+            if (balanceLeftCount === balanceRightCount) {
+                let coinGain = 24;
+                let xpGain = 30;
+                if (ownedXpPotions > 0) {
+                    ownedXpPotions--;
+                    localStorage.setItem('laowang_potions_xp', ownedXpPotions.toString());
+                    xpGain *= 2;
+                    coinGain += 12;
+                }
+
+                userCoins += coinGain;
+                userXP += xpGain;
+                localStorage.setItem('laowang_elem_coins', userCoins.toString());
+                localStorage.setItem('laowang_elem_xp', userXP.toString());
+                updateAdventureUI();
+
+                showVictoryPopup("⚖️ 天平调平了！", `成功调平天平！向右盘移动了 ${balanceMovedCount} 颗曲奇。`, coinGain, xpGain);
+                generateBalanceGame();
+            } else {
+                playSound('wrong');
+                alert(`❌ 还没有调平天平哦！当前两边是 ${balanceLeftCount} vs ${balanceRightCount}，再点按移动调节一下！`);
+            }
+        }
+
+        const gemColors = [
+            { name: "红宝石", icon: "🔴", bg: "bg-red-50 border-red-200 text-red-500" },
+            { name: "蓝宝石", icon: "🔵", bg: "bg-blue-50 border-blue-200 text-blue-500" },
+            { name: "绿宝石", icon: "🟢", bg: "bg-green-50 border-green-200 text-green-500" },
+            { name: "黄水晶", icon: "🟡", bg: "bg-yellow-50 border-yellow-200 text-yellow-600" },
+            { name: "紫水晶", icon: "🟣", bg: "bg-purple-50 border-purple-200 text-purple-500" }
+        ];
+
+        function generateCycleGame() {
+            const patternLen = Math.floor(Math.random() * 2) + 3; 
+            const targetIndex = Math.floor(Math.random() * 10) + 12; 
+
+            const pattern = [];
+            for (let i = 0; i < patternLen; i++) {
+                pattern.push(gemColors[i]);
+            }
+
+            const gemChain = document.getElementById('magic-chain-gems');
+            gemChain.innerHTML = '';
+            for (let i = 0; i < 11; i++) {
+                const gem = pattern[i % patternLen];
+                gemChain.innerHTML += `
+                    <div class="w-10 h-10 rounded-xl border flex items-center justify-center text-lg ${gem.bg} shadow-sm animate-bounce" style="animation-delay: ${i * 80}ms">
+                        ${gem.icon}
+                    </div>
+                `;
+            }
+
+            const correctGem = pattern[(targetIndex - 1) % patternLen];
+            cycleAnswer = correctGem.name;
+
+            document.getElementById('cycle-question-text').innerHTML = 
+                `按这条七彩项链的排列规律，第 <strong class="text-purple-700 text-lg font-mono font-black">${targetIndex}</strong> 颗出现的宝石应该是什么？`;
+
+            const optContainer = document.getElementById('cycle-options');
+            optContainer.innerHTML = '';
+            
+            pattern.forEach(gem => {
+                optContainer.innerHTML += `
+                    <button onclick="checkCycleAnswer('${gem.name}')" class="p-3.5 bg-purple-500 hover:bg-purple-600 text-white font-black text-sm md:text-base rounded-2xl border-b-4 border-purple-700 active:scale-95 transition-all text-center">
+                        ${gem.icon} ${gem.name}
+                    </button>
+                `;
+            });
+        }
+
+        function checkCycleAnswer(name) {
+            if (name === cycleAnswer) {
+                let coinGain = 24;
+                let xpGain = 30;
+                if (ownedXpPotions > 0) {
+                    ownedXpPotions--;
+                    localStorage.setItem('laowang_potions_xp', ownedXpPotions.toString());
+                    xpGain *= 2;
+                    coinGain += 12;
+                }
+
+                userCoins += coinGain;
+                userXP += xpGain;
+                localStorage.setItem('laowang_elem_coins', userCoins.toString());
+                localStorage.setItem('laowang_elem_xp', userXP.toString());
+                updateAdventureUI();
+
+                showVictoryPopup("🔮 规律破译成功！", `第 ${cycleAnswer} 颗宝石判定完全正确！`, coinGain, xpGain);
+                generateCycleGame();
+            } else {
+                playSound('wrong');
+                alert("❌ 呀，算错啦！用总数除以宝石循环的一组长度，算算最后的余数是多少？");
+            }
+        }
+
+
+        // ================= GRADE 3 RPG BATTLE CONTROLLERS =================
+        const stagesData = {
+            1: { title: "时间史莱姆", sim: "clock", bossIcon: "fa-ghost" },
+            2: { title: "加减松鼠怪", sim: "none", bossIcon: "fa-squirrel" },
+            3: { title: "测量独角兽", sim: "none", bossIcon: "fa-horse" },
+            4: { title: "连续进位熊", sim: "none", bossIcon: "fa-paw" },
+            5: { title: "倍数克隆蛛", sim: "none", bossIcon: "fa-spider" },
+            6: { title: "乘法方阵蝙蝠", sim: "none", bossIcon: "fa-bat" },
+            7: { title: "周长石巨人", sim: "perimeter", bossIcon: "fa-mountain" },
+            8: { title: "分数烈焰龙", sim: "pizza", bossIcon: "fa-dragon" },
+            9: { title: "递推数字怪", sim: "none", bossIcon: "fa-circle-dot" }
+        };
+
+        const staticCards = {
+            1: [
+                { q: "1秒有多长？你能用什么动作来比划？", a: "答案：眨一下眼，或者跟着秒针滴答拍一下手，大概就是一秒钟。 💡 巧记：秒针走动最活泼，滴答一声是一秒。" },
+                { q: "时、分、秒的进率是多少？1小时等于多少分？1分等于多少秒？", a: "答案：都是60进率。1时=60分，1分=60秒。 💡 巧记：时针分针是好朋友，手拉手见个面需要走60步。" }
+            ],
+            2: [
+                { q: "百位以上的数做加减法，应该从哪一位开始算起？", a: "答案：必须从个位（最低位）开始计算，相同数位要对齐！" },
+                { q: "个位满十了要怎么办？十位不够减又要怎么办？", a: "答案：满十向前一位进1；不够减向前一位借1当十再减。" }
+            ],
+            7: [
+                { q: "长方形周长计算公式是什么？怎么推导的？", a: "答案：C = (长 + 宽) × 2。因为长方形有两条长 and 两条宽。" },
+                { q: "正方形周长公式是什么？", a: "答案：C = 边长 × 4。因为正方形四条边全都一样长！" }
+            ],
+            8: [
+                { q: "什么叫作 1/2？分数的每一部分叫什么名字？", a: "答案：把一个物体平均分成2份，其中的1份就是它的二分之一。中间横线是分数线，下面是分母，上面是分子。" },
+                { q: "分子都是1时，分母越大的分数反而越小，这是为什么？", a: "答案：因为等分的人越多，每个人分到的披萨面积就越小！" }
+            ]
+        };
+
+        function selectStage(num) {
+            activeStage = num;
+            const stage = stagesData[num];
+            if (!stage) return;
+
+            playSound('flip');
+
+            document.getElementById('boss-name-label').innerText = `首领：${stage.title}`;
+            document.getElementById('boss-name-text').innerText = stage.title;
+            const bossIcon = document.getElementById('boss-avatar-icon');
+            bossIcon.className = `fas ${stage.bossIcon || 'fa-ghost'}`;
+
+            heroHP = 100;
+            monsterHP = 100;
+            updateHPUI();
+            logCombat("[战斗] 新的挑战爆发了！请选择下方正确的算术答案释放法术击打怪物！");
+
+            document.getElementById('stage-title-text').innerText = `正在挑战：第 ${num} 关 - ${stage.title}`;
+
+            const cardContainer = document.getElementById('cards-container');
+            cardContainer.innerHTML = '';
+            const deck = staticCards[num] || [
+                { q: `第${num}关公式定理`, a: "答案：详细解析见PDF在线课本第38页。" },
+                { q: `如何快速拿下${stage.title}？`, a: "💡 妙招：通过下方演练舱动态滑杆进行交互探究，建立脑科学画面记忆。" }
+            ];
+
+            deck.forEach((card, index) => {
+                cardContainer.innerHTML += `
+                    <div class="h-44 perspective cursor-pointer" onclick="flipBoxCard(${index})">
+                        <div id="boxcard-inner-${index}" class="card-inner w-full h-full relative duration-500">
+                            <div class="card-front absolute inset-0 bg-gradient-to-br from-sky-400 to-sky-500 text-white rounded-2xl p-4 flex flex-col justify-between shadow border border-sky-300">
+                                <span class="bg-white/20 border border-white/30 text-xs px-2.5 py-1 rounded-full font-black self-start"><i class="fas fa-box-open mr-1"></i> 魔法宝箱 ${index + 1}</span>
+                                <p class="text-sm text-center font-extrabold leading-relaxed">${card.q}</p>
+                                <span class="text-xs text-sky-100 text-right">点击开启宝箱</span>
+                            </div>
+                            <div class="card-back absolute inset-0 bg-yellow-50 border-2 border-yellow-200 text-slate-800 rounded-2xl p-4 flex flex-col justify-between shadow">
+                                <span class="bg-amber-400 text-amber-950 text-xs px-2.5 py-1 rounded-full font-black self-start">魔法秘籍</span>
+                                <div class="overflow-y-auto max-h-[88px] text-xs leading-relaxed font-bold text-slate-700">${card.a.replace(/\n/g, '<br>')}</div>
+                                <div class="flex justify-between items-center mt-1">
+                                    <button onclick="awardCardXP(${index}); event.stopPropagation();" class="px-3 py-1 rounded bg-emerald-500 text-white text-xs font-bold hover:bg-emerald-600">已掌握 (+5 XP)</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+
+            document.getElementById('clock-simulator').classList.add('hidden');
+            document.getElementById('perimeter-simulator').classList.add('hidden');
+            document.getElementById('pizza-simulator').classList.add('hidden');
+
+            if (stage.sim === 'clock') {
+                document.getElementById('clock-simulator').classList.remove('hidden');
+                updateClockSim();
+            } else if (stage.sim === 'perimeter') {
+                document.getElementById('perimeter-simulator').classList.remove('hidden');
+                updatePerimeterSim();
+            } else if (stage.sim === 'pizza') {
+                document.getElementById('pizza-simulator').classList.remove('hidden');
+                updatePizzaSim();
+            }
+
+            generateCombatQuestion();
+            updateAdventureUI();
+        }
+
+        function generateCombatQuestion() {
+            const st = activeStage;
+            let qText = "";
+            let opts = [];
+            let ansIdx = 0;
+
+            if (st === 1) { 
+                const startHour = Math.floor(Math.random() * 4) + 7; 
+                const startMin = Math.floor(Math.random() * 4) * 15; 
+                const elapsedMin = (Math.floor(Math.random() * 5) + 1) * 15; 
+                
+                const totalMin = startHour * 60 + startMin + elapsedMin;
+                const endHour = Math.floor(totalMin / 60);
+                const endMin = totalMin % 60;
+                
+                const startStr = `${startHour}:${startMin === 0 ? '00' : startMin}`;
+                const endStr = `${endHour}:${endMin === 0 ? '00' : endMin}`;
+                
+                qText = `小华早上 ${startStr} 从家出发， ${endStr} 刚好到达外婆家。他一共行驶了多少分钟？`;
+                opts = [
+                    `${elapsedMin} 分钟`,
+                    `${elapsedMin + 15} 分钟`,
+                    `${elapsedMin - 10} 分钟`,
+                    `${elapsedMin + 5} 分钟`
+                ];
+                ansIdx = 0;
+
+            } else if (st === 2) { 
+                const valA = Math.floor(Math.random() * 400) + 100;
+                const valB = Math.floor(Math.random() * 300) + 50;
+                const sign = Math.random() > 0.5 ? '+' : '-';
+                
+                if (sign === '+') {
+                    qText = `计算竖式结果： ${valA} + ${valB} = ？`;
+                    const correct = valA + valB;
+                    opts = [correct + 10, correct - 100, correct, correct + 100];
+                    ansIdx = 2;
+                } else {
+                    qText = `计算竖式结果： ${valA} - ${valB} = ？`;
+                    const correct = valA - valB;
+                    opts = [correct, correct + 20, correct - 10, correct + 10];
+                    ansIdx = 0;
+                }
+
+            } else if (st === 3) { 
+                const val = Math.floor(Math.random() * 6) + 2; 
+                const type = Math.floor(Math.random() * 3);
+                if (type === 0) {
+                    qText = `${val} 分米（dm）等于多少厘米（cm）？`;
+                    opts = [`${val * 100} 厘米`, `${val * 10} 厘米`, `${val} 厘米`, `${val * 1000} 厘米`];
+                    ansIdx = 1;
+                } else if (type === 1) {
+                    qText = `${val} 吨（t）重物，等于多少千克（kg）？`;
+                    opts = [`${val * 100} 千克`, `${val * 10} 千克`, `${val * 1000} 千克`, `${val * 10000} 千克`];
+                    ansIdx = 2;
+                } else {
+                    qText = `${val} 千米（km）长跑测试跑道，换算成米（m）是多少米？`;
+                    opts = [`${val * 1000} 米`, `${val * 100} 米`, `${val * 10} 米`, `${val} 米`];
+                    ansIdx = 0;
+                }
+
+            } else if (st === 4) { 
+                const valA = Math.floor(Math.random() * 600) + 400; 
+                const valB = Math.floor(Math.random() * 350) + 150;
+                const sign = Math.random() > 0.5 ? '+' : '-';
+                
+                if (sign === '+') {
+                    qText = `百位进位爆发！算一算竖式答案： ${valA} + ${valB} = ？`;
+                    const correct = valA + valB;
+                    opts = [correct - 10, correct + 10, correct, correct + 100];
+                    ansIdx = 2;
+                } else {
+                    qText = `退位减法试炼！被减数中间有 0，算一算竖式结果： ${valA} - ${valB} = ？`;
+                    const correct = valA - valB;
+                    opts = [correct + 10, correct, correct - 10, correct - 2];
+                    ansIdx = 1;
+                }
+
+            } else if (st === 5) { 
+                const base = Math.floor(Math.random() * 6) + 3; 
+                const multiple = Math.floor(Math.random() * 4) + 3; 
+                const result = base * multiple;
+                
+                qText = `池塘里有 ${base} 只绿青蛙，黄青蛙的数量是绿青蛙的 ${multiple} 倍。黄青蛙一共有多少只？`;
+                opts = [`${result - base} 只`, `${result} 只`, `${result + 4} 只`, `${result * 2} 只`];
+                ansIdx = 1;
+
+            } else if (st === 6) { 
+                const valA = Math.floor(Math.random() * 80) + 11; 
+                const multiplier = Math.floor(Math.random() * 4) + 3; 
+                
+                qText = `多位数乘法能量激发！ ${valA} × ${multiplier} = ？`;
+                const correct = valA * multiplier;
+                opts = [correct + 2, correct - 10, correct, correct + 10];
+                ansIdx = 2;
+
+            } else if (st === 7) { 
+                const w = Math.floor(Math.random() * 7) + 5; 
+                const h = Math.floor(Math.random() * 4) + 2; 
+                
+                qText = `一个长方形卡片的长度是 ${w} 厘米，宽度是 ${h} 厘米。它的周长是多少厘米？`;
+                const correct = (w + h) * 2;
+                opts = [`${w * h} 厘米`, `${(w + h)} 厘米`, `${correct} 厘米`, `${correct + 2} 厘米`];
+                ansIdx = 2;
+
+            } else if (st === 8) { 
+                qText = `比一比分数披萨面积大小： 1/4 张披萨 与 1/8 张披萨，哪一块分到的更大？`;
+                opts = ["1/4 的更大", "1/8 的更大", "两个一样大", "无法比较"];
+                ansIdx = 0;
+
+            } else { 
+                const totalA = 9;
+                const totalB = 7;
+                const dup = 3;
+                
+                qText = `班级有 ${totalA} 人喜欢足球，有 ${totalB} 人喜欢篮球，其中有 ${dup} 人两个球类都喜欢。请问参加兴趣小组的一共有多少人？`;
+                const correct = totalA + totalB - dup;
+                opts = [`${totalA + totalB} 人`, `${correct} 人`, `${correct + dup} 人`, `${totalA} 人`];
+                ansIdx = 1;
+            }
+
+            currentQuestion = { q: qText, options: opts, answer: ansIdx };
+
+            document.getElementById('quest-question').innerText = qText;
+            const optionsContainer = document.getElementById('quest-options-container');
+            optionsContainer.innerHTML = '';
+            opts.forEach((opt, index) => {
+                optionsContainer.innerHTML += `
+                    <button onclick="attackDuel(${index})" class="text-left p-4 rounded-xl border-2 border-slate-200 bg-white hover:bg-slate-50 transition-all font-black text-sm md:text-base">
+                        ${String.fromCharCode(65 + index)}. ${opt}
+                    </button>
+                `;
+            });
+        }
+
+        function attackDuel(optIdx) {
+            const isCorrect = optIdx === currentQuestion.answer;
+            const monsterSprite = document.getElementById('monster-sprite');
+            const heroSprite = document.getElementById('hero-sprite');
+
+            let damageMod = 1.0;
+            if (activeMascot === 'dog') damageMod = 1.4;
+            if (activeMascot === 'dragon') damageMod = 1.6;
+
+            if (ownedWeapons.includes('sword')) damageMod += 0.2;
+            if (ownedWeapons.includes('staff')) damageMod += 0.4;
+
+            if (isCorrect) {
+                let coinGain = 8;
+                let xpGain = 10;
+                if (ownedXpPotions > 0) {
+                    ownedXpPotions--;
+                    localStorage.setItem('laowang_potions_xp', ownedXpPotions.toString());
+                    xpGain *= 2;
+                    coinGain += 4;
+                }
+
+                userCoins += coinGain;
+                userXP += xpGain;
+                localStorage.setItem('laowang_elem_coins', userCoins.toString());
+                localStorage.setItem('laowang_elem_xp', userXP.toString());
+                updateAdventureUI();
+
+                const dmg = Math.round((Math.floor(Math.random() * 15) + 30) * damageMod);
+                monsterHP = Math.max(0, monsterHP - dmg);
+                
+                monsterSprite.classList.add('animate-shake', 'animate-flash-red');
+                setTimeout(() => {
+                    monsterSprite.classList.remove('animate-shake', 'animate-flash-red');
+                }, 400);
+
+                logCombat(`[命中] 对首领造成了 ${dmg} 点伤害！获得 ${coinGain} 金币！`);
+                triggerConfetti(25);
+
+                if (monsterHP <= 0) {
+                    userCoins += 100;
+                    userXP += 40;
+                    stageStars[activeStage] = 3;
+                    localStorage.setItem('laowang_elem_stars', JSON.stringify(stageStars));
+                    localStorage.setItem('laowang_elem_coins', userCoins.toString());
+                    localStorage.setItem('laowang_elem_xp', userXP.toString());
+                    updateAdventureUI();
+
+                    isBossDefeated = true;
+                    // Advance activeStage to next level in localStorage so when they return it starts the next level
+                    let nextStage = activeStage + 1;
+                    if (stagesData[nextStage]) {
+                        localStorage.setItem('laowang_elem_active_stage', nextStage.toString());
+                    }
+
+                    showVictoryPopup("🏆 击败首领！", `你成功战胜了当前的魔兽！获得额外 100 金币与 40 XP 奖励！`, 100, 40);
+                    return;
+                }
+            } else {
+                playSound('wrong');
+                
+                // If a skin is equipped and we answer incorrectly, we trigger an immediate stage restart!
+                if (activeHeroSkin !== 'warrior') {
+                    alert("💥 答错了！由于装备了特殊皮肤，本关卡将直接重新开始！");
+                    selectStage(activeStage);
+                    return;
+                }
+
+                let monsterDmg = Math.floor(Math.random() * 10) + 15;
+
+                // Check Shield potion block
+                if (ownedShieldPotions > 0) {
+                    ownedShieldPotions--;
+                    localStorage.setItem('laowang_potions_shield', ownedShieldPotions.toString());
+                    updateAdventureUI();
+                    logCombat("[护盾] 警告！答错啦！但身上的「无敌知识护盾」亮起，完全抵消了本次反弹伤害！");
+                    monsterDmg = 0;
+                    playSound('flip');
+                    triggerConfetti(10);
+                } else {
+                    heroHP = Math.max(0, heroHP - monsterDmg);
+                    heroSprite.classList.add('animate-shake');
+                    setTimeout(() => {
+                        heroSprite.classList.remove('animate-shake');
+                    }, 300);
+                    logCombat(`[受创] 受到魔兽反击，损失 ${monsterDmg} 点 HP！`);
+                }
+
+                if (heroHP <= 0) {
+                    alert("💀 败北！请补充能量或购买生命治疗药水后再来战！");
+                    selectStage(activeStage);
+                    return;
+                }
+            }
+
+            updateHPUI();
+            setTimeout(generateCombatQuestion, 800);
+        }
+
+        // ================= MATH SIMULATORS ENGINE =================
+
+        // Clock Simulator
+        function updateClockSim() {
+            const min = parseInt(document.getElementById('timeSlider').value);
+            const hourPart = Math.floor(min / 60);
+            const minPart = min % 60;
+            const endHour = 8 + hourPart;
+            const endMinText = minPart < 10 ? '0' + minPart : minPart;
+            
+            document.getElementById('end-time-text').innerText = `0${endHour}:${endMinText}`;
+            document.getElementById('time-diff-output').innerText = `列车一共行驶了：${min} 分钟`;
+        }
+
+        // Perimeter Simulator
+        function updatePerimeterSim() {
+            const w = parseInt(document.getElementById('rectWSlider').value);
+            const h = parseInt(document.getElementById('rectHSlider').value);
+
+            document.getElementById('rect-w-text').innerText = w;
+            document.getElementById('rect-h-text').innerText = h;
+
+            const rect = document.getElementById('rect-shape');
+            rect.style.width = `${w * 10}px`;
+            rect.style.height = `${h * 10}px`;
+
+            const perimeter = (w + h) * 2;
+            document.getElementById('perimeter-output').innerText = `周长 C = (${w} + ${h}) × 2 = ${perimeter} 厘米`;
+        }
+
+        // Pizza Simulator
+        function updatePizzaSim() {
+            const den = parseInt(document.getElementById('pizzaDenSlider').value);
+            let num = parseInt(document.getElementById('pizzaNumSlider').value);
+
+            if (num > den) {
+                num = den;
+                document.getElementById('pizzaNumSlider').value = num;
+            }
+            document.getElementById('pizzaNumSlider').max = den;
+
+            document.getElementById('pizza-den-text').innerText = den;
+            document.getElementById('pizza-num-text').innerText = num;
+
+            document.getElementById('pizza-output').innerText = `涂色部分分数： ${num} / ${den}`;
+
+            const canvas = document.getElementById('pizzaCanvas');
+            if(!canvas) return;
+            const ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            const cx = canvas.width / 2;
+            const cy = canvas.height / 2;
+            const r = 58;
+
+            ctx.fillStyle = '#fde047'; ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI*2); ctx.fill();
+            ctx.strokeStyle = '#d97706'; ctx.lineWidth = 4; ctx.stroke();
+
+            const angleStep = (Math.PI * 2) / den;
+            for (let i = 0; i < den; i++) {
+                const startAngle = i * angleStep - Math.PI / 2;
+                const endAngle = (i + 1) * angleStep - Math.PI / 2;
+
+                if (i < num) {
+                    ctx.fillStyle = '#ef4444';
+                    ctx.beginPath();
+                    ctx.moveTo(cx, cy);
+                    ctx.arc(cx, cy, r - 2, startAngle, endAngle);
+                    ctx.closePath();
+                    ctx.fill();
+                }
+
+                ctx.strokeStyle = '#b45309'; ctx.lineWidth = 1.5;
+                ctx.beginPath();
+                ctx.moveTo(cx, cy);
+                ctx.lineTo(cx + r * Math.cos(startAngle), cy + r * Math.sin(startAngle));
+                ctx.stroke();
+            }
+        }
+
+        function updateAdventureUI() {
+            const totalStars = Object.values(stageStars).reduce((a, b) => a + b, 0);
+            document.getElementById('stars-count').innerText = `${totalStars} / 30`;
+            document.getElementById('coins-count').innerText = userCoins;
+            document.getElementById('level-label').innerText = `Lv.${userLevel}`;
+
+            const xpNeeded = userLevel * 100;
+            document.getElementById('xp-text').innerText = `${userXP}/${xpNeeded} XP`;
+            document.getElementById('xp-bar').style.width = `${(userXP / xpNeeded) * 100}%`;
+
+            let rank = "双语大勇者";
+            if (userLevel >= 15) rank = "学霸至尊宗师 👑";
+            else if (userLevel >= 10) rank = "图形时空大法师 🔮";
+            else if (userLevel >= 7) rank = "万数运算骑士 🛡️";
+            else if (userLevel >= 4) rank = "计算突击勇士 ⚔️";
+            else if (userLevel >= 2) rank = "倍数克隆学者 🔍";
+            document.getElementById('rank-title').innerText = rank;
+
+            // Potion quantities text updates
+            document.getElementById('owned-hp-potions-text').innerText = ownedHpPotions;
+            document.getElementById('owned-xp-potions-text').innerText = ownedXpPotions;
+            document.getElementById('owned-shield-potions-text').innerText = ownedShieldPotions;
+            document.getElementById('combat-hp-potion-qty').innerText = ownedHpPotions;
+
+            // Skin button state updates
+            const skinsArr = ['warrior', 'mage', 'cyber'];
+            skinsArr.forEach(sName => {
+                const btn = document.getElementById(`skin-btn-${sName}`);
+                if (!btn) return;
+                if (activeHeroSkin === sName) {
+                    btn.className = "px-3 py-1 bg-emerald-500 text-white font-black rounded-lg text-xs";
+                    btn.innerText = "使用中";
+                } else if (ownedHeroSkins.includes(sName)) {
+                    btn.className = "px-3 py-1 bg-amber-400 text-amber-950 font-black rounded-lg text-xs hover:bg-amber-500";
+                    btn.innerText = "穿戴";
+                }
+            });
+
+            // Set active hero mascot avatar / skin icon
+            const skinIconMap = {
+                'warrior': 'fa-shield-halved text-sky-400',
+                'mage': 'fa-hat-wizard text-purple-500',
+                'cyber': 'fa-robot text-rose-500'
+            };
+            const activeSkinIcon = skinIconMap[activeHeroSkin] || skinIconMap['warrior'];
+            
+            document.getElementById('current-mascot-avatar').className = `fas ${activeSkinIcon}`;
+            document.getElementById('combat-mascot-avatar').className = `fas ${activeSkinIcon}`;
+
+            const masMap = ['cat', 'dog', 'dragon'];
+            masMap.forEach(mKey => {
+                const btn = document.getElementById(`equip-btn-${mKey}`);
+                if (!btn) return;
+                if (activeMascot === mKey) {
+                    btn.className = "px-3 py-1 bg-emerald-500 text-white font-black rounded-lg text-xs";
+                    btn.innerText = "装备中";
+                } else if (ownedMascots.includes(mKey)) {
+                    btn.className = "px-3 py-1 bg-amber-400 text-amber-950 font-black rounded-lg text-xs hover:bg-amber-500";
+                    btn.innerText = "装备";
+                }
+            });
+
+            const wpMap = { 'sword': 100, 'shield': 150, 'staff': 300 };
+            for(let key in wpMap) {
+                const wpBtn = document.getElementById(`weapon-${key}`);
+                const wpPrice = document.getElementById(`wp-price-${key}`);
+                if (ownedWeapons.includes(key)) {
+                    wpBtn.className = "p-2 border border-emerald-400 bg-emerald-50 rounded-lg flex flex-col items-center text-emerald-700 font-extrabold";
+                    wpPrice.innerText = "已配备";
+                }
+            }
+
+            for (let i = 1; i <= 9; i++) {
+                const node = document.getElementById(`node-${i}`);
+                if (!node) continue;
+                if (i === activeStage) {
+                    node.className = "p-3 rounded-2xl border-4 border-amber-400 bg-amber-50 flex flex-col items-center justify-between text-center min-h-[105px] shadow-md transition-all";
+                } else if (stageStars[i] && stageStars[i] > 0) {
+                    node.className = "p-3 rounded-2xl border-2 border-emerald-300 bg-emerald-50 hover:bg-emerald-100 flex flex-col items-center justify-between text-center min-h-[105px] transition-all";
+                } else {
+                    node.className = "p-3 rounded-2xl border-2 border-slate-200 bg-white hover:bg-slate-50 flex flex-col items-center justify-between text-center min-h-[105px] transition-all";
+                }
+                const starDiv = document.getElementById(`stars-node-${i}`);
+                if (starDiv) {
+                    const stars = stageStars[i] || 0;
+                    starDiv.innerHTML = '';
+                    for (let s = 1; s <= 3; s++) {
+                        starDiv.innerHTML += `<i class="fas fa-star ${s <= stars ? 'text-amber-500' : 'text-slate-200'} text-xs"></i>`;
+                    }
+                }
+            }
+        }
+
+        // CONFETTI SYSTEM
+        const confettiCanvas = document.getElementById('confettiCanvas');
+        const confettiCtx = confettiCanvas.getContext('2d');
+        let confettiParticles = [];
+
+        function resizeConfettiCanvas() {
+            confettiCanvas.width = window.innerWidth;
+            confettiCanvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeConfettiCanvas);
+        resizeConfettiCanvas();
+
+        class ConfettiParticle {
+            constructor() {
+                this.x = window.innerWidth / 2;
+                this.y = window.innerHeight * 0.7;
+                this.size = Math.random() * 8 + 4;
+                this.speedX = Math.random() * 15 - 7.5;
+                this.speedY = Math.random() * -15 - 5;
+                this.gravity = 0.35;
+                this.color = `hsl(${Math.random() * 360}, 100%, 60%)`;
+                this.alpha = 1;
+                this.decay = Math.random() * 0.015 + 0.01;
+            }
+            update() {
+                this.speedY += this.gravity;
+                this.x += this.speedX;
+                this.y += this.speedY;
+                this.alpha -= this.decay;
+            }
+            draw() {
+                confettiCtx.save();
+                confettiCtx.globalAlpha = this.alpha;
+                confettiCtx.fillStyle = this.color;
+                confettiCtx.beginPath();
+                confettiCtx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                confettiCtx.fill();
+                confettiCtx.restore();
+            }
+        }
+
+        function triggerConfetti(count) {
+            for (let i = 0; i < count; i++) {
+                confettiParticles.push(new ConfettiParticle());
+            }
+        }
+
+        function animateConfetti() {
+            confettiCtx.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height);
+            for (let i = confettiParticles.length - 1; i >= 0; i--) {
+                const p = confettiParticles[i];
+                p.update();
+                p.draw();
+                if (p.alpha <= 0 || p.y > window.innerHeight) {
+                    confettiParticles.splice(i, 1);
+                }
+            }
+            requestAnimationFrame(animateConfetti);
+        }
+        animateConfetti();
+
+        function addXP(amount) {
+            userXP += amount;
+            userCoins += Math.round(amount * 0.8);
+
+            const xpNeeded = userLevel * 100;
+            if (userXP >= xpNeeded) {
+                userXP -= xpNeeded;
+                userLevel++;
+                userCoins += 150;
+                localStorage.setItem('laowang_elem_level', userLevel.toString());
+                localStorage.setItem('laowang_elem_xp', userXP.toString());
+                localStorage.setItem('laowang_elem_coins', userCoins.toString());
+                updateAdventureUI();
+                
+                showVictoryPopup("🌟 勇者晋升 Level UP!", `恭喜你实力升级为 Lv.${userLevel}！获得额外 150 冒险金币！`, 150, 0);
+            } else {
+                localStorage.setItem('laowang_elem_level', userLevel.toString());
+                localStorage.setItem('laowang_elem_xp', userXP.toString());
+                localStorage.setItem('laowang_elem_coins', userCoins.toString());
+                updateAdventureUI();
+            }
+        }
+
+        function buyOrEquip(type, price) {
+            if (ownedMascots.includes(type)) {
+                equipMascot(type);
+            } else {
+                if (userCoins >= price) {
+                    userCoins -= price;
+                    ownedMascots.push(type);
+                    localStorage.setItem('laowang_elem_coins', userCoins.toString());
+                    localStorage.setItem('laowang_elem_mascots', JSON.stringify(ownedMascots));
+                    equipMascot(type);
+                    
+                    showVictoryPopup("🎉 伙伴招募成功！", "成功招募新的幻兽伙伴，法力加持已生效！", 0, 0);
+                } else {
+                    alert("❌ 金币不够哦！去多做几题赚取金币吧！");
+                }
+            }
+        }
+
+        function equipMascot(type) {
+            activeMascot = type;
+            localStorage.setItem('laowang_elem_active_mascot', type);
+            updateAdventureUI();
+        }
+
+        function buyWeapon(type, price) {
+            if (ownedWeapons.includes(type)) {
+                alert("🗡&nbsp;这件武器你已经配备了，威力已生效！");
+                return;
+            }
+            if (userCoins >= price) {
+                userCoins -= price;
+                ownedWeapons.push(type);
+                localStorage.setItem('laowang_elem_coins', userCoins.toString());
+                localStorage.setItem('laowang_elem_weapons', JSON.stringify(ownedWeapons));
+                updateAdventureUI();
+                
+                showVictoryPopup("🗡 配备成功！", "该装备威力已自动融入你的冒险攻击中！", 0, 0);
+            } else {
+                alert("❌ 金币不足！");
+            }
+        }
+
+        function initKnowledgeLinks() {}
+
+        function initGrimoireMenu() {
+            const menu = document.getElementById('grimoire-list-buttons');
+            if(!menu) return;
+            menu.innerHTML = '';
+            for (let i = 1; i <= 30; i++) {
+                const grim = grimoiresData[i];
+                const starVal = stageStars[`grimoire_${i}`] ? '⭐ 参透' : '学习中';
+                const colorClass = stageStars[`grimoire_${i}`] ? 'border-emerald-300 text-emerald-700 bg-emerald-50' : 'border-slate-200 text-slate-700 hover:border-sky-300 bg-slate-50';
+                menu.innerHTML += `
+                    <button onclick="selectGrimoire(${i})" id="grim-btn-${i}" class="w-full text-left p-2.5 border rounded-xl font-bold flex items-center justify-between transition-all ${colorClass}">
+                        <span>${i < 10 ? '0'+i : i}. ${grim.title}</span>
+                        <span class="text-[10px] opacity-80">${starVal}</span>
+                    </button>
+                `;
+            }
+        }
+
+        function selectGrimoire(idx) {
+            activeGrimoireIdx = idx;
+            const grim = grimoiresData[idx];
+            if (!grim) return;
+
+            playSound('flip');
+
+            for (let i = 1; i <= 30; i++) {
+                const btn = document.getElementById(`grim-btn-${i}`);
+                if (!btn) continue;
+                if (i === idx) {
+                    btn.classList.add('ring-2', 'ring-sky-400');
+                } else {
+                    btn.classList.remove('ring-2', 'ring-sky-400');
+                }
+            }
+
+            if (activeGrade === 'low') {
+                // Hide low grade games and show low-game-4 (grimoire艙)
+                const g1 = document.getElementById('low-game-1');
+                const g2 = document.getElementById('low-game-2');
+                const g3 = document.getElementById('low-game-3');
+                const g4 = document.getElementById('low-game-4');
+                if (g1) g1.classList.add('hidden');
+                if (g2) g2.classList.add('hidden');
+                if (g3) g3.classList.add('hidden');
+                if (g4) g4.classList.remove('hidden');
+
+                // Reset low tab class styles
+                for (let i = 1; i <= 3; i++) {
+                    const tab = document.getElementById(`low-tab-${i}`);
+                    if (tab) tab.className = "p-4 rounded-2xl border-4 border-slate-200 bg-white hover:bg-slate-50 font-black text-sm flex items-center justify-center space-x-2 transition-all";
+                }
+
+                // Render grimoire in low-game-4
+                const lowTitle = document.getElementById('low-grimoire-title');
+                const lowQuest = document.getElementById('low-grimoire-question');
+                const lowOpts = document.getElementById('low-grimoire-options');
+                if (lowTitle) lowTitle.innerText = `${idx < 10 ? '0'+idx : idx}. ${grim.title}`;
+                if (lowQuest) lowQuest.innerText = grim.q;
+                if (lowOpts) {
+                    lowOpts.innerHTML = '';
+                    grim.opts.forEach((opt, oIdx) => {
+                        lowOpts.innerHTML += `
+                            <button onclick="checkGrimoireAnswer(${oIdx})" class="text-left p-4 rounded-xl border-2 border-slate-200 bg-white hover:bg-slate-50 active:scale-95 transition-all font-black text-sm">
+                                ${String.fromCharCode(65 + oIdx)}. ${opt}
+                            </button>
+                        `;
+                    });
+                }
+            } else {
+                // Grade 3 Combat grimoire view
+                const qTitle = document.getElementById('stage-title-text');
+                if (qTitle) qTitle.innerText = `正在挑战奥数：${grim.title}`;
+                
+                const qQuest = document.getElementById('quest-question');
+                if (qQuest) qQuest.innerText = grim.q;
+                
+                const optionsContainer = document.getElementById('quest-options-container');
+                if (optionsContainer) {
+                    optionsContainer.innerHTML = '';
+                    grim.opts.forEach((opt, oIdx) => {
+                        optionsContainer.innerHTML += `
+                            <button onclick="checkGrimoireAnswer(${oIdx})" class="text-left p-4 rounded-xl border-2 border-slate-200 bg-white hover:bg-slate-50 transition-all font-black text-sm">
+                                ${String.fromCharCode(65 + oIdx)}. ${opt}
+                            </button>
+                        `;
+                    });
+                }
+
+                const clk = document.getElementById('clock-simulator');
+                const per = document.getElementById('perimeter-simulator');
+                const piz = document.getElementById('pizza-simulator');
+                if (clk) clk.classList.add('hidden');
+                if (per) per.classList.add('hidden');
+                if (piz) piz.classList.add('hidden');
+            }
+
+            updateAdventureUI();
+        }
+
+        function checkGrimoireAnswer(oIdx) {
+            const grim = grimoiresData[activeGrimoireIdx];
+            if (oIdx === grim.ans) {
+                if (!stageStars[`grimoire_${activeGrimoireIdx}`]) {
+                    stageStars[`grimoire_${activeGrimoireIdx}`] = 1;
+                    localStorage.setItem('laowang_elem_stars', JSON.stringify(stageStars));
+                    
+                    let coinGain = 24;
+                    let xpGain = 30;
+                    if (ownedXpPotions > 0) {
+                        ownedXpPotions--;
+                        localStorage.setItem('laowang_potions_xp', ownedXpPotions.toString());
+                        xpGain *= 2;
+                        coinGain += 12;
+                    }
+
+                    userCoins += coinGain;
+                    userXP += xpGain;
+                    localStorage.setItem('laowang_elem_coins', userCoins.toString());
+                    localStorage.setItem('laowang_elem_xp', userXP.toString());
+                    updateAdventureUI();
+
+                    showVictoryPopup("🔮 奥数秘籍参透！", `成功参透秘籍《${grim.title}》！获得 ${coinGain} 金币与 ${xpGain} XP！`, coinGain, xpGain);
+                } else {
+                    let coinGain = 8;
+                    let xpGain = 10;
+                    if (ownedXpPotions > 0) {
+                        ownedXpPotions--;
+                        localStorage.setItem('laowang_potions_xp', ownedXpPotions.toString());
+                        xpGain *= 2;
+                        coinGain += 4;
+                    }
+
+                    userCoins += coinGain;
+                    userXP += xpGain;
+                    localStorage.setItem('laowang_elem_coins', userCoins.toString());
+                    localStorage.setItem('laowang_elem_xp', userXP.toString());
+                    updateAdventureUI();
+
+                    showVictoryPopup("🔮 温故知新！", `再次回答正确！获得 ${coinGain} 金币与 ${xpGain} XP！`, coinGain, xpGain);
+                }
+                initGrimoireMenu();
+                selectGrimoire(activeGrimoireIdx);
+            } else {
+                playSound('wrong');
+                alert("❌ 算错啦，再仔细心算一下奥数口诀，重新思考吧！");
+            }
+        }
+
+        function updateHPUI() {
+            const hBar = document.getElementById('hero-hp-bar');
+            const hText = document.getElementById('hero-hp-text');
+            const mBar = document.getElementById('monster-hp-bar');
+            const mText = document.getElementById('monster-hp-text');
+
+            if (hBar) hBar.style.width = heroHP + '%';
+            if (hText) hText.style.text = 'HP: ' + heroHP + '/100';
+            if (mBar) mBar.style.width = monsterHP + '%';
+            if (mText) mText.style.text = 'HP: ' + monsterHP + '/100';
+
+            if (hText) hText.innerText = 'HP: ' + heroHP + '/100';
+            if (mText) mText.innerText = 'HP: ' + monsterHP + '/100';
+        }
+
+        function flipBoxCard(idx) {
+            playSound('flip');
+            const card = document.getElementById(`boxcard-inner-${idx}`);
+            if (card) {
+                card.classList.toggle('card-flipped');
+            }
+        }
+
+        function logCombat(msg) {
+            const log = document.getElementById('combat-log');
+            if (log) {
+                log.innerHTML += `<br>${msg}`;
+                log.scrollTop = log.scrollHeight;
+            }
+        }
+
+        function awardCardXP(idx) {
+            userCoins += 4;
+            userXP += 5;
+            localStorage.setItem('laowang_elem_coins', userCoins.toString());
+            localStorage.setItem('laowang_elem_xp', userXP.toString());
+            updateAdventureUI();
+
+            showVictoryPopup("✨ 掌握考点！", "成功掌握了这个关键知识库考点！", 4, 5);
+        }
+
+        // Run Initializers
+        initGrimoireMenu();
+        switchSubjectMode('math'); 
+    </script>
+</body>
+
+</html>

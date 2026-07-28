@@ -1,0 +1,860 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>小学生奥数思维训练营</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .badge-earned {
+            animation: bounce 0.5s ease infinite;
+        }
+        .spinner {
+            animation: spin 1s linear infinite;
+        }
+        .drag-number {
+            transition: transform 0.2s;
+        }
+        .drag-number:active {
+            transform: scale(1.1);
+        }
+        .flip-enter-active {
+            transition: all 0.3s ease;
+        }
+        .flip-leave-active {
+            transition: all 0.3s ease;
+        }
+        .flip-enter-from, .flip-leave-to {
+            opacity: 0;
+            transform: rotateX(90deg);
+        }
+    </style>
+</head>
+<body class="bg-blue-50 min-h-screen font-sans">
+    <div class="container mx-auto px-4 py-8">
+        <!-- 标题和导航 -->
+        <header class="text-center mb-8">
+            <h1 class="text-4xl font-bold text-blue-600 mb-2">奥数思维训练营</h1>
+            <div class="flex justify-center space-x-4">
+                <button id="practiceBtn" class="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600">开始练习</button>
+                <button id="progressBtn" class="px-4 py-2 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600">我的进度</button>
+                <button id="leaderboardBtn" class="px-4 py-2 bg-purple-500 text-white rounded-lg hover:bg-purple-600">排行榜</button>
+            </div>
+        </header>
+
+        <!-- 主内容区 -->
+        <main id="app" class="bg-white rounded-xl shadow-lg p-6 max-w-3xl mx-auto">
+            <!-- 初始状态显示 -->
+            <div id="welcomeScreen" class="text-center">
+                <div class="mb-6">
+                    <img src="https://img.icons8.com/color/96/000000/math.png" alt="数学" class="mx-auto">
+                </div>
+                <h2 class="text-2xl font-bold text-blue-600 mb-4">欢迎来到奥数思维训练营!</h2>
+                <p class="text-gray-700 mb-6">选择难度开始挑战你的数学能力，赢取徽章和奖励!</p>
+                <div class="flex justify-center space-x-4 mb-6">
+                    <button data-level="1" class="level-btn px-4 py-2 bg-blue-100 text-blue-800 rounded-lg hover:bg-blue-200">初级 (1年级)</button>
+                    <button data-level="2" class="level-btn px-4 py-2 bg-green-100 text-green-800 rounded-lg hover:bg-green-200">中级 (2-3年级)</button>
+                    <button data-level="3" class="level-btn px-4 py-2 bg-red-100 text-red-800 rounded-lg hover:bg-red-200">高级 (4-6年级)</button>
+                </div>
+                <div id="userStats" class="bg-gray-100 p-4 rounded-lg inline-block">
+                    <p>累计积分: <span id="totalPoints">0</span></p>
+                    <p>连续正确: <span id="streakCount">0</span> 题</p>
+                </div>
+            </div>
+
+            <!-- 题目练习区域 (初始隐藏) -->
+            <div id="practiceScreen" class="hidden">
+                <div class="flex justify-between items-center mb-4">
+                    <button id="backBtn" class="px-3 py-1 bg-gray-200 text-gray-700 rounded hover:bg-gray-300">← 返回</button>
+                    <div class="text-right">
+                        <span class="font-bold">积分: <span id="currentPoints">0</span></span>
+                        <span class="ml-4">难度: <span id="currentLevel">初级</span></span>
+                    </div>
+                </div>
+
+                <!-- 题目展示区 -->
+                <div id="questionContainer" class="mb-6 p-4 bg-blue-50 rounded-lg">
+                    <h3 class="text-xl font-semibold mb-3" id="questionText">题目加载中...</h3>
+                    <div id="questionContent"></div>
+                </div>
+
+                <!-- 答题区 -->
+                <div id="answerArea" class="mb-6">
+                    <!-- 动态生成答题区域 -->
+                </div>
+
+                <!-- 提示和提交 -->
+                <div class="flex justify-between items-center">
+                    <div id="hintArea" class="flex space-x-2">
+                        <button id="hint1Btn" class="px-3 py-1 bg-yellow-100 text-yellow-800 rounded hover:bg-yellow-200 text-sm">提示1</button>
+                        <button id="hint2Btn" class="px-3 py-1 bg-orange-100 text-orange-800 rounded hover:bg-orange-200 text-sm hidden">提示2</button>
+                        <button id="hint3Btn" class="px-3 py-1 bg-red-100 text-red-800 rounded hover:bg-red-200 text-sm hidden">提示3</button>
+                    </div>
+                    <button id="submitBtn" class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600">提交答案</button>
+                </div>
+
+                <!-- 反馈区 -->
+                <div id="feedbackArea" class="mt-4 hidden">
+                    <div class="p-3 rounded-lg" id="feedbackContent"></div>
+                    <button id="nextBtn" class="mt-3 px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600">下一题</button>
+                </div>
+            </div>
+
+            <!-- 进度查看区域 (初始隐藏) -->
+            <div id="progressScreen" class="hidden">
+                <div class="flex justify-between items-center mb-4">
+                    <button id="progressBackBtn" class="px-3 py-1 bg-gray-200 text-gray-700 rounded hover:bg-gray-300">← 返回</button>
+                    <h2 class="text-xl font-bold">我的学习进度</h2>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <!-- 成就徽章 -->
+                    <div class="bg-white border rounded-lg p-4 shadow">
+                        <h3 class="font-bold text-lg mb-3 border-b pb-2">我的徽章</h3>
+                        <div id="badgesContainer" class="flex flex-wrap gap-3">
+                            <!-- 徽章将在这里动态生成 -->
+                        </div>
+                    </div>
+
+                    <!-- 错题本 -->
+                    <div class="bg-white border rounded-lg p-4 shadow">
+                        <h3 class="font-bold text-lg mb-3 border-b pb-2">错题本</h3>
+                        <div id="wrongQuestionsContainer">
+                            <p class="text-gray-500">暂无错题记录</p>
+                        </div>
+                    </div>
+
+                    <!-- 能力分析 -->
+                    <div class="bg-white border rounded-lg p-4 shadow md:col-span-2">
+                        <h3 class="font-bold text-lg mb-3 border-b pb-2">能力分析</h3>
+                        <div id="skillAnalysis" class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                            <!-- 能力分析数据将在这里动态生成 -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 排行榜区域 (初始隐藏) -->
+            <div id="leaderboardScreen" class="hidden">
+                <div class="flex justify-between items-center mb-4">
+                    <button id="leaderboardBackBtn" class="px-3 py-1 bg-gray-200 text-gray-700 rounded hover:bg-gray-300">← 返回</button>
+                    <h2 class="text-xl font-bold">排行榜</h2>
+                </div>
+
+                <div class="bg-white border rounded-lg p-4 shadow">
+                    <table class="w-full">
+                        <thead>
+                            <tr class="border-b">
+                                <th class="text-left py-2">排名</th>
+                                <th class="text-left py-2">用户名</th>
+                                <th class="text-left py-2">积分</th>
+                                <th class="text-left py-2">徽章</th>
+                            </tr>
+                        </thead>
+                        <tbody id="leaderboardBody">
+                            <!-- 排行榜数据将在这里动态生成 -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+
+        <!-- 成就解锁弹窗 (初始隐藏) -->
+        <div id="achievementPopup" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50 hidden">
+            <div class="bg-white p-6 rounded-lg max-w-sm text-center">
+                <div id="badgeIcon" class="mx-auto mb-4 w-16 h-16"></div>
+                <h3 class="text-xl font-bold mb-2" id="achievementTitle">成就解锁!</h3>
+                <p id="achievementDesc" class="mb-4">你获得了新的徽章!</p>
+                <button id="closePopupBtn" class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">太棒了!</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 题目生成器
+        class QuestionGenerator {
+            static generateQuestion(type, level) {
+                const generators = {
+                    'numberPuzzle': this.generateNumberPuzzle,
+                    'patternRecognition': this.generatePatternRecognition,
+                    'logicRiddle': this.generateLogicRiddle
+                };
+                
+                const typeList = Object.keys(generators);
+                const selectedType = type || typeList[Math.floor(Math.random() * typeList.length)];
+                
+                return generators[selectedType](level);
+            }
+
+            static generateNumberPuzzle(level) {
+                const operations = ['+', '-', '*', '/'];
+                let a, b, answer, question;
+                
+                switch(level) {
+                    case 1: // 初级
+                        a = Math.floor(Math.random() * 10) + 1;
+                        b = Math.floor(Math.random() * 10) + 1;
+                        const op = operations[Math.floor(Math.random() * 2)]; // 只加减
+                        
+                        question = `${a} ${op} ${b} = ?`;
+                        answer = eval(`${a} ${op} ${b}`);
+                        break;
+                        
+                    case 2: // 中级
+                        a = Math.floor(Math.random() * 20) + 1;
+                        b = Math.floor(Math.random() * 20) + 1;
+                        const op2 = operations[Math.floor(Math.random() * 3)]; // 加减乘
+                        
+                        question = `${a} ${op2} ${b} = ?`;
+                        answer = Math.round(eval(`${a} ${op2} ${b}`) * 100) / 100;
+                        break;
+                        
+                    case 3: // 高级
+                        a = Math.floor(Math.random() * 50) + 1;
+                        b = Math.floor(Math.random() * 50) + 1;
+                        const op3 = operations[Math.floor(Math.random() * 4)]; // 加减乘除
+                        
+                        question = `${a} ${op3} ${b} = ?`;
+                        answer = Math.round(eval(`${a} ${op3} ${b}`) * 100) / 100;
+                        break;
+                }
+                
+                return {
+                    type: 'numberPuzzle',
+                    question: question,
+                    answer: answer,
+                    hints: [
+                        `先看是${operations.includes('+') ? '加' : operations.includes('-') ? '减' : operations.includes('*') ? '乘' : '除'}法运算`,
+                        `计算${a} ${operations.includes('+') ? '加' : operations.includes('-') ? '减' : operations.includes('*') ? '乘' : '除'} ${b}`,
+                        `答案是 ${answer}`
+                    ]
+                };
+            }
+
+            static generatePatternRecognition(level) {
+                let sequence = [];
+                let rule, answer;
+                
+                switch(level) {
+                    case 1: // 初级
+                        rule = Math.random() > 0.5 ? '+2' : '×2';
+                        sequence = [2, 4];
+                        if (rule === '+2') {
+                            sequence.push(6, 8, 10);
+                            answer = 12;
+                        } else {
+                            sequence.push(8, 16, 32);
+                            answer = 64;
+                        }
+                        break;
+                        
+                    case 2: // 中级
+                        const patterns = [
+                            { rule: '+3', seq: [3, 6, 9, 12], ans: 15 },
+                            { rule: '×3', seq: [3, 9, 27], ans: 81 },
+                            { rule: '+5,-2', seq: [10, 15, 13, 18], ans: 16 }
+                        ];
+                        const selected = patterns[Math.floor(Math.random() * patterns.length)];
+                        sequence = selected.seq;
+                        rule = selected.rule;
+                        answer = selected.ans;
+                        break;
+                        
+                    case 3: // 高级
+                        const advancedPatterns = [
+                            { rule: '斐波那契', seq: [1, 1, 2, 3, 5], ans: 8 },
+                            { rule: '平方数', seq: [1, 4, 9, 16], ans: 25 },
+                            { rule: '质数', seq: [2, 3, 5, 7, 11], ans: 13 }
+                        ];
+                        const selectedAdv = advancedPatterns[Math.floor(Math.random() * advancedPatterns.length)];
+                        sequence = selectedAdv.seq;
+                        rule = selectedAdv.rule;
+                        answer = selectedAdv.ans;
+                        break;
+                }
+                
+                return {
+                    type: 'patternRecognition',
+                    question: `找规律填空: ${sequence.join(', ')}, ?`,
+                    answer: answer,
+                    hints: [
+                        `观察序列: ${sequence.join(', ')}`,
+                        `尝试寻找规律: ${rule}`,
+                        `下一个数字是: ${answer}`
+                    ]
+                };
+            }
+
+            static generateLogicRiddle(level) {
+                const riddles = [
+                    {
+                        levels: [1, 2, 3],
+                        question: "小明比小红高，小红比小兰高，谁最高？",
+                        answer: "小明",
+                        hints: [
+                            "比较三个人的身高关系",
+                            "小明 > 小红 > 小兰",
+                            "最高的是小明"
+                        ]
+                    },
+                    {
+                        levels: [2, 3],
+                        question: "如果所有的A都是B，所有的B都是C，那么所有的A都是C吗？",
+                        answer: "是",
+                        hints: [
+                            "画一个包含关系的图",
+                            "A在B里面，B在C里面",
+                            "所以A也在C里面"
+                        ]
+                    },
+                    {
+                        levels: [3],
+                        question: "三个人三天喝三桶水，九个人九天喝多少桶水？",
+                        answer: "27",
+                        hints: [
+                            "先算一个人三天喝多少",
+                            "一个人三天喝1桶，一天喝1/3桶",
+                            "九个人九天喝：9 × 9 × (1/3) = 27桶"
+                        ]
+                    }
+                ];
+                
+                const availableRiddles = riddles.filter(r => r.levels.includes(level));
+                const selected = availableRiddles[Math.floor(Math.random() * availableRiddles.length)];
+                
+                return {
+                    type: 'logicRiddle',
+                    question: selected.question,
+                    answer: selected.answer,
+                    hints: selected.hints
+                };
+            }
+        }
+
+        // 用户状态管理
+        class UserState {
+            constructor() {
+                this.state = {
+                    points: 0,
+                    streak: 0,
+                    badges: [],
+                    wrongQuestions: [],
+                    leaderboard: [],
+                    currentLevel: 1,
+                    currentQuestion: null,
+                    usedHints: 0
+                };
+                
+                this.loadState();
+            }
+            
+            loadState() {
+                const savedState = localStorage.getItem('mathOlympiadState');
+                if (savedState) {
+                    this.state = JSON.parse(savedState);
+                    
+                    // 初始化排行榜示例数据
+                    if (this.state.leaderboard.length === 0) {
+                        this.state.leaderboard = [
+                            { name: "数学小天才", points: 350, badges: 5 },
+                            { name: "逻辑达人", points: 280, badges: 4 },
+                            { name: "你", points: this.state.points, badges: this.state.badges.length }
+                        ];
+                    }
+                }
+            }
+            
+            saveState() {
+                // 更新排行榜中的"你"的数据
+                const userIndex = this.state.leaderboard.findIndex(item => item.name === "你");
+                if (userIndex !== -1) {
+                    this.state.leaderboard[userIndex].points = this.state.points;
+                    this.state.leaderboard[userIndex].badges = this.state.badges.length;
+                }
+                
+                localStorage.setItem('mathOlympiadState', JSON.stringify(this.state));
+            }
+            
+            addPoints(points) {
+                this.state.points += points;
+                this.saveState();
+                this.updateUI();
+            }
+            
+            incrementStreak() {
+                this.state.streak++;
+                
+                // 检查是否获得连续答题徽章
+                if (this.state.streak >= 5 && !this.state.badges.includes('streak5')) {
+                    this.state.badges.push('streak5');
+                    this.showAchievement('速算小将', '连续答对5题!');
+                }
+                
+                // 检查是否达到100积分
+                if (this.state.points >= 100 && !this.state.badges.includes('points100')) {
+                    this.state.badges.push('points100');
+                    this.showAchievement('百积分达人', '累计获得100积分!');
+                }
+                
+                this.saveState();
+                this.updateUI();
+            }
+            
+            resetStreak() {
+                this.state.streak = 0;
+                this.saveState();
+                this.updateUI();
+            }
+            
+            addWrongQuestion(question) {
+                this.state.wrongQuestions.push({
+                    question: question.question,
+                    answer: question.answer,
+                    timestamp: new Date().toLocaleString()
+                });
+                this.saveState();
+            }
+            
+            updateUI() {
+                document.getElementById('totalPoints').textContent = this.state.points;
+                document.getElementById('streakCount').textContent = this.state.streak;
+                document.getElementById('currentPoints').textContent = this.state.points;
+                
+                // 更新排行榜显示
+                this.updateLeaderboardUI();
+                
+                // 更新徽章显示
+                this.updateBadgesUI();
+                
+                // 更新错题本
+                this.updateWrongQuestionsUI();
+            }
+            
+            updateLeaderboardUI() {
+                const leaderboardBody = document.getElementById('leaderboardBody');
+                if (!leaderboardBody) return;
+                
+                leaderboardBody.innerHTML = '';
+                
+                // 排序排行榜
+                const sortedLeaderboard = [...this.state.leaderboard].sort((a, b) => b.points - a.points);
+                
+                sortedLeaderboard.forEach((user, index) => {
+                    const row = document.createElement('tr');
+                    row.className = 'border-b';
+                    
+                    row.innerHTML = `
+                        <td class="py-2">${index + 1}</td>
+                        <td class="py-2">${user.name}</td>
+                        <td class="py-2">${user.points}</td>
+                        <td class="py-2">${user.badges || 0}</td>
+                    `;
+                    
+                    leaderboardBody.appendChild(row);
+                });
+            }
+            
+            updateBadgesUI() {
+                const badgesContainer = document.getElementById('badgesContainer');
+                if (!badgesContainer) return;
+                
+                badgesContainer.innerHTML = '';
+                
+                const badgeData = {
+                    'streak5': { name: '速算小将', desc: '连续答对5题', icon: '🏆', color: 'bg-yellow-100 text-yellow-800' },
+                    'points100': { name: '百积分达人', desc: '累计100积分', icon: '💯', color: 'bg-green-100 text-green-800' }
+                };
+                
+                this.state.badges.forEach(badgeId => {
+                    const badge = badgeData[badgeId];
+                    if (badge) {
+                        const badgeElement = document.createElement('div');
+                        badgeElement.className = `flex flex-col items-center p-2 rounded-full ${badge.color} w-16 h-16 justify-center badge-earned`;
+                        badgeElement.title = `${badge.name}: ${badge.desc}`;
+                        badgeElement.innerHTML = `
+                            <div class="text-2xl">${badge.icon}</div>
+                            <div class="text-xs mt-1">${badge.name}</div>
+                        `;
+                        badgesContainer.appendChild(badgeElement);
+                    }
+                });
+                
+                // 添加未获得的徽章（灰色显示）
+                Object.keys(badgeData).forEach(badgeId => {
+                    if (!this.state.badges.includes(badgeId)) {
+                        const badge = badgeData[badgeId];
+                        const badgeElement = document.createElement('div');
+                        badgeElement.className = `flex flex-col items-center p-2 rounded-full bg-gray-200 text-gray-500 w-16 h-16 justify-center`;
+                        badgeElement.title = `${badge.name}: ${badge.desc} (未获得)`;
+                        badgeElement.innerHTML = `
+                            <div class="text-2xl">${badge.icon}</div>
+                            <div class="text-xs mt-1">?</div>
+                        `;
+                        badgesContainer.appendChild(badgeElement);
+                    }
+                });
+            }
+            
+            updateWrongQuestionsUI() {
+                const wrongQuestionsContainer = document.getElementById('wrongQuestionsContainer');
+                if (!wrongQuestionsContainer) return;
+                
+                if (this.state.wrongQuestions.length === 0) {
+                    wrongQuestionsContainer.innerHTML = '<p class="text-gray-500">暂无错题记录</p>';
+                    return;
+                }
+                
+                wrongQuestionsContainer.innerHTML = '';
+                const list = document.createElement('div');
+                list.className = 'space-y-2';
+                
+                this.state.wrongQuestions.slice(0, 5).forEach((item, index) => {
+                    const questionItem = document.createElement('div');
+                    questionItem.className = 'border-b pb-2';
+                    questionItem.innerHTML = `
+                        <div class="font-semibold">${index + 1}. ${item.question}</div>
+                        <div class="text-sm text-gray-600">正确答案: ${item.answer}</div>
+                        <div class="text-xs text-gray-400">${item.timestamp}</div>
+                    `;
+                    list.appendChild(questionItem);
+                });
+                
+                wrongQuestionsContainer.appendChild(list);
+                
+                if (this.state.wrongQuestions.length > 5) {
+                    const moreLink = document.createElement('p');
+                    moreLink.className = 'text-sm text-blue-500 mt-2';
+                    moreLink.textContent = `查看更多 (共${this.state.wrongQuestions.length}题)`;
+                    moreLink.onclick = () => {
+                        alert('完整错题本功能需要后端支持，当前为演示版本只显示最近5题');
+                    };
+                    wrongQuestionsContainer.appendChild(moreLink);
+                }
+            }
+            
+            showAchievement(title, description) {
+                const popup = document.getElementById('achievementPopup');
+                const badgeIcon = document.getElementById('badgeIcon');
+                const achievementTitle = document.getElementById('achievementTitle');
+                const achievementDesc = document.getElementById('achievementDesc');
+                
+                achievementTitle.textContent = title;
+                achievementDesc.textContent = description;
+                
+                // 设置徽章图标
+                badgeIcon.innerHTML = title.includes('速算') ? '🏆' : '💯';
+                badgeIcon.className = 'mx-auto mb-4 w-16 h-16 text-4xl flex items-center justify-center badge-earned';
+                
+                popup.classList.remove('hidden');
+            }
+        }
+
+        // 应用控制器
+        class AppController {
+            constructor() {
+                this.userState = new UserState();
+                this.currentQuestion = null;
+                this.usedHints = 0;
+                
+                this.initEventListeners();
+                this.userState.updateUI();
+            }
+            
+            initEventListeners() {
+                // 难度选择按钮
+                document.querySelectorAll('.level-btn').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        const level = parseInt(btn.dataset.level);
+                        this.startPractice(level);
+                    });
+                });
+                
+                // 导航按钮
+                document.getElementById('practiceBtn').addEventListener('click', () => {
+                    this.showScreen('welcome');
+                });
+                
+                document.getElementById('progressBtn').addEventListener('click', () => {
+                    this.showScreen('progress');
+                });
+                
+                document.getElementById('leaderboardBtn').addEventListener('click', () => {
+                    this.showScreen('leaderboard');
+                });
+                
+                // 返回按钮
+                document.getElementById('backBtn').addEventListener('click', () => {
+                    this.showScreen('welcome');
+                });
+                
+                document.getElementById('progressBackBtn').addEventListener('click', () => {
+                    this.showScreen('welcome');
+                });
+                
+                document.getElementById('leaderboardBackBtn').addEventListener('click', () => {
+                    this.showScreen('welcome');
+                });
+                
+                // 答题相关按钮
+                document.getElementById('submitBtn').addEventListener('click', () => {
+                    this.checkAnswer();
+                });
+                
+                document.getElementById('nextBtn').addEventListener('click', () => {
+                    this.nextQuestion();
+                });
+                
+                // 提示按钮
+                document.getElementById('hint1Btn').addEventListener('click', () => {
+                    this.showHint(1);
+                });
+                
+                document.getElementById('hint2Btn').addEventListener('click', () => {
+                    this.showHint(2);
+                });
+                
+                document.getElementById('hint3Btn').addEventListener('click', () => {
+                    this.showHint(3);
+                });
+                
+                // 成就弹窗关闭按钮
+                document.getElementById('closePopupBtn').addEventListener('click', () => {
+                    document.getElementById('achievementPopup').classList.add('hidden');
+                });
+            }
+            
+            showScreen(screenName) {
+                // 隐藏所有屏幕
+                document.getElementById('welcomeScreen').classList.add('hidden');
+                document.getElementById('practiceScreen').classList.add('hidden');
+                document.getElementById('progressScreen').classList.add('hidden');
+                document.getElementById('leaderboardScreen').classList.add('hidden');
+                
+                // 显示选中的屏幕
+                switch(screenName) {
+                    case 'welcome':
+                        document.getElementById('welcomeScreen').classList.remove('hidden');
+                        break;
+                    case 'practice':
+                        document.getElementById('practiceScreen').classList.remove('hidden');
+                        break;
+                    case 'progress':
+                        document.getElementById('progressScreen').classList.remove('hidden');
+                        // 更新进度数据
+                        this.userState.updateBadgesUI();
+                        this.userState.updateWrongQuestionsUI();
+                        break;
+                    case 'leaderboard':
+                        document.getElementById('leaderboardScreen').classList.remove('hidden');
+                        // 更新排行榜
+                        this.userState.updateLeaderboardUI();
+                        break;
+                }
+            }
+            
+            startPractice(level) {
+                this.userState.state.currentLevel = level;
+                this.userState.saveState();
+                
+                // 更新UI显示当前难度
+                const levelNames = { 1: '初级', 2: '中级', 3: '高级' };
+                document.getElementById('currentLevel').textContent = levelNames[level];
+                
+                // 显示练习屏幕
+                this.showScreen('practice');
+                
+                // 生成并显示第一个问题
+                this.nextQuestion();
+            }
+            
+            nextQuestion() {
+                // 重置提示状态
+                this.usedHints = 0;
+                document.getElementById('hint2Btn').classList.add('hidden');
+                document.getElementById('hint3Btn').classList.add('hidden');
+                
+                // 隐藏反馈区域
+                document.getElementById('feedbackArea').classList.add('hidden');
+                
+                // 生成新问题
+                this.currentQuestion = QuestionGenerator.generateQuestion(null, this.userState.state.currentLevel);
+                this.userState.state.currentQuestion = this.currentQuestion;
+                this.userState.saveState();
+                
+                // 显示问题
+                this.displayQuestion(this.currentQuestion);
+            }
+            
+            displayQuestion(question) {
+                document.getElementById('questionText').textContent = question.question;
+                
+                const questionContent = document.getElementById('questionContent');
+                questionContent.innerHTML = '';
+                
+                // 根据问题类型创建不同的答题区域
+                const answerArea = document.getElementById('answerArea');
+                answerArea.innerHTML = '';
+                
+                if (question.type === 'numberPuzzle' || question.type === 'patternRecognition') {
+                    // 数字题 - 创建输入框
+                    const input = document.createElement('input');
+                    input.type = 'number';
+                    input.id = 'answerInput';
+                    input.className = 'border rounded px-3 py-2 w-24 text-center';
+                    input.placeholder = '输入答案';
+                    answerArea.appendChild(input);
+                    
+                    // 添加数字键盘（可选）
+                    const numberPad = document.createElement('div');
+                    numberPad.className = 'flex flex-wrap gap-2 mt-2 justify-center';
+                    
+                    for (let i = 1; i <= 9; i++) {
+                        const numBtn = document.createElement('button');
+                        numBtn.className = 'w-10 h-10 bg-gray-200 rounded hover:bg-gray-300';
+                        numBtn.textContent = i;
+                        numBtn.onclick = () => {
+                            input.value += i;
+                        };
+                        numberPad.appendChild(numBtn);
+                    }
+                    
+                    const zeroBtn = document.createElement('button');
+                    zeroBtn.className = 'w-10 h-10 bg-gray-200 rounded hover:bg-gray-300';
+                    zeroBtn.textContent = '0';
+                    zeroBtn.onclick = () => {
+                        input.value += '0';
+                    };
+                    numberPad.appendChild(zeroBtn);
+                    
+                    const clearBtn = document.createElement('button');
+                    clearBtn.className = 'w-10 h-10 bg-red-100 rounded hover:bg-red-200';
+                    clearBtn.textContent = '⌫';
+                    clearBtn.onclick = () => {
+                        input.value = input.value.slice(0, -1);
+                    };
+                    numberPad.appendChild(clearBtn);
+                    
+                    answerArea.appendChild(numberPad);
+                } else if (question.type === 'logicRiddle') {
+                    // 逻辑题 - 创建选择题或文本框
+                    if (typeof question.answer === 'string' && question.answer.length < 20) {
+                        // 短文本答案 - 使用输入框
+                        const input = document.createElement('input');
+                        input.type = 'text';
+                        input.id = 'answerInput';
+                        input.className = 'border rounded px-3 py-2 w-full max-w-xs';
+                        input.placeholder = '输入你的答案';
+                        answerArea.appendChild(input);
+                    } else {
+                        // 复杂答案 - 使用文本区域
+                        const textarea = document.createElement('textarea');
+                        textarea.id = 'answerInput';
+                        textarea.className = 'border rounded px-3 py-2 w-full';
+                        textarea.rows = 3;
+                        textarea.placeholder = '输入你的推理过程';
+                        answerArea.appendChild(textarea);
+                    }
+                }
+                
+                // 聚焦到输入框
+                const input = document.getElementById('answerInput');
+                if (input) input.focus();
+            }
+            
+            checkAnswer() {
+                const input = document.getElementById('answerInput');
+                if (!input) return;
+                
+                const userAnswer = input.value.trim();
+                if (!userAnswer) {
+                    alert('请输入答案');
+                    return;
+                }
+                
+                const feedbackArea = document.getElementById('feedbackArea');
+                const feedbackContent = document.getElementById('feedbackContent');
+                
+                // 检查答案
+                let isCorrect;
+                if (this.currentQuestion.type === 'numberPuzzle' || this.currentQuestion.type === 'patternRecognition') {
+                    // 数字题 - 比较数值
+                    isCorrect = Math.abs(parseFloat(userAnswer) - parseFloat(this.currentQuestion.answer)) < 0.001;
+                } else {
+                    // 逻辑题 - 比较字符串（不区分大小写）
+                    isCorrect = userAnswer.toLowerCase() === this.currentQuestion.answer.toString().toLowerCase();
+                }
+                
+                // 显示反馈
+                if (isCorrect) {
+                    feedbackContent.className = 'p-3 rounded-lg bg-green-100 text-green-800';
+                    feedbackContent.innerHTML = `
+                        <div class="flex items-center">
+                            <span class="text-2xl mr-2">✅</span>
+                            <span class="font-bold">回答正确!</span>
+                        </div>
+                        <div class="mt-2">${this.currentQuestion.hints[this.currentQuestion.hints.length - 1]}</div>
+                    `;
+                    
+                    // 奖励积分
+                    const pointsEarned = 10 - (this.usedHints * 2); // 基础10分，每用一次提示扣2分
+                    this.userState.addPoints(pointsEarned);
+                    this.userState.incrementStreak();
+                } else {
+                    feedbackContent.className = 'p-3 rounded-lg bg-red-100 text-red-800';
+                    feedbackContent.innerHTML = `
+                        <div class="flex items-center">
+                            <span class="text-2xl mr-2">❌</span>
+                            <span class="font-bold">回答错误</span>
+                        </div>
+                        <div class="mt-2">正确答案: ${this.currentQuestion.answer}</div>
+                        <div class="mt-1">${this.currentQuestion.hints[0]}</div>
+                    `;
+                    
+                    // 添加到错题本
+                    this.userState.addWrongQuestion(this.currentQuestion);
+                    this.userState.resetStreak();
+                }
+                
+                feedbackArea.classList.remove('hidden');
+            }
+            
+            showHint(hintNumber) {
+                if (hintNumber > this.usedHints + 1) return;
+                
+                this.usedHints = hintNumber;
+                this.userState.state.usedHints = hintNumber;
+                this.userState.saveState();
+                
+                const feedbackContent = document.getElementById('feedbackContent');
+                feedbackContent.className = 'p-3 rounded-lg bg-blue-100 text-blue-800';
+                feedbackContent.innerHTML = `
+                    <div class="font-semibold">提示 ${hintNumber}:</div>
+                    <div class="mt-1">${this.currentQuestion.hints[hintNumber - 1]}</div>
+                `;
+                
+                document.getElementById('feedbackArea').classList.remove('hidden');
+                
+                // 显示下一个提示按钮
+                if (hintNumber === 1) {
+                    document.getElementById('hint2Btn').classList.remove('hidden');
+                } else if (hintNumber === 2) {
+                    document.getElementById('hint3Btn').classList.remove('hidden');
+                }
+            }
+        }
+
+        // 初始化应用
+        document.addEventListener('DOMContentLoaded', () => {
+            new AppController();
+        });
+    </script>
+</body>
+</html>

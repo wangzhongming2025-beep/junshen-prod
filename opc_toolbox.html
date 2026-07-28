@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>《一人企业 (OPC) 自动化提效工具箱》 - 老王队长原创指南</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Noto+Sans+SC:wght@300;400;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Outfit', 'Noto Sans SC', 'sans-serif'],
+                    },
+                    colors: {
+                        military: {
+                            light: '#5c7065',
+                            DEFAULT: '#2f3b35', // Deep military green
+                            dark: '#141a17',
+                            accent: '#ffd700', // Gold accent
+                            glass: 'rgba(20, 26, 23, 0.75)',
+                            border: 'rgba(255, 215, 0, 0.15)'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #0b0f0d;
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(47, 59, 53, 0.15) 0%, transparent 40%),
+                radial-gradient(circle at 90% 80%, rgba(255, 215, 0, 0.03) 0%, transparent 35%);
+        }
+        .glow-text-gold {
+            text-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
+        }
+        .glass-card {
+            background: rgba(20, 26, 23, 0.65);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.03);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .glass-card:hover {
+            border-color: rgba(255, 215, 0, 0.3);
+            box-shadow: 0 15px 35px rgba(255, 215, 0, 0.08);
+        }
+        .glow-btn {
+            box-shadow: 0 4px 15px rgba(255, 215, 0, 0.2);
+            transition: all 0.3s ease;
+        }
+        .glow-btn:hover {
+            box-shadow: 0 8px 25px rgba(255, 215, 0, 0.45);
+        }
+        /* Style for prints */
+        @media print {
+            body {
+                background: white !important;
+                color: black !important;
+            }
+            .no-print {
+                display: none !important;
+            }
+            .glass-card {
+                background: white !important;
+                color: black !important;
+                border: 1px solid #ccc !important;
+                box-shadow: none !important;
+                backdrop-filter: none !important;
+            }
+        }
+    </style>
+</head>
+
+<body class="text-gray-300 antialiased pb-24 md:pb-12">
+
+    <!-- Top Action Bar (No Print) -->
+    <nav class="bg-military-dark/95 border-b border-white/5 py-4 px-6 sticky top-0 z-50 backdrop-blur-md no-print">
+        <div class="max-w-6xl mx-auto flex justify-between items-center">
+            <a href="index.html" class="flex items-center space-x-2 text-white hover:text-military-accent transition-colors">
+                <i class="fas fa-arrow-left"></i>
+                <span class="font-bold">返回主页</span>
+            </a>
+            <div class="text-lg font-bold tracking-wider text-military-accent glow-text-gold">
+                <i class="fas fa-book-open mr-2"></i>一人企业提效工具箱
+            </div>
+            <button onclick="window.print()" class="bg-military-accent text-military-dark px-4 py-1.5 rounded-full font-bold text-sm hover:bg-white transition-all glow-btn flex items-center">
+                <i class="fas fa-print mr-1.5"></i> 打印或导出 PDF
+            </button>
+        </div>
+    </nav>
+
+    <!-- Header Section -->
+    <header class="relative overflow-hidden py-16 md:py-20 border-b border-white/5 bg-gradient-to-b from-military-dark to-transparent">
+        <div class="absolute inset-0 bg-[radial-gradient(rgba(255,215,0,0.05)_1px,transparent_1px)] [background-size:20px_20px] pointer-events-none"></div>
+        <div class="max-w-4xl mx-auto px-6 text-center relative z-10 flex flex-col items-center">
+            <span class="bg-military-accent/10 text-military-accent border border-military-accent/20 text-xs px-3.5 py-1 rounded-full font-semibold tracking-wider uppercase mb-4 inline-block">
+                EBOOK / 核心红利指南
+            </span>
+            <h1 class="text-3xl md:text-5xl font-extrabold tracking-wide text-white mb-4 glow-text-gold">
+                《一人企业 (OPC) 自动化提效工具箱》
+            </h1>
+            <p class="text-xs md:text-sm text-gray-400 max-w-2xl leading-relaxed">
+                用 AI 把 1 个人活成一支队伍 · 帮创业者降本增效，少请人多干活
+            </p>
+            <div class="text-xs text-military-accent font-semibold mt-3 font-mono">
+                作者：老王队长 [军神] · 2026 最新版
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="max-w-4xl mx-auto px-4 md:px-6 py-10 space-y-12">
+
+        <!-- Preface -->
+        <section class="glass-card p-6 md:p-8 rounded-2xl border-l-4 border-military-accent space-y-4">
+            <h2 class="text-lg font-bold text-white flex items-center">
+                <i class="fas fa-pen-nib text-military-accent mr-2.5"></i> 前言：为什么是一人企业？
+            </h2>
+            <p class="text-xs text-gray-400 leading-relaxed text-justify">
+                在传统创业时代，团队规模往往被视为衡量企业实力的标准。然而，高昂的人员租房成本、繁重的管理内耗，击垮了绝大部分初创项目。
+            </p>
+            <p class="text-xs text-gray-400 leading-relaxed text-justify">
+                <strong>AI 时代的到来，彻底重塑了商业规则</strong>。借助于大模型（LLM）、低代码技术和自动化连接流，一个具备全栈能力的“超级个体”，完全可以借助 AI 助理完成产品开发、文案撰写、流量获客与自动化交付的完整闭环。
+            </p>
+            <p class="text-xs text-gray-400 leading-relaxed text-justify">
+                本工具箱旨在帮助想探索第二职业、副业，或期望精益创业的战友，梳理并配置最适合一人企业的提效武器栈。
+            </p>
+        </section>
+
+        <!-- Chapter 1: Knowledge & Information -->
+        <section class="space-y-4">
+            <h3 class="text-base font-bold text-white border-b border-white/10 pb-2 flex items-center">
+                <span class="w-2.5 h-2.5 bg-military-accent rounded-full mr-2"></span>
+                第一章：知识管理与深度阅读（输入端）
+            </h3>
+            <p class="text-xs text-gray-500">所有的输出都来自于高质量的日常积累，一人企业必须用 AI 提高 10 倍输入吞吐量。</p>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <!-- Tool Card -->
+                <div class="bg-black/30 p-5 rounded-xl border border-white/5 space-y-2">
+                    <h4 class="text-xs font-bold text-white flex items-center">
+                        <i class="fas fa-file-alt text-military-accent mr-2"></i> 飞书文档 (Feishu)
+                    </h4>
+                    <p class="text-[11px] text-gray-400 leading-relaxed">
+                        <strong>定位</strong>：个人知识库底座与大纲整理。<br>
+                        <strong>提效用法</strong>：利用其无限层级的 Wiki 目录结构以及对飞书妙记、音视频的深度集成，将自己日常的读书笔记、项目复盘、碎片灵感沉淀为可追溯的方法论。
+                    </p>
+                </div>
+                <!-- Tool Card -->
+                <div class="bg-black/30 p-5 rounded-xl border border-white/5 space-y-2">
+                    <h4 class="text-xs font-bold text-white flex items-center">
+                        <i class="fas fa-robot text-military-accent mr-2"></i> DeepSeek & Kimi
+                    </h4>
+                    <p class="text-[11px] text-gray-400 leading-relaxed">
+                        <strong>定位</strong>：长文本阅读与论文/大文档榨干。<br>
+                        <strong>提效用法</strong>：将 5 万字的行业研报或整本书丢给它们，下发提示词：“请在3分钟内用脑图结构梳理出该材料的 3 个核心论点和 5 个可落地的实操案例。”
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Chapter 2: Content Creation -->
+        <section class="space-y-4">
+            <h3 class="text-base font-bold text-white border-b border-white/10 pb-2 flex items-center">
+                <span class="w-2.5 h-2.5 bg-military-accent rounded-full mr-2"></span>
+                第二章：自媒体爆款内容创作（流量端）
+            </h3>
+            <p class="text-xs text-gray-500">公域输出内容，私域长期沉淀，一人企业必须打造低成本获客的“信任管道”。</p>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <!-- Tool Card -->
+                <div class="bg-black/30 p-5 rounded-xl border border-white/5 space-y-2">
+                    <h4 class="text-xs font-bold text-white flex items-center">
+                        <i class="fas fa-keyboard text-military-accent mr-2"></i> Claude 3.5 Sonnet
+                    </h4>
+                    <p class="text-[11px] text-gray-400 leading-relaxed">
+                        <strong>定位</strong>：高质量文案与逻辑输出。<br>
+                        <strong>提效用法</strong>：由于 Claude 的文字质感最为拟人、极少“AI腔”，适合用来撰写公众号爆款深度长文、小红书高赞分享文案，以及短视频口播文案。
+                    </p>
+                </div>
+                <!-- Tool Card -->
+                <div class="bg-black/30 p-5 rounded-xl border border-white/5 space-y-2">
+                    <h4 class="text-xs font-bold text-white flex items-center">
+                        <i class="fas fa-image text-military-accent mr-2"></i> Midjourney & Flux
+                    </h4>
+                    <p class="text-[11px] text-gray-400 leading-relaxed">
+                        <strong>定位</strong>：自媒体精美封面与配图生成。<br>
+                        <strong>提效用法</strong>：Flux 模型的文字渲染极其强大，特别适合制作包含特定中文/英文 slogan 的小红书封面。配合 Midjourney 制作极具电影感和意境的文案配图。
+                    </p>
+                </div>
+                <!-- Tool Card -->
+                <div class="bg-black/30 p-5 rounded-xl border border-white/5 space-y-2">
+                    <h4 class="text-xs font-bold text-white flex items-center">
+                        <i class="fas fa-video text-military-accent mr-2"></i> 剪映 (CapCut) & 腾讯智影
+                    </h4>
+                    <p class="text-[11px] text-gray-400 leading-relaxed">
+                        <strong>定位</strong>：短视频快速智能剪辑。<br>
+                        <strong>提效用法</strong>：利用其“文字成片”或“智能降噪”功能，只需输入写好的脚本，即可自动匹配素材剪切、添加字幕和配乐，配合数字人工具甚至不需要真人出镜。
+                    </p>
+                </div>
+                <!-- Tool Card -->
+                <div class="bg-black/30 p-5 rounded-xl border border-white/5 space-y-2">
+                    <h4 class="text-xs font-bold text-white flex items-center">
+                        <i class="fas fa-user-plus text-military-accent mr-2"></i> 微信自动引流助手
+                    </h4>
+                    <p class="text-[11px] text-gray-400 leading-relaxed">
+                        <strong>定位</strong>：私域自动响应与沉淀。<br>
+                        <strong>提效用法</strong>：在公众号或社群中，利用自动回复或特定机器人对发送“资料包”等暗号的客户实现秒级加微信、发链接响应，降低人工看管成本。
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Chapter 3: Development & Productization -->
+        <section class="space-y-4">
+            <h3 class="text-base font-bold text-white border-b border-white/10 pb-2 flex items-center">
+                <span class="w-2.5 h-2.5 bg-military-accent rounded-full mr-2"></span>
+                第三章：零基础 AI 编程与自我产品化（交付端）
+            </h3>
+            <p class="text-xs text-gray-500">课程不值钱，拥有自己可以卖一辈子的“独一无二的产品”才是长期收钱的王道。</p>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <!-- Tool Card -->
+                <div class="bg-black/30 p-5 rounded-xl border border-white/5 space-y-2">
+                    <h4 class="text-xs font-bold text-white flex items-center">
+                        <i class="fas fa-code text-military-accent mr-2"></i> Cursor & Windsurf
+                    </h4>
+                    <p class="text-[11px] text-gray-400 leading-relaxed">
+                        <strong>定位</strong>：全栈 AI 编程编辑器。<br>
+                        <strong>提效用法</strong>：即使完全不会语法，只要配置好提示词库，使用“Composer / Agent”多文件协同编辑模式，你可以像跟人说话一样让 AI 帮你一行行编写微信小程序、导航站和展示网页。
+                    </p>
+                </div>
+                <!-- Tool Card -->
+                <div class="bg-black/30 p-5 rounded-xl border border-white/5 space-y-2">
+                    <h4 class="text-xs font-bold text-white flex items-center">
+                        <i class="fas fa-cubes text-military-accent mr-2"></i> Lovable & v0
+                    </h4>
+                    <p class="text-[11px] text-gray-400 leading-relaxed">
+                        <strong>定位</strong>：前端界面与交互的原型极速生成。<br>
+                        <strong>提效用法</strong>：在构思产品原型时，截图给 v0 即可一键输出对应的 Tailwind CSS 代码，或者让 Lovable 自动生成可以点击的交互式 Web 网页版原型，极大提升跟客户对齐方案的速度。
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Chapter 4: Integration & Automation -->
+        <section class="space-y-4">
+            <h3 class="text-base font-bold text-white border-b border-white/10 pb-2 flex items-center">
+                <span class="w-2.5 h-2.5 bg-military-accent rounded-full mr-2"></span>
+                第四章：低代码自动化连接与 AI Agent（系统端）
+            </h3>
+            <p class="text-xs text-gray-500">将各种软件和工具像积木一样拼装起来，一人企业必须靠“自动化系统”不知疲倦地运作。</p>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <!-- Tool Card -->
+                <div class="bg-black/30 p-5 rounded-xl border border-white/5 space-y-2">
+                    <h4 class="text-xs font-bold text-white flex items-center">
+                        <i class="fas fa-link text-military-accent mr-2"></i> Make.com / 集简云
+                    </h4>
+                    <p class="text-[11px] text-gray-400 leading-relaxed">
+                        <strong>定位</strong>：低代码工作流自动化连接器。<br>
+                        <strong>提效用法</strong>：实现无缝跨平台数据流转。例如：当金山表单收到新意向时 $\rightarrow$ 自动触发大模型写定制回复邮件 $\rightarrow$ 自动在企业微信发出提醒并打上客户标签，全流程无需人工干预。
+                    </p>
+                </div>
+                <!-- Tool Card -->
+                <div class="bg-black/30 p-5 rounded-xl border border-white/5 space-y-2">
+                    <h4 class="text-xs font-bold text-white flex items-center">
+                        <i class="fas fa-brain text-military-accent mr-2"></i> Dify.ai & FastGPT
+                    </h4>
+                    <p class="text-[11px] text-gray-400 leading-relaxed">
+                        <strong>定位</strong>：零代码私有 AI Agent 平台。<br>
+                        <strong>提效用法</strong>：将自己近10年积累的文章、课程文档上传为知识库（RAG），轻松配置出一个具备您本人说话语气与知识储备的“分身客服”，挂载至网页或私域，24小时在线答疑引流。
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Lao Wang's Daily Practice -->
+        <section class="bg-gradient-to-r from-military via-military-dark to-black border border-military-accent/20 rounded-2xl p-6 md:p-8 space-y-4">
+            <h3 class="text-base font-bold text-white flex items-center">
+                <i class="fas fa-star text-military-accent mr-2"></i> 老王队长的「一人企业运营日课」心法
+            </h3>
+            <p class="text-xs text-gray-300 leading-relaxed">
+                工具只是武器，使用武器的人才决定了结果的胜负。我的核心心法很简单：
+            </p>
+            <div class="space-y-2">
+                <div class="flex items-start space-x-2 text-xs">
+                    <span class="text-military-accent font-bold">1.</span>
+                    <p class="text-gray-400"><strong>先迈步，再调整</strong>：完美的计划不存在。不冒险本身就是最大风险，只要能承受最差结果的损失，就应当勇敢迈出低成本试错的第一步。</p>
+                </div>
+                <div class="flex items-start space-x-2 text-xs">
+                    <span class="text-military-accent font-bold">2.</span>
+                    <p class="text-gray-400"><strong>日课式积累</strong>：每天只需投入 30 分钟进行思考并公开写出 1 篇短文章，将其变成终身习惯。积累 10 年，您的被动收入将是数十万、数百万甚至千万级。</p>
+                </div>
+                <div class="flex items-start space-x-2 text-xs">
+                    <span class="text-military-accent font-bold">3.</span>
+                    <p class="text-gray-400"><strong>肌肉记忆大于教程</strong>：课程再多不练也无用。反复使用工具以形成生理上的肌肉记忆，从赚到第一个一分钱开始，不断滚大您的私域复利雪球。</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Lead Form (Claim detailed version) -->
+        <section id="claim-form" class="bg-black/40 border border-white/10 p-6 rounded-xl text-center space-y-4 max-w-2xl mx-auto no-print">
+            <h4 class="font-bold text-white text-sm">💡 获取更多实操细节与 1对1 提效语音诊断</h4>
+            <p class="text-[11px] text-gray-400 leading-relaxed">
+                本网页版为《一人企业提效工具箱》之速查体验卡。如果您需要更详尽的 **包含 30+ 精选工具下载链接、配套高效 Prompt 模板以及可直接导入的 Make 自动化模版 .json 文件**，请扫码或一键复制微信添加我。
+            </p>
+            
+            <div class="flex flex-col md:flex-row justify-center items-center gap-6 pt-2">
+                <div class="bg-white/5 p-3 rounded-lg border border-white/10 w-36">
+                    <img src="erweima2.jpg" alt="微信二维码" class="w-28 h-28 mx-auto rounded mb-1">
+                    <span class="text-[9px] text-gray-400">扫码直接联系</span>
+                </div>
+                <div class="text-left flex flex-col justify-center space-y-3">
+                    <div>
+                        <div class="text-[10px] text-gray-500">老王队长微信号</div>
+                        <div class="text-sm font-bold text-military-accent tracking-wider font-mono select-all" id="wechat-id">vip20213456</div>
+                    </div>
+                    <button onclick="copyWeChat()" class="bg-military-accent text-military-dark hover:bg-white font-bold py-1.5 px-4 rounded-full text-xs active:scale-95 transition-all glow-btn">
+                        一键复制微信号并添加
+                    </button>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Toast Component -->
+    <div id="toast" class="fixed top-6 left-1/2 transform -translate-x-1/2 bg-military-accent text-military-dark px-6 py-3.5 rounded-full font-bold shadow-2xl z-[100] opacity-0 transition-opacity duration-300 pointer-events-none text-center text-xs border border-military">
+        🎉 成功复制微信号，快去微信搜索添加领完整版吧！
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-military-dark text-gray-500 py-8 text-center text-xs border-t border-white/5 no-print">
+        <div class="max-w-6xl mx-auto px-4">
+            <p>&copy; 2026 老王队长 - 从军官到创业者的转型之路</p>
+        </div>
+    </footer>
+
+    <script>
+        function copyWeChat() {
+            const wechatId = document.getElementById('wechat-id').innerText;
+            navigator.clipboard.writeText(wechatId).then(() => {
+                showToast();
+            }).catch(err => {
+                const input = document.createElement('input');
+                input.value = wechatId;
+                document.body.appendChild(input);
+                input.select();
+                document.execCommand('copy');
+                document.body.removeChild(input);
+                showToast();
+            });
+        }
+
+        function showToast() {
+            const toast = document.getElementById('toast');
+            toast.style.opacity = '1';
+            setTimeout(() => {
+                toast.style.opacity = '0';
+            }, 3000);
+        }
+    </script>
+</body>
+
+</html>

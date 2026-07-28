@@ -1,0 +1,1099 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>护眼助手 - 保护你的眼睛</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome -->
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.8/dist/chart.umd.min.js"></script>
+    
+    <!-- Tailwind 配置 -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#4ade80', // 护眼绿色
+                        secondary: '#10b981', // 深绿色
+                        accent: '#22c55e', // 强调色
+                        neutral: '#64748b', // 中性色
+                        light: '#f8fafc', // 亮色背景
+                        dark: '#1e293b' // 暗色背景
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <!-- 自定义工具类 -->
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .content-auto {
+                content-visibility: auto;
+            }
+            .eye-shadow {
+                box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            }
+            .gradient-bg {
+                background: linear-gradient(135deg, #4ade80 0%, #10b981 100%);
+            }
+            .dark-gradient-bg {
+                background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            }
+            .text-balance {
+                text-wrap: balance;
+            }
+        }
+    </style>
+</head>
+<body class="bg-light dark:bg-dark text-dark dark:text-light min-h-screen flex flex-col transition-colors duration-300">
+    <!-- 状态条 - 显示当前用眼时长 -->
+    <div class="fixed top-0 left-0 right-0 h-1 bg-gray-200 dark:bg-gray-800 z-50">
+        <div id="eye-time-progress" class="h-full bg-primary transition-all duration-1000"></div>
+    </div>
+    
+    <!-- 主容器 -->
+    <div class="container mx-auto px-4 py-8 mt-4 flex-grow">
+        <!-- 头部导航 -->
+        <header class="flex justify-between items-center mb-8">
+            <div class="flex items-center space-x-2">
+                <i class="fa fa-eye text-2xl text-primary"></i>
+                <h1 class="text-[clamp(1.5rem,3vw,2.5rem)] font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">护眼助手</h1>
+            </div>
+            <div class="flex space-x-4">
+                <button id="theme-toggle" class="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-800 transition-colors">
+                    <i class="fa fa-moon-o text-lg text-neutral dark:text-light"></i>
+                </button>
+                <button id="settings-btn" class="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-800 transition-colors">
+                    <i class="fa fa-cog text-lg text-neutral dark:text-light"></i>
+                </button>
+                <button id="stats-btn" class="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-800 transition-colors">
+                    <i class="fa fa-bar-chart text-lg text-neutral dark:text-light"></i>
+                </button>
+            </div>
+        </header>
+        
+        <!-- 主界面 -->
+        <div id="main-screen" class="space-y-8">
+            <!-- 用眼时间显示 -->
+            <section class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- 电脑用眼时间 -->
+                <div class="bg-white dark:bg-gray-800 rounded-xl p-6 eye-shadow transition-transform hover:scale-[1.02] duration-300">
+                    <div class="flex justify-between items-start mb-4">
+                        <h2 class="text-xl font-semibold">电脑用眼时间</h2>
+                        <span id="computer-status" class="px-3 py-1 rounded-full text-sm bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">
+                            <i class="fa fa-play-circle mr-1"></i>运行中
+                        </span>
+                    </div>
+                    <div class="flex items-end space-x-2">
+                        <span id="computer-time" class="text-[clamp(2rem,5vw,3.5rem)] font-bold text-primary">00:00</span>
+                        <span class="text-sm text-gray-500 dark:text-gray-400 mb-2">今日</span>
+                    </div>
+                    <div class="mt-4">
+                        <div class="h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+                            <div id="computer-progress" class="h-full bg-primary transition-all duration-1000" style="width: 0%"></div>
+                        </div>
+                        <p class="text-sm text-gray-500 dark:text-gray-400 mt-2">
+                            距离今日目标还有 <span id="computer-remaining">00:00</span>
+                        </p>
+                    </div>
+                </div>
+                
+                <!-- 手机用眼时间 -->
+                <div class="bg-white dark:bg-gray-800 rounded-xl p-6 eye-shadow transition-transform hover:scale-[1.02] duration-300">
+                    <div class="flex justify-between items-start mb-4">
+                        <h2 class="text-xl font-semibold">手机用眼时间</h2>
+                        <span id="phone-status" class="px-3 py-1 rounded-full text-sm bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300">
+                            <i class="fa fa-pause-circle mr-1"></i>已暂停
+                        </span>
+                    </div>
+                    <div class="flex items-end space-x-2">
+                        <span id="phone-time" class="text-[clamp(2rem,5vw,3.5rem)] font-bold text-primary">00:00</span>
+                        <span class="text-sm text-gray-500 dark:text-gray-400 mb-2">今日</span>
+                    </div>
+                    <div class="mt-4">
+                        <div class="h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+                            <div id="phone-progress" class="h-full bg-primary transition-all duration-1000" style="width: 0%"></div>
+                        </div>
+                        <p class="text-sm text-gray-500 dark:text-gray-400 mt-2">
+                            距离今日目标还有 <span id="phone-remaining">00:00</span>
+                        </p>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- 快捷操作按钮 -->
+            <section class="grid grid-cols-3 gap-4">
+                <button id="toggle-computer" class="bg-primary hover:bg-secondary text-white py-4 px-6 rounded-xl font-medium transition-all duration-300 shadow-lg hover:shadow-xl">
+                    <i class="fa fa-desktop block text-2xl mb-2"></i>
+                    <span>暂停电脑计时</span>
+                </button>
+                <button id="toggle-phone" class="bg-gray-200 hover:bg-gray-300 text-gray-800 dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-white py-4 px-6 rounded-xl font-medium transition-all duration-300 shadow-lg hover:shadow-xl">
+                    <i class="fa fa-mobile block text-2xl mb-2"></i>
+                    <span>开始手机计时</span>
+                </button>
+                <button id="reset-all" class="bg-red-500 hover:bg-red-600 text-white py-4 px-6 rounded-xl font-medium transition-all duration-300 shadow-lg hover:shadow-xl">
+                    <i class="fa fa-refresh block text-2xl mb-2"></i>
+                    <span>重置计时</span>
+                </button>
+            </section>
+            
+            <!-- 今日统计概览 -->
+            <section class="bg-white dark:bg-gray-800 rounded-xl p-6 eye-shadow">
+                <h2 class="text-xl font-semibold mb-4">今日统计概览</h2>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
+                    <div class="p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                        <p class="text-sm text-gray-500 dark:text-gray-400 mb-1">累计时长</p>
+                        <p id="total-time" class="text-2xl font-bold">00:00</p>
+                    </div>
+                    <div class="p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                        <p class="text-sm text-gray-500 dark:text-gray-400 mb-1">提醒次数</p>
+                        <p id="reminder-count" class="text-2xl font-bold">0</p>
+                    </div>
+                    <div class="p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                        <p class="text-sm text-gray-500 dark:text-gray-400 mb-1">完成休息次数</p>
+                        <p id="rest-count" class="text-2xl font-bold">0</p>
+                    </div>
+                    <div class="p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                        <p class="text-sm text-gray-500 dark:text-gray-400 mb-1">用眼效率</p>
+                        <p id="eye-efficiency" class="text-2xl font-bold text-primary">0%</p>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- 活动推荐区 -->
+            <section class="bg-white dark:bg-gray-800 rounded-xl p-6 eye-shadow">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-xl font-semibold">推荐活动</h2>
+                    <span class="px-3 py-1 rounded-full text-xs bg-primary/20 text-primary">根据你的用眼时长推荐</span>
+                </div>
+                <div id="recommended-activities" class="space-y-4">
+                    <!-- 活动推荐项 -->
+                    <div class="p-4 border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer transition-colors">
+                        <div class="flex items-center">
+                            <div class="w-12 h-12 rounded-full bg-blue-100 dark:bg-blue-900 flex items-center justify-center text-blue-600 dark:text-blue-300 mr-4">
+                                <i class="fa fa-eye text-xl"></i>
+                            </div>
+                            <div class="flex-grow">
+                                <h3 class="font-medium">20-20-20法则</h3>
+                                <p class="text-sm text-gray-500 dark:text-gray-400">每20分钟，远眺20英尺外物体20秒</p>
+                            </div>
+                            <button class="text-primary hover:text-secondary">
+                                <i class="fa fa-play-circle text-xl"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="p-4 border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer transition-colors">
+                        <div class="flex items-center">
+                            <div class="w-12 h-12 rounded-full bg-green-100 dark:bg-green-900 flex items-center justify-center text-green-600 dark:text-green-300 mr-4">
+                                <i class="fa fa-hand-paper-o text-xl"></i>
+                            </div>
+                            <div class="flex-grow">
+                                <h3 class="font-medium">眼部穴位按摩</h3>
+                                <p class="text-sm text-gray-500 dark:text-gray-400">按摩眼周穴位，缓解眼部疲劳</p>
+                            </div>
+                            <button class="text-primary hover:text-secondary">
+                                <i class="fa fa-play-circle text-xl"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <button id="view-all-activities" class="mt-4 w-full py-3 border border-primary text-primary hover:bg-primary/10 rounded-lg transition-colors">
+                    查看全部活动
+                </button>
+            </section>
+            
+            <!-- 护眼知识小贴士 -->
+            <section class="bg-white dark:bg-gray-800 rounded-xl p-6 eye-shadow">
+                <div class="flex items-center mb-4">
+                    <i class="fa fa-lightbulb-o text-yellow-500 mr-2"></i>
+                    <h2 class="text-xl font-semibold">护眼小贴士</h2>
+                </div>
+                <div class="bg-yellow-50 dark:bg-yellow-900/30 p-4 rounded-lg">
+                    <p class="text-balance" id="eye-tip">保持良好的坐姿，屏幕中心应略低于眼睛水平，距离约50-70厘米。</p>
+                    <button id="next-tip" class="mt-3 text-sm text-yellow-700 dark:text-yellow-400 hover:underline">
+                        换一个小贴士 <i class="fa fa-arrow-right ml-1"></i>
+                    </button>
+                </div>
+            </section>
+        </div>
+        
+        <!-- 休息提醒界面 (初始隐藏) -->
+        <div id="reminder-screen" class="fixed inset-0 bg-white dark:bg-dark z-50 flex items-center justify-center p-4 hidden">
+            <div class="max-w-md w-full bg-white dark:bg-gray-800 rounded-2xl p-8 eye-shadow">
+                <div class="text-center mb-6">
+                    <div class="inline-flex items-center justify-center w-16 h-16 rounded-full gradient-bg text-white mb-4">
+                        <i class="fa fa-eye text-2xl"></i>
+                    </div>
+                    <h2 class="text-2xl font-bold">该休息一下了！</h2>
+                    <p class="text-gray-500 dark:text-gray-400 mt-2">你已经连续用眼 <span id="reminder-duration">00:00</span></p>
+                </div>
+                
+                <!-- 休息活动 -->
+                <div id="rest-activity" class="mb-8">
+                    <h3 class="text-lg font-semibold mb-3">20-20-20法则</h3>
+                    <p class="text-gray-600 dark:text-gray-300 mb-4">站起来，向窗外远眺至少20英尺（约6米）外的物体，保持20秒。</p>
+                    <div class="relative h-2 bg-gray-200 dark:bg-gray-700 rounded-full mb-2">
+                        <div id="rest-progress" class="absolute top-0 left-0 h-full bg-primary transition-all duration-1000" style="width: 100%"></div>
+                    </div>
+                    <p class="text-center text-lg font-bold" id="rest-countdown">20秒</p>
+                </div>
+                
+                <div class="flex space-x-4">
+                    <button id="skip-rest" class="flex-1 py-3 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                        稍后提醒
+                    </button>
+                    <button id="complete-rest" class="flex-1 py-3 gradient-bg text-white rounded-lg hover:opacity-90 transition-opacity shadow-lg">
+                        完成休息
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 设置界面 (初始隐藏) -->
+        <div id="settings-screen" class="fixed inset-0 bg-white dark:bg-dark z-50 p-4 overflow-y-auto hidden">
+            <div class="max-w-md mx-auto">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-2xl font-bold">设置</h2>
+                    <button id="close-settings" class="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-800">
+                        <i class="fa fa-times"></i>
+                    </button>
+                </div>
+                
+                <div class="space-y-6">
+                    <!-- 提醒设置 -->
+                    <div class="bg-white dark:bg-gray-800 rounded-xl p-6 eye-shadow">
+                        <h3 class="text-lg font-semibold mb-4">提醒设置</h3>
+                        
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-sm font-medium mb-2">提醒间隔 (分钟)</label>
+                                <input type="range" id="reminder-interval" min="5" max="60" value="20" class="w-full h-2 bg-gray-200 dark:bg-gray-700 rounded-lg appearance-none cursor-pointer">
+                                <div class="flex justify-between text-xs text-gray-500 mt-1">
+                                    <span>5分钟</span>
+                                    <span id="interval-value">20分钟</span>
+                                    <span>60分钟</span>
+                                </div>
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium mb-2">休息时长 (秒)</label>
+                                <input type="range" id="rest-duration" min="10" max="300" step="5" value="20" class="w-full h-2 bg-gray-200 dark:bg-gray-700 rounded-lg appearance-none cursor-pointer">
+                                <div class="flex justify-between text-xs text-gray-500 mt-1">
+                                    <span>10秒</span>
+                                    <span id="duration-value">20秒</span>
+                                    <span>5分钟</span>
+                                </div>
+                            </div>
+                            
+                            <div class="flex items-center justify-between">
+                                <label class="text-sm font-medium">浏览器通知提醒</label>
+                                <label class="relative inline-flex items-center cursor-pointer">
+                                    <input type="checkbox" id="browser-notification" class="sr-only peer" checked>
+                                    <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+                                </label>
+                            </div>
+                            
+                            <div class="flex items-center justify-between">
+                                <label class="text-sm font-medium">声音提示</label>
+                                <label class="relative inline-flex items-center cursor-pointer">
+                                    <input type="checkbox" id="sound-notification" class="sr-only peer" checked>
+                                    <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+                                </label>
+                            </div>
+                            
+                            <div class="flex items-center justify-between">
+                                <label class="text-sm font-medium">屏幕遮罩提醒</label>
+                                <label class="relative inline-flex items-center cursor-pointer">
+                                    <input type="checkbox" id="screen-mask" class="sr-only peer">
+                                    <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 每日目标设置 -->
+                    <div class="bg-white dark:bg-gray-800 rounded-xl p-6 eye-shadow">
+                        <h3 class="text-lg font-semibold mb-4">每日目标设置</h3>
+                        
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-sm font-medium mb-2">电脑用眼上限 (小时)</label>
+                                <input type="range" id="computer-limit" min="1" max="8" step="0.5" value="4" class="w-full h-2 bg-gray-200 dark:bg-gray-700 rounded-lg appearance-none cursor-pointer">
+                                <div class="flex justify-between text-xs text-gray-500 mt-1">
+                                    <span>1小时</span>
+                                    <span id="computer-limit-value">4小时</span>
+                                    <span>8小时</span>
+                                </div>
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium mb-2">手机用眼上限 (小时)</label>
+                                <input type="range" id="phone-limit" min="1" max="6" step="0.5" value="2" class="w-full h-2 bg-gray-200 dark:bg-gray-700 rounded-lg appearance-none cursor-pointer">
+                                <div class="flex justify-between text-xs text-gray-500 mt-1">
+                                    <span>1小时</span>
+                                    <span id="phone-limit-value">2小时</span>
+                                    <span>6小时</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 活动偏好设置 -->
+                    <div class="bg-white dark:bg-gray-800 rounded-xl p-6 eye-shadow">
+                        <h3 class="text-lg font-semibold mb-4">活动偏好</h3>
+                        
+                        <div class="grid grid-cols-2 gap-4">
+                            <label class="flex items-center space-x-2 p-3 border border-gray-200 dark:border-gray-700 rounded-lg cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700">
+                                <input type="checkbox" class="form-checkbox text-primary h-5 w-5 rounded" checked>
+                                <span>望远类</span>
+                            </label>
+                            <label class="flex items-center space-x-2 p-3 border border-gray-200 dark:border-gray-700 rounded-lg cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700">
+                                <input type="checkbox" class="form-checkbox text-primary h-5 w-5 rounded" checked>
+                                <span>按摩类</span>
+                            </label>
+                            <label class="flex items-center space-x-2 p-3 border border-gray-200 dark:border-gray-700 rounded-lg cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700">
+                                <input type="checkbox" class="form-checkbox text-primary h-5 w-5 rounded" checked>
+                                <span>运动类</span>
+                            </label>
+                            <label class="flex items-center space-x-2 p-3 border border-gray-200 dark:border-gray-700 rounded-lg cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700">
+                                <input type="checkbox" class="form-checkbox text-primary h-5 w-5 rounded">
+                                <span>护理类</span>
+                            </label>
+                            <label class="flex items-center space-x-2 p-3 border border-gray-200 dark:border-gray-700 rounded-lg cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700">
+                                <input type="checkbox" class="form-checkbox text-primary h-5 w-5 rounded">
+                                <span>环境调整</span>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <!-- 按钮 -->
+                    <div class="flex space-x-4">
+                        <button id="reset-settings" class="flex-1 py-3 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                            恢复默认设置
+                        </button>
+                        <button id="save-settings" class="flex-1 py-3 gradient-bg text-white rounded-lg hover:opacity-90 transition-opacity shadow-lg">
+                            保存设置
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 统计界面 (初始隐藏) -->
+        <div id="stats-screen" class="fixed inset-0 bg-white dark:bg-dark z-50 p-4 overflow-y-auto hidden">
+            <div class="max-w-3xl mx-auto">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-2xl font-bold">统计分析</h2>
+                    <button id="close-stats" class="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-800">
+                        <i class="fa fa-times"></i>
+                    </button>
+                </div>
+                
+                <div class="space-y-6">
+                    <!-- 时间范围选择 -->
+                    <div class="flex space-x-2 overflow-x-auto pb-2">
+                        <button class="px-4 py-2 rounded-full bg-primary text-white whitespace-nowrap">今日</button>
+                        <button class="px-4 py-2 rounded-full bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600 whitespace-nowrap">本周</button>
+                        <button class="px-4 py-2 rounded-full bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600 whitespace-nowrap">本月</button>
+                        <button class="px-4 py-2 rounded-full bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600 whitespace-nowrap">自定义</button>
+                    </div>
+                    
+                    <!-- 用眼时间图表 -->
+                    <div class="bg-white dark:bg-gray-800 rounded-xl p-6 eye-shadow">
+                        <h3 class="text-lg font-semibold mb-4">用眼时间分布</h3>
+                        <div class="h-80">
+                            <canvas id="eye-time-chart"></canvas>
+                        </div>
+                    </div>
+                    
+                    <!-- 详细统计数据 -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="bg-white dark:bg-gray-800 rounded-xl p-6 eye-shadow">
+                            <h3 class="text-lg font-semibold mb-4">电脑用眼统计</h3>
+                            <div class="space-y-4">
+                                <div class="flex justify-between items-center">
+                                    <span class="text-gray-600 dark:text-gray-300">总时长</span>
+                                    <span class="font-bold">00:00</span>
+                                </div>
+                                <div class="flex justify-between items-center">
+                                    <span class="text-gray-600 dark:text-gray-300">平均每次时长</span>
+                                    <span class="font-bold">00:00</span>
+                                </div>
+                                <div class="flex justify-between items-center">
+                                    <span class="text-gray-600 dark:text-gray-300">提醒次数</span>
+                                    <span class="font-bold">0</span>
+                                </div>
+                                <div class="flex justify-between items-center">
+                                    <span class="text-gray-600 dark:text-gray-300">休息完成率</span>
+                                    <span class="font-bold text-primary">0%</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-white dark:bg-gray-800 rounded-xl p-6 eye-shadow">
+                            <h3 class="text-lg font-semibold mb-4">手机用眼统计</h3>
+                            <div class="space-y-4">
+                                <div class="flex justify-between items-center">
+                                    <span class="text-gray-600 dark:text-gray-300">总时长</span>
+                                    <span class="font-bold">00:00</span>
+                                </div>
+                                <div class="flex justify-between items-center">
+                                    <span class="text-gray-600 dark:text-gray-300">平均每次时长</span>
+                                    <span class="font-bold">00:00</span>
+                                </div>
+                                <div class="flex justify-between items-center">
+                                    <span class="text-gray-600 dark:text-gray-300">提醒次数</span>
+                                    <span class="font-bold">0</span>
+                                </div>
+                                <div class="flex justify-between items-center">
+                                    <span class="text-gray-600 dark:text-gray-300">休息完成率</span>
+                                    <span class="font-bold text-primary">0%</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 用眼习惯建议 -->
+                    <div class="bg-white dark:bg-gray-800 rounded-xl p-6 eye-shadow">
+                        <h3 class="text-lg font-semibold mb-4">用眼习惯建议</h3>
+                        <div class="bg-blue-50 dark:bg-blue-900/30 p-4 rounded-lg">
+                            <p class="text-balance text-blue-700 dark:text-blue-300">根据你的用眼数据，建议你保持每20分钟休息20秒的节奏，这样可以有效减轻眼部疲劳。</p>
+                        </div>
+                    </div>
+                    
+                    <!-- 数据导出 -->
+                    <button id="export-data" class="w-full py-3 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                        <i class="fa fa-download mr-2"></i> 导出数据
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 活动库界面 (初始隐藏) -->
+        <div id="activities-screen" class="fixed inset-0 bg-white dark:bg-dark z-50 p-4 overflow-y-auto hidden">
+            <div class="max-w-2xl mx-auto">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-2xl font-bold">眼部放松活动库</h2>
+                    <button id="close-activities" class="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-800">
+                        <i class="fa fa-times"></i>
+                    </button>
+                </div>
+                
+                <!-- 活动分类 -->
+                <div class="flex space-x-2 overflow-x-auto pb-4 mb-6">
+                    <button class="px-4 py-2 rounded-full bg-primary text-white whitespace-nowrap">全部</button>
+                    <button class="px-4 py-2 rounded-full bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600 whitespace-nowrap">望远类</button>
+                    <button class="px-4 py-2 rounded-full bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600 whitespace-nowrap">按摩类</button>
+                    <button class="px-4 py-2 rounded-full bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600 whitespace-nowrap">运动类</button>
+                    <button class="px-4 py-2 rounded-full bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600 whitespace-nowrap">护理类</button>
+                    <button class="px-4 py-2 rounded-full bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600 whitespace-nowrap">环境调整</button>
+                </div>
+                
+                <!-- 活动列表 -->
+                <div class="space-y-4">
+                    <!-- 望远类 -->
+                    <div class="bg-white dark:bg-gray-800 rounded-xl overflow-hidden eye-shadow">
+                        <div class="p-4">
+                            <div class="flex justify-between items-start mb-3">
+                                <h3 class="text-lg font-semibold">20-20-20法则</h3>
+                                <span class="px-2 py-1 text-xs rounded-full bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200">望远类</span>
+                            </div>
+                            <p class="text-gray-600 dark:text-gray-300 mb-3">每20分钟，远眺20英尺外物体20秒，有效缓解眼部疲劳。</p>
+                            <div class="flex justify-between items-center">
+                                <div class="flex items-center space-x-4">
+                                    <span class="text-sm text-gray-500 dark:text-gray-400"><i class="fa fa-clock-o mr-1"></i> 20秒</span>
+                                    <span class="text-sm text-gray-500 dark:text-gray-400"><i class="fa fa-signal mr-1"></i> 简单</span>
+                                </div>
+                                <button class="text-primary hover:text-secondary">
+                                    <i class="fa fa-play-circle text-xl"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white dark:bg-gray-800 rounded-xl overflow-hidden eye-shadow">
+                        <div class="p-4">
+                            <div class="flex justify-between items-start mb-3">
+                                <h3 class="text-lg font-semibold">窗外聚焦训练</h3>
+                                <span class="px-2 py-1 text-xs rounded-full bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200">望远类</span>
+                            </div>
+                            <p class="text-gray-600 dark:text-gray-300 mb-3">交替注视窗外不同距离的物体，锻炼眼部调节能力。</p>
+                            <div class="flex justify-between items-center">
+                                <div class="flex items-center space-x-4">
+                                    <span class="text-sm text-gray-500 dark:text-gray-400"><i class="fa fa-clock-o mr-1"></i> 1分钟</span>
+                                    <span class="text-sm text-gray-500 dark:text-gray-400"><i class="fa fa-signal mr-1"></i> 中等</span>
+                                </div>
+                                <button class="text-primary hover:text-secondary">
+                                    <i class="fa fa-play-circle text-xl"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 按摩类 -->
+                    <div class="bg-white dark:bg-gray-800 rounded-xl overflow-hidden eye-shadow">
+                        <div class="p-4">
+                            <div class="flex justify-between items-start mb-3">
+                                <h3 class="text-lg font-semibold">眼部穴位按摩</h3>
+                                <span class="px-2 py-1 text-xs rounded-full bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">按摩类</span>
+                            </div>
+                            <p class="text-gray-600 dark:text-gray-300 mb-3">按摩睛明、攒竹、鱼腰等眼部穴位，促进血液循环。</p>
+                            <div class="flex justify-between items-center">
+                                <div class="flex items-center space-x-4">
+                                    <span class="text-sm text-gray-500 dark:text-gray-400"><i class="fa fa-clock-o mr-1"></i> 3分钟</span>
+                                    <span class="text-sm text-gray-500 dark:text-gray-400"><i class="fa fa-signal mr-1"></i> 中等</span>
+                                </div>
+                                <button class="text-primary hover:text-secondary">
+                                    <i class="fa fa-play-circle text-xl"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 运动类 -->
+                    <div class="bg-white dark:bg-gray-800 rounded-xl overflow-hidden eye-shadow">
+                        <div class="p-4">
+                            <div class="flex justify-between items-start mb-3">
+                                <h3 class="text-lg font-semibold">眼球转动训练</h3>
+                                <span class="px-2 py-1 text-xs rounded-full bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200">运动类</span>
+                            </div>
+                            <p class="text-gray-600 dark:text-gray-300 mb-3">上下左右、顺时针逆时针转动眼球，锻炼眼外肌。</p>
+                            <div class="flex justify-between items-center">
+                                <div class="flex items-center space-x-4">
+                                    <span class="text-sm text-gray-500 dark:text-gray-400"><i class="fa fa-clock-o mr-1"></i> 2分钟</span>
+                                    <span class="text-sm text-gray-500 dark:text-gray-400"><i class="fa fa-signal mr-1"></i> 简单</span>
+                                </div>
+                                <button class="text-primary hover:text-secondary">
+                                    <i class="fa fa-play-circle text-xl"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 页脚 -->
+    <footer class="bg-white dark:bg-gray-800 py-4 px-4 border-t border-gray-200 dark:border-gray-700">
+        <div class="container mx-auto text-center text-gray-500 dark:text-gray-400 text-sm">
+            <p>护眼助手 v1.0 | 保护你的眼睛，从现在开始</p>
+            <p class="mt-1">数据仅供参考，如有眼部不适请及时就医</p>
+        </div>
+    </footer>
+    
+    <!-- JavaScript -->
+    <script>
+        // DOM 元素
+        const mainScreen = document.getElementById('main-screen');
+        const reminderScreen = document.getElementById('reminder-screen');
+        const settingsScreen = document.getElementById('settings-screen');
+        const statsScreen = document.getElementById('stats-screen');
+        const activitiesScreen = document.getElementById('activities-screen');
+        
+        const computerTimeEl = document.getElementById('computer-time');
+        const phoneTimeEl = document.getElementById('phone-time');
+        const totalTimeEl = document.getElementById('total-time');
+        const computerStatusEl = document.getElementById('computer-status');
+        const phoneStatusEl = document.getElementById('phone-status');
+        const toggleComputerBtn = document.getElementById('toggle-computer');
+        const togglePhoneBtn = document.getElementById('toggle-phone');
+        const resetAllBtn = document.getElementById('reset-all');
+        
+        const settingsBtn = document.getElementById('settings-btn');
+        const closeSettingsBtn = document.getElementById('close-settings');
+        const statsBtn = document.getElementById('stats-btn');
+        const closeStatsBtn = document.getElementById('close-stats');
+        const themeToggleBtn = document.getElementById('theme-toggle');
+        const viewAllActivitiesBtn = document.getElementById('view-all-activities');
+        const closeActivitiesBtn = document.getElementById('close-activities');
+        
+        const skipRestBtn = document.getElementById('skip-rest');
+        const completeRestBtn = document.getElementById('complete-rest');
+        const restCountdownEl = document.getElementById('rest-countdown');
+        const restProgressEl = document.getElementById('rest-progress');
+        
+        const reminderIntervalEl = document.getElementById('reminder-interval');
+        const intervalValueEl = document.getElementById('interval-value');
+        const restDurationEl = document.getElementById('rest-duration');
+        const durationValueEl = document.getElementById('duration-value');
+        const computerLimitEl = document.getElementById('computer-limit');
+        const computerLimitValueEl = document.getElementById('computer-limit-value');
+        const phoneLimitEl = document.getElementById('phone-limit');
+        const phoneLimitValueEl = document.getElementById('phone-limit-value');
+        
+        const nextTipBtn = document.getElementById('next-tip');
+        const eyeTipEl = document.getElementById('eye-tip');
+        
+        // 应用状态
+        let appState = {
+            isComputerRunning: true,
+            isPhoneRunning: false,
+            computerSeconds: 0,
+            phoneSeconds: 0,
+            reminderCount: 0,
+            restCount: 0,
+            lastReminderTime: Date.now(),
+            settings: {
+                reminderInterval: 20, // 分钟
+                restDuration: 20, // 秒
+                computerLimit: 4, // 小时
+                phoneLimit: 2, // 小时
+                browserNotification: true,
+                soundNotification: true,
+                screenMask: false
+            },
+            darkMode: false
+        };
+        
+        // 护眼小贴士数组
+        const eyeTips = [
+            "保持良好的坐姿，屏幕中心应略低于眼睛水平，距离约50-70厘米。",
+            "调整屏幕亮度与环境光线相匹配，避免过亮或过暗。",
+            "使用防蓝光眼镜可以减少有害蓝光对眼睛的伤害。",
+            "保持室内空气湿润，干燥环境容易导致眼睛干涩。",
+            "多吃富含维生素A、C、E和锌的食物，有助于保护眼睛健康。",
+            "定期进行眼部检查，特别是长时间使用电子设备的人群。",
+            "避免在黑暗环境中使用电子设备，会增加眼睛疲劳。",
+            "保证充足的睡眠，让眼睛得到充分休息。"
+        ];
+        
+        // 时间格式化函数
+        function formatTime(seconds) {
+            const hours = Math.floor(seconds / 3600);
+            const minutes = Math.floor((seconds % 3600) / 60);
+            const remainingSeconds = seconds % 60;
+            
+            if (hours > 0) {
+                return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
+            } else {
+                return `${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
+            }
+        }
+        
+        // 更新时间显示
+        function updateTimeDisplay() {
+            computerTimeEl.textContent = formatTime(appState.computerSeconds);
+            phoneTimeEl.textContent = formatTime(appState.phoneSeconds);
+            totalTimeEl.textContent = formatTime(appState.computerSeconds + appState.phoneSeconds);
+            
+            // 更新进度条
+            const computerLimitSeconds = appState.settings.computerLimit * 3600;
+            const phoneLimitSeconds = appState.settings.phoneLimit * 3600;
+            
+            const computerProgress = Math.min((appState.computerSeconds / computerLimitSeconds) * 100, 100);
+            const phoneProgress = Math.min((appState.phoneSeconds / phoneLimitSeconds) * 100, 100);
+            const totalProgress = Math.min(((appState.computerSeconds + appState.phoneSeconds) / (computerLimitSeconds + phoneLimitSeconds)) * 100, 100);
+            
+            document.getElementById('computer-progress').style.width = `${computerProgress}%`;
+            document.getElementById('phone-progress').style.width = `${phoneProgress}%`;
+            document.getElementById('eye-time-progress').style.width = `${totalProgress}%`;
+            
+            // 更新剩余时间
+            const computerRemaining = Math.max(0, computerLimitSeconds - appState.computerSeconds);
+            const phoneRemaining = Math.max(0, phoneLimitSeconds - appState.phoneSeconds);
+            
+            document.getElementById('computer-remaining').textContent = formatTime(computerRemaining);
+            document.getElementById('phone-remaining').textContent = formatTime(phoneRemaining);
+            
+            // 更新效率
+            const efficiency = appState.restCount > 0 ? Math.min(Math.round((appState.restCount / appState.reminderCount) * 100), 100) : 0;
+            document.getElementById('eye-efficiency').textContent = `${efficiency}%`;
+            document.getElementById('reminder-count').textContent = appState.reminderCount;
+            document.getElementById('rest-count').textContent = appState.restCount;
+        }
+        
+        // 切换电脑计时状态
+        function toggleComputerTimer() {
+            appState.isComputerRunning = !appState.isComputerRunning;
+            
+            if (appState.isComputerRunning) {
+                computerStatusEl.innerHTML = '<i class="fa fa-play-circle mr-1"></i>运行中';
+                computerStatusEl.className = 'px-3 py-1 rounded-full text-sm bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200';
+                toggleComputerBtn.innerHTML = '<i class="fa fa-desktop block text-2xl mb-2"></i><span>暂停电脑计时</span>';
+            } else {
+                computerStatusEl.innerHTML = '<i class="fa fa-pause-circle mr-1"></i>已暂停';
+                computerStatusEl.className = 'px-3 py-1 rounded-full text-sm bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300';
+                toggleComputerBtn.innerHTML = '<i class="fa fa-desktop block text-2xl mb-2"></i><span>开始电脑计时</span>';
+                toggleComputerBtn.className = 'bg-gray-200 hover:bg-gray-300 text-gray-800 dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-white py-4 px-6 rounded-xl font-medium transition-all duration-300 shadow-lg hover:shadow-xl';
+            }
+            
+            toggleComputerBtn.className = appState.isComputerRunning 
+                ? 'bg-primary hover:bg-secondary text-white py-4 px-6 rounded-xl font-medium transition-all duration-300 shadow-lg hover:shadow-xl' 
+                : 'bg-gray-200 hover:bg-gray-300 text-gray-800 dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-white py-4 px-6 rounded-xl font-medium transition-all duration-300 shadow-lg hover:shadow-xl';
+        }
+        
+        // 切换手机计时状态
+        function togglePhoneTimer() {
+            appState.isPhoneRunning = !appState.isPhoneRunning;
+            
+            if (appState.isPhoneRunning) {
+                phoneStatusEl.innerHTML = '<i class="fa fa-play-circle mr-1"></i>运行中';
+                phoneStatusEl.className = 'px-3 py-1 rounded-full text-sm bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200';
+                togglePhoneBtn.innerHTML = '<i class="fa fa-mobile block text-2xl mb-2"></i><span>暂停手机计时</span>';
+                togglePhoneBtn.className = 'bg-primary hover:bg-secondary text-white py-4 px-6 rounded-xl font-medium transition-all duration-300 shadow-lg hover:shadow-xl';
+            } else {
+                phoneStatusEl.innerHTML = '<i class="fa fa-pause-circle mr-1"></i>已暂停';
+                phoneStatusEl.className = 'px-3 py-1 rounded-full text-sm bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300';
+                togglePhoneBtn.innerHTML = '<i class="fa fa-mobile block text-2xl mb-2"></i><span>开始手机计时</span>';
+                togglePhoneBtn.className = 'bg-gray-200 hover:bg-gray-300 text-gray-800 dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-white py-4 px-6 rounded-xl font-medium transition-all duration-300 shadow-lg hover:shadow-xl';
+            }
+        }
+        
+        // 重置所有计时
+        function resetAllTimers() {
+            if (confirm('确定要重置所有计时数据吗？')) {
+                appState.computerSeconds = 0;
+                appState.phoneSeconds = 0;
+                updateTimeDisplay();
+            }
+        }
+        
+        // 显示提醒界面
+        function showReminder() {
+            appState.reminderCount++;
+            
+            // 计算连续用眼时长
+            const currentTime = Date.now();
+            const continuousTime = Math.floor((currentTime - appState.lastReminderTime) / 1000);
+            document.getElementById('reminder-duration').textContent = formatTime(continuousTime);
+            appState.lastReminderTime = currentTime;
+            
+            // 更新显示
+            mainScreen.classList.add('hidden');
+            reminderScreen.classList.remove('hidden');
+            
+            // 设置倒计时
+            let restTime = appState.settings.restDuration;
+            restCountdownEl.textContent = `${restTime}秒`;
+            
+            const restInterval = setInterval(() => {
+                restTime--;
+                restCountdownEl.textContent = `${restTime}秒`;
+                const progress = (restTime / appState.settings.restDuration) * 100;
+                restProgressEl.style.width = `${progress}%`;
+                
+                if (restTime <= 0) {
+                    clearInterval(restInterval);
+                    completeRest();
+                }
+            }, 1000);
+            
+            // 存储倒计时ID以便后续清除
+            appState.restIntervalId = restInterval;
+        }
+        
+        // 跳过休息
+        function skipRest() {
+            if (appState.restIntervalId) {
+                clearInterval(appState.restIntervalId);
+                appState.restIntervalId = null;
+            }
+            
+            reminderScreen.classList.add('hidden');
+            mainScreen.classList.remove('hidden');
+        }
+        
+        // 完成休息
+        function completeRest() {
+            if (appState.restIntervalId) {
+                clearInterval(appState.restIntervalId);
+                appState.restIntervalId = null;
+            }
+            
+            appState.restCount++;
+            
+            reminderScreen.classList.add('hidden');
+            mainScreen.classList.remove('hidden');
+            updateTimeDisplay();
+        }
+        
+        // 显示设置界面
+        function showSettings() {
+            // 更新设置界面的值
+            reminderIntervalEl.value = appState.settings.reminderInterval;
+            intervalValueEl.textContent = `${appState.settings.reminderInterval}分钟`;
+            
+            restDurationEl.value = appState.settings.restDuration;
+            durationValueEl.textContent = `${appState.settings.restDuration}秒`;
+            
+            computerLimitEl.value = appState.settings.computerLimit;
+            computerLimitValueEl.textContent = `${appState.settings.computerLimit}小时`;
+            
+            phoneLimitEl.value = appState.settings.phoneLimit;
+            phoneLimitValueEl.textContent = `${appState.settings.phoneLimit}小时`;
+            
+            document.getElementById('browser-notification').checked = appState.settings.browserNotification;
+            document.getElementById('sound-notification').checked = appState.settings.soundNotification;
+            document.getElementById('screen-mask').checked = appState.settings.screenMask;
+            
+            mainScreen.classList.add('hidden');
+            settingsScreen.classList.remove('hidden');
+        }
+        
+        // 关闭设置界面
+        function closeSettings() {
+            settingsScreen.classList.add('hidden');
+            mainScreen.classList.remove('hidden');
+        }
+        
+        // 保存设置
+        function saveSettings() {
+            appState.settings.reminderInterval = parseInt(reminderIntervalEl.value);
+            appState.settings.restDuration = parseInt(restDurationEl.value);
+            appState.settings.computerLimit = parseFloat(computerLimitEl.value);
+            appState.settings.phoneLimit = parseFloat(phoneLimitEl.value);
+            appState.settings.browserNotification = document.getElementById('browser-notification').checked;
+            appState.settings.soundNotification = document.getElementById('sound-notification').checked;
+            appState.settings.screenMask = document.getElementById('screen-mask').checked;
+            
+            // 保存到本地存储
+            localStorage.setItem('eyeCareSettings', JSON.stringify(appState.settings));
+            
+            closeSettings();
+            
+            // 显示保存成功提示
+            alert('设置已保存！');
+        }
+        
+        // 显示统计界面
+        function showStats() {
+            mainScreen.classList.add('hidden');
+            statsScreen.classList.remove('hidden');
+            
+            // 初始化图表
+            initCharts();
+        }
+        
+        // 关闭统计界面
+        function closeStats() {
+            statsScreen.classList.add('hidden');
+            mainScreen.classList.remove('hidden');
+        }
+        
+        // 切换主题
+        function toggleTheme() {
+            appState.darkMode = !appState.darkMode;
+            
+            if (appState.darkMode) {
+                document.documentElement.classList.add('dark');
+                themeToggleBtn.innerHTML = '<i class="fa fa-sun-o text-lg text-yellow-500"></i>';
+            } else {
+                document.documentElement.classList.remove('dark');
+                themeToggleBtn.innerHTML = '<i class="fa fa-moon-o text-lg text-neutral dark:text-light"></i>';
+            }
+            
+            // 保存主题设置
+            localStorage.setItem('eyeCareDarkMode', appState.darkMode);
+        }
+        
+        // 显示活动库
+        function showActivities() {
+            mainScreen.classList.add('hidden');
+            activitiesScreen.classList.remove('hidden');
+        }
+        
+        // 关闭活动库
+        function closeActivities() {
+            activitiesScreen.classList.add('hidden');
+            mainScreen.classList.remove('hidden');
+        }
+        
+        // 显示随机护眼小贴士
+        function showRandomTip() {
+            const randomIndex = Math.floor(Math.random() * eyeTips.length);
+            eyeTipEl.textContent = eyeTips[randomIndex];
+        }
+        
+        // 初始化图表
+        function initCharts() {
+            const ctx = document.getElementById('eye-time-chart').getContext('2d');
+            
+            // 如果图表已存在，销毁它
+            if (window.eyeTimeChart) {
+                window.eyeTimeChart.destroy();
+            }
+            
+            // 生成模拟数据
+            const labels = ['00:00', '03:00', '06:00', '09:00', '12:00', '15:00', '18:00', '21:00'];
+            const computerData = [0, 0, 0, 120, 180, 240, 150, 60]; // 分钟
+            const phoneData = [30, 45, 15, 60, 90, 120, 180, 120]; // 分钟
+            
+            window.eyeTimeChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [
+                        {
+                            label: '电脑用眼',
+                            data: computerData,
+                            backgroundColor: '#4ade80',
+                            borderColor: '#4ade80',
+                            borderWidth: 1
+                        },
+                        {
+                            label: '手机用眼',
+                            data: phoneData,
+                            backgroundColor: '#10b981',
+                            borderColor: '#10b981',
+                            borderWidth: 1
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: '分钟'
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        },
+                        title: {
+                            display: true,
+                            text: '今日用眼时间分布'
+                        }
+                    }
+                }
+            });
+        }
+        
+        // 导出数据
+        function exportData() {
+            const data = {
+                date: new Date().toISOString().split('T')[0],
+                computerTime: appState.computerSeconds,
+                phoneTime: appState.phoneSeconds,
+                reminderCount: appState.reminderCount,
+                restCount: appState.restCount,
+                settings: appState.settings
+            };
+            
+            const dataStr = JSON.stringify(data, null, 2);
+            const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+            
+            const exportFileDefaultName = `护眼数据_${data.date}.json`;
+            
+            const linkElement = document.createElement('a');
+            linkElement.setAttribute('href', dataUri);
+            linkElement.setAttribute('download', exportFileDefaultName);
+            linkElement.click();
+        }
+        
+        // 初始化应用
+        function initApp() {
+            // 从本地存储加载设置
+            const savedSettings = localStorage.getItem('eyeCareSettings');
+            if (savedSettings) {
+                appState.settings = JSON.parse(savedSettings);
+            }
+            
+            // 加载主题设置
+            const savedDarkMode = localStorage.getItem('eyeCareDarkMode');
+            if (savedDarkMode) {
+                appState.darkMode = savedDarkMode === 'true';
+                if (appState.darkMode) {
+                    document.documentElement.classList.add('dark');
+                    themeToggleBtn.innerHTML = '<i class="fa fa-sun-o text-lg text-yellow-500"></i>';
+                }
+            }
+            
+            // 设置提醒间隔
+            setInterval(() => {
+                if ((appState.isComputerRunning || appState.isPhoneRunning) && 
+                    Date.now() - appState.lastReminderTime >= appState.settings.reminderInterval * 60 * 1000) {
+                    showReminder();
+                }
+            }, 1000);
+            
+            // 定时更新时间
+            setInterval(() => {
+                if (appState.isComputerRunning) {
+                    appState.computerSeconds++;
+                }
+                
+                if (appState.isPhoneRunning) {
+                    appState.phoneSeconds++;
+                }
+                
+                updateTimeDisplay();
+            }, 1000);
+            
+            // 事件监听器
+            toggleComputerBtn.addEventListener('click', toggleComputerTimer);
+            togglePhoneBtn.addEventListener('click', togglePhoneTimer);
+            resetAllBtn.addEventListener('click', resetAllTimers);
+            
+            skipRestBtn.addEventListener('click', skipRest);
+            completeRestBtn.addEventListener('click', completeRest);
+            
+            settingsBtn.addEventListener('click', showSettings);
+            closeSettingsBtn.addEventListener('click', closeSettings);
+            statsBtn.addEventListener('click', showStats);
+            closeStatsBtn.addEventListener('click', closeStats);
+            themeToggleBtn.addEventListener('click', toggleTheme);
+            
+            viewAllActivitiesBtn.addEventListener('click', showActivities);
+            closeActivitiesBtn.addEventListener('click', closeActivities);
+            
+            nextTipBtn.addEventListener('click', showRandomTip);
+            
+            document.getElementById('save-settings').addEventListener('click', saveSettings);
+            document.getElementById('reset-settings').addEventListener('click', () => {
+                if (confirm('确定要恢复默认设置吗？')) {
+                    appState.settings = {
+                        reminderInterval: 20,
+                        restDuration: 20,
+                        computerLimit: 4,
+                        phoneLimit: 2,
+                        browserNotification: true,
+                        soundNotification: true,
+                        screenMask: false
+                    };
+                    showSettings();
+                }
+            });
+            
+            document.getElementById('export-data').addEventListener('click', exportData);
+            
+            // 设置滑块事件
+            reminderIntervalEl.addEventListener('input', () => {
+                intervalValueEl.textContent = `${reminderIntervalEl.value}分钟`;
+            });
+            
+            restDurationEl.addEventListener('input', () => {
+                durationValueEl.textContent = `${restDurationEl.value}秒`;
+            });
+            
+            computerLimitEl.addEventListener('input', () => {
+                computerLimitValueEl.textContent = `${computerLimitEl.value}小时`;
+            });
+            
+            phoneLimitEl.addEventListener('input', () => {
+                phoneLimitValueEl.textContent = `${phoneLimitEl.value}小时`;
+            });
+            
+            // 显示初始随机小贴士
+            showRandomTip();
+        }
+        
+        // 启动应用
+        document.addEventListener('DOMContentLoaded', initApp);
+    </script>
+</body>
+</html>

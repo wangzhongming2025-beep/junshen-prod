@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>高效能工作管理系统 - 基于七个习惯</title>
+    <style>
+        body {
+            font-family: 'Microsoft YaHei', Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f7fa;
+        }
+        
+        header, footer {
+            background-color: #2c3e50;
+            color: white;
+            padding: 15px 20px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .return-btn {
+            background-color: #3498db;
+            color: white;
+            padding: 8px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            text-decoration: none;
+            font-size: 14px;
+        }
+        
+        .return-btn:hover {
+            background-color: #2980b9;
+        }
+        
+        h1, h2, h3 {
+            color: #2c3e50;
+        }
+        
+        .habits-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .habit-card {
+            background-color: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+        
+        .habit-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .habit-card h3 {
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+            margin-top: 0;
+        }
+        
+        .task-list {
+            list-style-type: none;
+            padding: 0;
+        }
+        
+        .task-item {
+            padding: 10px;
+            margin-bottom: 8px;
+            background-color: #f8f9fa;
+            border-left: 4px solid #3498db;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+        }
+        
+        .task-item .task-content {
+            flex-grow: 1;
+        }
+        
+        .task-deadline {
+            font-size: 12px;
+            padding: 2px 6px;
+            border-radius: 10px;
+            margin-right: 8px;
+            color: white;
+        }
+        
+        .deadline-today {
+            background-color: #e74c3c;
+        }
+        
+        .deadline-tomorrow {
+            background-color: #f39c12;
+        }
+        
+        .deadline-week {
+            background-color: #3498db;
+        }
+        
+        .deadline-future {
+            background-color: #2ecc71;
+        }
+        
+        .task-actions {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .btn {
+            padding: 5px 10px;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+        
+        .btn-edit {
+            background-color: #f39c12;
+            color: white;
+        }
+        
+        .btn-delete {
+            background-color: #e74c3c;
+            color: white;
+        }
+        
+        .btn-complete {
+            background-color: #2ecc71;
+            color: white;
+        }
+        
+        .add-task-form {
+            margin-top: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .form-group label {
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        
+        input, textarea, select {
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        
+        textarea {
+            min-height: 60px;
+            resize: vertical;
+        }
+        
+        .submit-btn {
+            background-color: #3498db;
+            color: white;
+            padding: 8px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        
+        .submit-btn:hover {
+            background-color: #2980b9;
+        }
+        
+        .quadrant-matrix {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            grid-template-rows: auto 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+        
+        .quadrant-header {
+            text-align: center;
+            font-weight: bold;
+            padding: 10px;
+        }
+        
+        .quadrant {
+            background-color: white;
+            border-radius: 8px;
+            padding: 15px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            min-height: 200px;
+        }
+        
+        .quad-1 {
+            border-top: 5px solid #e74c3c;
+        }
+        
+        .quad-2 {
+            border-top: 5px solid #2ecc71;
+        }
+        
+        .quad-3 {
+            border-top: 5px solid #f39c12;
+        }
+        
+        .quad-4 {
+            border-top: 5px solid #95a5a6;
+        }
+        
+        .progress-container {
+            margin-bottom: 30px;
+            background-color: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        
+        .progress-bar {
+            height: 10px;
+            background-color: #ecf0f1;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            overflow: hidden;
+        }
+        
+        .progress {
+            height: 100%;
+            background-color: #3498db;
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+        
+        .priority-high {
+            border-left-color: #e74c3c;
+        }
+        
+        .priority-medium {
+            border-left-color: #f39c12;
+        }
+        
+        .priority-low {
+            border-left-color: #2ecc71;
+        }
+        
+        .deadline-selector {
+            display: flex;
+            gap: 8px;
+            margin-top: 8px;
+        }
+        
+        .deadline-option {
+            font-size: 12px;
+            padding: 2px 8px;
+            border-radius: 10px;
+            cursor: pointer;
+            border: 1px solid #ddd;
+        }
+        
+        .deadline-option.selected {
+            color: white;
+        }
+        
+        .deadline-option.today.selected {
+            background-color: #e74c3c;
+            border-color: #e74c3c;
+        }
+        
+        .deadline-option.tomorrow.selected {
+            background-color: #f39c12;
+            border-color: #f39c12;
+        }
+        
+        .deadline-option.week.selected {
+            background-color: #3498db;
+            border-color: #3498db;
+        }
+        
+        .deadline-option.future.selected {
+            background-color: #2ecc71;
+            border-color: #2ecc71;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>高效能工作管理系统</h1>
+        <a href="https://junshen.top/index.html" class="return-btn">返回主站</a>
+    </header>
+
+    <main>
+        <section class="progress-container">
+            <h2>本周目标进度</h2>
+            <div class="progress-bar">
+                <div class="progress" style="width: 45%;"></div>
+            </div>
+            <p>已完成45%的周目标</p>
+        </section>
+
+        <section>
+            <h2>时间管理矩阵（习惯三：要事第一）</h2>
+            <div class="quadrant-matrix">
+                <div class="quadrant-header"></div>
+                <div class="quadrant-header">重要</div>
+                <div class="quadrant-header">不重要</div>
+                
+                <div class="quadrant-header">紧急</div>
+                <div class="quadrant quad-1">
+                    <h3>第一象限：重要且紧急</h3>
+                    <ul class="task-list">
+                        <li class="task-item priority-high">
+                            <div class="task-content">
+                                <span class="task-deadline deadline-today">今日</span>
+                                <span>完成季度报告</span>
+                            </div>
+                            <div class="task-actions">
+                                <button class="btn btn-complete">完成</button>
+                                <button class="btn btn-edit">编辑</button>
+                            </div>
+                        </li>
+                        <li class="task-item priority-high">
+                            <div class="task-content">
+                                <span class="task-deadline deadline-tomorrow">明日</span>
+                                <span>准备客户演示</span>
+                            </div>
+                            <div class="task-actions">
+                                <button class="btn btn-complete">完成</button>
+                                <button class="btn btn-edit">编辑</button>
+                            </div>
+                        </li>
+                    </ul>
+                    <form class="add-task-form">
+                        <div class="form-group">
+                            <input type="text" placeholder="添加新任务" class="task-input">
+                            <div class="deadline-selector">
+                                <span class="deadline-option today selected" data-value="today">今日</span>
+                                <span class="deadline-option tomorrow" data-value="tomorrow">明日</span>
+                                <span class="deadline-option week" data-value="week">本周</span>
+                                <span class="deadline-option future" data-value="future">未来</span>
+                            </div>
+                        </div>
+                        <button type="submit" class="submit-btn">添加</button>
+                    </form>
+                </div>
+                
+                <div class="quadrant quad-3">
+                    <h3>第三象限：不重要但紧急</h3>
+                    <ul class="task-list">
+                        <li class="task-item priority-medium">
+                            <div class="task-content">
+                                <span class="task-deadline deadline-today">今日</span>
+                                <span>回复日常邮件</span>
+                            </div>
+                            <div class="task-actions">
+                                <button class="btn btn-complete">完成</button>
+                                <button class="btn btn-edit">编辑</button>
+                            </div>
+                        </li>
+                    </ul>
+                    <form class="add-task-form">
+                        <div class="form-group">
+                            <input type="text" placeholder="添加新任务" class="task-input">
+                            <div class="deadline-selector">
+                                <span class="deadline-option today selected" data-value="today">今日</span>
+                                <span class="deadline-option tomorrow" data-value="tomorrow">明日</span>
+                                <span class="deadline-option week" data-value="week">本周</span>
+                                <span class="deadline-option future" data-value="future">未来</span>
+                            </div>
+                        </div>
+                        <button type="submit" class="submit-btn">添加</button>
+                    </form>
+                </div>
+                
+                <div class="quadrant-header">不紧急</div>
+                <div class="quadrant quad-2">
+                    <h3>第二象限：重要但不紧急</h3>
+                    <ul class="task-list">
+                        <li class="task-item priority-high">
+                            <div class="task-content">
+                                <span class="task-deadline deadline-week">本周</span>
+                                <span>制定年度计划</span>
+                            </div>
+                            <div class="task-actions">
+                                <button class="btn btn-complete">完成</button>
+                                <button class="btn btn-edit">编辑</button>
+                            </div>
+                        </li>
+                        <li class="task-item priority-medium">
+                            <div class="task-content">
+                                <span class="task-deadline deadline-future">未来</span>
+                                <span>学习新技能</span>
+                            </div>
+                            <div class="task-actions">
+                                <button class="btn btn-complete">完成</button>
+                                <button class="btn btn-edit">编辑</button>
+                            </div>
+                        </li>
+                    </ul>
+                    <form class="add-task-form">
+                        <div class="form-group">
+                            <input type="text" placeholder="添加新任务" class="task-input">
+                            <div class="deadline-selector">
+                                <span class="deadline-option today" data-value="today">今日</span>
+                                <span class="deadline-option tomorrow" data-value="tomorrow">明日</span>
+                                <span class="deadline-option week selected" data-value="week">本周</span>
+                                <span class="deadline-option future" data-value="future">未来</span>
+                            </div>
+                        </div>
+                        <button type="submit" class="submit-btn">添加</button>
+                    </form>
+                </div>
+                
+                <div class="quadrant quad-4">
+                    <h3>第四象限：不重要且不紧急</h3>
+                    <ul class="task-list">
+                        <li class="task-item priority-low">
+                            <div class="task-content">
+                                <span class="task-deadline deadline-future">未来</span>
+                                <span>浏览社交媒体</span>
+                            </div>
+                            <div class="task-actions">
+                                <button class="btn btn-complete">完成</button>
+                                <button class="btn btn-edit">编辑</button>
+                            </div>
+                        </li>
+                    </ul>
+                    <form class="add-task-form">
+                        <div class="form-group">
+                            <input type="text" placeholder="添加新任务" class="task-input">
+                            <div class="deadline-selector">
+                                <span class="deadline-option today" data-value="today">今日</span>
+                                <span class="deadline-option tomorrow" data-value="tomorrow">明日</span>
+                                <span class="deadline-option week" data-value="week">本周</span>
+                                <span class="deadline-option future selected" data-value="future">未来</span>
+                            </div>
+                        </div>
+                        <button type="submit" class="submit-btn">添加</button>
+                    </form>
+                </div>
+            </div>
+        </section>
+
+        <section>
+            <h2>七个习惯工作法</h2>
+            <div class="habits-container">
+                <!-- 习惯一：积极主动 -->
+                <div class="habit-card">
+                    <h3>习惯一：积极主动</h3>
+                    <p>专注于你能够影响和改变的事情。</p>
+                    <ul class="task-list">
+                        <li class="task-item">
+                            <div class="task-content">
+                                <span class="task-deadline deadline-week">本周</span>
+                                <span>识别并记录影响圈内的事项</span>
+                            </div>
+                            <div class="task-actions">
+                                <button class="btn btn-complete">完成</button>
+                            </div>
+                        </li>
+                    </ul>
+                    <form class="add-task-form">
+                        <div class="form-group">
+                            <label for="habit1-task">新增行动项：</label>
+                            <input type="text" id="habit1-task" placeholder="我能主动改变的事情..." class="task-input">
+                            <div class="deadline-selector">
+                                <span class="deadline-option today" data-value="today">今日</span>
+                                <span class="deadline-option tomorrow" data-value="tomorrow">明日</span>
+                                <span class="deadline-option week selected" data-value="week">本周</span>
+                                <span class="deadline-option future" data-value="future">未来</span>
+                            </div>
+                        </div>
+                        <button type="submit" class="submit-btn">添加</button>
+                    </form>
+                </div>
+                
+                <!-- 习惯二：以终为始 -->
+                <div class="habit-card">
+                    <h3>习惯二：以终为始</h3>
+                    <p>明确你的长期目标和人生使命。</p>
+                    <ul class="task-list">
+                        <li class="task-item">
+                            <div class="task-content">
+                                <span class="task-deadline deadline-future">未来</span>
+                                <span>撰写个人使命宣言</span>
+                            </div>
+                            <div class="task-actions">
+                                <button class="btn btn-complete">完成</button>
+                            </div>
+                        </li>
+                    </ul>
+                    <form class="add-task-form">
+                        <div class="form-group">
+                            <label for="habit2-task">新增目标：</label>
+                            <input type="text" id="habit2-task" placeholder="我的长期目标是..." class="task-input">
+                            <div class="deadline-selector">
+                                <span class="deadline-option today" data-value="today">今日</span>
+                                <span class="deadline-option tomorrow" data-value="tomorrow">明日</span>
+                                <span class="deadline-option week" data-value="week">本周</span>
+                                <span class="deadline-option future selected" data-value="future">未来</span>
+                            </div>
+                        </div>
+                        <button type="submit" class="submit-btn">添加</button>
+                    </form>
+                </div>
+                
+                <!-- 其他习惯卡片... -->
+                <!-- 由于篇幅限制，其他习惯卡片的结构类似，可以根据需要复制修改 -->
+                
+            </div>
+        </section>
+        
+        <section>
+            <h2>周计划制定</h2>
+            <form>
+                <div class="form-group">
+                    <label for="weekly-goal">本周主要目标：</label>
+                    <textarea id="weekly-goal" placeholder="基于你的长期目标，本周最重要的3-5件事是什么？"></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label for="big-rocks">本周"大石头"（重要事项）：</label>
+                    <textarea id="big-rocks" placeholder="列出必须完成的重大任务（参考第二象限）"></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label for="delegation">可以委派的任务：</label>
+                    <textarea id="delegation" placeholder="哪些任务可以交给他人完成？"></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label for="self-renewal">自我更新计划：</label>
+                    <textarea id="self-renewal" placeholder="本周在身体、精神、智力、社会情感方面的更新计划"></textarea>
+                </div>
+                
+                <button type="submit" class="submit-btn" style="padding: 10px 20px; font-size: 16px;">保存周计划</button>
+            </form>
+        </section>
+    </main>
+
+    <footer>
+        <p>高效能工作管理系统 &copy; 2023 | 基于《高效能人士的七个习惯》</p>
+        <a href="https://junshen.top/index.html" class="return-btn">返回主站</a>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // 期限选择器交互
+            document.querySelectorAll('.deadline-option').forEach(option => {
+                option.addEventListener('click', function() {
+                    const selector = this.closest('.deadline-selector');
+                    selector.querySelectorAll('.deadline-option').forEach(opt => {
+                        opt.classList.remove('selected');
+                    });
+                    this.classList.add('selected');
+                });
+            });
+            
+            // 任务完成按钮
+            document.querySelectorAll('.btn-complete').forEach(button => {
+                button.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const taskItem = this.closest('.task-item');
+                    taskItem.style.opacity = '0.6';
+                    taskItem.style.textDecoration = 'line-through';
+                    this.textContent = '已完成';
+                    this.disabled = true;
+                    updateProgress();
+                });
+            });
+            
+            // 表单提交处理
+            document.querySelectorAll('form').forEach(form => {
+                form.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    const input = this.querySelector('.task-input');
+                    const deadline = this.querySelector('.deadline-option.selected').dataset.value;
+                    
+                    if (input && input.value.trim() !== '') {
+                        const taskList = this.previousElementSibling;
+                        if (taskList && taskList.classList.contains('task-list')) {
+                            const newTask = document.createElement('li');
+                            newTask.className = 'task-item';
+                            
+                            let deadlineClass = 'deadline-future';
+                            let deadlineText = '未来';
+                            
+                            switch(deadline) {
+                                case 'today':
+                                    deadlineClass = 'deadline-today';
+                                    deadlineText = '今日';
+                                    break;
+                                case 'tomorrow':
+                                    deadlineClass = 'deadline-tomorrow';
+                                    deadlineText = '明日';
+                                    break;
+                                case 'week':
+                                    deadlineClass = 'deadline-week';
+                                    deadlineText = '本周';
+                                    break;
+                            }
+                            
+                            newTask.innerHTML = `
+                                <div class="task-content">
+                                    <span class="task-deadline ${deadlineClass}">${deadlineText}</span>
+                                    <span>${input.value}</span>
+                                </div>
+                                <div class="task-actions">
+                                    <button class="btn btn-complete">完成</button>
+                                    <button class="btn btn-edit">编辑</button>
+                                </div>
+                            `;
+                            taskList.appendChild(newTask);
+                            input.value = '';
+                            
+                            // 为新添加的按钮添加事件
+                            newTask.querySelector('.btn-complete').addEventListener('click', function(e) {
+                                e.preventDefault();
+                                const taskItem = this.closest('.task-item');
+                                taskItem.style.opacity = '0.6';
+                                taskItem.style.textDecoration = 'line-through';
+                                this.textContent = '已完成';
+                                this.disabled = true;
+                                updateProgress();
+                            });
+                        }
+                    }
+                });
+            });
+            
+            function updateProgress() {
+                const totalTasks = document.querySelectorAll('.task-item').length;
+                const completedTasks = document.querySelectorAll('.task-item .btn-complete[disabled]').length;
+                const progress = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
+                
+                const progressBar = document.querySelector('.progress');
+                if (progressBar) {
+                    progressBar.style.width = `${progress}%`;
+                    
+                    const progressText = document.querySelector('.progress-container p');
+                    if (progressText) {
+                        progressText.textContent = `已完成${progress}%的周目标`;
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>

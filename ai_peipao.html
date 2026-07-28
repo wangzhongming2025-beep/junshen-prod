@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI编程实战陪跑营 - 从零打造独立产品 | 老王队长</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        ai: {
+                            light: '#a855f7',
+                            DEFAULT: '#7c3aed',
+                            dark: '#0f172a',
+                            accent: '#22c55e',
+                            bg: '#030712'
+                        },
+                        military: {
+                            light: '#8da399',
+                            DEFAULT: '#4b5c53',
+                            dark: '#2f3b35',
+                            accent: '#d4af37'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            background-color: #030712;
+            color: #f3f4f6;
+        }
+        .ai-glow-card {
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid rgba(168, 85, 247, 0.15);
+            backdrop-filter: blur(12px);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .ai-glow-card:hover {
+            border-color: rgba(168, 85, 247, 0.5);
+            box-shadow: 0 0 25px rgba(168, 85, 247, 0.2);
+            transform: translateY(-3px);
+        }
+        .glow-text {
+            text-shadow: 0 0 10px rgba(168, 85, 247, 0.5);
+        }
+    </style>
+</head>
+
+<body class="pb-20 md:pb-0">
+
+    <!-- Top Navigation Bar -->
+    <nav class="bg-ai-dark/90 text-white py-4 px-6 sticky top-0 z-40 border-b border-ai-light/10 backdrop-blur-md">
+        <div class="max-w-6xl mx-auto flex justify-between items-center">
+            <a href="index.html" class="flex items-center space-x-2 text-white hover:text-ai-light transition-colors">
+                <i class="fas fa-arrow-left"></i>
+                <span class="font-bold">返回主页</span>
+            </a>
+            <div class="text-lg font-bold tracking-wider text-ai-light glow-text">
+                <i class="fas fa-robot mr-2"></i>AI编程陪跑训练营
+            </div>
+            <a href="#contact" class="bg-ai-light text-white px-4 py-1.5 rounded-full font-bold text-sm hover:bg-purple-600 transition-all shadow-[0_0_15px_rgba(168,85,247,0.3)]">
+                申请入营
+            </a>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <header class="text-center py-20 px-4 relative overflow-hidden bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-purple-900/30 via-ai-bg to-ai-bg">
+        <div class="max-w-3xl mx-auto relative z-10">
+            <span class="bg-ai-light/10 text-ai-light border border-ai-light/30 text-xs px-3.5 py-1 rounded-full font-semibold tracking-wider uppercase mb-4 inline-block">Cursor & Windsurf 核心应用 · 1对1实战陪跑</span>
+            <h1 class="text-3xl md:text-5xl font-bold mb-6 tracking-wide leading-tight text-white glow-text">AI 编程 30 天实战陪跑营</h1>
+            <p class="text-base md:text-lg font-light text-gray-400 max-w-2xl mx-auto leading-relaxed">
+                不懂代码？没学过编程？不要紧！在AI时代，你的“自然语言”就是最强大的代码。我将手把手带你使用 Cursor、Windsurf、Gemini 等主流 AI 工具，用30天从零开发出你自己的第一个商用小程序或网页平台，完成你的副业闭环。
+            </p>
+        </div>
+    </header>
+
+    <!-- Two Ultimate Paths of AI Programming -->
+    <section class="max-w-6xl mx-auto px-6 py-6 mt-4">
+        <h2 class="text-2xl md:text-3xl font-bold text-center text-white mb-10 glow-text flex items-center justify-center">
+            <span class="h-0.5 w-8 bg-purple-500 mr-3"></span>
+            AI 编程改变个人命运的两种模式
+            <span class="h-0.5 w-8 bg-purple-500 ml-3"></span>
+        </h2>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <!-- Path A -->
+            <div class="ai-glow-card p-8 rounded-2xl border-l-4 border-l-purple-500 bg-gradient-to-br from-purple-950/20 to-transparent">
+                <div class="flex items-center space-x-3 mb-4">
+                    <span class="w-8 h-8 rounded-full bg-purple-500/20 text-purple-400 flex items-center justify-center font-bold">A</span>
+                    <h3 class="text-xl font-bold text-white">路径一：帮别人开发（稳健的技术变现）</h3>
+                </div>
+                <p class="text-sm text-gray-400 leading-relaxed">
+                    不需要自己拥有完美的产品点子。你可以直接在市场上承接企业官网、后台管理系统或行业小程序的定制开发外包。借助 AI 辅助开发，原本需要程序员开发数周的项目，你只需 1-3 天即可高标准交付，空余时间接单，赚取稳定的高溢价服务费。
+                </p>
+                <div class="mt-4 text-xs text-purple-400 font-semibold flex items-center">
+                    <i class="fas fa-check-circle mr-2"></i> 门槛低 · 交付快 · 即刻获取丰厚服务费
+                </div>
+            </div>
+
+            <!-- Path B -->
+            <div class="ai-glow-card p-8 rounded-2xl border-l-4 border-l-emerald-500 bg-gradient-to-br from-emerald-950/10 to-transparent">
+                <div class="flex items-center space-x-3 mb-4">
+                    <span class="w-8 h-8 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-bold">B</span>
+                    <h3 class="text-xl font-bold text-white">路径二：做自己的产品（爆发式的被动财富）</h3>
+                </div>
+                <p class="text-sm text-gray-400 leading-relaxed">
+                    独立开发你自己的实用小程序、垂直导航站、甚至跨平台 App。一旦你的产品在某些垂直圈子火了，可以通过内置广告组件（如微信流量主）、按月/年会员订阅制、功能解锁内购等，为你创造 24 小时不间断的“睡后被动收入”。
+                </p>
+                <div class="mt-4 text-xs text-emerald-400 font-semibold flex items-center">
+                    <i class="fas fa-fire mr-2"></i> 睡后收入 · 无上限复利 · 打造个人资产
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Course Modules -->
+    <main class="max-w-6xl mx-auto px-4 py-8">
+        <section class="mb-16">
+            <h2 class="text-2xl md:text-3xl font-bold text-center text-white mb-12 glow-text">
+                四大实战陪跑模块
+            </h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                <!-- Mod 1 -->
+                <div class="ai-glow-card p-6 rounded-2xl">
+                    <div class="w-12 h-12 rounded-xl bg-ai-light/10 text-ai-light flex items-center justify-center text-2xl mb-4 border border-ai-light/20">
+                        <i class="fas fa-brain"></i>
+                    </div>
+                    <h3 class="text-lg font-bold text-white mb-2">1. AI思维重塑</h3>
+                    <p class="text-gray-400 text-xs leading-relaxed">
+                        如何向 AI 提问？如何下发精准的需求文档（PRD）？掌握“提问即编程”的核心 Prompt 逻辑，从产品经理的视角和 AI 配合。
+                    </p>
+                </div>
+                <!-- Mod 2 -->
+                <div class="ai-glow-card p-6 rounded-2xl">
+                    <div class="w-12 h-12 rounded-xl bg-ai-light/10 text-ai-light flex items-center justify-center text-2xl mb-4 border border-ai-light/20">
+                        <i class="fas fa-terminal"></i>
+                    </div>
+                    <h3 class="text-lg font-bold text-white mb-2">2. Cursor 实战通关</h3>
+                    <p class="text-gray-400 text-xs leading-relaxed">
+                        手把手熟悉 Cursor / Windsurf 编辑器，配置你的开发环境。通过实战演练，一行代码不敲，就能实现前端界面和业务逻辑的编写。
+                    </p>
+                </div>
+                <!-- Mod 3 -->
+                <div class="ai-glow-card p-6 rounded-2xl">
+                    <div class="w-12 h-12 rounded-xl bg-ai-light/10 text-ai-light flex items-center justify-center text-2xl mb-4 border border-ai-light/20">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                    </div>
+                    <h3 class="text-lg font-bold text-white mb-2">3. 一键部署与云端托管</h3>
+                    <p class="text-gray-400 text-xs leading-relaxed">
+                        带你跑通 Vercel、Netlify、WeChat Cloud 等托管平台。掌握如何快速将本地的程序发布到互联网，绑定自己的独立域名。
+                    </p>
+                </div>
+                <!-- Mod 4 -->
+                <div class="ai-glow-card p-6 rounded-2xl">
+                    <div class="w-12 h-12 rounded-xl bg-ai-light/10 text-ai-light flex items-center justify-center text-2xl mb-4 border border-ai-light/20">
+                        <i class="fas fa-coins"></i>
+                    </div>
+                    <h3 class="text-lg font-bold text-white mb-2">4. 副业变现与交付</h3>
+                    <p class="text-gray-400 text-xs leading-relaxed">
+                        不仅教编程，更教你怎么卖！如何帮客户定制开发、怎么接外包单、怎么申请软件著作权、如何通过小程序流量主获取源源不断的睡后收入。
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Accompaniment Highlights -->
+        <section class="mb-16 bg-gradient-to-r from-purple-950/20 to-slate-900/40 border border-ai-light/10 rounded-3xl p-8 md:p-12">
+            <h2 class="text-2xl md:text-3xl font-bold text-center text-white mb-10 glow-text">为什么选择我们陪跑？</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
+                <div>
+                    <div class="text-ai-accent text-3xl mb-3"><i class="fas fa-headset"></i></div>
+                    <h4 class="font-bold text-white mb-1">社群日更答疑</h4>
+                    <p class="text-xs text-gray-400">开发遇到 Bug 别慌，在群里直接发截图，专业导师随时帮你纠错解答，绝不让你卡死在任何一步。</p>
+                </div>
+                <div>
+                    <div class="text-ai-accent text-3xl mb-3"><i class="fas fa-users"></i></div>
+                    <h4 class="font-bold text-white mb-1">每周线上连麦 CodeReview</h4>
+                    <p class="text-xs text-gray-400">每周日晚上，在线为大家答疑、剖析产品原型，帮你的产品把脉，理清后续开发迭代逻辑。</p>
+                </div>
+                <div>
+                    <div class="text-ai-accent text-3xl mb-3"><i class="fas fa-project-diagram"></i></div>
+                    <h4 class="font-bold text-white mb-1">提供 5+ 实战模板</h4>
+                    <p class="text-xs text-gray-400">入营即送 5 套可直接部署的商业小程序、网页完整脚手架模板，拿去改改就能直接当做你的副业上线。</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Contact / Join Camp -->
+        <section id="contact" class="bg-gradient-to-br from-ai-dark to-slate-900 border border-ai-light/20 rounded-3xl p-8 md:p-12 text-center shadow-[0_0_50px_rgba(168,85,247,0.05)]">
+            <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-ai-light/10 text-ai-light border border-ai-light/30 mb-4 shadow-[0_0_10px_rgba(168,85,247,0.1)]">
+                <i class="fas fa-handshake-angle mr-1.5 animate-pulse"></i> 专属福利 (Limited Benefit)
+            </span>
+            <h2 class="text-2xl md:text-3xl font-bold mb-4 text-white glow-text">预约 15 分钟免费 AI 编程与独立产品诊断</h2>
+            <p class="text-gray-400 text-sm max-w-xl mx-auto mb-8 leading-relaxed">
+                添加老王队长微信，即可免费预约一次 1对1 语音技术评估与副业变现路径规划。我们将根据您的基础与行业背景，帮您量身匹配最佳的AI变现方案。
+            </p>
+            <div class="flex flex-col md:flex-row justify-center items-center gap-8">
+                <div class="bg-white/5 p-4 rounded-xl border border-ai-light/10 w-48">
+                    <img src="erweima2.jpg" alt="微信二维码" class="w-36 h-36 mx-auto rounded-lg mb-2">
+                    <span class="text-xs text-gray-400">微信扫码咨询</span>
+                </div>
+                <div class="text-left flex flex-col justify-center space-y-4">
+                    <div>
+                        <div class="text-xs text-gray-400">老王队长微信号</div>
+                        <div class="text-lg font-bold text-ai-light tracking-wider" id="wechat-ai">vip20213456</div>
+                    </div>
+                    <button onclick="copyWeChatId()" class="bg-ai-light text-white hover:bg-purple-600 font-bold py-2.5 px-6 rounded-full shadow-[0_0_20px_rgba(168,85,247,0.2)] transition-all active:scale-95 text-sm">
+                        <i class="fas fa-copy mr-1"></i>复制微信号直接添加
+                    </button>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Toast -->
+    <div id="toast" class="fixed top-5 left-1/2 transform -translate-x-1/2 bg-ai-light text-white px-6 py-3 rounded-full font-bold shadow-2xl z-[100] opacity-0 transition-opacity duration-300 pointer-events-none text-center text-sm border border-ai-light">
+        🎉 成功复制微信号，快去微信搜索添加吧！
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-ai-dark text-gray-500 py-8 text-center text-sm border-t border-ai-light/10">
+        <div class="max-w-6xl mx-auto px-4">
+            <p>&copy; 2026 老王队长 - 从军官到创业者的转型之路</p>
+            <p class="mt-2 text-ai-light/60">人生需要挑战，行动创造可能</p>
+        </div>
+    </footer>
+
+    <script>
+        function copyWeChatId() {
+            const wechatId = document.getElementById('wechat-ai').innerText;
+            navigator.clipboard.writeText(wechatId).then(() => {
+                showToast();
+            }).catch(err => {
+                const input = document.createElement('input');
+                input.value = wechatId;
+                document.body.appendChild(input);
+                input.select();
+                document.execCommand('copy');
+                document.body.removeChild(input);
+                showToast();
+            });
+        }
+
+        function showToast() {
+            const toast = document.getElementById('toast');
+            toast.style.opacity = '1';
+            setTimeout(() => {
+                toast.style.opacity = '0';
+            }, 3000);
+        }
+    </script>
+</body>
+
+</html>

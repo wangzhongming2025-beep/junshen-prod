@@ -1,0 +1,733 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>张岚守护站 - 科学护眼训练中心</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.8/dist/chart.umd.min.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#3B82F6',
+                        secondary: '#10B981',
+                        accent: '#F59E0B',
+                        dark: '#1E293B',
+                        light: '#F8FAFC'
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .content-auto {
+                content-visibility: auto;
+            }
+            .text-shadow {
+                text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            }
+            .card-hover {
+                transition: all 0.3s ease;
+            }
+            .card-hover:hover {
+                transform: translateY(-5px);
+            }
+            .nav-link {
+                @apply relative px-3 py-2 text-gray-700 hover:text-primary transition-colors duration-300;
+            }
+            .nav-link::after {
+                @apply content-[''] absolute bottom-0 left-0 w-0 h-0.5 bg-primary transition-all duration-300;
+            }
+            .nav-link:hover::after {
+                @apply w-full;
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 font-sans text-gray-800">
+    <!-- 导航栏 -->
+    <header class="fixed w-full bg-white/90 backdrop-blur-sm shadow-sm z-50 transition-all duration-300" id="navbar">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16 md:h-20">
+                <div class="flex items-center">
+                    <i class="fa fa-eye text-primary text-2xl mr-2"></i>
+                    <span class="text-xl font-bold text-primary">张岚守护站</span>
+                </div>
+                <!-- 桌面导航 -->
+                <nav class="hidden md:flex space-x-1">
+                    <a href="#home" class="nav-link font-medium">首页</a>
+                    <a href="#plans" class="nav-link font-medium">训练计划</a>
+                    <a href="#knowledge" class="nav-link font-medium">护眼知识</a>
+                    <a href="#records" class="nav-link font-medium">训练记录</a>
+                    <a href="#profile" class="nav-link font-medium">个人中心</a>
+                </nav>
+                <!-- 移动端菜单按钮 -->
+                <div class="md:hidden">
+                    <button type="button" id="mobile-menu-button" class="text-gray-500 hover:text-primary focus:outline-none">
+                        <i class="fa fa-bars text-xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <!-- 移动端导航菜单 -->
+        <div class="md:hidden hidden bg-white shadow-lg absolute w-full" id="mobile-menu">
+            <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+                <a href="#home" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-primary hover:bg-gray-50">首页</a>
+                <a href="#plans" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-primary hover:bg-gray-50">训练计划</a>
+                <a href="#knowledge" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-primary hover:bg-gray-50">护眼知识</a>
+                <a href="#records" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-primary hover:bg-gray-50">训练记录</a>
+                <a href="#profile" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-primary hover:bg-gray-50">个人中心</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- 英雄区 -->
+    <section id="home" class="pt-24 md:pt-32 pb-16 md:pb-24 bg-gradient-to-br from-blue-50 to-indigo-100">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col md:flex-row items-center">
+                <div class="md:w-1/2 md:pr-12 mb-10 md:mb-0">
+                    <h1 class="text-[clamp(2rem,5vw,3.5rem)] font-bold leading-tight text-dark text-shadow mb-4">
+                        给眼睛做个 SPA，告别干涩疲劳
+                    </h1>
+                    <p class="text-lg md:text-xl text-gray-600 mb-8 max-w-lg">
+                        每天 5 分钟，科学护眼训练守护心灵之窗
+                    </p>
+                    <button id="start-training-btn" class="bg-primary hover:bg-primary/90 text-white font-semibold px-8 py-3 rounded-full shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300 flex items-center">
+                        <span>开始今日训练</span>
+                        <i class="fa fa-arrow-right ml-2"></i>
+                    </button>
+                </div>
+                <div class="md:w-1/2">
+                    <img src="https://picsum.photos/id/1070/600/400" alt="护眼训练插图" class="rounded-2xl shadow-xl w-full h-auto object-cover transform rotate-2 hover:rotate-0 transition-transform duration-500">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 训练模块 -->
+    <section id="plans" class="py-16 md:py-24 bg-white">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl md:text-4xl font-bold text-dark mb-4">科学护眼训练模块</h2>
+                <p class="text-gray-600 max-w-2xl mx-auto">精选四大护眼训练模块，每天坚持练习，有效缓解眼疲劳，提升视力健康</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                <!-- 眼球运动训练 -->
+                <div class="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl shadow-lg p-6 transition-all duration-300 hover:shadow-xl card-hover border border-blue-100">
+                    <div class="w-14 h-14 bg-primary/10 rounded-full flex items-center justify-center mb-5">
+                        <i class="fa fa-eye text-primary text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3 text-dark">灵动眼球操</h3>
+                    <p class="text-gray-600 mb-5">转动你的眼球，像指挥家挥动指挥棒一样，激活每一条眼肌。</p>
+                    <ul class="space-y-2 text-gray-600 mb-6">
+                        <li class="flex items-start">
+                            <i class="fa fa-check-circle text-secondary mt-1 mr-2"></i>
+                            <span>向上看天花板，保持 3 秒</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fa fa-check-circle text-secondary mt-1 mr-2"></i>
+                            <span>向下看脚尖，保持 3 秒</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fa fa-check-circle text-secondary mt-1 mr-2"></i>
+                            <span>左右看肩，各保持 3 秒</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fa fa-check-circle text-secondary mt-1 mr-2"></i>
+                            <span>顺逆时针转动眼球各 5 圈</span>
+                        </li>
+                    </ul>
+                    <button class="w-full bg-primary/10 hover:bg-primary/20 text-primary font-medium py-2 rounded-lg transition-colors duration-300 training-btn" data-training="eye-movement">
+                        开始训练
+                    </button>
+                </div>
+
+                <!-- 远近聚焦训练 -->
+                <div class="bg-gradient-to-br from-green-50 to-teal-50 rounded-2xl shadow-lg p-6 transition-all duration-300 hover:shadow-xl card-hover border border-green-100">
+                    <div class="w-14 h-14 bg-secondary/10 rounded-full flex items-center justify-center mb-5">
+                        <i class="fa fa-search text-secondary text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3 text-dark">变焦达人挑战</h3>
+                    <p class="text-gray-600 mb-5">模拟相机变焦功能，提升眼睛调节力。</p>
+                    <ul class="space-y-2 text-gray-600 mb-6">
+                        <li class="flex items-start">
+                            <i class="fa fa-check-circle text-secondary mt-1 mr-2"></i>
+                            <span>食指放眼前 15 厘米，注视 5 秒</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fa fa-check-circle text-secondary mt-1 mr-2"></i>
+                            <span>视线转移到 5 米外固定点，注视 5 秒</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fa fa-check-circle text-secondary mt-1 mr-2"></i>
+                            <span>快速切换焦点，重复 10 次</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fa fa-check-circle text-secondary mt-1 mr-2"></i>
+                            <span>闭眼休息 10 秒，感受眼睛放松</span>
+                        </li>
+                    </ul>
+                    <button class="w-full bg-secondary/10 hover:bg-secondary/20 text-secondary font-medium py-2 rounded-lg transition-colors duration-300 training-btn" data-training="focus">
+                        开始训练
+                    </button>
+                </div>
+
+                <!-- 穴位按摩训练 -->
+                <div class="bg-gradient-to-br from-amber-50 to-orange-50 rounded-2xl shadow-lg p-6 transition-all duration-300 hover:shadow-xl card-hover border border-amber-100">
+                    <div class="w-14 h-14 bg-accent/10 rounded-full flex items-center justify-center mb-5">
+                        <i class="fa fa-hand-paper-o text-accent text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3 text-dark">中医护眼魔法</h3>
+                    <p class="text-gray-600 mb-5">找到这些神奇的 “护眼开关”，用指尖激活眼部活力。</p>
+                    <ul class="space-y-2 text-gray-600 mb-6">
+                        <li class="flex items-start">
+                            <i class="fa fa-check-circle text-secondary mt-1 mr-2"></i>
+                            <span>睛明穴：轻轻按压 8 次</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fa fa-check-circle text-secondary mt-1 mr-2"></i>
+                            <span>攒竹穴：画圈按摩 8 次</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fa fa-check-circle text-secondary mt-1 mr-2"></i>
+                            <span>太阳穴：轻揉 8 次</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fa fa-check-circle text-secondary mt-1 mr-2"></i>
+                            <span>四白穴：点按 8 次</span>
+                        </li>
+                    </ul>
+                    <button class="w-full bg-accent/10 hover:bg-accent/20 text-accent font-medium py-2 rounded-lg transition-colors duration-300 training-btn" data-training="massage">
+                        开始训练
+                    </button>
+                </div>
+
+                <!-- 眨眼训练 -->
+                <div class="bg-gradient-to-br from-purple-50 to-pink-50 rounded-2xl shadow-lg p-6 transition-all duration-300 hover:shadow-xl card-hover border border-purple-100">
+                    <div class="w-14 h-14 bg-purple-500/10 rounded-full flex items-center justify-center mb-5">
+                        <i class="fa fa-blink text-purple-500 text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3 text-dark">隐形眼镜式眨眼法</h3>
+                    <p class="text-gray-600 mb-5">像佩戴隐形眼镜时那样有意识眨眼，保持角膜湿润。</p>
+                    <ul class="space-y-2 text-gray-600 mb-6">
+                        <li class="flex items-start">
+                            <i class="fa fa-check-circle text-secondary mt-1 mr-2"></i>
+                            <span>保持每分钟 15-20 次的眨眼频率</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fa fa-check-circle text-secondary mt-1 mr-2"></i>
+                            <span>每工作 20 分钟，闭眼深呼吸 5 次</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fa fa-check-circle text-secondary mt-1 mr-2"></i>
+                            <span>20-20-20 法则：每 20 分钟看 6 米外 20 秒</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fa fa-check-circle text-secondary mt-1 mr-2"></i>
+                            <span>感受眼睛湿润度变化</span>
+                        </li>
+                    </ul>
+                    <button class="w-full bg-purple-500/10 hover:bg-purple-500/20 text-purple-500 font-medium py-2 rounded-lg transition-colors duration-300 training-btn" data-training="blink">
+                        开始训练
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 数据可视化区域 -->
+    <section id="records" class="py-16 md:py-24 bg-gray-50">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl md:text-4xl font-bold text-dark mb-4">你的护眼成就</h2>
+                <p class="text-gray-600 max-w-2xl mx-auto">记录你的每一次努力，见证眼睛健康的改善历程</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+                <!-- 卡片 1：本周累计训练时长 -->
+                <div class="bg-white rounded-xl shadow-md p-6 transform transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-gray-500 font-medium">本周累计训练时长</h3>
+                        <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center text-primary">
+                            <i class="fa fa-clock-o"></i>
+                        </div>
+                    </div>
+                    <div class="flex items-end">
+                        <span class="text-3xl font-bold text-dark">120</span>
+                        <span class="text-gray-500 ml-2 mb-1">分钟</span>
+                    </div>
+                    <div class="mt-2 text-sm text-green-500 flex items-center">
+                        <i class="fa fa-arrow-up mr-1"></i>
+                        <span>较上周增加 15%</span>
+                    </div>
+                </div>
+
+                <!-- 卡片 2：眼疲劳指数下降 -->
+                <div class="bg-white rounded-xl shadow-md p-6 transform transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-gray-500 font-medium">眼疲劳指数下降</h3>
+                        <div class="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center text-secondary">
+                            <i class="fa fa-line-chart"></i>
+                        </div>
+                    </div>
+                    <div class="flex items-end">
+                        <span class="text-3xl font-bold text-dark">23</span>
+                        <span class="text-gray-500 ml-2 mb-1">%</span>
+                    </div>
+                    <div class="mt-2 text-sm text-green-500 flex items-center">
+                        <i class="fa fa-arrow-down mr-1"></i>
+                        <span>持续改善中</span>
+                    </div>
+                </div>
+
+                <!-- 卡片 3：坚持天数 -->
+                <div class="bg-white rounded-xl shadow-md p-6 transform transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-gray-500 font-medium">坚持天数</h3>
+                        <div class="w-10 h-10 bg-amber-100 rounded-full flex items-center justify-center text-accent">
+                            <i class="fa fa-calendar-check-o"></i>
+                        </div>
+                    </div>
+                    <div class="flex items-end">
+                        <span class="text-3xl font-bold text-dark">15</span>
+                        <span class="text-gray-500 ml-2 mb-1">天</span>
+                    </div>
+                    <div class="mt-2 text-sm text-green-500 flex items-center">
+                        <i class="fa fa-fire mr-1"></i>
+                        <span>已连续坚持 15 天</span>
+                    </div>
+                </div>
+
+                <!-- 卡片 4：今日训练进度 -->
+                <div class="bg-white rounded-xl shadow-md p-6 transform transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-gray-500 font-medium">今日训练进度</h3>
+                        <div class="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center text-purple-500">
+                            <i class="fa fa-tasks"></i>
+                        </div>
+                    </div>
+                    <div class="flex items-end">
+                        <span class="text-3xl font-bold text-dark">80</span>
+                        <span class="text-gray-500 ml-2 mb-1">%</span>
+                    </div>
+                    <div class="mt-4">
+                        <div class="w-full bg-gray-200 rounded-full h-2.5">
+                            <div class="bg-primary h-2.5 rounded-full" style="width: 80%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 训练趋势图表 -->
+            <div class="bg-white rounded-xl shadow-md p-6 lg:p-8">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8">
+                    <div>
+                        <h3 class="text-xl font-bold text-dark mb-2">训练趋势</h3>
+                        <p class="text-gray-600">近 7 天训练时长统计</p>
+                    </div>
+                    <div class="flex space-x-2 mt-4 md:mt-0">
+                        <button class="px-4 py-2 bg-primary text-white rounded-lg text-sm">周视图</button>
+                        <button class="px-4 py-2 bg-gray-100 text-gray-600 rounded-lg text-sm hover:bg-gray-200">月视图</button>
+                    </div>
+                </div>
+                <div class="h-80">
+                    <canvas id="trainingChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 护眼知识卡片 -->
+    <section id="knowledge" class="py-16 md:py-24 bg-white">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl md:text-4xl font-bold text-dark mb-4">护眼知识</h2>
+                <p class="text-gray-600 max-w-2xl mx-auto">了解护眼小常识，让眼睛更健康</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <!-- 蓝光危害 -->
+                <div class="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl shadow-md overflow-hidden transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
+                    <div class="h-40 overflow-hidden">
+                        <img src="https://picsum.photos/id/180/400/300" alt="蓝光危害" class="w-full h-full object-cover transition-transform duration-500 hover:scale-110">
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-lg font-bold text-dark mb-3">蓝光危害</h3>
+                        <p class="text-gray-600">手机屏幕蓝光会损伤视网膜，建议使用防蓝光模式，减少夜间使用电子设备的时间。</p>
+                    </div>
+                </div>
+
+                <!-- 饮食建议 -->
+                <div class="bg-gradient-to-br from-green-50 to-teal-50 rounded-xl shadow-md overflow-hidden transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
+                    <div class="h-40 overflow-hidden">
+                        <img src="https://picsum.photos/id/292/400/300" alt="饮食建议" class="w-full h-full object-cover transition-transform duration-500 hover:scale-110">
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-lg font-bold text-dark mb-3">饮食建议</h3>
+                        <p class="text-gray-600">每天一把蓝莓 + 一杯枸杞菊花茶，补充抗氧化物质，帮助保护视网膜健康。</p>
+                    </div>
+                </div>
+
+                <!-- 环境调节 -->
+                <div class="bg-gradient-to-br from-amber-50 to-orange-50 rounded-xl shadow-md overflow-hidden transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
+                    <div class="h-40 overflow-hidden">
+                        <img src="https://picsum.photos/id/160/400/300" alt="环境调节" class="w-full h-full object-cover transition-transform duration-500 hover:scale-110">
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-lg font-bold text-dark mb-3">环境调节</h3>
+                        <p class="text-gray-600">电脑屏幕亮度应与环境光线匹配，避免明暗差过大，使用护眼灯减少屏幕反光。</p>
+                    </div>
+                </div>
+
+                <!-- 睡眠修护 -->
+                <div class="bg-gradient-to-br from-purple-50 to-pink-50 rounded-xl shadow-md overflow-hidden transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
+                    <div class="h-40 overflow-hidden">
+                        <img src="https://picsum.photos/id/177/400/300" alt="睡眠修护" class="w-full h-full object-cover transition-transform duration-500 hover:scale-110">
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-lg font-bold text-dark mb-3">睡眠修护</h3>
+                        <p class="text-gray-600">夜间睡眠时，眼睛会自我修复，保证 7-8 小时睡眠，让眼睛得到充分休息。</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 页脚 -->
+    <footer class="bg-dark text-white py-12">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+                <div>
+                    <div class="flex items-center mb-4">
+                        <i class="fa fa-eye text-primary text-2xl mr-2"></i>
+                        <span class="text-xl font-bold">张岚守护站</span>
+                    </div>
+                    <p class="text-gray-400 mb-4">科学护眼训练，守护您的心灵之窗。每天5分钟，远离眼疲劳。</p>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-gray-400 hover:text-white transition-colors"><i class="fa fa-weixin text-xl"></i></a>
+                        <a href="#" class="text-gray-400 hover:text-white transition-colors"><i class="fa fa-weibo text-xl"></i></a>
+                        <a href="#" class="text-gray-400 hover:text-white transition-colors"><i class="fa fa-qq text-xl"></i></a>
+                    </div>
+                </div>
+                <div>
+                    <h4 class="text-lg font-semibold mb-4">快速链接</h4>
+                    <ul class="space-y-2">
+                        <li><a href="#home" class="text-gray-400 hover:text-white transition-colors">首页</a></li>
+                        <li><a href="#plans" class="text-gray-400 hover:text-white transition-colors">训练计划</a></li>
+                        <li><a href="#knowledge" class="text-gray-400 hover:text-white transition-colors">护眼知识</a></li>
+                        <li><a href="#records" class="text-gray-400 hover:text-white transition-colors">训练记录</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-lg font-semibold mb-4">护眼知识</h4>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-gray-400 hover:text-white transition-colors">常见眼疾预防</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition-colors">正确用眼习惯</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition-colors">儿童护眼指南</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition-colors">办公护眼技巧</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-lg font-semibold mb-4">联系我们</h4>
+                    <ul class="space-y-2">
+                        <li class="flex items-start">
+                            <i class="fa fa-envelope-o mt-1 mr-2 text-gray-400"></i>
+                            <span class="text-gray-400">为你守护</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fa fa-phone mt-1 mr-2 text-gray-400"></i>
+                            <span class="text-gray-400">请联系给你这份方案的人</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="border-t border-gray-800 pt-8 text-center text-gray-500">
+                <p>&copy; 2025 张岚守护站 - 科学护眼训练中心. 保留所有权利.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- 训练模态框 -->
+    <div id="training-modal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-auto">
+            <div class="p-6 border-b">
+                <div class="flex justify-between items-center">
+                    <h2 id="modal-title" class="text-2xl font-bold text-dark">训练模块</h2>
+                    <button id="close-modal" class="text-gray-500 hover:text-gray-700">
+                        <i class="fa fa-times text-xl"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="p-6" id="modal-content">
+                <!-- 训练内容将通过JavaScript动态填充 -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 导航栏滚动效果
+        window.addEventListener('scroll', function() {
+            const navbar = document.getElementById('navbar');
+            if (window.scrollY > 10) {
+                navbar.classList.add('shadow-md');
+                navbar.classList.remove('shadow-sm');
+            } else {
+                navbar.classList.remove('shadow-md');
+                navbar.classList.add('shadow-sm');
+            }
+        });
+
+        // 移动端菜单切换
+        document.getElementById('mobile-menu-button').addEventListener('click', function() {
+            const mobileMenu = document.getElementById('mobile-menu');
+            mobileMenu.classList.toggle('hidden');
+        });
+
+        // 平滑滚动
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href');
+                const targetElement = document.querySelector(targetId);
+                if (targetElement) {
+                    window.scrollTo({
+                        top: targetElement.offsetTop - 80,
+                        behavior: 'smooth'
+                    });
+                    // 关闭移动菜单
+                    document.getElementById('mobile-menu').classList.add('hidden');
+                }
+            });
+        });
+
+        // 训练模态框
+        const modal = document.getElementById('training-modal');
+        const modalTitle = document.getElementById('modal-title');
+        const modalContent = document.getElementById('modal-content');
+        const closeModal = document.getElementById('close-modal');
+        const startTrainingBtn = document.getElementById('start-training-btn');
+        const trainingBtns = document.querySelectorAll('.training-btn');
+
+        // 关闭模态框
+        closeModal.addEventListener('click', function() {
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        });
+
+        // 点击模态框外部关闭
+        modal.addEventListener('click', function(e) {
+            if (e.target === modal) {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+            }
+        });
+
+        // 训练数据
+        const trainingData = {
+            'eye-movement': {
+                title: '灵动眼球操',
+                steps: [
+                    '向上看天花板，保持 3 秒，感受额头舒展',
+                    '向下看脚尖，保持 3 秒，放松后颈肌肉',
+                    '向左看左肩，保持 3 秒，拉伸眼外侧肌肉',
+                    '向右看右肩，保持 3 秒，平衡眼肌力量',
+                    '顺时针转动眼球 5 圈',
+                    '逆时针转动眼球 5 圈'
+                ]
+            },
+            'focus': {
+                title: '变焦达人挑战',
+                steps: [
+                    '伸出食指放于眼前 15 厘米处，注视指尖 5 秒',
+                    '迅速将视线转移到 5 米外的固定点，注视 5 秒',
+                    '快速切换焦点，指尖 ↔ 远处，重复 10 次',
+                    '闭眼休息 10 秒，感受眼睛放松'
+                ]
+            },
+            'massage': {
+                title: '中医护眼魔法',
+                steps: [
+                    '睛明穴（内眼角稍上方凹陷处）：轻轻按压 8 次',
+                    '攒竹穴（眉头内侧）：画圈按摩 8 次',
+                    '太阳穴（外眼角延长线凹陷处）：轻揉 8 次',
+                    '四白穴（瞳孔直下，颧骨凹陷处）：点按 8 次'
+                ]
+            },
+            'blink': {
+                title: '隐形眼镜式眨眼法',
+                steps: [
+                    '正常眨眼频率为每分钟 15 - 20 次',
+                    '有意识地完成 20 次完整眨眼动作',
+                    '每工作 20 分钟，闭眼深呼吸 5 次',
+                    '应用 20 - 20 - 20 法则：看 6 米外物体 20 秒'
+                ]
+            }
+        };
+
+        // 打开训练模态框
+        function openTrainingModal(trainingType) {
+            const training = trainingData[trainingType];
+            if (!training) return;
+
+            modalTitle.textContent = training.title;
+
+            // 构建训练步骤HTML
+            let stepsHTML = '<div class="training-container">';
+            stepsHTML += '<div class="text-center mb-8">';
+            stepsHTML += '<div class="inline-block bg-primary/10 text-primary rounded-full px-4 py-2 mb-4">';
+            stepsHTML += '<span id="step-counter">步骤 1 / ' + training.steps.length + '</span>';
+            stepsHTML += '</div>';
+            stepsHTML += '<div class="w-32 h-32 bg-gray-100 rounded-full mx-auto flex items-center justify-center mb-6">';
+            stepsHTML += '<i id="step-icon" class="fa fa-eye text-4xl text-primary"></i>';
+            stepsHTML += '</div>';
+            stepsHTML += '<p id="step-description" class="text-xl text-gray-700 font-medium">' + training.steps[0] + '</p>';
+            stepsHTML += '</div>';
+            stepsHTML += '<div class="flex justify-between">';
+            stepsHTML += '<button id="prev-step" class="px-6 py-2 bg-gray-100 text-gray-600 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed" disabled>上一步</button>';
+            stepsHTML += '<button id="next-step" class="px-6 py-2 bg-primary text-white rounded-lg">下一步</button>';
+            stepsHTML += '</div>';
+            stepsHTML += '</div>';
+
+            modalContent.innerHTML = stepsHTML;
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+
+            // 初始化训练步骤导航
+            let currentStep = 0;
+            const totalSteps = training.steps.length;
+            const stepCounter = document.getElementById('step-counter');
+            const stepDescription = document.getElementById('step-description');
+            const prevBtn = document.getElementById('prev-step');
+            const nextBtn = document.getElementById('next-step');
+
+            function updateStep() {
+                stepCounter.textContent = `步骤 ${currentStep + 1} / ${totalSteps}`;
+                stepDescription.textContent = training.steps[currentStep];
+
+                // 更新按钮状态
+                prevBtn.disabled = currentStep === 0;
+                nextBtn.textContent = currentStep === totalSteps - 1 ? '完成训练' : '下一步';
+            }
+
+            prevBtn.addEventListener('click', function() {
+                if (currentStep > 0) {
+                    currentStep--;
+                    updateStep();
+                }
+            });
+
+            nextBtn.addEventListener('click', function() {
+                if (currentStep < totalSteps - 1) {
+                    currentStep++;
+                    updateStep();
+                } else {
+                    // 完成训练
+                    modalContent.innerHTML = `
+                        <div class="text-center py-8">
+                            <div class="w-24 h-24 bg-green-100 rounded-full mx-auto flex items-center justify-center mb-6">
+                                <i class="fa fa-check text-4xl text-secondary"></i>
+                            </div>
+                            <h3 class="text-2xl font-bold text-dark mb-2">训练完成！</h3>
+                            <p class="text-gray-600 mb-8">恭喜您完成了本次护眼训练，记得每天坚持哦！</p>
+                            <button id="complete-btn" class="px-8 py-3 bg-primary text-white font-medium rounded-lg hover:bg-primary/90 transition-colors">
+                                关闭
+                            </button>
+                        </div>
+                    `;
+                    document.getElementById('complete-btn').addEventListener('click', function() {
+                        modal.classList.add('hidden');
+                        modal.classList.remove('flex');
+                    });
+                }
+            });
+        }
+
+        // 训练按钮点击事件
+        trainingBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                const trainingType = this.getAttribute('data-training');
+                openTrainingModal(trainingType);
+            });
+        });
+
+        // 开始训练按钮点击事件
+        startTrainingBtn.addEventListener('click', function() {
+            // 默认打开第一个训练模块
+            openTrainingModal('eye-movement');
+        });
+
+        // 初始化训练趋势图表
+        window.addEventListener('load', function() {
+            const ctx = document.getElementById('trainingChart').getContext('2d');
+            const chart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['周一', '周二', '周三', '周四', '周五', '周六', '周日'],
+                    datasets: [{
+                        label: '训练时长（分钟）',
+                        data: [10, 15, 5, 20, 15, 25, 20],
+                        backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                        borderColor: 'rgba(59, 130, 246, 1)',
+                        borderWidth: 3,
+                        tension: 0.4,
+                        fill: true,
+                        pointBackgroundColor: 'rgba(59, 130, 246, 1)',
+                        pointRadius: 4,
+                        pointHoverRadius: 6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(255, 255, 255, 0.9)',
+                            titleColor: '#1E293B',
+                            bodyColor: '#64748B',
+                            borderColor: '#E2E8F0',
+                            borderWidth: 1,
+                            padding: 12,
+                            boxPadding: 6,
+                            usePointStyle: true,
+                            callbacks: {
+                                label: function(context) {
+                                    return `训练时长: ${context.raw} 分钟`;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: {
+                                color: 'rgba(0, 0, 0, 0.05)'
+                            },
+                            ticks: {
+                                callback: function(value) {
+                                    return value + 'm';
+                                }
+                            }
+                        },
+                        x: {
+                            grid: {
+                                display: false
+                            }
+                        }
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Brain Visual Diagnosis Detail</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;700;900&family=Black+Ops+One&display=swap"
+        rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        :root {
+            --bg-color: #050505;
+            --neon-green: #00FF00;
+            --alert-red: #FF0000;
+            --text-white: #FFFFFF;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-white);
+            font-family: 'Noto Sans SC', sans-serif;
+            overflow-x: hidden;
+        }
+
+        .section {
+            padding: 60px 20px;
+            position: relative;
+            border-bottom: 1px solid #111;
+        }
+
+        /* Glitch Text Effect */
+        .glitch-text {
+            position: relative;
+        }
+
+        .tactical-border {
+            border: 1px solid rgba(0, 255, 0, 0.3);
+            background: rgba(0, 20, 0, 0.3);
+            position: relative;
+        }
+
+        .tactical-border::before {
+            content: '';
+            position: absolute;
+            top: -1px;
+            left: -1px;
+            width: 10px;
+            height: 10px;
+            border-top: 2px solid var(--neon-green);
+            border-left: 2px solid var(--neon-green);
+        }
+
+        .tactical-border::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            right: -1px;
+            width: 10px;
+            height: 10px;
+            border-bottom: 2px solid var(--neon-green);
+            border-right: 2px solid var(--neon-green);
+        }
+
+        /* SECTION 1: PAIN POINT */
+        .pain-section {
+            background: linear-gradient(to bottom, #000, #1a0000);
+        }
+
+        .pain-img-container {
+            position: relative;
+            overflow: hidden;
+            border: 2px solid var(--alert-red);
+        }
+
+        .pain-img-container::after {
+            content: 'WARNING: SYSTEM FAILURE';
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            color: var(--alert-red);
+            font-family: 'Black Ops One';
+            background: rgba(0, 0, 0, 0.7);
+            padding: 2px 10px;
+        }
+
+        /* SECTION 2: PRINCIPLE */
+        .principle-section {
+            background: #000;
+            background-image: radial-gradient(circle at center, #001000 0%, #000 70%);
+        }
+
+        /* SECTION 3: WEAPONS */
+        .weapon-card {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.01) 100%);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            margin-bottom: 20px;
+            padding: 20px;
+            position: relative;
+        }
+
+        .weapon-badge {
+            background: var(--neon-green);
+            color: black;
+            font-weight: 900;
+            padding: 2px 8px;
+            font-size: 12px;
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+
+        /* SECTION 4: PROMISE */
+        .promise-section {
+            background: linear-gradient(to bottom, #000, #001a00);
+            text-align: center;
+        }
+
+        .gold-badge {
+            width: 100px;
+            height: 100px;
+            margin: 0 auto;
+            border-radius: 50%;
+            border: 3px solid #FFD700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #FFD700;
+            font-weight: 700;
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
+            font-size: 14px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .cta-btn {
+            background: var(--neon-green);
+            color: black;
+            font-weight: 900;
+            padding: 20px 40px;
+            font-size: 24px;
+            display: inline-block;
+            margin-top: 30px;
+            clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(0, 255, 0, 0.7);
+            }
+
+            70% {
+                box-shadow: 0 0 0 10px rgba(0, 255, 0, 0);
+            }
+
+            100% {
+                box-shadow: 0 0 0 0 rgba(0, 255, 0, 0);
+            }
+        }
+    </style>
+</head>
+
+<body class="max-w-xl mx-auto border-x border-zinc-800">
+
+    <!-- SECTION 1: PAIN POINT -->
+    <section class="section pain-section">
+        <h2 class="text-4xl font-black text-red-600 mb-6 leading-tight">
+            ⚠️ 警告：<br>你还在给孩子做<br><span class="text-white">“无效护眼”</span>吗？
+        </h2>
+
+        <div class="pain-img-container mb-8">
+            <img src="/Users/wangzhongming/.gemini/antigravity/brain/9bf60341-e62b-4990-9986-ed90aa75dcf0/pain_point_stressed_parent_1769048418951.png"
+                alt="Stressed Parent" class="w-full grayscale contrast-125 brightness-75">
+        </div>
+
+        <div class="space-y-4 text-lg font-bold text-zinc-300">
+            <p>🔴 为什么滴眼药水、做眼操、甚至配了OK镜，<span class="text-red-500">度数还在涨？</span></p>
+            <p>🔴 为什么孩子写作业像蜗牛，漏字跳行，<span class="text-red-500">一上课就走神？</span></p>
+        </div>
+
+        <div class="mt-8 p-6 border-l-4 border-red-600 bg-red-900/10">
+            <p class="text-xl font-black text-white">真相只有一个：</p>
+            <p class="text-2xl font-black text-red-500 mt-2">不是眼睛瞎，是大脑“卡”了！</p>
+        </div>
+    </section>
+
+    <!-- SECTION 2: PRINCIPLE -->
+    <section class="section principle-section">
+        <div class="flex items-center gap-4 mb-6">
+            <div class="w-12 h-1 bg-green-500"></div>
+            <h2 class="text-2xl font-black text-green-500">颠覆认知 · 底层逻辑</h2>
+        </div>
+
+        <div class="mb-8 tactical-border p-2">
+            <img src="/Users/wangzhongming/.gemini/antigravity/brain/9bf60341-e62b-4990-9986-ed90aa75dcf0/eye_brain_cpu_diagram_1769048434856.png"
+                alt="Eye vs Brain Diagram" class="w-full">
+            <div class="flex justify-between text-xs text-green-500 font-mono mt-1 px-2">
+                <span>OPTICAL SENSOR</span>
+                <span>CENTRAL PROCESSOR</span>
+            </div>
+        </div>
+
+        <div class="prose prose-invert">
+            <p class="text-lg leading-relaxed">
+                <span class="font-bold text-green-400">斯坦福神经学教授 Huberman 揭秘：</span><br>
+                视觉不仅仅是眼球的物理折射，更是<span class="underline decoration-green-500 decoration-2">大脑皮层的信号处理</span>。
+            </p>
+            <p class="mt-4 text-zinc-400">
+                当大脑视觉搜索速度（CPU）跟不上信息量时，
+                眼轴就会被迫拉长（近视），注意力就会被迫中断（磨蹭）。
+            </p>
+            <div class="mt-6 text-center text-xl font-black border border-white/20 py-4">
+                不修大脑，只修眼球<br>
+                <span class="text-red-500">永远治标不治本！</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 3: PRODUCT BREAKDOWN -->
+    <section class="section bg-zinc-900">
+        <h2 class="text-3xl font-black text-center mb-10 text-white font-mono">
+            🛠️ 本诊断包包含<br><span class="text-green-500">4 笔核心军火</span>
+        </h2>
+
+        <!-- Item 1 -->
+        <div class="weapon-card">
+            <div class="weapon-badge">CORE 01</div>
+            <h3 class="text-xl font-black text-green-400 mt-2 mb-2">【全网独家】AI 脑视觉压力测试</h3>
+            <p class="text-sm text-zinc-500 mb-4">价值 ¥299</p>
+            <ul class="space-y-2 text-zinc-300 text-sm">
+                <li>🎯 <strong class="text-white">Gabor 视标测试：</strong> 测视皮层成像清晰度。</li>
+                <li>⚡ <strong class="text-white">动态舒尔特方格：</strong> 测视觉搜索广度与速度。</li>
+            </ul>
+            <p class="mt-3 text-xs text-zinc-500 border-t border-white/10 pt-2">
+                * 飞行员选拔同款逻辑，测出孩子最真实的“裸脑”数据。
+            </p>
+        </div>
+
+        <!-- Item 2 -->
+        <div class="weapon-card">
+            <div class="weapon-badge">CORE 02</div>
+            <h3 class="text-xl font-black text-green-400 mt-2 mb-2">【连长亲笔】万字级数据分析报告</h3>
+            <p class="text-sm text-zinc-500 mb-4">价值 ¥199</p>
+            <p class="text-zinc-300 text-sm">
+                不给模棱两可的结论。直接指出：<br>
+                <span class="text-white font-bold">视力卡点在哪？专注力流失在哪？</span>
+            </p>
+        </div>
+
+        <!-- Item 3 -->
+        <div class="weapon-card border-green-500/30 bg-green-900/10">
+            <div class="weapon-badge bg-green-500 text-black">CORE 03 - IMPORTANT</div>
+            <h3 class="text-xl font-black text-green-400 mt-2 mb-2">【连长面诊】15分钟 1对1 语音通话</h3>
+            <p class="text-sm text-zinc-500 mb-4">价值 ¥500+</p>
+            <p class="text-zinc-300 text-sm">
+                这不是客服聊天，这是<strong class="text-white text-lg">“坐堂问诊”</strong>。<br>
+                老王连长亲自为你解读数据，制定这一学期的“作战计划”。
+            </p>
+        </div>
+
+        <!-- Item 4 -->
+        <div class="weapon-card">
+            <div class="weapon-badge">CORE 04</div>
+            <h3 class="text-xl font-black text-green-400 mt-2 mb-2">【新兵特权】系统 3 天体验卡</h3>
+            <p class="text-zinc-300 text-sm">
+                带孩子亲自试玩这套“训练大脑”的黑科技。
+            </p>
+        </div>
+    </section>
+
+    <!-- SECTION 4: PROMISE -->
+    <section class="section promise-section pb-20">
+        <div class="gold-badge">
+            <div class="leading-tight">
+                Quality<br>
+                Guarantee<br>
+                <span class="text-xs">品质保障</span>
+            </div>
+        </div>
+
+        <div class="text-center mb-10">
+            <p class="text-zinc-400 mb-2">连长补贴价</p>
+            <div class="text-6xl font-black text-red-500 font-mono tracking-tighter">
+                ¥299
+            </div>
+            <p class="text-zinc-600 text-sm line-through mt-1">原价 ¥699</p>
+            <p class="text-green-500 text-xs mt-4">（这甚至不够去医院挂一次特需号）</p>
+        </div>
+
+        <div class="bg-white/5 mx-4 p-6 rounded-lg text-left border border-white/10">
+            <h4 class="font-bold text-yellow-400 mb-2">🎁 惊喜彩蛋：</h4>
+            <p class="text-sm text-zinc-300 leading-relaxed">
+                诊断后，如您决定加入【2980元 特种兵训练营】，<br>
+                <strong class="text-white">本诊断费 299 元可双倍抵扣！</strong><br>
+                即：特训营仅需补差价入营。<br>
+                <span class="italic text-zinc-500">相当于：这顿诊断，连长请了！</span>
+            </p>
+        </div>
+
+        <div class="text-center mt-12">
+            <p class="text-xs text-zinc-500 animate-bounce">👇 每日仅限接诊 5 人（连长精力有限） 👇</p>
+            <a href="#" class="cta-btn cursor-pointer hover:scale-105 transition-transform">
+                立即下单 安排测试
+            </a>
+        </div>
+    </section>
+
+</body>
+
+</html>

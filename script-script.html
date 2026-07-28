@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>教师训练逐字稿页面</title>
+    <style>
+        body {
+            font-family: 'Microsoft YaHei', sans-serif;
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            margin: 0;
+            padding: 20px;
+            color: #333;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #667eea;
+            font-size: 28px;
+            margin-bottom: 20px;
+        }
+        .description {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 16px;
+        }
+        .tab-container {
+            margin-bottom: 20px;
+        }
+        .tabs {
+            display: flex;
+            background: #f8f9fa;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        .tab-button {
+            padding: 12px 24px;
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            font-size: 16px;
+            color: #555;
+            flex: 1;
+            transition: all 0.3s ease;
+        }
+        .tab-button.active {
+            background: #667eea;
+            color: white;
+            font-weight: bold;
+        }
+        .tab-button:hover {
+            background: #e0e7ff;
+        }
+        .tab-button.active:hover {
+            background: #5a67d8;
+        }
+        .tab-content {
+            display: none;
+            padding: 20px 0;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #555;
+        }
+        input[type="text"], textarea, select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            box-sizing: border-box;
+            font-family: 'Microsoft YaHei', sans-serif;
+        }
+        input[type="text"]:focus, textarea:focus, select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        textarea {
+            min-height: 200px;
+            resize: vertical;
+        }
+        .button-group {
+            margin: 20px 0;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        button:hover {
+            background: #5a67d8;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102,126,234,0.3);
+        }
+        button:active {
+            transform: translateY(0);
+        }
+        button.secondary {
+            background: #48bb78;
+        }
+        button.secondary:hover {
+            background: #38a169;
+        }
+        button.danger {
+            background: #f56565;
+        }
+        button.danger:hover {
+            background: #e53e3e;
+        }
+        .script-list {
+            display: grid;
+            gap: 15px;
+            margin: 20px 0;
+        }
+        .script-item {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            border-left: 5px solid #667eea;
+            transition: all 0.3s ease;
+        }
+        .script-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        .script-item h3 {
+            margin: 0 0 10px 0;
+            color: #667eea;
+        }
+        .script-meta {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+        .script-actions {
+            margin-top: 10px;
+        }
+        .preview-container {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+        .preview-title {
+            font-size: 20px;
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 15px;
+        }
+        .preview-content {
+            line-height: 1.8;
+            color: #333;
+        }
+        .timer-section {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            text-align: center;
+        }
+        .timer {
+            font-size: 48px;
+            font-weight: bold;
+            color: #667eea;
+            margin: 20px 0;
+        }
+        .custom-notice {
+            background: #fff3cd;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+            text-align: center;
+            font-weight: bold;
+            color: #856404;
+            border: 1px solid #ffeeba;
+        }
+        .footer {
+            margin-top: 30px;
+            text-align: center;
+            color: #666;
+            font-size: 14px;
+        }
+        .home-link {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 10px 20px;
+            background: #667eea;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+        .home-link:hover {
+            background: #5a67d8;
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📝 教师训练逐字稿页面</h1>
+        <div class="description">
+            用于教师教学训练的逐字稿编辑、预览和管理工具！
+        </div>
+        
+        <div class="tab-container">
+            <div class="tabs">
+                <button class="tab-button active" onclick="openTab('create-script')">✏️ 创建逐字稿</button>
+                <button class="tab-button" onclick="openTab('script-list')">📋 逐字稿列表</button>
+                <button class="tab-button" onclick="openTab('practice')">🎯 模拟练习</button>
+            </div>
+            
+            <div id="create-script" class="tab-content active">
+                <form id="scriptForm">
+                    <div class="form-group">
+                        <label for="title">📌 标题：</label>
+                        <input type="text" id="title" name="title" placeholder="请输入逐字稿标题" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="subject">📚 科目：</label>
+                        <select id="subject" name="subject" required>
+                            <option value="">请选择科目</option>
+                            <option value="语文">语文</option>
+                            <option value="数学">数学</option>
+                            <option value="英语">英语</option>
+                            <option value="物理">物理</option>
+                            <option value="化学">化学</option>
+                            <option value="生物">生物</option>
+                            <option value="历史">历史</option>
+                            <option value="地理">地理</option>
+                            <option value="政治">政治</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="grade">🏫 年级：</label>
+                        <select id="grade" name="grade" required>
+                            <option value="">请选择年级</option>
+                            <option value="小学一年级">小学一年级</option>
+                            <option value="小学二年级">小学二年级</option>
+                            <option value="小学三年级">小学三年级</option>
+                            <option value="小学四年级">小学四年级</option>
+                            <option value="小学五年级">小学五年级</option>
+                            <option value="小学六年级">小学六年级</option>
+                            <option value="初中一年级">初中一年级</option>
+                            <option value="初中二年级">初中二年级</option>
+                            <option value="初中三年级">初中三年级</option>
+                            <option value="高中一年级">高中一年级</option>
+                            <option value="高中二年级">高中二年级</option>
+                            <option value="高中三年级">高中三年级</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="content">📝 逐字稿内容：</label>
+                        <textarea id="content" name="content" placeholder="请输入逐字稿内容..." required></textarea>
+                    </div>
+                    
+                    <div class="button-group">
+                        <button type="submit">💾 保存逐字稿</button>
+                        <button type="button" class="secondary" onclick="resetForm()">🔄 重置表单</button>
+                        <button type="button" class="secondary" onclick="previewScript()">👀 预览</button>
+                    </div>
+                </form>
+                
+                <div class="preview-container" id="previewContainer" style="display: none;">
+                    <div class="preview-title" id="previewTitle"></div>
+                    <div class="preview-content" id="previewContent"></div>
+                </div>
+            </div>
+            
+            <div id="script-list" class="tab-content">
+                <div class="script-list" id="scriptList">
+                    <!-- 逐字稿列表将在这里生成 -->
+                    <div style="text-align: center; color: #666; padding: 50px;">
+                        暂无逐字稿，请先创建！
+                    </div>
+                </div>
+            </div>
+            
+            <div id="practice" class="tab-content">
+                <div class="form-group">
+                    <label for="practiceScript">📝 选择要练习的逐字稿：</label>
+                    <select id="practiceScript" name="practiceScript">
+                        <option value="">请选择逐字稿</option>
+                        <!-- 逐字稿选项将在这里生成 -->
+                    </select>
+                </div>
+                
+                <div class="timer-section">
+                    <h3>⏱️ 练习计时器</h3>
+                    <div class="timer" id="timer">00:00:00</div>
+                    <div class="button-group">
+                        <button id="startTimer" onclick="startTimer()">▶️ 开始计时</button>
+                        <button id="pauseTimer" onclick="pauseTimer()" disabled>⏸️ 暂停</button>
+                        <button id="resetTimer" onclick="resetTimer()" disabled>🔄 重置</button>
+                    </div>
+                </div>
+                
+                <div class="preview-container" id="practicePreview">
+                    <div class="preview-title">选择逐字稿开始练习</div>
+                    <div class="preview-content">请从上方选择一个逐字稿开始你的教学模拟练习。</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="custom-notice">
+            💡 教学提效工具定制，教学ppt定制，可以联系小红书店铺客服。
+        </div>
+        
+        <div class="footer">
+            <p>📚 教师训练工具 | 专为教师设计的教学辅助工具</p>
+            <a href="xiaoxue.html" class="home-link">🏠 返回学习工具首页</a>
+        </div>
+    </div>
+    
+    <script>
+        // 逐字稿数据存储
+        let scripts = JSON.parse(localStorage.getItem('teacherScripts')) || [];
+        let currentTimer = null;
+        let startTime = 0;
+        let elapsedTime = 0;
+        let isPaused = false;
+        
+        function openTab(tabName) {
+            // 隐藏所有标签内容
+            const tabContents = document.getElementsByClassName('tab-content');
+            for (let i = 0; i < tabContents.length; i++) {
+                tabContents[i].classList.remove('active');
+            }
+            
+            // 移除所有按钮的活跃状态
+            const tabButtons = document.getElementsByClassName('tab-button');
+            for (let i = 0; i < tabButtons.length; i++) {
+                tabButtons[i].classList.remove('active');
+            }
+            
+            // 显示当前标签和按钮
+            document.getElementById(tabName).classList.add('active');
+            event.currentTarget.classList.add('active');
+            
+            // 更新逐字稿列表
+            if (tabName === 'script-list') {
+                updateScriptList();
+            }
+            
+            // 更新练习选项
+            if (tabName === 'practice') {
+                updatePracticeOptions();
+            }
+        }
+        
+        function saveScript() {
+            const form = document.getElementById('scriptForm');
+            const formData = new FormData(form);
+            
+            const script = {
+                id: Date.now(),
+                title: formData.get('title'),
+                subject: formData.get('subject'),
+                grade: formData.get('grade'),
+                content: formData.get('content'),
+                createdAt: new Date().toLocaleString(),
+                updatedAt: new Date().toLocaleString()
+            };
+            
+            scripts.push(script);
+            localStorage.setItem('teacherScripts', JSON.stringify(scripts));
+            
+            alert('✅ 逐字稿保存成功！');
+            resetForm();
+            updateScriptList();
+            updatePracticeOptions();
+            
+            return false;
+        }
+        
+        function resetForm() {
+            document.getElementById('scriptForm').reset();
+            document.getElementById('previewContainer').style.display = 'none';
+        }
+        
+        function previewScript() {
+            const title = document.getElementById('title').value;
+            const content = document.getElementById('content').value;
+            
+            if (!title || !content) {
+                alert('请先填写标题和内容！');
+                return;
+            }
+            
+            document.getElementById('previewTitle').textContent = title;
+            document.getElementById('previewContent').textContent = content;
+            document.getElementById('previewContainer').style.display = 'block';
+        }
+        
+        function updateScriptList() {
+            const scriptList = document.getElementById('scriptList');
+            
+            if (scripts.length === 0) {
+                scriptList.innerHTML = '<div style="text-align: center; color: #666; padding: 50px;">暂无逐字稿，请先创建！</div>';
+                return;
+            }
+            
+            let html = '';
+            for (let i = 0; i < scripts.length; i++) {
+                const script = scripts[i];
+                html += `
+                    <div class="script-item">
+                        <h3>${script.title}</h3>
+                        <div class="script-meta">
+                            <span>科目：${script.subject} | </span>
+                            <span>年级：${script.grade} | </span>
+                            <span>创建时间：${script.createdAt}</span>
+                        </div>
+                        <div class="script-actions">
+                            <button class="secondary" onclick="editScript(${script.id})">✏️ 编辑</button>
+                            <button class="secondary" onclick="viewScript(${script.id})">👀 查看</button>
+                            <button class="danger" onclick="deleteScript(${script.id})">🗑️ 删除</button>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            scriptList.innerHTML = html;
+        }
+        
+        function updatePracticeOptions() {
+            const practiceScript = document.getElementById('practiceScript');
+            
+            practiceScript.innerHTML = '<option value="">请选择逐字稿</option>';
+            
+            for (let i = 0; i < scripts.length; i++) {
+                const script = scripts[i];
+                practiceScript.innerHTML += `<option value="${script.id}">${script.title}</option>`;
+            }
+            
+            // 添加选择事件
+            practiceScript.onchange = function() {
+                const scriptId = this.value;
+                if (scriptId) {
+                    const script = scripts.find(s => s.id == scriptId);
+                    if (script) {
+                        document.getElementById('practicePreview').innerHTML = `
+                            <div class="preview-title">${script.title}</div>
+                            <div class="preview-content">${script.content}</div>
+                        `;
+                    }
+                } else {
+                    document.getElementById('practicePreview').innerHTML = `
+                        <div class="preview-title">选择逐字稿开始练习</div>
+                        <div class="preview-content">请从上方选择一个逐字稿开始你的教学模拟练习。</div>
+                    `;
+                }
+            };
+        }
+        
+        function editScript(id) {
+            // 简单实现，实际可以更复杂
+            alert('编辑功能开发中，敬请期待！');
+        }
+        
+        function viewScript(id) {
+            const script = scripts.find(s => s.id == id);
+            if (script) {
+                alert(`📝 ${script.title}\n\n${script.content}`);
+            }
+        }
+        
+        function deleteScript(id) {
+            if (confirm('确定要删除这个逐字稿吗？')) {
+                scripts = scripts.filter(s => s.id != id);
+                localStorage.setItem('teacherScripts', JSON.stringify(scripts));
+                updateScriptList();
+                updatePracticeOptions();
+                alert('✅ 逐字稿删除成功！');
+            }
+        }
+        
+        function startTimer() {
+            startTime = Date.now() - elapsedTime;
+            currentTimer = setInterval(updateTimer, 1000);
+            
+            document.getElementById('startTimer').disabled = true;
+            document.getElementById('pauseTimer').disabled = false;
+            document.getElementById('resetTimer').disabled = false;
+        }
+        
+        function pauseTimer() {
+            clearInterval(currentTimer);
+            currentTimer = null;
+            isPaused = true;
+            
+            document.getElementById('startTimer').disabled = false;
+            document.getElementById('pauseTimer').disabled = true;
+        }
+        
+        function resetTimer() {
+            clearInterval(currentTimer);
+            currentTimer = null;
+            elapsedTime = 0;
+            isPaused = false;
+            document.getElementById('timer').textContent = '00:00:00';
+            
+            document.getElementById('startTimer').disabled = false;
+            document.getElementById('pauseTimer').disabled = true;
+            document.getElementById('resetTimer').disabled = true;
+        }
+        
+        function updateTimer() {
+            elapsedTime = Date.now() - startTime;
+            const hours = Math.floor(elapsedTime / (1000 * 60 * 60));
+            const minutes = Math.floor((elapsedTime % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((elapsedTime % (1000 * 60)) / 1000);
+            
+            const formattedTime = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            document.getElementById('timer').textContent = formattedTime;
+        }
+        
+        // 绑定表单提交事件
+        document.getElementById('scriptForm').onsubmit = function(e) {
+            e.preventDefault();
+            saveScript();
+        };
+        
+        // 初始化
+        updateScriptList();
+        updatePracticeOptions();
+    </script>
+</body>
+</html>
