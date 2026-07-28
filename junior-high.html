@@ -107,7 +107,7 @@
             <div class="text-lg font-bold tracking-wider text-military-accent glow-text-gold">
                 <i class="fas fa-graduation-cap mr-2"></i>初中智能学习中心
             </div>
-            <a href="#jq-quest-hub" class="border border-military-accent/40 text-military-accent px-3 py-1.5 rounded-full font-bold text-xs hover:bg-military-accent hover:text-military-dark transition-all">
+            <a href="#jq-quest-hub" onclick="jqShowMap()" class="border border-military-accent/40 text-military-accent px-3 py-1.5 rounded-full font-bold text-xs hover:bg-military-accent hover:text-military-dark transition-all">
                 🗺️ 闯关
             </a>
             <a href="index.html#contact-section" class="bg-military-accent text-military-dark px-4 py-1.5 rounded-full font-bold text-sm hover:bg-white transition-all">
@@ -4957,6 +4957,73 @@ const masteryData = {
     {tokens:['__','H₂O','→','__','H₂','+','__','O₂'], ans:[2,2,1], hint:'电解水'},
     {tokens:['__','KMnO₄','→','__','K₂MnO₄','+','__','MnO₂','+','__','O₂'], ans:[2,1,1,1], hint:'高锰酸钾受热分解'}
   ];
+  // 通用选择题题库：其余 8 科各一套独立初中题，复用同一战斗引擎
+  const JQ_Q = {
+    shuxue:[
+      {q:'若 2x + 3 = 11，则 x = ?', options:['3','4','5','6'], a:1},
+      {q:'一个三角形的内角和是？', options:['90°','180°','270°','360°'], a:1},
+      {q:'计算 3² + 4² = ?', options:['7','12','25','24'], a:2},
+      {q:'一个数的 20% 是 40，这个数是？', options:['80','200','400','800'], a:1},
+      {q:'若 a=3, b=2，则 a² − b² = ?', options:['5','1','13','9'], a:0},
+      {q:'圆的半径 r=2，面积 = ?（π取3.14）', options:['12.56','6.28','25.12','3.14'], a:0}
+    ],
+    yingyu:[
+      {q:'“重要的”英文是？', options:['important','impossible','impatient','impolite'], a:0},
+      {q:'“环境”的英文是？', options:['environment','experiment','equipment','employment'], a:0},
+      {q:'success 的副词形式是？', options:['successfully','success','successful','succeed'], a:0},
+      {q:'“允许”的英文是？', options:['allow','aloud','alone','along'], a:0},
+      {q:'“建议”的英文是？', options:['suggest','subject','subtract','sudden'], a:0},
+      {q:'“科学家”的英文是？', options:['scientist','science','scenic','silent'], a:0}
+    ],
+    lishi:[
+      {q:'中国历史上第一个王朝是？', options:['夏朝','商朝','周朝','秦朝'], a:0},
+      {q:'秦始皇统一六国是在哪一年？', options:['公元前221年','公元前202年','公元8年','公元25年'], a:0},
+      {q:'丝绸之路的起点是？', options:['长安','洛阳','北京','南京'], a:0},
+      {q:'唐朝的开国皇帝是？', options:['李渊','李世民','李隆基','武则天'], a:0},
+      {q:'改进造纸术的是？', options:['蔡伦','张衡','华佗','祖冲之'], a:0},
+      {q:'辛亥革命发生在哪一年？', options:['1911年','1919年','1921年','1949年'], a:0}
+    ],
+    daofa:[
+      {q:'中学阶段我们的根本活动准则是？', options:['宪法','校规','班规','家规'], a:0},
+      {q:'公民最基本、最重要的权利是？', options:['人身自由','选举权','财产权','受教育权'], a:0},
+      {q:'我国的国家性质是？', options:['人民民主专政','君主立宪','贵族共和','军事管制'], a:0},
+      {q:'在我国，未成年人是指未满多少周岁？', options:['18','16','14','20'], a:0},
+      {q:'法律区别于道德最主要的特征是？', options:['由国家强制力保证实施','约定俗成','靠舆论','靠习惯'], a:0},
+      {q:'我国处理民族关系的基本原则不包括？', options:['民族分裂','民族平等','民族团结','各民族共同繁荣'], a:0}
+    ],
+    tiyu:[
+      {q:'长跑后最不该立即做的是？', options:['坐下不动','慢走放松','深呼吸','拉伸'], a:0},
+      {q:'运动中发生抽筋，首先应？', options:['停止运动并拉伸','继续跑','大量饮水','躺下'], a:0},
+      {q:'体育锻炼中“BMI”指？', options:['身体质量指数','血压指数','肺活量','心率'], a:0},
+      {q:'运动前最应该做的是？', options:['充分热身','大量进食','喝碳酸饮料','直接冲刺'], a:0},
+      {q:'游泳时小腿抽筋，正确做法是？', options:['保持冷静、仰漂并扳脚趾','拼命挣扎','深潜水','乱喊乱动'], a:0},
+      {q:'一节体育课通常约多少分钟？', options:['40–45分钟','20分钟','90分钟','10分钟'], a:0}
+    ],
+    shengwu:[
+      {q:'动植物细胞都有的结构是？', options:['细胞膜','细胞壁','叶绿体','液泡'], a:0},
+      {q:'人体最大的器官是？', options:['皮肤','肝脏','心脏','肺'], a:0},
+      {q:'光合作用的场所是？', options:['叶绿体','线粒体','细胞核','液泡'], a:0},
+      {q:'DNA 主要存在于？', options:['细胞核','细胞膜','细胞壁','细胞质基质'], a:0},
+      {q:'呼吸作用的实质是？', options:['分解有机物释放能量','合成有机物储能量','产生氧气','吸收二氧化碳'], a:0},
+      {q:'遗传信息的携带者是？', options:['DNA','蛋白质','糖类','脂肪'], a:0}
+    ],
+    wuli:[
+      {q:'光在真空中的速度约为？', options:['3×10⁸ m/s','3×10⁵ m/s','340 m/s','1500 m/s'], a:0},
+      {q:'声音在以下哪种介质中传播最快？', options:['固体','气体','真空','一样快'], a:0},
+      {q:'质量 2kg 的物体受到的重力约？(g=10N/kg)', options:['20N','2N','0.2N','200N'], a:0},
+      {q:'凸透镜对光的作用是？', options:['会聚','发散','不变','反射'], a:0},
+      {q:'标准大气压下水的沸点是？', options:['100℃','0℃','50℃','80℃'], a:0},
+      {q:'功的单位是？', options:['焦耳','瓦特','牛顿','帕斯卡'], a:0}
+    ],
+    dili:[
+      {q:'地球上最长的纬线是？', options:['赤道','北回归线','北极圈','本初子午线'], a:0},
+      {q:'划分东西经度的起始线是？', options:['本初子午线','赤道','180°经线','回归线'], a:0},
+      {q:'我国最大的淡水湖是？', options:['鄱阳湖','洞庭湖','太湖','青海湖'], a:0},
+      {q:'世界上最高的高原是？', options:['青藏高原','云贵高原','黄土高原','内蒙古高原'], a:0},
+      {q:'季风气候最显著的大洲是？', options:['亚洲','欧洲','非洲','南美洲'], a:0},
+      {q:'地球自转产生的现象是？', options:['昼夜交替','四季变化','五带划分','极昼极夜'], a:0}
+    ]
+  };
   const JQ_SAVE_KEY = 'laowang_junior_quest_v2';
   function jqLoad(){
     try { const s = JSON.parse(localStorage.getItem(JQ_SAVE_KEY)); if (s) return s; } catch(e){}
@@ -4964,9 +5031,9 @@ const masteryData = {
   }
   function jqSave(){ localStorage.setItem(JQ_SAVE_KEY, JSON.stringify(jqState)); }
   let jqState = jqLoad();
-  // 占位（非示范）学科默认解锁，避免解锁链路被占位科卡死；示范科按进度解锁
+  // 所有学科默认解锁：降低门槛，进入即可玩；通关仍给 XP/徽章作为里程碑
   JQ_SUBJECTS.forEach(s => {
-    if (s.id !== 'yuwen' && s.id !== 'huaxue' && !jqState.unlocked.includes(s.id)) {
+    if (!jqState.unlocked.includes(s.id)) {
       jqState.unlocked.push(s.id);
     }
   });
@@ -5014,10 +5081,10 @@ const masteryData = {
     const cleared = jqState.cleared[id] || [];
     const lvEl = document.getElementById('jq-q-levels');
     lvEl.innerHTML = '';
-    const isDemo = (id === 'yuwen' || id === 'huaxue');
+    const playable = (id === 'yuwen' || id === 'huaxue' || (JQ_Q[id] && JQ_Q[id].length));
     for (let i=0;i<3;i++){
       const isCleared = cleared.includes(i);
-      const isUnlocked = isDemo && (i===0 || cleared.includes(i-1));
+      const isUnlocked = playable && (i===0 || cleared.includes(i-1));
       const row = document.createElement('div');
       row.className = 'flex items-center gap-3 bg-black/40 border border-white/10 rounded-xl p-3' + (isCleared ? ' border-military-accent/40' : '');
       const dot = isCleared ? '✅' : (i+1);
@@ -5037,7 +5104,7 @@ const masteryData = {
       lvEl.appendChild(row);
     }
     const soon = document.getElementById('jq-q-soon');
-    if (isDemo){ soon.classList.add('hidden'); }
+    if (playable){ soon.classList.add('hidden'); }
     else {
       soon.classList.remove('hidden');
       soon.innerHTML = '⚡ 本学科专属玩法【' + jqCur.mech + '】设计中<br>原型已开放 <b class="text-military-accent">语文·诗词填空斩</b> 与 <b class="text-military-accent">化学·配平熔炉</b> 真实可玩，先去体验！';
@@ -5046,7 +5113,15 @@ const masteryData = {
   function jqMechDesc(s, i){
     const map = {
       yuwen:['课内古诗文填空','错别字+文学常识混战','整册背诵连击 Boss'],
-      huaxue:['化学式书写热身','方程式配平实战','反应推断 Boss 战']
+      huaxue:['化学式书写热身','方程式配平实战','反应推断 Boss 战'],
+      shuxue:['计算与方程热身','几何与函数实战','综合推理 Boss 战'],
+      yingyu:['核心词汇狩猎','语法辨析实战','阅读推理 Boss 战'],
+      lishi:['朝代时序梳理','重大事件辨析','史料推理 Boss 战'],
+      daofa:['宪法与权利认知','责任与法治实战','价值抉择 Boss 战'],
+      tiyu:['运动常识热身','健康防护实战','耐力策略 Boss 战'],
+      shengwu:['细胞结构认知','生理过程实战','遗传推理 Boss 战'],
+      wuli:['公式与单位热身','现象辨析实战','综合计算 Boss 战'],
+      dili:['经纬与地图认知','区域特征实战','人地关系 Boss 战']
     };
     if (map[s.id]) return map[s.id][i];
     return s.mech + ' · 第'+(i+1)+'阶';
@@ -5054,7 +5129,8 @@ const masteryData = {
   let jqBattle = null;
   function jqStartBattle(id, lv){
     jqCur = JQ_SUBJECTS.find(s => s.id === id);
-    if (id !== 'yuwen' && id !== 'huaxue') return;
+    if (!jqCur) return;
+    if (id !== 'yuwen' && id !== 'huaxue' && !(JQ_Q[id] && JQ_Q[id].length)) return;
     document.getElementById('jq-quest').classList.add('hidden');
     document.getElementById('jq-battle').classList.remove('hidden');
     document.getElementById('jq-b-boss').textContent = jqCur.bossEmoji;
@@ -5062,6 +5138,7 @@ const masteryData = {
     jqBattle = { id, lv, bossHP:100, max:100, idx:0 };
     if (id === 'yuwen') jqInitPoem();
     else if (id === 'huaxue') jqInitChem();
+    else jqInitChoice();
   }
   function jqSetHP(hp){
     jqBattle.bossHP = Math.max(0, hp);
@@ -5223,6 +5300,44 @@ const masteryData = {
     }
   }
 
+  /* 通用选择题战斗（数学/英语/历史/道法/体育/生物/物理/地理） */
+  function jqInitChoice(){
+    const pool = (JQ_Q[jqCur.id] || []).slice();
+    for (let i=pool.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [pool[i],pool[j]]=[pool[j],pool[i]]; }
+    jqBattle.questions = pool.slice(0, 5);
+    jqBattle.qi = 0;
+    jqRenderChoice();
+  }
+  function jqRenderChoice(){
+    jqShowHP();
+    const q = jqBattle.questions[jqBattle.qi];
+    const box = document.getElementById('jq-b-qbox');
+    const opts = q.options.map((o,i) =>
+      `<button class="w-full text-left px-4 py-2.5 rounded-xl bg-black/40 border border-white/15 text-white hover:border-military-accent hover:bg-military-accent/10 transition-all" onclick="jqSubmitChoice(${i})">${String.fromCharCode(65+i)}. ${o}</button>`
+    ).join('');
+    box.innerHTML = `
+      <div class="font-bold text-white text-base leading-relaxed mb-3">第${jqBattle.qi+1}/${jqBattle.questions.length} 题 · ${q.q}</div>
+      <div class="space-y-2">${opts}</div>
+      <div class="text-center font-bold text-sm min-h-[20px] mt-2" id="jq-fb"></div>
+    `;
+  }
+  function jqSubmitChoice(i){
+    const q = jqBattle.questions[jqBattle.qi];
+    const fb = document.getElementById('jq-fb');
+    if (i === q.a){
+      fb.className = 'text-center font-bold text-sm min-h-[20px] mt-2 text-emerald-400';
+      fb.textContent = '⚔️ 命中！正确';
+      jqHitBoss(); jqSetHP(jqBattle.bossHP - Math.ceil(100 / jqBattle.questions.length));
+      if (jqBattle.bossHP > 0){
+        jqBattle.qi++;
+        setTimeout(() => { if (jqBattle.qi < jqBattle.questions.length) jqRenderChoice(); }, 700);
+      }
+    } else {
+      fb.className = 'text-center font-bold text-sm min-h-[20px] mt-2 text-red-400';
+      fb.textContent = '✖ 答错了，正确答案：' + String.fromCharCode(65 + q.a) + '. ' + q.options[q.a];
+    }
+  }
+
   /* 导航 */
   function jqShowMap(){
     document.getElementById('jq-quest').classList.add('hidden');
@@ -5235,6 +5350,7 @@ const masteryData = {
   window.jqSubmitPoem = jqSubmitPoem;
   window.jqCheckChem = jqCheckChem;
   window.jqAdjCoef = jqAdjCoef;
+  window.jqSubmitChoice = jqSubmitChoice;
   window.jqCloseModal = jqCloseModal;
   window.jqBackToQuest = jqBackToQuest;
 
