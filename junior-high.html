@@ -4957,73 +4957,87 @@ const masteryData = {
     {tokens:['__','H₂O','→','__','H₂','+','__','O₂'], ans:[2,2,1], hint:'电解水'},
     {tokens:['__','KMnO₄','→','__','K₂MnO₄','+','__','MnO₂','+','__','O₂'], ans:[2,1,1,1], hint:'高锰酸钾受热分解'}
   ];
-  // 通用选择题题库：其余 8 科各一套独立初中题，复用同一战斗引擎
-  const JQ_Q = {
-    shuxue:[
-      {q:'若 2x + 3 = 11，则 x = ?', options:['3','4','5','6'], a:1},
-      {q:'一个三角形的内角和是？', options:['90°','180°','270°','360°'], a:1},
-      {q:'计算 3² + 4² = ?', options:['7','12','25','24'], a:2},
-      {q:'一个数的 20% 是 40，这个数是？', options:['80','200','400','800'], a:1},
-      {q:'若 a=3, b=2，则 a² − b² = ?', options:['5','1','13','9'], a:0},
-      {q:'圆的半径 r=2，面积 = ?（π取3.14）', options:['12.56','6.28','25.12','3.14'], a:0}
-    ],
-    yingyu:[
-      {q:'“重要的”英文是？', options:['important','impossible','impatient','impolite'], a:0},
-      {q:'“环境”的英文是？', options:['environment','experiment','equipment','employment'], a:0},
-      {q:'success 的副词形式是？', options:['successfully','success','successful','succeed'], a:0},
-      {q:'“允许”的英文是？', options:['allow','aloud','alone','along'], a:0},
-      {q:'“建议”的英文是？', options:['suggest','subject','subtract','sudden'], a:0},
-      {q:'“科学家”的英文是？', options:['scientist','science','scenic','silent'], a:0}
-    ],
-    lishi:[
-      {q:'中国历史上第一个王朝是？', options:['夏朝','商朝','周朝','秦朝'], a:0},
-      {q:'秦始皇统一六国是在哪一年？', options:['公元前221年','公元前202年','公元8年','公元25年'], a:0},
-      {q:'丝绸之路的起点是？', options:['长安','洛阳','北京','南京'], a:0},
-      {q:'唐朝的开国皇帝是？', options:['李渊','李世民','李隆基','武则天'], a:0},
-      {q:'改进造纸术的是？', options:['蔡伦','张衡','华佗','祖冲之'], a:0},
-      {q:'辛亥革命发生在哪一年？', options:['1911年','1919年','1921年','1949年'], a:0}
-    ],
-    daofa:[
-      {q:'中学阶段我们的根本活动准则是？', options:['宪法','校规','班规','家规'], a:0},
-      {q:'公民最基本、最重要的权利是？', options:['人身自由','选举权','财产权','受教育权'], a:0},
-      {q:'我国的国家性质是？', options:['人民民主专政','君主立宪','贵族共和','军事管制'], a:0},
-      {q:'在我国，未成年人是指未满多少周岁？', options:['18','16','14','20'], a:0},
-      {q:'法律区别于道德最主要的特征是？', options:['由国家强制力保证实施','约定俗成','靠舆论','靠习惯'], a:0},
-      {q:'我国处理民族关系的基本原则不包括？', options:['民族分裂','民族平等','民族团结','各民族共同繁荣'], a:0}
-    ],
-    tiyu:[
-      {q:'长跑后最不该立即做的是？', options:['坐下不动','慢走放松','深呼吸','拉伸'], a:0},
-      {q:'运动中发生抽筋，首先应？', options:['停止运动并拉伸','继续跑','大量饮水','躺下'], a:0},
-      {q:'体育锻炼中“BMI”指？', options:['身体质量指数','血压指数','肺活量','心率'], a:0},
-      {q:'运动前最应该做的是？', options:['充分热身','大量进食','喝碳酸饮料','直接冲刺'], a:0},
-      {q:'游泳时小腿抽筋，正确做法是？', options:['保持冷静、仰漂并扳脚趾','拼命挣扎','深潜水','乱喊乱动'], a:0},
-      {q:'一节体育课通常约多少分钟？', options:['40–45分钟','20分钟','90分钟','10分钟'], a:0}
-    ],
-    shengwu:[
-      {q:'动植物细胞都有的结构是？', options:['细胞膜','细胞壁','叶绿体','液泡'], a:0},
-      {q:'人体最大的器官是？', options:['皮肤','肝脏','心脏','肺'], a:0},
-      {q:'光合作用的场所是？', options:['叶绿体','线粒体','细胞核','液泡'], a:0},
-      {q:'DNA 主要存在于？', options:['细胞核','细胞膜','细胞壁','细胞质基质'], a:0},
-      {q:'呼吸作用的实质是？', options:['分解有机物释放能量','合成有机物储能量','产生氧气','吸收二氧化碳'], a:0},
-      {q:'遗传信息的携带者是？', options:['DNA','蛋白质','糖类','脂肪'], a:0}
-    ],
-    wuli:[
-      {q:'光在真空中的速度约为？', options:['3×10⁸ m/s','3×10⁵ m/s','340 m/s','1500 m/s'], a:0},
-      {q:'声音在以下哪种介质中传播最快？', options:['固体','气体','真空','一样快'], a:0},
-      {q:'质量 2kg 的物体受到的重力约？(g=10N/kg)', options:['20N','2N','0.2N','200N'], a:0},
-      {q:'凸透镜对光的作用是？', options:['会聚','发散','不变','反射'], a:0},
-      {q:'标准大气压下水的沸点是？', options:['100℃','0℃','50℃','80℃'], a:0},
-      {q:'功的单位是？', options:['焦耳','瓦特','牛顿','帕斯卡'], a:0}
-    ],
-    dili:[
-      {q:'地球上最长的纬线是？', options:['赤道','北回归线','北极圈','本初子午线'], a:0},
-      {q:'划分东西经度的起始线是？', options:['本初子午线','赤道','180°经线','回归线'], a:0},
-      {q:'我国最大的淡水湖是？', options:['鄱阳湖','洞庭湖','太湖','青海湖'], a:0},
-      {q:'世界上最高的高原是？', options:['青藏高原','云贵高原','黄土高原','内蒙古高原'], a:0},
-      {q:'季风气候最显著的大洲是？', options:['亚洲','欧洲','非洲','南美洲'], a:0},
-      {q:'地球自转产生的现象是？', options:['昼夜交替','四季变化','五带划分','极昼极夜'], a:0}
-    ]
-  };
+  /* ═══════════════ 8 科定制闯关数据与引擎（一门一种） ═══════════════ */
+
+  /* ── 数学：方程炮台（计算填空，输入数值） ── */
+  const JQ_MATH = [
+    {q:'若 2x + 3 = 11，则 x = ?', a:'4', hint:'移项：2x = 11 − 3'},
+    {q:'计算 √144 = ?', a:'12', hint:'12 × 12 = ?'},
+    {q:'一个三角形底=6、高=4，面积 = ?', a:'12', hint:'S = ½ × 底 × 高'},
+    {q:'若 |x − 5| = 3，则 x 的正数解 = ?', a:'8', hint:'x−5=3 或 x−5=−3'},
+    {q:'圆的直径=10cm，周长 = ? cm（π取3.14）', a:'31.4', hint:'C = πd'},
+    {q:'一元二次方程 x² − 5x + 6 = 0 的较大根 = ?', a:'3', hint:'因式分解：(x−2)(x−3)=0'}
+  ];
+  /* ── 英语：词汇狩猎（单词拼写填空） ── */
+  const JQ_ENG = [
+    {q:'"环境"的英文（首字母 e）: e___________', a:'environment', hint:'envi + ronment'},
+    {q:'"成功的"形容词形式: s_________', a:'successful', hint:'success + ful'},
+    {q:'"建议"的动词: s______', a:'suggest', hint:'sug + gest'},
+    {q:'"科学家": s_________', a:'scientist', hint:'science + ist'},
+    {q:'"允许"的动词: a_____', a:'allow', hint:'al + low'},
+    {q:'"重要的"副词: i_______________', a:'importantly', hint:'important + ly'}
+  ];
+  /* ── 历史：时空回廊（事件时间线排序） ── */
+  const JQ_HIST = [
+    {q:'按时间先后顺序点击下列事件：', items:['夏朝建立(约前2070)','秦统一六国(前221)','西汉建立(前202)','三国鼎立(220)'], order:[0,1,2,3]},
+    {q:'按时间先后顺序点击：', items:['鸦片战争爆发(1840)','洋务运动开始(1860s)','甲午战争(1894)','辛亥革命(1911)'], order:[0,1,2,3]},
+    {q:'按时间先后顺序点击：', items:['五四运动(1919)','中共成立(1921)','长征开始(1934)','新中国成立(1949)'], order:[0,1,2,3]},
+    {q:'按时间先后顺序点击：', items:['商鞅变法(前356)','张骞出使西域(前138)','造纸术改进(105)','郑和下西洋(1405)'], order:[0,1,2,3]},
+    {q:'按时间先后顺序点击：', items:['文景之治(前180−前141)','贞观之治(627−649)','开元盛世(713−741)','康乾盛世(1662−1795)'], order:[0,1,2,3]},
+    {q:'按时间先后顺序点击：', items:['第一次工业革命(1760s)','第二次工业革命(1870s)','第三次科技革命(1940s)','中国改革开放(1978)'], order:[0,1,2,3]}
+  ];
+  /* ── 道法：天平裁决（情景判断·对/错） ── */
+  const JQ_DAOF = [
+    {q:'小明发现有人偷拍他，可以立即抢对方手机删除照片。', a:false, explain:'侵犯他人财产权，应通过合法途径维权'},
+    {q:'未成年人也有隐私权，父母不能随意翻看孩子日记。', a:true, explain:'正确！宪法保护公民隐私权'},
+    {q:'遇到校园欺凌，应该及时告诉老师或家长。', a:true, explain:'正确！寻求帮助是勇敢的表现'},
+    {q:'在网上匿名发帖骂人不需要承担法律责任。', a:false, explain:'网络不是法外之地，需承担法律责任'},
+    {q:'受教育既是权利也是义务。', a:true, explain:'正确！宪法规定'},
+    {q:'看到老人摔倒不敢扶，因为怕被讹诈所以不管。', a:false, explain:'应扶助老人，可拍照留证保护自己'}
+  ];
+  /* ── 体育：耐力跑酷（快速判断对错） ── */
+  const JQ_PE = [
+    {q:'运动前应该做充分热身活动', a:true},
+    {q:'长跑后立即坐下休息有利于恢复', a:false},
+    {q:'运动中抽筋时应停止运动并拉伸放松', a:true},
+    {q:'剧烈运动后大量喝冰水最解渴', a:false},
+    {q:'BMI 指数是身体质量指数', a:true},
+    {q:'游泳时小腿抽筋应拼命挣扎呼救', a:false}
+  ];
+  /* ── 生物：显微镜副本（术语配对连线） ── */
+  const JQ_BIO = [
+    {pairs:[['细胞膜','控制物质进出'],['细胞核','遗传信息库'],['叶绿体','光合作用场所'],['线粒体','呼吸作用主要场所']],
+     q:'将左侧结构与右侧功能配对（依次点击一对）：'},
+    {pairs:[['DNA','遗传物质'],['染色体','DNA+蛋白质'],['基因','有遗传效应的DNA片段'],['变异','亲子间差异']],
+     q:'将左侧概念与右侧定义配对：'},
+    {pairs:[['光合作用','合成有机物+储存能量'],['呼吸作用','分解有机物+释放能量'],['蒸腾作用','水分以气体散失'],['输导作用','运输水和无机盐']],
+     q:'将生理过程与描述配对：'},
+    {pairs:[['关节','骨连接的主要形式'],['骨骼肌','运动动力来源'],['神经','调节控制中枢'],['血管','运输通道']],
+     q:'将运动系统结构与其功能配对：'},
+    {pairs:[['被子植物','种子有果皮包被'],['裸子植物','种子裸露无果皮'],['藻类','无根茎叶分化'],['苔藓植物','有茎叶无真根']],
+     q:'将植物类群与特征配对：'},
+    {pairs:[['昆虫','三对足两对翅',['鸟类','前肢成翼恒温'],['鱼类','用鳃呼吸'],['哺乳动物','胎生哺乳']]],
+     q:'将动物类群与特征配对：'}
+  ];
+  /* ── 物理：折射迷宫（公式计算输入） ── */
+  const JQ_PHYS = [
+    {q:'光在真空中的速度约为 ___×10⁸ m/s（只填数字）', a:'3', hint:'c ≈ 3×10⁸ m/s'},
+    {q:'质量 m=2kg 的物体，重力 G = ? N（g取10N/kg）', a:'20', hint:'G = mg'},
+    {q:'声音在15℃空气中的速度约 ___ m/s', a:'340', hint:'v声 ≈ 340 m/s'},
+    {q:'一个电阻 R=10Ω，电压 U=6V，电流 I = ? A', a:'0.6', hint:'I = U/R'},
+    {q:'功率 P=100W 的灯泡工作 t=2h，消耗电能 W = ? kW·h', a:'0.2', hint:'W = Pt，注意单位换算'},
+    {q:'凸透镜焦距 f=10cm，物距 u=30cm，像距 v = ? cm（1/f=1/u+1/v）', a:'15', hint:'代入透镜公式'}
+  ];
+  /* ── 地理：经纬远征（匹配选择） ── */
+  const JQ_GEO = [
+    {q:'我国首都北京位于哪个地形区？', options:['华北平原','黄土高原','四川盆地','长江中下游平原'], a:0},
+    {q:'被称为"世界屋脊"的高原是？', options:['青藏高原','云贵高原','内蒙古高原','帕米尔高原'], a:0},
+    {q:'我国冬季气温最低的地区是？', options:['漠河','拉萨','乌鲁木齐','哈尔滨'], a:0},
+    {q:'长江注入哪个海洋？', options:['东海','南海','渤海','黄海'], a:0},
+    {q:'北回归线自西向东穿过的省区依次是？', options:['云桂粤台','滇粤闽台','桂粤闽台','云粤闽台'], a:0},
+    {q:'我国人口最多的少数民族是？', options:['壮族','满族','回族','苗族'], a:0}
+  ];
+
   const JQ_SAVE_KEY = 'laowang_junior_quest_v2';
   function jqLoad(){
     try { const s = JSON.parse(localStorage.getItem(JQ_SAVE_KEY)); if (s) return s; } catch(e){}
@@ -5081,10 +5095,10 @@ const masteryData = {
     const cleared = jqState.cleared[id] || [];
     const lvEl = document.getElementById('jq-q-levels');
     lvEl.innerHTML = '';
-    const playable = (id === 'yuwen' || id === 'huaxue' || (JQ_Q[id] && JQ_Q[id].length));
+    const playable = (id === 'yuwen' || id === 'huaxue' || ['shuxue','yingyu','lishi','daofa','tiyu','shengwu','wuli','dili'].includes(id));
     for (let i=0;i<3;i++){
       const isCleared = cleared.includes(i);
-      const isUnlocked = playable && (i===0 || cleared.includes(i-1));
+      const isUnlocked = playable; // 全关卡默认解锁，降低门槛
       const row = document.createElement('div');
       row.className = 'flex items-center gap-3 bg-black/40 border border-white/10 rounded-xl p-3' + (isCleared ? ' border-military-accent/40' : '');
       const dot = isCleared ? '✅' : (i+1);
@@ -5130,7 +5144,6 @@ const masteryData = {
   function jqStartBattle(id, lv){
     jqCur = JQ_SUBJECTS.find(s => s.id === id);
     if (!jqCur) return;
-    if (id !== 'yuwen' && id !== 'huaxue' && !(JQ_Q[id] && JQ_Q[id].length)) return;
     document.getElementById('jq-quest').classList.add('hidden');
     document.getElementById('jq-battle').classList.remove('hidden');
     document.getElementById('jq-b-boss').textContent = jqCur.bossEmoji;
@@ -5138,7 +5151,14 @@ const masteryData = {
     jqBattle = { id, lv, bossHP:100, max:100, idx:0 };
     if (id === 'yuwen') jqInitPoem();
     else if (id === 'huaxue') jqInitChem();
-    else jqInitChoice();
+    else if (id === 'shuxue') jqInitMath();
+    else if (id === 'yingyu') jqInitEng();
+    else if (id === 'lishi') jqInitHist();
+    else if (id === 'daofa') jqInitDaofa();
+    else if (id === 'tiyu') jqInitPE();
+    else if (id === 'shengwu') jqInitBio();
+    else if (id === 'wuli') jqInitPhys();
+    else if (id === 'dili') jqInitGeo();
   }
   function jqSetHP(hp){
     jqBattle.bossHP = Math.max(0, hp);
@@ -5300,41 +5320,292 @@ const masteryData = {
     }
   }
 
-  /* 通用选择题战斗（数学/英语/历史/道法/体育/生物/物理/地理） */
-  function jqInitChoice(){
-    const pool = (JQ_Q[jqCur.id] || []).slice();
-    for (let i=pool.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [pool[i],pool[j]]=[pool[j],pool[i]]; }
-    jqBattle.questions = pool.slice(0, 5);
-    jqBattle.qi = 0;
-    jqRenderChoice();
+  /* ═══ 1. 数学：方程炮台（计算填空输入） ═══ */
+  function jqInitMath(){
+    const pool = JQ_MATH.slice();
+    for (let i=pool.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[pool[i],pool[j]]=[pool[j],pool[i]];}
+    jqBattle.questions = pool.slice(0,5); jqBattle.qi = 0; jqRenderMath();
   }
-  function jqRenderChoice(){
+  function jqRenderMath(){
     jqShowHP();
     const q = jqBattle.questions[jqBattle.qi];
     const box = document.getElementById('jq-b-qbox');
-    const opts = q.options.map((o,i) =>
-      `<button class="w-full text-left px-4 py-2.5 rounded-xl bg-black/40 border border-white/15 text-white hover:border-military-accent hover:bg-military-accent/10 transition-all" onclick="jqSubmitChoice(${i})">${String.fromCharCode(65+i)}. ${o}</button>`
-    ).join('');
     box.innerHTML = `
-      <div class="font-bold text-white text-base leading-relaxed mb-3">第${jqBattle.qi+1}/${jqBattle.questions.length} 题 · ${q.q}</div>
-      <div class="space-y-2">${opts}</div>
-      <div class="text-center font-bold text-sm min-h-[20px] mt-2" id="jq-fb"></div>
-    `;
+      <div class="font-bold text-white text-base leading-relaxed mb-2">第${jqBattle.qi+1}/${jqBattle.questions.length}题 · 🔢 ${q.q}</div>
+      <div class="text-xs text-gray-400 mb-2 text-center">💡 ${q.hint||'输入数值答案'}</div>
+      <input id="jq-ans" placeholder="输入答案" autocomplete="off" class="w-full px-4 py-2.5 rounded-xl bg-black/40 border border-blue-400/30 text-white text-center text-lg focus:outline-none focus:border-military-accent">
+      <div class="flex justify-center mt-3">
+        <button class="bg-blue-500 text-white px-6 py-2 rounded-full font-bold text-sm hover:bg-blue-400 transition-all" onclick="jqSubmitMath()">发射 🔭</button>
+      </div>
+      <div class="text-center font-bold text-sm min-h-[20px] mt-2" id="jq-fb"></div>`;
+    const inp = document.getElementById('jq-ans');
+    inp.focus(); inp.addEventListener('keydown',e=>{if(e.key==='Enter')jqSubmitMath();});
   }
-  function jqSubmitChoice(i){
+  function jqSubmitMath(){
+    const val = document.getElementById('jq-ans').value.trim();
+    const q = jqBattle.questions[jqBattle.qi]; const fb = document.getElementById('jq-fb');
+    if (val === q.a){
+      fb.className='text-center font-bold text-sm min-h-[20px] mt-2 text-emerald-400'; fb.textContent='🎯 命中！'+q.a;
+      jqHitBoss(); jqSetHP(jqBattle.bossHP - Math.ceil(100/jqBattle.questions.length));
+      if (jqBattle.bossHP > 0){ jqBattle.qi++; setTimeout(()=>{if(jqBattle.qi<jqBattle.questions.length)jqRenderMath();},700);}
+    } else {
+      fb.className='text-center font-bold text-sm min-h-[20px] mt-2 text-red-400'; fb.textContent='✖ 算错了，再试！';
+    }
+  }
+
+  /* ═══ 2. 英语：词汇狩猎（单词拼写填空） ═══ */
+  function jqInitEng(){
+    const pool = JQ_ENG.slice();
+    for (let i=pool.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[pool[i],pool[j]]=[pool[j],pool[i]];}
+    jqBattle.questions = pool.slice(0,5); jqBattle.qi = 0; jqRenderEng();
+  }
+  function jqRenderEng(){
+    jqShowHP();
     const q = jqBattle.questions[jqBattle.qi];
-    const fb = document.getElementById('jq-fb');
-    if (i === q.a){
-      fb.className = 'text-center font-bold text-sm min-h-[20px] mt-2 text-emerald-400';
-      fb.textContent = '⚔️ 命中！正确';
-      jqHitBoss(); jqSetHP(jqBattle.bossHP - Math.ceil(100 / jqBattle.questions.length));
-      if (jqBattle.bossHP > 0){
-        jqBattle.qi++;
-        setTimeout(() => { if (jqBattle.qi < jqBattle.questions.length) jqRenderChoice(); }, 700);
+    const box = document.getElementById('jq-b-qbox');
+    box.innerHTML = `
+      <div class="font-bold text-white text-base leading-relaxed mb-2">第${jqBattle.qi+1}/${jqBattle.questions.length}题 · 🔤 拼写单词</div>
+      <div class="text-xl font-extrabold text-yellow-400 mb-3 text-center font-mono tracking-wider">${q.q}</div>
+      <div class="text-xs text-gray-400 mb-2 text-center">💡 提示：${q.hint}</div>
+      <input id="jq-ans" placeholder="输入完整单词" autocomplete="off" class="w-full px-4 py-2.5 rounded-xl bg-black/40 border border-yellow-400/30 text-white text-center focus:outline-none focus:border-military-accent uppercase">
+      <div class="flex justify-center mt-3">
+        <button class="bg-yellow-500 text-black px-6 py-2 rounded-full font-bold text-sm hover:bg-yellow-400 transition-all" onclick="jqSubmitEng()">狩猎 🏹</button>
+      </div>
+      <div class="text-center font-bold text-sm min-h-[20px] mt-2" id="jq-fb"></div>`;
+    const inp=document.getElementById('jq-ans'); inp.focus(); inp.addEventListener('keydown',e=>{if(e.key==='Enter')jqSubmitEng();});
+  }
+  function jqSubmitEng(){
+    const val = document.getElementById('jq-ans').value.trim().toLowerCase();
+    const q = jqBattle.questions[jqBattle.qi]; const fb = document.getElementById('jq-fb');
+    if (val === q.a.toLowerCase()){
+      fb.className='text-center font-bold text-sm min-h-[20px] mt-2 text-emerald-400'; fb.textContent='🎯 命中！'+q.a;
+      jqHitBoss(); jqSetHP(jqBattle.bossHP - Math.ceil(100/jqBattle.questions.length));
+      if (jqBattle.bossHP > 0){ jqBattle.qi++; setTimeout(()=>{if(jqBattle.qi<jqBattle.questions.length)jqRenderEng();},700);}
+    } else {
+      fb.className='text-center font-bold text-sm min-h-[20px] mt-2 text-red-400'; fb.textContent='✖ 拼错了，正确：'+q.a;
+    }
+  }
+
+  /* ═══ 3. 历史：时空回廊（时间线排序——点击事件按顺序排列） ═══ */
+  function jqInitHist(){
+    const pool = JQ_HIST.slice();
+    for (let i=pool.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[pool[i],pool[j]]=[pool[j],pool[i]];}
+    jqBattle.questions = pool.slice(0,4); jqBattle.qi = 0; jqRenderHist();
+  }
+  function jqRenderHist(){
+    jqShowHP();
+    const q = jqBattle.questions[jqBattle.qi];
+    // 打乱显示顺序
+    const shuffled = q.items.map((t,i)=>({t,i:q.order[i]})).sort(()=>Math.random()-0.5);
+    jqBattle.userOrder = [];
+    const box = document.getElementById('jq-b-qbox');
+    box.innerHTML = `
+      <div class="font-bold text-white text-base leading-relaxed mb-2">第${jqBattle.qi+1}/${jqBattle.questions.length}题 · 🏛️ ${q.q}</div>
+      <div id="jq-hist-pool" class="flex flex-wrap gap-2 justify-center my-3">${shuffled.map((s,idx)=>
+        `<button class="hist-btn px-3 py-2 rounded-lg bg-purple-500/20 border border-purple-400/40 text-purple-200 text-xs font-bold hover:bg-purple-500/40 transition-all" data-idx="${s.i}" onclick="jqHistPick(this)">${s.t}</button>`
+      ).join('')}</div>
+      <div id="jq-hist-seq" class="min-h-[40px] flex gap-2 items-center justify-center flex-wrap"></div>
+      <div class="flex justify-center mt-2">
+        <button class="bg-purple-500 text-white px-6 py-2 rounded-full font-bold text-sm hover:bg-purple-400 transition-all" onclick="jqSubmitHist()">确认排序 ⏳</button>
+      </div>
+      <div class="text-center font-bold text-sm min-h-[20px] mt-2" id="jq-fb"></div>`;
+  }
+  window.jqHistPick = function(el){
+    if (el.disabled) return;
+    el.disabled = true; el.classList.add('opacity-30');
+    jqBattle.userOrder.push(parseInt(el.dataset.idx));
+    const seq = document.getElementById('jq-hist-seq');
+    const tag = document.createElement('span');
+    tag.className = 'px-2 py-1 rounded bg-purple-500 text-white text-xs font-bold';
+    tag.textContent = el.textContent + (jqBattle.userOrder.length > 0 ? ' →' : '');
+    seq.appendChild(tag);
+  };
+  function jqSubmitHist(){
+    const q = jqBattle.questions[jqBattle.qi]; const fb = document.getElementById('jq-fb');
+    if (jqBattle.userOrder.length !== q.items.length){ fb.className='text-red-400'; fb.textContent='请先点击所有事件排序！'; return; }
+    const ok = jqBattle.userOrder.every((v,i)=> v === q.order[i]);
+    if (ok){
+      fb.className='text-emerald-400'; fb.textContent='⏳ 时间线正确！';
+      jqHitBoss(); jqSetHP(jqBattle.bossHP - Math.ceil(100/jqBattle.questions.length));
+      if (jqBattle.bossHP > 0){ jqBattle.qi++; setTimeout(()=>{if(jqBattle.qi<jqBattle.questions.length)jqRenderHist();},700);}
+    } else {
+      fb.className='text-red-400'; fb.textContent='✖ 顺序有误，正确顺序已重置';
+      setTimeout(()=>jqRenderHist(),1200);
+    }
+  }
+
+  /* ═══ 4. 道法：天平裁决（情景判断·对/错按钮） ═══ */
+  function jqInitDaofa(){
+    const pool = JQ_DAOF.slice();
+    for (let i=pool.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[pool[i],pool[j]]=[pool[j],pool[i]];}
+    jqBattle.questions = pool.slice(0,5); jqBattle.qi = 0; jqRenderDaofa();
+  }
+  function jqRenderDaofa(){
+    jqShowHP();
+    const q = jqBattle.questions[jqBattle.qi];
+    const box = document.getElementById('jq-b-qbox');
+    box.innerHTML = `
+      <div class="font-bold text-white text-base leading-relaxed mb-3">第${jqBattle.qi+1}/${jqBattle.questions.length}题 · ⚖️ 判断对错</div>
+      <div class="bg-black/40 border border-emerald-400/20 rounded-xl p-4 mb-3"><p class="text-white text-sm leading-relaxed">${q.q}</p></div>
+      <div class="flex gap-3 justify-center">
+        <button class="flex-1 py-3 rounded-xl bg-emerald-500 text-white font-bold text-sm hover:bg-emerald-400 transition-all" onclick="jqSubmitDaofa(true)">✓ 正确</button>
+        <button class="flex-1 py-3 rounded-xl bg-red-500 text-white font-bold text-sm hover:bg-red-400 transition-all" onclick="jqSubmitDaofa(false)">✗ 错误</button>
+      </div>
+      <div class="text-center font-bold text-sm min-h-[20px] mt-2" id="jq-fb"></div>`;
+  }
+  function jqSubmitDaofa(choice){
+    const q = jqBattle.questions[jqBattle.qi]; const fb = document.getElementById('jq-fb');
+    if (choice === q.a){
+      fb.className='text-emerald-400'; fb.textContent='⚖️ 裁决正确！'+(q.explain||'');
+      jqHitBoss(); jqSetHP(jqBattle.bossHP - Math.ceil(100/jqBattle.questions.length));
+      if (jqBattle.bossHP > 0){ jqBattle.qi++; setTimeout(()=>{if(jqBattle.qi<jqBattle.questions.length)jqRenderDaofa();},800);}
+    } else {
+      fb.className='text-red-400'; fb.textContent='✖ 裁决错误！'+(q.explain||'');
+    }
+  }
+
+  /* ═══ 5. 体育：耐力跑酷（快速判断对错） ═══ */
+  function jqInitPE(){
+    const pool = JQ_PE.slice();
+    for (let i=pool.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[pool[i],pool[j]]=[pool[j],pool[i]];}
+    jqBattle.questions = pool.slice(0,5); jqBattle.qi = 0; jqRenderPE();
+  }
+  function jqRenderPE(){
+    jqShowHP();
+    const q = jqBattle.questions[jqBattle.qi];
+    const box = document.getElementById('jq-b-qbox');
+    box.innerHTML = `
+      <div class="font-bold text-white text-base leading-relaxed mb-3">第${jqBattle.qi+1}/${jqBattle.questions.length}题 · 🏃 快速判断</div>
+      <div class="bg-orange-500/10 border border-orange-400/30 rounded-xl p-4 mb-3"><p class="text-white text-base font-bold text-center">${q.q}</p></div>
+      <div class="flex gap-3 justify-center">
+        <button class="flex-1 py-3 rounded-xl bg-emerald-500 text-white font-bold text-lg hover:bg-emerald-400 transition-all" onclick="jqSubmitPE(true)">○ 对</button>
+        <button class="flex-1 py-3 rounded-xl bg-red-500 text-white font-bold text-lg hover:bg-red-400 transition-all" onclick="jqSubmitPE(false)">× 错</button>
+      </div>
+      <div class="text-center font-bold text-sm min-h-[20px] mt-2" id="jq-fb"></div>`;
+  }
+  function jqSubmitPE(choice){
+    const q = jqBattle.questions[jqBattle.qi]; const fb = document.getElementById('jq-fb');
+    if (choice === q.a){
+      fb.className='text-emerald-400'; fb.textContent='✓ 正确！冲刺中…';
+      jqHitBoss(); jqSetHP(jqBattle.bossHP - Math.ceil(100/jqBattle.questions.length));
+      if (jqBattle.bossHP > 0){ jqBattle.qi++; setTimeout(()=>{if(jqBattle.qi<jqBattle.questions.length)jqRenderPE();},500);}
+    } else {
+      fb.className='text-red-400'; fb.textContent='✗ 错了！注意安全';
+    }
+  }
+
+  /* ═══ 6. 生物：显微镜副本（术语配对——依次点击左右一对） ═══ */
+  function jqInitBio(){
+    const pool = JQ_BIO.slice();
+    for (let i=pool.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[pool[i],pool[j]]=[pool[j],pool[i]];}
+    jqBattle.questions = pool.slice(0,4); jqBattle.qi = 0; jqRenderBio();
+  }
+  function jqRenderBio(){
+    jqShowHP();
+    const q = jqBattle.questions[jqBattle.qi];
+    // 打乱配对
+    const lefts = q.pairs.map(p=>p[0]).sort(()=>Math.random()-0.5);
+    const rights = q.pairs.map(p=>p[1]).sort(()=>Math.random()-0.5);
+    jqBattle.bioLeft = null; jqBattle.bioTarget = {};
+    q.pairs.forEach(p=>{ jqBattle.bioTarget[p[0]]=p[1]; });
+    jqBattle.bioDone = 0; jqBattle.bioTotal = q.pairs.length;
+    const box = document.getElementById('jq-b-qbox');
+    box.innerHTML = `
+      <div class="font-bold text-white text-base leading-relaxed mb-2">第${jqBattle.qi+1}/${jqBattle.questions.length}题 · 🧬 ${q.q}</div>
+      <div class="grid grid-cols-2 gap-3 my-3">
+        <div id="jq-bio-left" class="space-y-2">${lefts.map(l=>
+          `<button class="bio-l w-full px-3 py-2 rounded-lg bg-green-500/20 border border-green-400/40 text-green-200 text-xs font-bold hover:bg-green-500/40" data-v="${l}" onclick="jqBioPickL(this)">${l}</button>`
+        ).join('')}</div>
+        <div id="jq-bio-right" class="space-y-2">${rights.map(r=>
+          `<button class="bio-r w-full px-3 py-2 rounded-lg bg-cyan-500/20 border border-cyan-400/40 text-cyan-200 text-xs font-bold hover:bg-cyan-500/40" data-v="${r}" onclick="jqBioPickR(this)">${r}</button>`
+        ).join('')}</div>
+      </div>
+      <div class="text-center text-xs text-gray-400">已配对：<span id="jq-bio-count">0</span>/${jqBattle.bioTotal}</div>
+      <div class="text-center font-bold text-sm min-h-[20px] mt-2" id="jq-fb"></div>`;
+  }
+  window.jqBioPickL = function(el){
+    document.querySelectorAll('.bio-l').forEach(b=>{b.classList.remove('ring-2','ring-military-accent');});
+    el.classList.add('ring-2','ring-military-accent'); jqBattle.bioLeft = el.dataset.v;
+  };
+  window.jqBioPickR = function(el){
+    if (!jqBattle.bioLeft){ const fb=document.getElementById('jq-fb'); fb.className='text-yellow-400'; fb.textContent='⚠ 先点击左侧术语！'; return; }
+    const target = jqBattle.bioTarget[jqBattle.bioLeft];
+    if (el.dataset.v === target){
+      el.classList.add('opacity-30'); el.disabled=true;
+      const leftBtn = document.querySelector(`.bio-l[data-v="${jqBattle.bioLeft}"]`);
+      if(leftBtn){leftBtn.classList.add('opacity-30','line-through');leftBtn.disabled=true;}
+      jqBattle.bioLeft = null; jqBattle.bioDone++;
+      document.getElementById('jq-bio-count').textContent = jqBattle.bioDone;
+      jqHitBoss(); jqSetHP(jqBattle.bossHP - Math.ceil(100/(jqBattle.bioTotal*jqBattle.questions.length))*jqBattle.questions.length);
+      if (jqBattle.bioDone >= jqBattle.bioTotal){
+        const fb=document.getElementById('jq-fb'); fb.className='text-emerald-400'; fb.textContent='🔬 全部配对成功！';
+        if (jqBattle.bossHP <= 0) return;
+        jqBattle.qi++; setTimeout(()=>{if(jqBattle.qi<jqBattle.questions.length)jqRenderBio();},800);
       }
     } else {
-      fb.className = 'text-center font-bold text-sm min-h-[20px] mt-2 text-red-400';
-      fb.textContent = '✖ 答错了，正确答案：' + String.fromCharCode(65 + q.a) + '. ' + q.options[q.a];
+      const fb=document.getElementById('jq-fb'); fb.className='text-red-400'; fb.textContent='✖ 配对错误，再试！';
+      jqSetHP(jqBattle.bossHP - 5); // 扣自己血
+    }
+  };
+
+  /* ═══ 7. 物理：折射迷宫（公式计算输入） ═══ */
+  function jqInitPhys(){
+    const pool = JQ_PHYS.slice();
+    for (let i=pool.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[pool[i],pool[j]]=[pool[j],pool[i]];}
+    jqBattle.questions = pool.slice(0,5); jqBattle.qi = 0; jqRenderPhys();
+  }
+  function jqRenderPhys(){
+    jqShowHP();
+    const q = jqBattle.questions[jqBattle.qi];
+    const box = document.getElementById('jq-b-qbox');
+    box.innerHTML = `
+      <div class="font-bold text-white text-base leading-relaxed mb-2">第${jqBattle.qi+1}/${jqBattle.questions.length}题 · ⚡ ${q.q}</div>
+      <div class="text-xs text-gray-400 mb-2 text-center">💡 ${q.hint||'代入公式计算'}</div>
+      <input id="jq-ans" placeholder="输入数值答案" autocomplete="off" class="w-full px-4 py-2.5 rounded-xl bg-black/40 border border-cyan-400/30 text-white text-center text-lg focus:outline-none focus:border-military-accent">
+      <div class="flex justify-center mt-3">
+        <button class="bg-cyan-500 text-black px-6 py-2 rounded-full font-bold text-sm hover:bg-cyan-400 transition-all" onclick="jqSubmitPhys()">折射 ⚡</button>
+      </div>
+      <div class="text-center font-bold text-sm min-h-[20px] mt-2" id="jq-fb"></div>`;
+    const inp=document.getElementById('jq-ans'); inp.focus(); inp.addEventListener('keydown',e=>{if(e.key==='Enter')jqSubmitPhys();});
+  }
+  function jqSubmitPhys(){
+    const val = document.getElementById('jq-ans').value.trim();
+    const q = jqBattle.questions[jqBattle.qi]; const fb = document.getElementById('jq-fb');
+    if (val === q.a){
+      fb.className='text-emerald-400'; fb.textContent='⚡ 光路正确！'+q.a;
+      jqHitBoss(); jqSetHP(jqBattle.bossHP - Math.ceil(100/jqBattle.questions.length));
+      if (jqBattle.bossHP > 0){ jqBattle.qi++; setTimeout(()=>{if(jqBattle.qi<jqBattle.questions.length)jqRenderPhys();},700);}
+    } else {
+      fb.className='text-red-400'; fb.textContent='✖ 计算错误，再检查公式！';
+    }
+  }
+
+  /* ═══ 8. 地理：经纬远征（匹配选择——4选1，地图主题UI） ═══ */
+  function jqInitGeo(){
+    const pool = JQ_GEO.slice();
+    for (let i=pool.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[pool[i],pool[j]]=[pool[j],pool[i]];}
+    jqBattle.questions = pool.slice(0,5); jqBattle.qi = 0; jqRenderGeo();
+  }
+  function jqRenderGeo(){
+    jqShowHP();
+    const q = jqBattle.questions[jqBattle.qi];
+    const opts = q.options.map((o,i)=>
+      `<button class="w-full text-left px-4 py-2.5 rounded-xl bg-lime-900/30 border border-lime-500/30 text-lime-100 hover:border-lime-400 hover:bg-lime-500/20 transition-all text-sm" onclick="jqSubmitGeo(${i})">📍 ${o}</button>`
+    ).join('');
+    const box = document.getElementById('jq-b-qbox');
+    box.innerHTML = `
+      <div class="font-bold text-white text-base leading-relaxed mb-3">第${jqBattle.qi+1}/${jqBattle.questions.length}题 · 🌍 ${q.q}</div>
+      <div class="space-y-2">${opts}</div>
+      <div class="text-center font-bold text-sm min-h-[20px] mt-2" id="jq-fb"></div>`;
+  }
+  function jqSubmitGeo(i){
+    const q = jqBattle.questions[jqBattle.qi]; const fb = document.getElementById('jq-fb');
+    if (i === q.a){
+      fb.className='text-emerald-400'; fb.textContent='🌍 定位准确！'+q.options[q.a];
+      jqHitBoss(); jqSetHP(jqBattle.bossHP - Math.ceil(100/jqBattle.questions.length));
+      if (jqBattle.bossHP > 0){ jqBattle.qi++; setTimeout(()=>{if(jqBattle.qi<jqBattle.questions.length)jqRenderGeo();},600);}
+    } else {
+      fb.className='text-red-400'; fb.textContent='✖ 定位偏差！正确：'+String.fromCharCode(65+q.a)+'. '+q.options[q.a];
     }
   }
 
@@ -5350,7 +5621,15 @@ const masteryData = {
   window.jqSubmitPoem = jqSubmitPoem;
   window.jqCheckChem = jqCheckChem;
   window.jqAdjCoef = jqAdjCoef;
-  window.jqSubmitChoice = jqSubmitChoice;
+  window.jqSubmitMath = jqSubmitMath;
+  window.jqSubmitEng = jqSubmitEng;
+  // jqHistPick/jqBioPickL/jqBioPickR 已在引擎内直接挂到 window
+  window.jqSubmitHist = jqSubmitHist;
+  window.jqSubmitDaofa = jqSubmitDaofa;
+  window.jqSubmitPE = jqSubmitPE;
+  // jqBioPickL/jqBioPickR 已在引擎内直接挂到 window
+  window.jqSubmitPhys = jqSubmitPhys;
+  window.jqSubmitGeo = jqSubmitGeo;
   window.jqCloseModal = jqCloseModal;
   window.jqBackToQuest = jqBackToQuest;
 
