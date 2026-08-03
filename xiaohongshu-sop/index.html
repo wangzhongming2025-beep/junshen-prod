@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>教程 SOP：从下载 WorkBuddy 到用它运营小红书（实体商家零基础版）</title>
+<style>
+  :root{
+    --red:#ff2442; --red-soft:#fff0f2; --ink:#1f2330; --gray:#6b7280;
+    --line:#eceef2; --bg:#f7f8fa; --card:#ffffff; --accent:#2f6bff; --green:#16a34a;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+    background:var(--bg);color:var(--ink);line-height:1.75;font-size:15px}
+  .wrap{max-width:920px;margin:0 auto;padding:32px 20px 90px}
+  header.hero{background:linear-gradient(135deg,#ff2442,#ff6a3d);color:#fff;border-radius:18px;padding:34px 30px;margin-bottom:24px;box-shadow:0 10px 30px rgba(255,36,66,.18)}
+  header.hero h1{font-size:23px;font-weight:800;letter-spacing:.4px}
+  header.hero p{margin-top:10px;opacity:.95;font-size:13.5px}
+  .toc{background:#fff;border:1px solid var(--line);border-radius:14px;padding:16px 22px;margin-bottom:20px;font-size:14px}
+  .toc b{color:var(--red)}
+  .toc ol{margin:6px 0 0 22px}
+  .toc li{margin:3px 0}
+  section{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:24px;margin-bottom:16px}
+  h2{font-size:18px;font-weight:800;margin-bottom:12px;display:flex;align-items:center;gap:9px}
+  h2 .num{background:var(--red);color:#fff;width:28px;height:28px;border-radius:9px;display:inline-flex;align-items:center;justify-content:center;font-size:13px;flex:0 0 auto}
+  h3{font-size:14.5px;font-weight:700;margin:14px 0 6px;color:#2a2f3d}
+  p,li{color:#33393f}
+  ul,ol{margin:6px 0 6px 20px}
+  li{margin:4px 0}
+  .step-do{border-left:4px solid var(--accent);background:#f5f9ff;border-radius:0 10px 10px 0;padding:10px 14px;margin:8px 0;font-size:14px}
+  .step-do b{color:var(--accent)}
+  .callout{background:var(--red-soft);border-left:4px solid var(--red);border-radius:0 10px 10px 0;padding:11px 15px;margin:10px 0;font-size:13.5px}
+  .callout.g{background:#ecfdf3;border-color:var(--green);color:#14532d}
+  .warn{background:#fff8eb;border-left:4px solid #f59e0b;border-radius:0 10px 10px 0;padding:11px 15px;margin:10px 0;font-size:13.5px}
+  pre.prompt{background:#0f1729;color:#e6edf6;border-radius:10px;padding:13px 15px;font-size:13px;line-height:1.7;white-space:pre-wrap;word-break:break-word;margin:8px 0;font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+  pre.prompt .hl{color:#7fd1ff}
+  .grid{display:grid;gap:12px}
+  .grid.c3{grid-template-columns:repeat(3,1fr)}
+  @media(max-width:680px){.grid.c3{grid-template-columns:1fr}}
+  .box{border:1px solid var(--line);border-radius:12px;padding:13px 15px;background:#fcfcfd;font-size:13.5px}
+  .box b{color:var(--red)}
+  table{width:100%;border-collapse:collapse;margin:10px 0;font-size:13px}
+  th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}
+  th{background:#fafbfc;font-weight:700}
+  tr:nth-child(even) td{background:#fcfcfd}
+  .footer{text-align:center;color:var(--gray);font-size:12.5px;margin-top:8px}
+  .tag{display:inline-block;background:var(--red-soft);color:var(--red);border-radius:6px;padding:1px 8px;font-size:12px;font-weight:700}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="hero">
+    <h1>教程 SOP：从下载 WorkBuddy 到用它运营小红书</h1>
+    <p>实体/个体商家零基础版 · 每一步都写到“点哪里、输什么”，照着做就能发第一篇笔记。本教程本身也可作为你训练营的学员手册。</p>
+  </header>
+
+  <div class="toc">
+    <b>目录（10 步 + 3 个附录）</b>
+    <ol>
+      <li>准备清单</li><li>下载并安装 WorkBuddy</li><li>认识主界面（三块区域）</li>
+      <li>第一次对话：让 WorkBuddy 记住你的店</li><li>用 WorkBuddy 找本地热门选题</li>
+      <li>生成笔记文案</li><li>生成封面图（图像生成）</li><li>生成短视频（可选）</li>
+      <li>发布到小红书</li><li>设置自动化排期 + 每周复盘</li>
+    </ol>
+    <b>附录：</b>A 老板每日/每周清单 · B 复制粘贴提示词库 · C 常见问题
+  </div>
+
+  <!-- 0 准备 -->
+  <section>
+    <h2><span class="num">0</span>准备清单（开始前 5 分钟搞定）</h2>
+    <div class="grid c3">
+      <div class="box"><b>设备</b><br>一台电脑（Win10 以上 / macOS 12 以上）+ 一部手机（发小红书用）</div>
+      <div class="box"><b>材料</b><br>门店照片 5–10 张、门店/产品视频 1–2 段、店名/地址/主打产品</div>
+      <div class="box"><b>账号</b><br>手机号（注册 WorkBuddy）+ 小红书账号（建议升专业号/企业号）</div>
+    </div>
+    <div class="callout g">不用会写代码、不用会设计。全程你只做“提供门店素材 + 最后把关”，其余交给 WorkBuddy。</div>
+  </section>
+
+  <!-- 1 下载安装 -->
+  <section>
+    <h2><span class="num">1</span>下载并安装 WorkBuddy</h2>
+    <div class="step-do"><b>1.1</b> 打开电脑浏览器（Chrome / Edge / Safari 都行），在地址栏输入 <b>https://www.workbuddy.cn</b> ，按回车。</div>
+    <div class="step-do"><b>1.2</b> 在官网首页找到「下载」按钮（通常在首屏或右上角），点击它。</div>
+    <div class="step-do"><b>1.3</b> 按你的电脑系统选安装包：<br>· macOS 电脑 → 点 <b>.dmg</b>（或 .pkg）<br>· Windows 电脑 → 点 <b>.exe</b></div>
+    <div class="step-do"><b>1.4</b> 下载完成后安装：<br>· <b>macOS</b>：双击 .dmg，把 WorkBuddy 图标拖进「应用程序」文件夹，再打开启动台双击启动。<br>· <b>Windows</b>：双击 .exe，安装向导里一直点「下一步 / 安装」，完成后桌面出现 WorkBuddy 图标，双击打开。</div>
+    <div class="step-do"><b>1.5</b> 首次启动 → 用<b>手机号注册 / 登录</b>（收验证码）→ 登录成功进入主界面。</div>
+    <div class="warn">需要联网才能用 AI 能力；如果打不开官网，检查网络或稍后重试，以官网实际页面为准。</div>
+  </section>
+
+  <!-- 2 界面 -->
+  <section>
+    <h2><span class="num">2</span>认识主界面（记住这 3 块就够）</h2>
+    <div class="grid c3">
+      <div class="box"><b>左侧 · 任务栏</b><br>显示你的任务列表（按文件夹分组），底部是你的头像；从这里进「专家」中心、在右上角进「连接器」管理。</div>
+      <div class="box"><b>中间 · 对话区</b><br>核心区域：顶部任务标题栏、中间消息列表、<b>底部输入框</b>——你在这里跟它说话下指令。</div>
+      <div class="box"><b>右侧 · 结果区</b><br>它生成的文档 / 图片 / 文件都在这里，可预览、可下载，是你的“产出仓库”。</div>
+    </div>
+    <div class="callout"><b>工作模式</b>：默认 <b>Craft（你说我做）</b> 即可；想先商量方案选 Plan；只想问问题选 Ask。新手全程用 Craft 最省事。</div>
+  </section>
+
+  <!-- 3 第一次对话 -->
+  <section>
+    <h2><span class="num">3</span>第一次对话：让 WorkBuddy 记住你的店</h2>
+    <p>把店的基础信息一次性告诉它，以后做选题/文案/封面它都按你的店来，不用重复说。</p>
+    <div class="step-do"><b>3.1</b> 在底部输入框，复制下面这段，把【括号】里改成你的真实信息，回车发送：</div>
+    <pre class="prompt"><span class="hl">我是开【奶茶店】的老板，店在【成都·春熙路】，主打【鲜果茶】，
+想用小红书把附近3公里的人引到店。请记住这些信息，
+以后帮我做选题、文案和封面图，都按这家店的定位来。</span></pre>
+    <div class="step-do"><b>3.2</b> 它会回复确认，并把信息记到长期记忆里。</div>
+    <div class="step-do"><b>3.3</b> （推荐）再发一句：“把上面这些信息整理成一份「店铺档案」，存到文件里，方便以后调用。” → 右侧结果区会出现一个文件，以后直接说“按店铺档案来”就行。</div>
+  </section>
+
+  <!-- 4 选题 -->
+  <section>
+    <h2><span class="num">4</span>用 WorkBuddy 找本地热门选题（联网搜索）</h2>
+    <div class="step-do"><b>4.1</b> 在输入框复制下面这段，改【括号】内容，回车：</div>
+    <pre class="prompt"><span class="hl">帮我联网搜一下最近【成都】【奶茶/饮品】在小红书上的热门选题
+和本地流量方向，给我10个适合实体店发的选题，
+按“探店 / 种草 / 活动 / 避坑”分类，并标注每个选题为什么能引到店。</span></pre>
+    <div class="step-do"><b>4.2</b> 它会联网返回一份选题清单 → 你挑 <b>3 个</b> 作为本周要发的。</div>
+    <div class="step-do"><b>4.3</b> 把选中的告诉它：“就把第 1、3、5 个写成标题，每个给 5 个备选标题。” → 它出标题供你选。</div>
+    <div class="callout">不会挑？直接问它：“这 3 个里哪个最适合新店冷启动、最容易爆？”让它帮你排优先级。</div>
+  </section>
+
+  <!-- 5 文案 -->
+  <section>
+    <h2><span class="num">5</span>生成笔记文案</h2>
+    <div class="step-do"><b>5.1</b> 复制下面这段，把【选题】换成你选的，回车：</div>
+    <pre class="prompt"><span class="hl">按选题【成都春熙路奶茶探店】，给我写一篇小红书图文笔记：
+· 标题 5 选 1
+· 正文 300 字以内，口语化，像老板自己跟邻居聊天
+· 带 5 个话题标签（含#成都奶茶 #春熙路）
+· 结尾加一句引导到店的评论钩子（如“评论领买一送一”）
+· 文末提醒我填店名、地址、优惠</span></pre>
+    <div class="step-do"><b>5.2</b> 它产出后，你可以直接复制用；也可以让它“存成文件”，右侧结果区下载。</div>
+    <div class="step-do"><b>5.3</b> 把店名、地址、真实优惠填进正文空白处，文案就定了。</div>
+    <div class="warn">文案是 AI 写的，发布前一定亲自读一遍、把优惠/地址改成真实的，别发出错的券。</div>
+  </section>
+
+  <!-- 6 封面 -->
+  <section>
+    <h2><span class="num">6</span>生成封面图（图像生成）</h2>
+    <div class="step-do"><b>6.1</b> 复制下面这段，改【标题/产品】，回车：</div>
+    <pre class="prompt"><span class="hl">帮我生成一张小红书封面图：3:4 竖图，红橙配色，
+大字标题“【成都奶茶控必看】”，
+背景是诱人的鲜果茶杯特写，风格干净明亮，像门店促销海报。</span></pre>
+    <div class="step-do"><b>6.2</b> 等待生成（几十秒）→ 在<b>右侧结果区</b>预览，点下载 / 右键保存图片到电脑。</div>
+    <div class="step-do"><b>6.3</b> 想一次出同风格多张：“保持这个视觉风格，再生成 3 张，标题分别换成【XX】【XX】【XX】。” → 一套封面就齐了。</div>
+    <div class="callout g">封面要“大字 &gt; 图”，前 0.5 秒抓人。固定一套配色字体，账号才有“视觉锤”，粉丝刷到就知道是你。</div>
+  </section>
+
+  <!-- 7 视频 -->
+  <section>
+    <h2><span class="num">7</span>生成短视频（可选，吃视频流量）</h2>
+    <div class="step-do"><b>7.1</b> 先让它写口播脚本：</div>
+    <pre class="prompt"><span class="hl">把第5步的笔记改成 30 秒口播脚本：第1句钩子吸引看完，
+中间展示门店/产品，结尾引导到店，标注画面建议。</span></pre>
+    <div class="step-do"><b>7.2</b> 再发：“用这段脚本生成一段 30 秒门店短视频（配门店画面/字幕）。” → 生成后右侧结果区下载。</div>
+    <div class="step-do"><b>7.3</b> 把视频发到小红书「视频笔记」，图文号也能吃视频流量。</div>
+    <div class="warn">视频生成会消耗额外额度，新手先用图文跑通流程，再上视频。</div>
+  </section>
+
+  <!-- 8 发布 -->
+  <section>
+    <h2><span class="num">8</span>发布到小红书（你来做，WorkBuddy 出素材）</h2>
+    <div class="step-do"><b>8.1</b> 打开手机<b>小红书 APP</b> → 点底部中间的「＋」→ 从相册选 WorkBuddy 生成的<b>封面 + 门店图</b>（3–6 张）。</div>
+    <div class="step-do"><b>8.2</b> 填标题（用第 5 步的）、正文（粘贴，确认优惠/地址已填真）、加话题标签。</div>
+    <div class="step-do"><b>8.3</b> ⭐关键一步：点「<b>添加地理位置</b>」→ 搜你店名/地址打标签。这是<b>同城流量</b>的核心，实体店必做。</div>
+    <div class="step-do"><b>8.4</b> 如有团购：绑定「门店 / 团购」组件，让用户直接买券到店核销。</div>
+    <div class="step-do"><b>8.5</b> 发布时间选：<b>早 7:30–9:00 / 午 12:00–13:00 / 晚 20:00–22:30</b>；周三、四、日通常更好。</div>
+    <div class="step-do"><b>8.6</b> 发后 <b>2 小时内</b>：亲自回前 20 条评论，并<b>置顶</b>一条“评论领优惠 / 看店铺档案”的钩子。</div>
+    <div class="callout">回评论不是客套，是涨粉和到店的关键动作。WorkBuddy 能写回复话术，但你本人出镜/口吻更可信。</div>
+  </section>
+
+  <!-- 9 自动化+复盘 -->
+  <section>
+    <h2><span class="num">9</span>设置自动化排期 + 每周复盘</h2>
+    <h3>9.1 让 WorkBuddy 替你“记着发”</h3>
+    <div class="step-do">在输入框复制这段，回车，它会创建定时任务：</div>
+    <pre class="prompt"><span class="hl">请帮我创建一个自动化：每周一、三、五 早上9点 提醒我——
+今天要发的小红书选题是什么、封面和文案是否用 WorkBuddy 做好了、
+记得打地理位置标签、发后2小时回评论。语气像同事提醒。</span></pre>
+    <div class="callout g">以后不用自己记排期，到点在 WorkBuddy 里自动弹提醒。想改频率，直接说“改成每周发4次”即可。</div>
+    <h3>9.2 每周数据复盘</h3>
+    <div class="step-do"><b>9.2.1</b> 打开小红书「创作中心 → 数据」，记下：小眼睛（曝光）、赞藏评、新增粉丝、最火的一篇。</div>
+    <div class="step-do"><b>9.2.2</b> 把数据发给 WorkBuddy：</div>
+    <pre class="prompt"><span class="hl">这是我这周的小红书数据（小眼睛XX、赞藏评XX、新增粉XX），
+最火的是【XX篇】。帮我分析哪类笔记引到店效果最好，
+下周该加什么、砍什么，给一份周报。</span></pre>
+    <div class="step-do"><b>9.2.3</b> 它出复盘 → 照建议调下周选题，形成“发 → 看数据 → 优化”的飞轮。</div>
+  </section>
+
+  <!-- 附录A -->
+  <section>
+    <h2><span class="num">A</span>附录 A：老板照做清单（一页版）</h2>
+    <table>
+      <tr><th>频率</th><th>动作</th><th>用 WorkBuddy 做啥</th></tr>
+      <tr><td>每天</td><td>发 1 篇图文（或隔天）</td><td>出文案 + 封面</td></tr>
+      <tr><td>每天</td><td>打地理位置标签、回评论</td><td>写回复话术</td></tr>
+      <tr><td>每周一三五</td><td>按计划发文（被提醒）</td><td>自动化提醒</td></tr>
+      <tr><td>每周日</td><td>数据复盘、定下周选题</td><td>出周报 + 新选题</td></tr>
+      <tr><td>每月</td><td>更新店铺档案/优惠</td><td>改文案模板</td></tr>
+    </table>
+  </section>
+
+  <!-- 附录B -->
+  <section>
+    <h2><span class="num">B</span>附录 B：复制粘贴提示词库</h2>
+    <h3>找选题</h3>
+    <pre class="prompt"><span class="hl">联网搜【城市】【行业】小红书热门选题，给10个，按探店/种草/活动/避坑分类，标注为何能引到店。</span></pre>
+    <h3>写文案</h3>
+    <pre class="prompt"><span class="hl">按选题【XX】写小红书图文：标题5选1 + 正文300字内（口语化）+ 5个标签 + 到店钩子。</span></pre>
+    <h3>做封面</h3>
+    <pre class="prompt"><span class="hl">生成小红书封面 3:4 竖图，红橙配色，大字标题【XX】，背景【产品】特写，门店海报风。</span></pre>
+    <h3>做视频</h3>
+    <pre class="prompt"><span class="hl">把笔记改成30秒口播脚本（钩子+展示+引导到店），再生成30秒门店短视频。</span></pre>
+    <h3>周复盘</h3>
+    <pre class="prompt"><span class="hl">这是我本周数据（小眼睛XX、赞藏评XX、新增粉XX），最火【XX篇】，分析哪类引到店最好，下周加什么砍什么，给周报。</span></pre>
+    <h3>自动化</h3>
+    <pre class="prompt"><span class="hl">创建自动化：每周一三五早9点提醒我今日选题、封面文案是否做好、记得打地理标签和回评论。</span></pre>
+  </section>
+
+  <!-- 附录C -->
+  <section>
+    <h2><span class="num">C</span>附录 C：常见问题</h2>
+    <ul>
+      <li><b>下载打不开？</b> 检查网络；确认系统是 Win10 / macOS 12 以上；以官网 workbuddy.cn 为准。</li>
+      <li><b>生成的文案要改吗？</b> 必须改——把店名、地址、优惠填成真实的再发，别发错券。</li>
+      <li><b>图片能商用吗？</b> 用于自己门店宣传一般可用，正式商用前确认生成内容的版权说明。</li>
+      <li><b>没流量怎么办？</b> 先检查是否打了地理位置标签、封面是否大字抓人；用第 9 步复盘调选题。</li>
+      <li><b>要请人运营吗？</b> 按本 SOP，老板自己每天 20 分钟就能跑通，省下运营工资。</li>
+    </ul>
+  </section>
+
+  <div class="footer">本 SOP 可直接作为你训练营的《学员手册》。下一步可让我：① 把这份 SOP 转成小红书图文笔记 ② 生成配套封面提示词 ③ 做一页“老板每日 checklist”海报。</div>
+
+</div>
+</body>
+</html>
