@@ -1,1 +1,1 @@
-{"version": 2, "name": "junshen-prod", "cleanUrls": true, "outputDirectory": ".", "framework": null}
+{"version": 2, "name": "junshen-prod", "cleanUrls": true, "outputDirectory": ".", "framework": null, "redirects": [{"source": "/:path*", "destination": "https://www.junshen.top/:path*", "permanent": true, "has": [{"type": "host", "value": "junshen.top"}]}]}
