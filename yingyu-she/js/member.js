@@ -294,7 +294,7 @@
     if (st.redeemedCodes && st.redeemedCodes.length) {
       for (const c of st.redeemedCodes) {
         const r = await API.redeem(c);
-        if (r.ok) Store.setVip(true);
+        if (r.ok) Store.setVip(true, r.vipUntil || null);
       }
     }
     const r = await API.getState();

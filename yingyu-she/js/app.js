@@ -1378,7 +1378,7 @@
             UNAUTHORIZED: "登录已过期，请重新登录",
           };
           r = res.ok
-            ? { ok: true, msg: "🎉 学习卡激活成功，会员权益已开通！" }
+            ? { ok: true, msg: "🎉 学习卡激活成功，会员权益已开通！", vipUntil: res.vipUntil || null, planLabel: res.planLabel || "会员" }
             : { ok: false, msg: tips[res.error] || ("激活失败：" + (res.error || "未知错误")) };
         } else {
           r = Store.redeemCode(v);
