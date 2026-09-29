@@ -424,6 +424,36 @@ img { max-width: 100%; display: block; }
 .wd-n { font-size: 22px; font-weight: 800; }
 .wd-sub { margin-top: 10px; color: var(--ink-2); line-height: 1.8; }
 
+/* ===== 登录 / 会员 / 每日免费额度 ===== */
+.usage-bar {
+  position: fixed; left: 16px; bottom: 16px; z-index: 60;
+  padding: 9px 16px; border-radius: 999px;
+  background: rgba(255, 255, 255, .86);
+  backdrop-filter: blur(10px);
+  border: 1px solid var(--line);
+  box-shadow: 0 6px 22px rgba(31, 42, 55, .10);
+  color: var(--ink-2); font-size: 13px; font-weight: 600;
+  letter-spacing: .2px; pointer-events: none;
+  transition: all .3s ease;
+}
+.usage-bar.warn { color: var(--orange-d); border-color: #ffd7b8; background: rgba(255, 248, 240, .92); }
+.usage-bar.vip { color: #b7801a; border-color: #f3dfae; background: linear-gradient(135deg, #fff9ec, #fff); }
+
+#navLogin.logged { color: var(--green-d); border-color: #bfe8d3; background: var(--green-l); }
+
+.gate-modal { text-align: center; }
+.gate-icon { font-size: 42px; margin-bottom: 4px; }
+.gate-actions { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-top: 20px; }
+
+.login-modal .login-row { display: flex; gap: 10px; margin-top: 12px; }
+.login-modal .login-row .code-input { flex: 1; min-width: 0; }
+.login-modal .login-row .btn-ghost { white-space: nowrap; }
+
+@media (max-width: 560px) {
+  .usage-bar { left: 12px; bottom: 12px; font-size: 12px; padding: 8px 13px; }
+  .gate-actions .btn-green, .gate-actions .btn-ghost { flex: 1 1 100%; }
+}
+
 @media (max-width: 700px) {
   .weak-stats { grid-template-columns: repeat(3, 1fr); gap: 8px; }
   .weak-stats .ws { padding: 14px 6px; }

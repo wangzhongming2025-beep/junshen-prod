@@ -26,6 +26,9 @@ const Store = (() => {
     redeemedCodes: [],
   });
 
+  // 变更监听：用于登录后的云同步
+  const listeners = [];
+
   let state = load();
 
   function load() {
@@ -45,6 +48,7 @@ const Store = (() => {
 
   function save() {
     try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) {}
+    listeners.forEach((f) => { try { f(); } catch (e) {} });
   }
 
   const todayStr = () => {
@@ -256,6 +260,26 @@ const Store = (() => {
     unmarkMastered(key) { if (state.weakBook[key]) { state.weakBook[key].mastered = false; save(); } },
     removeWeak(key) { delete state.weakBook[key]; save(); },
     clearWeak() { state.weakBook = {}; save(); },
+
+    // ---------- 云同步支撑 ----------
+    // 注册变更监听（member.js 用它触发防抖上传）
+    onChange(fn) { if (typeof fn === "function") listeners.push(fn); },
+    // 用云端数据整体替换本地（补齐缺省字段，防止结构缺失）
+    replaceAll(data) {
+      if (!data || typeof data !== "object") return;
+      const d = defaultState();
+      state = Object.assign(d, data, {
+        stats: Object.assign(d.stats, data.stats || {}),
+        checkin: Object.assign(d.checkin, data.checkin || {}),
+        weakBook: data.weakBook && typeof data.weakBook === "object" ? data.weakBook : {},
+        journal: Array.isArray(data.journal) ? data.journal : [],
+        practiceLog: Array.isArray(data.practiceLog) ? data.practiceLog : [],
+        redeemedCodes: Array.isArray(data.redeemedCodes) ? data.redeemedCodes : [],
+      });
+      save();
+    },
+    // 会员态由云端/兑换结果驱动
+    setVip(v) { state.vip = !!v; save(); },
 
     reset() { state = defaultState(); save(); },
   };

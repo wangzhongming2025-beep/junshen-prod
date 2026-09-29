@@ -11,6 +11,7 @@
     clearTimeout(toastEl._t);
     toastEl._t = setTimeout(() => toastEl.classList.remove("show"), 1800);
   }
+  window.toastMsg = toast;
   function esc(s) {
     return String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
   }
@@ -993,13 +994,35 @@
       document.body.appendChild(mask);
       mask.addEventListener("click", (e) => { if (e.target === mask) mask.classList.remove("show"); });
       mask.querySelector("#cardClose").addEventListener("click", () => mask.classList.remove("show"));
-      mask.querySelector("#redeemBtn").addEventListener("click", () => {
-        const v = mask.querySelector("#codeInput").value;
-        const r = Store.redeemCode(v);
+      mask.querySelector("#redeemBtn").addEventListener("click", async () => {
+        const v = (mask.querySelector("#codeInput").value || "").trim();
         const msg = mask.querySelector("#redeemMsg");
+        if (!v) { msg.className = "redeem-msg err"; msg.textContent = "请输入兑换码"; return; }
+        msg.className = "redeem-msg"; msg.textContent = "激活中…";
+        // 已登录 → 服务端校验（会员记在云端账号上）；未登录 → 本地码池兜底
+        let r;
+        if (window.API && API.isLoggedIn()) {
+          const res = await API.redeem(v);
+          const tips = {
+            CODE_INVALID: "兑换码无效，请核对后重试",
+            CODE_USED: "该兑换码已被使用",
+            CODE_ALREADY_ACTIVATED: "你已经开通过了",
+            CODE_EMPTY: "请输入兑换码",
+            REDEEM_CODES_NOT_CONFIGURED: "服务端未配置兑换码，请联系站长",
+            NETWORK_ERROR: "网络异常，请稍后重试",
+            UNAUTHORIZED: "登录已过期，请重新登录",
+          };
+          r = res.ok
+            ? { ok: true, msg: "🎉 学习卡激活成功，会员权益已开通！" }
+            : { ok: false, msg: tips[res.error] || ("激活失败：" + (res.error || "未知错误")) };
+        } else {
+          r = Store.redeemCode(v);
+        }
         if (r.ok) {
+          Store.setVip(true);
           msg.className = "redeem-msg ok"; msg.textContent = r.msg;
           toast(r.msg); refreshVipUI();
+          if (window.Member) Member.refresh();   // 解除每日额度门禁
           setTimeout(() => mask.classList.remove("show"), 1500);
         } else {
           msg.className = "redeem-msg err"; msg.textContent = r.msg;
