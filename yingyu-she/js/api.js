@@ -56,5 +56,7 @@
     getUsage: () => request("/user/usage"),
     addUsage: (seconds) => request("/user/usage", { method: "POST", body: { seconds } }),
     redeem: (code) => request("/member/redeem", { method: "POST", body: { code } }),
+    surveySubmit: (answers, advantage) => request("/survey/submit", { method: "POST", body: { answers, advantage } }),
+    surveyGet: () => request("/survey/get"),
   };
 })();

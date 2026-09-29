@@ -99,6 +99,7 @@
     weakPractice: renderWeakReview,
     leaderboard: renderLeaderboard,
     journal: renderJournal,
+    partner: () => window.Survey && window.Survey.render(),
   };
   let statRange = "total";
   function route() {
@@ -110,6 +111,8 @@
     });
     // 二级路由：#/weak/practice 走「只练易错」复习
     if (r === "weak" && parts[1] === "practice") { routes.weakPractice(); return; }
+    // 合伙人计划别名
+    if (r === "partner-plan") { routes.partner(); return; }
     (routes[r] || renderHome)();
   }
   window.addEventListener("hashchange", route);
@@ -192,7 +195,10 @@
         <div class="stat-card" style="cursor:pointer" onclick="openCardModal()"><div class="n orange">¥39</div><div class="l">月卡</div><div class="sub">先体验，随时退</div></div>
         <div class="stat-card" style="cursor:pointer" onclick="openCardModal()"><div class="n orange">¥109</div><div class="l">季卡</div><div class="sub">立省 ¥8</div></div>
         <div class="stat-card" style="cursor:pointer" onclick="openCardModal()"><div class="n orange">¥365</div><div class="l">年卡</div><div class="sub">平均每天仅 ¥1</div></div>
-        <div class="stat-card" style="cursor:pointer" onclick="openCardModal()"><div class="n green">¥1299</div><div class="l">永久卡</div><div class="sub">一次开通，终身可用</div></div>
+        <a class="stat-card" href="#/partner" style="text-decoration:none;cursor:pointer;position:relative">
+          <div class="n green">¥1299</div><div class="l">永久卡</div><div class="sub">一次开通，终身可用</div>
+          <div class="sv-link-tag">先测一测 · 适合再付</div>
+        </a>
       </div>`}
       ${(() => { const w = Store.getWeakStats(); return w.weak ? `<div class="weak-banner">📒 你有 <b>${w.weak}</b> 个易错内容待巩固，<a href="#/weak">去易错本专项复习 →</a></div>` : ""; })()}
     `;
@@ -354,9 +360,9 @@
           <p class="detail-desc">${esc(c.desc || "")}</p>
           <div class="detail-meta">${total} 个句子 · 👥 ${fmt(c.learners)} 人在学 · 已练 ${done} 句</div>
           <div class="course-prog"><div class="course-prog-bar" style="width:${pct}%"></div></div>
-          <div style="margin-top:14px;display:flex;gap:12px">
+          <div style="margin-top:14px;display:flex;gap:12px;flex-wrap:wrap">
             ${isVipLocked(c)
-              ? `<button class="btn-green" onclick="openCardModal()">🔒 开通学习卡后解锁</button>`
+              ? `<button class="btn-green" onclick="openCardModal()">🔒 开通学习卡后解锁</button><a class="btn-ghost" href="#/partner">🎯 先测一测适不适合 1299</a>`
               : `<a class="btn-green" href="#/practice/${c.id}">▶ 开始练习</a>`}
           </div>
         </div>
@@ -1298,11 +1304,20 @@
             </div>
             <div id="redeemMsg" class="redeem-msg"></div>
           </div>
+          <div class="sv-modal-cta">
+            <div class="sv-modal-cta-txt">不确定选哪档？花 30 秒做份合伙人测评，老王队长帮你判断适不适合 1299 永久卡。</div>
+            <a class="btn-primary" href="#/partner" id="cardSurveyLink">🎯 1299 合伙人测评</a>
+          </div>
           <div style="text-align:right;margin-top:16px"><button class="btn-ghost" id="cardClose">关闭</button></div>
         </div>`;
       document.body.appendChild(mask);
       mask.addEventListener("click", (e) => { if (e.target === mask) mask.classList.remove("show"); });
       mask.querySelector("#cardClose").addEventListener("click", () => mask.classList.remove("show"));
+      mask.querySelector("#cardSurveyLink").addEventListener("click", (e) => {
+        e.preventDefault();
+        mask.classList.remove("show");
+        location.hash = "#/partner";
+      });
       mask.querySelector("#redeemBtn").addEventListener("click", async () => {
         const v = (mask.querySelector("#codeInput").value || "").trim();
         const msg = mask.querySelector("#redeemMsg");
