@@ -284,10 +284,24 @@
 
   // ---------- 练习页 ----------
   const pstate = { courseId: null, idx: 0, mode: "type", answered: false };
+
+  // 练习进度持久化：按「课程+模式」分别记忆题号，切换/刷新都连续进行
+  function loadPracticeMeta() { try { return JSON.parse(localStorage.getItem("hy_practice_v1") || "{}"); } catch (e) { return {}; } }
+  function savePracticeMeta() { try { localStorage.setItem("hy_practice_v1", JSON.stringify({ courseId: pstate.courseId, mode: pstate.mode })); } catch (e) {} }
+  let PROGRESS = (() => { try { return JSON.parse(localStorage.getItem("hy_progress_v1") || "{}"); } catch (e) { return {}; } })();
+  function getProg(courseId, mode) { return PROGRESS[courseId + "|" + mode] || 0; }
+  function setProg(courseId, mode, idx) { PROGRESS[courseId + "|" + mode] = idx; try { localStorage.setItem("hy_progress_v1", JSON.stringify(PROGRESS)); } catch (e) {} }
+  (function restorePractice() {
+    const m = loadPracticeMeta();
+    if (m.courseId && COURSES.find((c) => c.id === m.courseId)) pstate.courseId = m.courseId;
+    if (m.mode) pstate.mode = m.mode;
+    pstate.idx = getProg(pstate.courseId, pstate.mode);
+  })();
   function renderPractice() {
     const idFromHash = location.hash.replace("#/", "").split("/")[1];
     if (idFromHash && COURSES.find((c) => c.id === idFromHash)) pstate.courseId = idFromHash;
     if (!pstate.courseId) pstate.courseId = COURSES[0].id;
+    pstate.idx = getProg(pstate.courseId, pstate.mode);
 
     const side = COURSES.map(
       (c) => `<div class="side-item ${c.id === pstate.courseId ? "active" : ""}" data-id="${c.id}">${c.emoji} ${esc(c.title)}</div>`
@@ -304,12 +318,13 @@
     `;
     app.querySelectorAll(".side-item").forEach((el) =>
       el.addEventListener("click", () => {
-        pstate.courseId = el.dataset.id; pstate.idx = 0; pstate.mode = "type";
-        renderPractice();
+        const target = "#/practice/" + el.dataset.id;
+        if (location.hash !== target) location.hash = target; // 由 hash 路由驱动，避免被 renderPractice 内的 hash 解析覆盖
       })
     );
     renderStage();
     bindVoiceSelect();
+    savePracticeMeta();
   }
   function renderStage() {
     const course = COURSES.find((c) => c.id === pstate.courseId);
@@ -322,11 +337,11 @@
         <button class="mode-tab ${pstate.mode === "sentence" ? "active" : ""}" data-mode="sentence">🧩 拼句闯关</button>
         <button class="mode-tab ${pstate.mode === "word" ? "active" : ""}" data-mode="word">🔤 单词闯关</button>
       </div>
-      <div class="progress-line">${esc(course.title)} · 第 ${pstate.idx + 1} / ${total} ${isWord ? "词" : "句"}</div>
+      <div class="progress-line">${esc(course.title)} · 第 ${(isWord && total ? pstate.idx % total : pstate.idx) + 1} / ${total} ${isWord ? "词" : "句"}</div>
       <div id="qbox"></div>
     `;
     stage.querySelectorAll(".mode-tab").forEach((el) =>
-      el.addEventListener("click", () => { pstate.mode = el.dataset.mode; pstate.idx = 0; pstate.answered = false; renderStage(); })
+      el.addEventListener("click", () => { pstate.mode = el.dataset.mode; pstate.idx = getProg(pstate.courseId, pstate.mode); pstate.answered = false; savePracticeMeta(); renderStage(); })
     );
     if (pstate.mode === "type") renderType(stage.querySelector("#qbox"), course);
     else if (pstate.mode === "sentence") renderSentence(stage.querySelector("#qbox"), course);
@@ -440,6 +455,7 @@
       pstate.idx = 0;
       toast("🎉 本课程已练完一轮，从头再来！");
     }
+    setProg(pstate.courseId, pstate.mode, pstate.idx);
     renderStage();
   }
   function renderWord(box, course) {
@@ -498,6 +514,7 @@
     if (pstate.idx >= (course.words || []).length) {
       pstate.idx = 0; toast("🎉 单词练完一轮，再来一遍！");
     }
+    setProg(pstate.courseId, pstate.mode, pstate.idx);
     renderStage();
   }
 
