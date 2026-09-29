@@ -408,6 +408,7 @@
   const comboMult = () => 1 + Math.min(Math.max(session.combo - 1, 0), 5) * 0.2;
   function qAnchor() {
     return document.querySelector(".practice-stage .typing-input")
+      || document.querySelector(".practice-stage .word-slots")
       || document.querySelector(".practice-stage .answer-slots")
       || document.querySelector(".practice-stage");
   }
@@ -592,6 +593,53 @@
     });
     syncSoundBtn();
   }
+  // 机械感逐词下划线输入框：count 个下划线框，空格/回车/方向键跳格，自动扩宽
+  function buildWordSlots(box, count, opts) {
+    opts = opts || {};
+    const wrap = document.createElement("div");
+    wrap.className = "word-slots";
+    const els = [];
+    for (let i = 0; i < count; i++) {
+      const cell = document.createElement("div");
+      cell.className = "word-slot-wrap";
+      if (opts.showIndex) {
+        const idx = document.createElement("div");
+        idx.className = "idx";
+        idx.textContent = String(i + 1).padStart(2, "0");
+        cell.appendChild(idx);
+      }
+      const inp = document.createElement("input");
+      inp.className = "word-slot"; inp.type = "text"; inp.autocomplete = "off";
+      inp.setAttribute("data-i", i);
+      if (opts.placeholder) inp.placeholder = opts.placeholder;
+      if (opts.width) inp.style.width = opts.width;
+      cell.appendChild(inp);
+      wrap.appendChild(cell);
+      els.push(inp);
+      const grow = () => { inp.style.width = (Math.max(inp.value.length, 4) + 1) + "ch"; };
+      inp.addEventListener("input", grow);
+      inp.addEventListener("keydown", (e) => {
+        if (e.key === " " || e.key === "Spacebar") { e.preventDefault(); focusSlot(i + 1); }
+        else if (e.key === "Enter") { e.preventDefault(); if (opts.onEnter) opts.onEnter(); }
+        else if (e.key === "ArrowRight") { focusSlot(i + 1); }
+        else if (e.key === "ArrowLeft") { focusSlot(i - 1); }
+        else if (e.key === "Backspace" && !inp.value) { e.preventDefault(); focusSlot(i - 1); }
+      });
+    }
+    box.appendChild(wrap);
+    function focusSlot(n) { if (n < 0 || n >= els.length) return; els[n].focus(); }
+    return {
+      els, wrap,
+      getValue() { return els.map((e) => e.value).join(" ").trim(); },
+      fill(val) {
+        const ws = String(val).split(/\s+/);
+        els.forEach((e, i) => { e.value = ws[i] || ""; e.style.width = (Math.max(e.value.length, 4) + 1) + "ch"; });
+      },
+      setReadOnly(ro) { els.forEach((e) => { if (ro) e.setAttribute("readonly", "true"); else e.removeAttribute("readonly"); }); },
+      setStatus(cls) { els.forEach((e) => { e.classList.remove("ok", "err"); if (cls) e.classList.add(cls); }); },
+      focus(n) { (els[n || 0] || els[0]).focus(); },
+    };
+  }
   function renderStage() {
     const course = COURSES.find((c) => c.id === pstate.courseId);
     const isWord = pstate.mode === "word";
@@ -624,54 +672,55 @@
   }
   function renderType(box, course) {
     const item = course.lessons[pstate.idx];
+    const answerWords = item.en.replace(/[.,!?;:'"()]/g, "").split(/\s+/).filter(Boolean);
     box.innerHTML = `
       <div class="sentence-zh">${esc(item.zh)}</div>
       <button class="speak-btn" id="speak" type="button">🔊 听发音</button>
-      <div class="sentence-hint">把上面的中文翻译成英文，敲完按回车或点“提交”。</div>
-      <input class="typing-input" id="ti" placeholder="Type the English sentence…" autocomplete="off" />
+      <div class="sentence-hint">把上面的中文翻译成英文，一个单词填一个框，敲空格跳到下一个，回车提交。</div>
+      <div id="slotBox"></div>
       <div class="feedback" id="fb"></div>
       ${tipBlockHTML(learnText(course.id, item.en, false), "讲讲这句的语法")}
       <div style="margin-top:16px;display:flex;gap:12px;">
         <button class="btn-green" id="submit">提交</button>
         <button class="btn-ghost" id="skip">不会，看答案</button>
       </div>`;
-    const input = box.querySelector("#ti");
-    setTimeout(() => input.focus(), 50);
     setTimeout(() => speak(item.en), 350);
     bindTip(box);
-    const submit = () => {
+    const slots = buildWordSlots(box.querySelector("#slotBox"), answerWords.length, { showIndex: true, onEnter: submit });
+    setTimeout(() => slots.focus(0), 50);
+    const inputEl = slots.wrap;
+    function submit() {
       if (pstate.answered) return;
-      const val = input.value;
+      const val = slots.getValue();
       if (!val.trim()) { toast("先写点英文再提交"); return; }
       const correct = normalize(val) === normalize(item.en);
       const fb = box.querySelector("#fb");
       if (correct) {
         pstate.answered = true;
-        input.classList.add("ok"); input.setAttribute("readonly", "true");
+        slots.setStatus("ok"); slots.setReadOnly(true);
         fb.className = "feedback ok"; fb.textContent = "✅ " + praise();
         speak("Correct!");
         Store.recordSentence(true); Store.addMinutes(1); Store.logPractice(course.id, "type", true);
         Store.recordWeak(course.id, course.title, "type", item.zh, item.en, true);
-        award(true, input);
+        award(true, inputEl);
         openTip(box, 420);
         setTimeout(() => nextSentence(course), 1150);
       } else {
         pstate.answered = false;
-        input.classList.remove("ok"); input.classList.add("err");
+        slots.setStatus("err");
         fb.className = "feedback err"; fb.textContent = wrongHint(val, item.en);
         speak("Try again");
         Store.recordWeak(course.id, course.title, "type", item.zh, item.en, false);
-        award(false, input);
+        award(false, inputEl);
         openTip(box, 260);
-        setTimeout(() => { input.value = ""; input.classList.remove("err"); input.focus(); }, 620);
+        setTimeout(() => { slots.setStatus(""); slots.els.forEach((e) => { e.value = ""; e.style.width = ""; }); slots.focus(0); }, 620);
       }
-    };
+    }
     box.querySelector("#submit").addEventListener("click", submit);
-    input.addEventListener("keydown", (e) => { if (e.key === "Enter") submit(); });
     box.querySelector("#speak").addEventListener("click", () => speak(item.en));
     box.querySelector("#skip").addEventListener("click", () => {
       if (pstate.answered) return;
-      pstate.answered = true; input.value = item.en; input.classList.add("ok");
+      pstate.answered = true; slots.fill(item.en); slots.setStatus("ok"); slots.setReadOnly(true);
       const fb = box.querySelector("#fb"); fb.className = "feedback ok"; fb.textContent = `答案：${item.en}`;
       speak(item.en);
       Store.recordSentence(false); Store.addMinutes(1); Store.logPractice(course.id, "type", false);
@@ -764,51 +813,51 @@
     box.innerHTML = `
       <div class="sentence-zh">${esc(item.zh)}</div>
       <button class="speak-btn" id="speak" type="button">🔊 听发音</button>
-      <div class="sentence-hint">根据中文释义，拼写出对应的英文单词。</div>
-      <input class="typing-input" id="ti" placeholder="Type the English word…" autocomplete="off" />
+      <div class="sentence-hint">根据中文释义，在下方横线上拼写出对应的英文单词，回车提交。</div>
+      <div id="slotBox"></div>
       <div class="feedback" id="fb"></div>
       ${tipBlockHTML(learnText(course.id, item.en, true), "这个单词怎么用")}
       <div style="margin-top:16px;display:flex;gap:12px;">
         <button class="btn-green" id="submit">提交</button>
         <button class="btn-ghost" id="skip">看答案</button>
       </div>`;
-    const input = box.querySelector("#ti");
-    setTimeout(() => input.focus(), 50);
     setTimeout(() => speak(item.en), 350);
     bindTip(box);
-    const submit = () => {
+    const slots = buildWordSlots(box.querySelector("#slotBox"), 1, { showIndex: false, width: "14ch", placeholder: "英文单词", onEnter: submit });
+    setTimeout(() => slots.focus(0), 50);
+    const inputEl = slots.wrap;
+    function submit() {
       if (pstate.answered) return;
-      const val = input.value;
+      const val = slots.getValue();
       if (!val.trim()) { toast("先写点英文再提交"); return; }
       const correct = normalize(val) === normalize(item.en);
       const fb = box.querySelector("#fb");
       if (correct) {
         pstate.answered = true;
-        input.classList.add("ok"); input.setAttribute("readonly", "true");
+        slots.setStatus("ok"); slots.setReadOnly(true);
         fb.className = "feedback ok"; fb.textContent = "✅ " + praise();
         speak("Correct!");
         Store.recordWord(true); Store.addMinutes(1); Store.logPractice(course.id, "word", true);
         Store.recordWeak(course.id, course.title, "word", item.zh, item.en, true);
-        award(true, input);
+        award(true, inputEl);
         openTip(box, 420);
         setTimeout(() => nextWord(course), 1150);
       } else {
         pstate.answered = false;
-        input.classList.remove("ok"); input.classList.add("err");
+        slots.setStatus("err");
         fb.className = "feedback err"; fb.textContent = wrongWordHint(val, item.en);
         speak("Try again");
         Store.recordWeak(course.id, course.title, "word", item.zh, item.en, false);
-        award(false, input);
+        award(false, inputEl);
         openTip(box, 260);
-        setTimeout(() => { input.value = ""; input.classList.remove("err"); input.focus(); }, 620);
+        setTimeout(() => { slots.setStatus(""); slots.els.forEach((e) => { e.value = ""; e.style.width = ""; }); slots.focus(0); }, 620);
       }
-    };
+    }
     box.querySelector("#submit").addEventListener("click", submit);
-    input.addEventListener("keydown", (e) => { if (e.key === "Enter") submit(); });
     box.querySelector("#speak").addEventListener("click", () => speak(item.en));
     box.querySelector("#skip").addEventListener("click", () => {
       if (pstate.answered) return;
-      pstate.answered = true; input.value = item.en; input.classList.add("ok");
+      pstate.answered = true; slots.fill(item.en); slots.setStatus("ok"); slots.setReadOnly(true);
       const fb = box.querySelector("#fb"); fb.className = "feedback ok"; fb.textContent = `答案：${item.en}`;
       speak(item.en);
       Store.recordWord(false); Store.addMinutes(1); Store.logPractice(course.id, "word", false);

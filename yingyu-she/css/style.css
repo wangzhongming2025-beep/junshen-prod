@@ -207,6 +207,41 @@ img { max-width: 100%; display: block; }
 .typing-input.ok { border-color: rgba(24,180,107,.5); background: var(--green-l); box-shadow: 0 0 0 4px rgba(24,180,107,.12); }
 .typing-input.err { border-color: rgba(235,87,87,.5); background: #fff5f5; box-shadow: 0 0 0 4px rgba(235,87,87,.10); }
 
+/* ===== 机械感 · 逐词下划线输入 ===== */
+.word-slots {
+  position: relative; display: flex; flex-wrap: wrap; gap: 14px 16px; align-items: flex-end;
+  margin: 6px 0 2px; padding: 16px 16px 14px;
+  background: linear-gradient(180deg, #f7fafc 0%, #eaf0f6 100%);
+  border: 1px solid #d4dde7; border-radius: 10px;
+  box-shadow: inset 0 1px 3px rgba(31,42,55,.06), 0 2px 8px rgba(31,42,55,.04);
+}
+.word-slots::before {
+  content: "⌨ KEY-IN"; position: absolute; top: 7px; left: 12px;
+  font: 700 9px/1 "SF Mono", "Cascadia Code", "Consolas", "Roboto Mono", monospace;
+  letter-spacing: 2px; color: var(--ink-3); opacity: .55;
+}
+.word-slot-wrap { position: relative; display: flex; flex-direction: column; align-items: center; gap: 5px; margin-top: 10px; }
+.word-slot-wrap .idx {
+  font: 700 10px/1 "SF Mono", "Cascadia Code", "Consolas", "Roboto Mono", monospace;
+  letter-spacing: 1px; color: var(--ink-3); opacity: .65;
+}
+.word-slot {
+  width: 8ch; min-width: 4ch; padding: 9px 6px 8px; text-align: center;
+  font-family: "SF Mono", "Cascadia Code", "Consolas", "Roboto Mono", monospace;
+  font-size: 19px; letter-spacing: .5px; color: var(--ink);
+  background: #fff; border: 1px solid #cdd7e2; border-bottom: 3px solid #98a6b4;
+  border-radius: 3px; outline: none;
+  box-shadow: inset 0 2px 3px rgba(31,42,55,.06), 0 1px 0 #fff;
+  transition: border-color .15s, box-shadow .15s, background .15s;
+}
+.word-slot::placeholder { color: var(--ink-3); opacity: .4; }
+.word-slot:focus {
+  border-color: var(--green-d); border-bottom-color: var(--green); background: #fff;
+  box-shadow: 0 0 0 3px rgba(24,180,107,.16), inset 0 2px 3px rgba(31,42,55,.04);
+}
+.word-slot.ok { border-color: rgba(24,180,107,.55); border-bottom-color: var(--green); background: var(--green-l); }
+.word-slot.err { border-color: rgba(235,87,87,.55); border-bottom-color: var(--red); background: #fff5f5; }
+
 .word-bank { display: flex; flex-wrap: wrap; gap: 12px; margin: 18px 0; }
 .word-chip {
   padding: 12px 20px; background: rgba(231,248,239,.7); color: var(--green-d);
