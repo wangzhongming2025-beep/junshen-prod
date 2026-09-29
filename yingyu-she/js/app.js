@@ -630,6 +630,7 @@
       });
       inp.addEventListener("keydown", (e) => {
         if (e.key === "Enter") { e.preventDefault(); if (opts.onEnter) opts.onEnter(); }
+        else if (e.key === " " || e.key === "Spacebar") { e.preventDefault(); focusSlot(i + 1); }
         else if (e.key === "ArrowRight") { focusSlot(i + 1); }
         else if (e.key === "ArrowLeft") { focusSlot(i - 1); }
         else if (e.key === "Backspace" && !inp.value) { e.preventDefault(); focusSlot(i - 1); }
@@ -685,7 +686,7 @@
     box.innerHTML = `
       <div class="sentence-zh">${esc(item.zh)}</div>
       <button class="speak-btn" id="speak" type="button">🔊 听发音</button>
-      <div class="sentence-hint">把上面的中文翻译成英文，一个单词一条横线（长短随单词自适应），填完当前词自动跳到下一格，回车提交。</div>
+      <div class="sentence-hint">把上面的中文翻译成英文，一个单词一条横线（长短随单词自适应）；填完自动跳下一格，或敲空格 / → 跳格，回车提交。</div>
       <div id="slotBox"></div>
       <div class="feedback" id="fb"></div>
       ${tipBlockHTML(learnText(course.id, item.en, false), "讲讲这句的语法")}
