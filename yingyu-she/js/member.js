@@ -300,7 +300,7 @@
     const r = await API.getState();
     if (r.ok) {
       API.setUser(r.user);
-      if (r.user && r.user.vip) Store.setVip(true);
+      if (r.user && r.user.vip) Store.setVip(true, r.user.vipUntil || null);
       if (r.data && Object.keys(r.data).length) {
         suppressPush = true;
         Store.replaceAll(r.data);

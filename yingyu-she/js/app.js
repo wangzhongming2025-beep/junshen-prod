@@ -1384,9 +1384,14 @@
           r = Store.redeemCode(v);
         }
         if (r.ok) {
-          Store.setVip(true);
-          msg.className = "redeem-msg ok"; msg.textContent = r.msg;
-          toast(r.msg); refreshVipUI();
+          Store.setVip(true, r.vipUntil || null);
+          msg.className = "redeem-msg ok";
+          const planLabel = r.planLabel || "会员";
+          const untilText = r.vipUntil
+            ? "，有效期至 " + new Date(r.vipUntil).toLocaleDateString("zh-CN")
+            : "，永久有效";
+          msg.textContent = "🎉 " + planLabel + "激活成功" + untilText;
+          toast(msg.textContent); refreshVipUI();
           if (window.Member) Member.refresh();   // 解除每日额度门禁
           setTimeout(() => mask.classList.remove("show"), 1500);
         } else {

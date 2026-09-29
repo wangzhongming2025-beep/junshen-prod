@@ -25,6 +25,7 @@ const Store = (() => {
     practiceLog: [],
     weakBook: {}, // 易错本：key -> {key,courseId,courseTitle,type,zh,en,wrong,right,lastWrong,lastRight,mastered,createdAt}
     vip: false,
+    vipUntil: null, // 月/季/年卡到期时间 ISO 字符串；null 表示永久/未开通
     redeemedCodes: [],
   });
 
@@ -206,8 +207,15 @@ const Store = (() => {
       return state.practiceLog.filter((l) => l.course === id).length;
     },
 
-    // 会员态：是否开通学习卡
-    isVip() { return !!state.vip; },
+    // 会员态：是否开通学习卡（支持月/季/年卡到期自动失效）
+    isVip() {
+      if (!state.vip) return false;
+      if (state.vipUntil) {
+        const t = new Date(state.vipUntil).getTime();
+        if (!isNaN(t) && t <= Date.now()) return false;
+      }
+      return true;
+    },
 
     // 兑换码激活：校验码池 + 防复用，成功后置 vip
     redeemCode(raw) {
@@ -218,8 +226,10 @@ const Store = (() => {
       if (state.redeemedCodes.includes(code)) return { ok: false, msg: "该兑换码已被使用" };
       state.redeemedCodes.push(code);
       state.vip = true;
+      // 前端默认码池当前统一视为月卡（30天）；永久卡需登录后由服务端 redeem 返回 vipUntil=null
+      state.vipUntil = new Date(Date.now() + 30 * 86400000).toISOString();
       save();
-      return { ok: true, msg: "🎉 学习卡激活成功，会员权益已开通！" };
+      return { ok: true, msg: "🎉 月卡激活成功，有效期 30 天" };
     },
 
     // ---------- 易错本（自动记录记得好/记不好）----------
@@ -298,7 +308,17 @@ const Store = (() => {
       save();
     },
     // 会员态由云端/兑换结果驱动
-    setVip(v) { state.vip = !!v; save(); },
+    setVip(v, until) {
+      state.vip = !!v;
+      if (until === undefined) {
+        // 不传则保留原值（永久卡）
+      } else if (until === null || until === false) {
+        state.vipUntil = null;
+      } else {
+        state.vipUntil = until;
+      }
+      save();
+    },
 
     reset() { state = defaultState(); save(); },
   };
