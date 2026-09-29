@@ -1256,11 +1256,14 @@
   document.getElementById("checkinBtn").addEventListener("click", doCheckin);
 
   // ---------- 支付 / 会员配置 ----------
-  // contact = 付款后加此客服领取兑换码；qr = 收款码图片(放本目录，命名为 pay-qr.png)
+  // contact = 付款后加此客服领取兑换码
+  // wxQr = 微信收款码图片（建议用微信官方"保存收款码"原图，不要用截图/合成图）
+  // alipayQr = 支付宝收款码图片
   // codes = 可用兑换码池（手动维护，每个码建议只发给一人，避免被复用）
   const PAY = window.PAY = {
     contact: "vip20213456",
-    qr: "pay-qr.png",
+    wxQr: "pay-qr.png",
+    alipayQr: "pay-qr-alipay.png",
     codes: [
       "HY2026-1001","HY2026-1002","HY2026-1003","HY2026-1004","HY2026-1005",
       "HY2026-2001","HY2026-2002","HY2026-2003","HY2026-2004","HY2026-2005",
@@ -1292,9 +1295,25 @@
           <h3>开通学习卡</h3>
           <p class="modal-sub">微信 / 支付宝 <b>扫码付款</b>，付款后加客服 <b>${esc(PAY.contact)}</b> 领取兑换码，即可激活全部会员课程。</p>
           <div class="pay-qr-wrap">
-            <img class="pay-qr" src="${esc(PAY.qr)}" alt="收款码"
-                 onerror="this.style.display='none';document.getElementById('qrTip').style.display='block'" />
-            <div id="qrTip" class="qr-tip" style="display:none">请将收款码图片命名为 <code>pay-qr.png</code> 放到本站目录下</div>
+            <div class="pay-qr-grid">
+              <div class="pay-qr-item">
+                <img class="pay-qr" src="${esc(PAY.wxQr)}" alt="微信收款码"
+                     onerror="this.style.display='none';this.nextElementSibling.style.display='block'" />
+                <div class="qr-tip" style="display:none;font-size:12px;padding:10px">请将微信收款码命名为 <code>pay-qr.png</code> 放到本站目录下</div>
+                <div class="pay-qr-label">长按识别 · 微信支付</div>
+              </div>
+              <div class="pay-qr-item">
+                <img class="pay-qr" src="${esc(PAY.alipayQr)}" alt="支付宝收款码"
+                     onerror="this.style.display='none';this.nextElementSibling.style.display='block'" />
+                <div class="qr-tip" style="display:none;font-size:12px;padding:10px">请将支付宝收款码命名为 <code>pay-qr-alipay.png</code> 放到本站目录下</div>
+                <div class="pay-qr-label">长按识别 · 支付宝</div>
+              </div>
+            </div>
+          </div>
+          <div class="pay-contact-box">
+            <div class="pay-contact-tip">扫码失败？加客服微信转账，备注“英语社”</div>
+            <div class="pay-contact-id" id="cardContactId">${esc(PAY.contact)}</div>
+            <button class="btn-ghost pay-copy-mini" id="cardCopyContact">复制微信号</button>
           </div>
           <div class="redeem-box">
             <div class="rb-h">已付款？输入兑换码立即激活</div>
@@ -1313,6 +1332,28 @@
       document.body.appendChild(mask);
       mask.addEventListener("click", (e) => { if (e.target === mask) mask.classList.remove("show"); });
       mask.querySelector("#cardClose").addEventListener("click", () => mask.classList.remove("show"));
+      const copyBtn = mask.querySelector("#cardCopyContact");
+      if (copyBtn) {
+        copyBtn.addEventListener("click", () => {
+          const id = PAY.contact;
+          if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(id).then(() => {
+              copyBtn.textContent = "已复制 ✓";
+              setTimeout(() => copyBtn.textContent = "复制微信号", 2000);
+            }).catch(() => fallbackCopy(id));
+          } else {
+            fallbackCopy(id);
+          }
+        });
+      }
+      function fallbackCopy(text) {
+        const ta = document.createElement("textarea");
+        ta.value = text; ta.style.position = "fixed"; ta.style.opacity = "0";
+        document.body.appendChild(ta); ta.select();
+        try { document.execCommand("copy"); copyBtn.textContent = "已复制 ✓"; setTimeout(() => copyBtn.textContent = "复制微信号", 2000); }
+        catch (e) { window.toastMsg && window.toastMsg("请手动复制微信号"); }
+        document.body.removeChild(ta);
+      }
       mask.querySelector("#cardSurveyLink").addEventListener("click", (e) => {
         e.preventDefault();
         mask.classList.remove("show");

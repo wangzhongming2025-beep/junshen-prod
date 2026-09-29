@@ -11,7 +11,7 @@
     { key: "time", q: "你每天能抽出 ≥1 小时，连续投入学习和行动吗？" },
   ];
 
-  const PAY = (window.PAY && window.PAY.contact) ? window.PAY : { contact: "vip20213456", qr: "pay-qr.png" };
+  const PAY = (window.PAY && window.PAY.contact) ? window.PAY : { contact: "vip20213456", wxQr: "pay-qr.png", alipayQr: "pay-qr-alipay.png" };
 
   function loadSurvey() {
     try {
@@ -128,10 +128,19 @@
     const advantage = saved.advantage ? `<div class="sv-result-adv"><b>你写的优点：</b>${esc(saved.advantage)}</div>` : "";
     const payBlock = cfg.action === "pay" ? `
       <div class="sv-pay">
-        <img src="${esc(PAY.qr)}" alt="收款码" class="sv-qr" onerror="this.style.display='none'">
+        <div class="pay-qr-grid" style="margin-bottom:10px">
+          <div class="pay-qr-item">
+            <img src="${esc(PAY.wxQr)}" alt="微信收款码" class="sv-qr" onerror="this.style.display='none'" style="width:150px;height:150px">
+            <div class="pay-qr-label">微信扫码</div>
+          </div>
+          <div class="pay-qr-item">
+            <img src="${esc(PAY.alipayQr)}" alt="支付宝收款码" class="sv-qr" onerror="this.style.display='none'" style="width:150px;height:150px">
+            <div class="pay-qr-label">支付宝扫码</div>
+          </div>
+        </div>
         <div class="sv-pay-info">
           <div class="sv-price">¥1299</div>
-          <div class="sv-pay-tip">扫码付款后，请加 <b>${esc(PAY.contact)}</b>，发送付款截图领取兑换码。</div>
+          <div class="sv-pay-tip">扫码付款后，请加 <b>${esc(PAY.contact)}</b>，发送付款截图领取兑换码。扫码失败可直接复制微信号转账。</div>
           <button class="btn-primary" id="svCopyContact">复制微信号</button>
         </div>
       </div>
