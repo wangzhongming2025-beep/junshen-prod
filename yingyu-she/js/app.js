@@ -37,11 +37,9 @@
   function fillVoiceSelect(sel) {
     if (!sel) return;
     sel.innerHTML = "";
-    if (!VOICES.length) {
-      const o = document.createElement("option");
-      o.textContent = "系统默认嗓音"; o.value = ""; sel.appendChild(o);
-      return;
-    }
+    // 永远保留“系统默认嗓音”在最前，避免选中了无声嗓音后无法退回
+    const def = document.createElement("option");
+    def.textContent = "系统默认嗓音"; def.value = ""; sel.appendChild(def);
     VOICES.forEach((v) => {
       const o = document.createElement("option");
       o.value = v.voiceURI;
@@ -63,14 +61,28 @@
   function speak(text, lang) {
     try {
       if (!("speechSynthesis" in window)) return;
+      if (!VOICES.length) loadVoices();          // voices 未加载完时先尝试刷新
+      try { window.speechSynthesis.resume(); } catch (e) {}
       window.speechSynthesis.cancel();
       const u = new SpeechSynthesisUtterance(text);
       u.lang = lang || "en-US";
       u.rate = 0.96;
+      let usedVoice = false;
       if (currentVoiceURI) {
         const v = VOICES.find((x) => x.voiceURI === currentVoiceURI);
-        if (v) u.voice = v;
+        if (v) { u.voice = v; usedVoice = true; }
       }
+      // 选中的嗓音播不出 → 自动回退系统默认，并清掉坏的持久化选择
+      u.onerror = () => {
+        if (!usedVoice) return;
+        try { localStorage.removeItem("hy_voice_uri"); } catch (e) {}
+        currentVoiceURI = "";
+        try {
+          const fb = new SpeechSynthesisUtterance(text);
+          fb.lang = lang || "en-US"; fb.rate = 0.96;
+          window.speechSynthesis.speak(fb);
+        } catch (e) {}
+      };
       window.speechSynthesis.speak(u);
     } catch (e) {}
   }
