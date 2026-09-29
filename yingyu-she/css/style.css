@@ -576,3 +576,120 @@ img { max-width: 100%; display: block; }
   .weak-card { flex-direction: column; gap: 12px; }
   .wc-actions { flex-direction: row; flex-wrap: wrap; }
 }
+
+/* ===== 语法精讲 / 句子讲解 ===== */
+/* 高亮讲解里的关键词 */
+.tg { color: var(--green-d); font-weight: 800; padding: 0 4px; border-radius: 5px; background: rgba(24,180,107,.10); font-family: "SF Mono", Consolas, monospace; font-size: .95em; }
+
+/* 题目下方的讲解条（默认收起） */
+.tipbox {
+  margin-top: 14px; border-radius: 16px; overflow: hidden;
+  background: linear-gradient(135deg, rgba(120,190,255,.10), rgba(24,180,107,.07));
+  border: 1px solid rgba(24,180,107,.18);
+  backdrop-filter: blur(6px);
+  transition: border-color .25s, box-shadow .25s;
+}
+.tipbox:hover { border-color: rgba(24,180,107,.34); }
+.tipbox.open { border-color: rgba(24,180,107,.34); box-shadow: 0 8px 24px rgba(24,180,107,.08); }
+.tip-head {
+  width: 100%; display: flex; align-items: center; gap: 8px;
+  padding: 11px 16px; background: transparent; border: none; cursor: pointer;
+  font-family: inherit; font-size: 13.5px; font-weight: 700; color: var(--ink-2); text-align: left;
+}
+.tip-head .tip-ico { font-size: 15px; filter: drop-shadow(0 0 6px rgba(24,180,107,.35)); }
+.tip-head .tip-title { flex: 1; }
+.tip-head .tip-chev { color: var(--ink-3); font-size: 12px; transition: transform .25s; }
+.tipbox.open .tip-head .tip-chev { transform: rotate(180deg); }
+.tip-body {
+  max-height: 0; opacity: 0; overflow: hidden;
+  transition: max-height .34s ease, opacity .28s ease, padding .28s ease;
+  padding: 0 16px;
+}
+.tipbox.open .tip-body { max-height: 460px; opacity: 1; padding: 0 16px 14px; }
+.tip-body p {
+  margin: 0; font-size: 14px; line-height: 1.85; color: var(--ink);
+  padding: 12px 14px; border-radius: 12px;
+  background: rgba(255,255,255,.62); border: 1px solid rgba(232,236,241,.85);
+}
+
+/* 练习页：本课语法精讲抽屉 + 自动展开开关 */
+.study-bar { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; margin: -6px 0 16px; }
+.study-bar .chip { font-size: 13px; padding: 7px 14px; }
+.study-bar .chip.on { background: var(--green-l); border-color: rgba(24,180,107,.45); color: var(--green-d); font-weight: 700; }
+.tip-switch { display: inline-flex; align-items: center; gap: 7px; font-size: 13px; color: var(--ink-2); cursor: pointer; user-select: none; }
+.tip-switch input { width: 15px; height: 15px; accent-color: var(--green); cursor: pointer; }
+.gpanel {
+  max-height: 0; opacity: 0; overflow: hidden;
+  transition: max-height .4s ease, opacity .3s ease, margin .3s ease;
+  margin: 0;
+}
+.gpanel.open { max-height: 2400px; opacity: 1; margin: 0 0 20px; }
+
+/* 语法点卡片 */
+.grammar-list { display: grid; gap: 12px; }
+.gcard {
+  background: var(--card); border: 1px solid var(--line); border-radius: 18px;
+  padding: 15px 18px; box-shadow: var(--shadow-s); animation: qboxIn .32s ease;
+}
+.gcard .gc-head { display: flex; align-items: center; gap: 9px; }
+.gcard .gc-no {
+  width: 22px; height: 22px; border-radius: 50%; flex-shrink: 0;
+  background: linear-gradient(135deg, #18b46b, #2bd07f); color: #fff;
+  font-size: 12px; font-weight: 800; display: grid; place-items: center;
+}
+.gcard .gc-t { font-size: 15px; font-weight: 800; color: var(--ink); }
+.gcard .gc-f {
+  margin-top: 9px; padding: 8px 12px; border-radius: 11px;
+  background: rgba(24,180,107,.07); border: 1px dashed rgba(24,180,107,.3);
+  font-family: "SF Mono", Consolas, monospace; font-size: 13px; color: var(--green-d); font-weight: 600;
+}
+.gcard .gc-flb, .gcard .gc-elb {
+  display: inline-block; margin-right: 8px; padding: 1px 7px; border-radius: 6px;
+  font-family: inherit; font-size: 11px; font-weight: 700;
+  background: rgba(24,180,107,.14); color: var(--green-d);
+}
+.gcard .gc-z { margin-top: 9px; font-size: 13.5px; line-height: 1.8; color: var(--ink-2); }
+.gcard .gc-e { margin-top: 9px; font-size: 13px; color: var(--ink-3); display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.gcard .gc-e em { font-style: normal; color: var(--ink); font-family: "SF Mono", Consolas, monospace; font-weight: 600; }
+.gcard .gc-e .speak-btn.sm { margin: 0; animation: none; }
+
+/* 课程详情页：句子行内讲解 */
+.lesson-list li.has-tip { flex-wrap: wrap; }
+.lesson-list .tip-dot {
+  flex-shrink: 0; width: 26px; height: 26px; border-radius: 50%;
+  background: rgba(24,180,107,.09); border: 1px solid rgba(24,180,107,.28);
+  cursor: pointer; font-size: 12px; line-height: 1; padding: 0;
+  transition: .2s;
+}
+.lesson-list .tip-dot:hover { background: var(--green-l); transform: translateY(-1px); }
+.lesson-list li.tip-open .tip-dot { background: var(--green-l); border-color: rgba(24,180,107,.5); }
+.lesson-list .row-tip {
+  flex-basis: 100%; max-height: 0; opacity: 0; overflow: hidden;
+  transition: max-height .3s ease, opacity .25s ease, padding .25s ease;
+  font-size: 13px; line-height: 1.8; color: var(--ink-2); padding: 0 12px;
+}
+.lesson-list li.tip-open .row-tip {
+  max-height: 320px; opacity: 1; padding: 10px 12px; margin-top: 8px;
+  border-radius: 11px; background: rgba(24,180,107,.06); border: 1px solid rgba(24,180,107,.16);
+}
+
+/* 单词注解 */
+.word-list .wchip { flex-wrap: wrap; }
+.word-list .wnote { flex-basis: 100%; font-size: 12px; color: var(--ink-3); margin-top: 6px; line-height: 1.65; }
+
+/* 易错本卡片里的讲解 */
+.wc-tip {
+  margin-top: 10px; padding: 9px 12px; border-radius: 11px;
+  background: linear-gradient(135deg, rgba(120,190,255,.09), rgba(24,180,107,.06));
+  border: 1px solid rgba(24,180,107,.16);
+  font-size: 13px; line-height: 1.8; color: var(--ink-2);
+  display: flex; gap: 8px; align-items: flex-start;
+}
+.wc-tip .wc-tip-ico { flex-shrink: 0; font-size: 13px; }
+.wc-tip .wc-tip-tx { min-width: 0; }
+
+@media (max-width: 700px) {
+  .lesson-list .len { font-size: 12px; }
+  .study-bar { gap: 10px; }
+  .gcard { padding: 13px 14px; }
+}

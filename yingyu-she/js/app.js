@@ -252,6 +252,73 @@
       </div>`;
   }
 
+  // ---------- 语法精讲（讲解数据在 grammar.js）----------
+  const gdata = (id) => (typeof GRAMMAR !== "undefined" && GRAMMAR[id]) || {};
+  const gnotesOf = (id) => gdata(id).grammar || [];
+  const tipOf = (id, en) => (gdata(id).tips || {})[en] || "";
+  const wordNoteOf = (id, en) => (gdata(id).words || {})[en] || "";
+
+  // 讲解文本里用反引号包住的关键词 → 高亮
+  function richTip(t) {
+    return esc(t).replace(/`([^`]+)`/g, '<b class="tg">$1</b>');
+  }
+  // 取一道题的讲解：单词模式看单词注解，句子模式看语法讲解
+  function learnText(courseId, en, isWord) {
+    if (isWord) {
+      const w = wordNoteOf(courseId, en);
+      return w ? "`" + en + "` " + w : "";
+    }
+    return tipOf(courseId, en);
+  }
+  // 「讲解自动展开」开关（默认开，记在本地）
+  let TIPAUTO = (() => { try { return localStorage.getItem("hy_tip_auto") !== "0"; } catch (e) { return true; } })();
+  function setTipAuto(v) { TIPAUTO = !!v; try { localStorage.setItem("hy_tip_auto", v ? "1" : "0"); } catch (e) {} }
+
+  function tipBlockHTML(text, label) {
+    if (!text) return "";
+    return `<div class="tipbox" id="tipbox">
+      <button class="tip-head" id="tipToggle" type="button">
+        <span class="tip-ico">💡</span><span class="tip-title">${esc(label || "讲讲这句的语法")}</span><span class="tip-chev">▾</span>
+      </button>
+      <div class="tip-body"><p>${richTip(text)}</p></div>
+    </div>`;
+  }
+  function bindTip(root) {
+    const box = (root || app).querySelector("#tipbox");
+    if (!box) return;
+    const head = box.querySelector("#tipToggle");
+    if (head) head.addEventListener("click", () => box.classList.toggle("open"));
+  }
+  function openTip(root, delay) {
+    if (!TIPAUTO) return;
+    const doIt = () => {
+      const box = (root || app).querySelector("#tipbox");
+      if (box) box.classList.add("open");
+    };
+    if (delay) setTimeout(doIt, delay); else doIt();
+  }
+  // 本课语法精讲面板（课程详情页与练习页共用）
+  function grammarCardsHTML(courseId) {
+    const ns = gnotesOf(courseId);
+    if (!ns.length) return "";
+    return ns
+      .map(
+        (n, i) => `
+      <div class="gcard">
+        <div class="gc-head"><span class="gc-no">${i + 1}</span><span class="gc-t">${esc(n.t)}</span></div>
+        <div class="gc-f"><span class="gc-flb">结构</span>${esc(n.f)}</div>
+        <div class="gc-z">${esc(n.z)}</div>
+        <div class="gc-e"><span class="gc-elb">例</span><em>${esc(n.e)}</em><button class="speak-btn sm" data-en="${esc(n.e)}">🔊</button></div>
+      </div>`
+      )
+      .join("");
+  }
+  function bindGrammarSpeak(root) {
+    (root || app).querySelectorAll(".gcard .speak-btn.sm").forEach((b) =>
+      b.addEventListener("click", () => speak(b.dataset.en))
+    );
+  }
+
   // ---------- 课程详情页 ----------
   function renderCourseDetail() {
     const id = location.hash.replace("#/", "").split("/")[1];
@@ -261,11 +328,22 @@
     const total = c.lessons.length;
     const pct = Math.min(100, Math.round((done / total) * 100));
     const lessonRows = c.lessons
-      .map((l, i) => `<li><span class="ln">${i + 1}</span><span class="lzh">${esc(l.zh)}</span><span class="len">${esc(l.en)}</span><button class="speak-btn sm" data-en="${esc(l.en)}">🔊</button></li>`)
+      .map((l, i) => {
+        const tip = tipOf(c.id, l.en);
+        return `<li${tip ? ' class="has-tip"' : ""}><span class="ln">${i + 1}</span><span class="lzh">${esc(l.zh)}</span><span class="len">${esc(l.en)}</span><button class="speak-btn sm" data-en="${esc(l.en)}">🔊</button>${
+          tip ? `<button class="tip-dot" type="button" title="看这句的语法讲解">💡</button><div class="row-tip">${richTip(tip)}</div>` : ""
+        }</li>`;
+      })
       .join("");
     const wordRows = (c.words || [])
-      .map((w) => `<div class="wchip"><span class="wz">${esc(w.zh)}</span><span class="we">${esc(w.en)}</span><button class="speak-btn sm" data-en="${esc(w.en)}">🔊</button></div>`)
+      .map((w) => {
+        const note = wordNoteOf(c.id, w.en);
+        return `<div class="wchip"><span class="wz">${esc(w.zh)}</span><span class="we">${esc(w.en)}</span><button class="speak-btn sm" data-en="${esc(w.en)}">🔊</button>${
+          note ? `<span class="wnote">${esc(note)}</span>` : ""
+        }</div>`;
+      })
       .join("");
+    const gnotes = gnotesOf(c.id);
     app.innerHTML = `
       <a class="back-link" href="#/courses">← 返回课程广场</a>
       <div class="detail-head">
@@ -283,11 +361,18 @@
           </div>
         </div>
       </div>
+      ${gnotes.length ? `<div class="section-h"><span class="bar"></span>本课语法精讲（${gnotes.length}）</div><div class="grammar-list">${grammarCardsHTML(c.id)}</div>` : ""}
       <div class="section-h"><span class="bar"></span>句子清单（${total}）</div>
       <ul class="lesson-list">${lessonRows}</ul>
       ${wordRows ? `<div class="section-h"><span class="bar"></span>核心单词（${c.words.length}）</div><div class="word-list">${wordRows}</div>` : ""}
     `;
     app.querySelectorAll(".speak-btn.sm").forEach((b) => b.addEventListener("click", () => speak(b.dataset.en)));
+    app.querySelectorAll(".lesson-list .tip-dot").forEach((b) =>
+      b.addEventListener("click", () => {
+        const li = b.closest("li");
+        li.classList.toggle("tip-open");
+      })
+    );
   }
 
   // ---------- 练习页 ----------
@@ -454,6 +539,11 @@
       <div class="page-title">开始练习</div>
       <div class="page-sub">答对就有经验、有连击、有爽感 —— 连对越多，音效越亮、彩带越多。</div>
       <div class="voice-bar"><span class="voice-label">🔊 发音嗓音</span><select id="voiceSel" class="voice-sel"></select></div>
+      <div class="study-bar">
+        <button class="chip" id="gBtn" type="button">📖 本课语法精讲（${gnotesOf(pstate.courseId).length}）</button>
+        <label class="tip-switch"><input type="checkbox" id="tipAuto"${TIPAUTO ? " checked" : ""} /><span>答完自动展开讲解</span></label>
+      </div>
+      <div class="gpanel" id="gpanel"><div class="grammar-list">${grammarCardsHTML(pstate.courseId)}</div></div>
       <div class="hud">
         <div class="hud-item combo"><span class="hud-ico">🔥</span><b id="hudCombo">0</b><span class="hud-lb">连击</span></div>
         <div class="hud-item"><span class="hud-ico">⭐</span><b id="hudXp">0</b><span class="hud-lb">本轮经验</span></div>
@@ -477,6 +567,17 @@
     resetSession();
     renderStage();
     bindVoiceSelect();
+    bindGrammarSpeak(app);
+    const gBtn = app.querySelector("#gBtn"), gPanel = app.querySelector("#gpanel");
+    if (gBtn && gPanel) gBtn.addEventListener("click", () => {
+      gPanel.classList.toggle("open");
+      gBtn.classList.toggle("on");
+    });
+    const ta = app.querySelector("#tipAuto");
+    if (ta) ta.addEventListener("change", () => {
+      setTipAuto(ta.checked);
+      toast(ta.checked ? "已开启：答完自动展开讲解" : "已关闭自动展开，可点 💡 随时查看");
+    });
     savePracticeMeta();
     const sb = document.getElementById("hudSound");
     if (sb) sb.addEventListener("click", () => {
@@ -490,6 +591,7 @@
     const isWord = pstate.mode === "word";
     const total = isWord ? (course.words || []).length : course.lessons.length;
     const stage = app.querySelector("#stage");
+    pstate.answered = false; // 每次重绘都是新题，避免上一题已作答的锁死状态被带过来
     stage.innerHTML = `
       <div class="mode-tabs">
         <button class="mode-tab ${pstate.mode === "type" ? "active" : ""}" data-mode="type">⌨️ 看中文敲英文</button>
@@ -522,6 +624,7 @@
       <div class="sentence-hint">把上面的中文翻译成英文，敲完按回车或点“提交”。</div>
       <input class="typing-input" id="ti" placeholder="Type the English sentence…" autocomplete="off" />
       <div class="feedback" id="fb"></div>
+      ${tipBlockHTML(learnText(course.id, item.en, false), "讲讲这句的语法")}
       <div style="margin-top:16px;display:flex;gap:12px;">
         <button class="btn-green" id="submit">提交</button>
         <button class="btn-ghost" id="skip">不会，看答案</button>
@@ -529,6 +632,7 @@
     const input = box.querySelector("#ti");
     setTimeout(() => input.focus(), 50);
     setTimeout(() => speak(item.en), 350);
+    bindTip(box);
     const submit = () => {
       if (pstate.answered) return;
       const val = input.value;
@@ -543,6 +647,7 @@
         Store.recordSentence(true); Store.addMinutes(1); Store.logPractice(course.id, "type", true);
         Store.recordWeak(course.id, course.title, "type", item.zh, item.en, true);
         award(true, input);
+        openTip(box, 420);
         setTimeout(() => nextSentence(course), 1150);
       } else {
         pstate.answered = false;
@@ -551,6 +656,7 @@
         speak("Try again");
         Store.recordWeak(course.id, course.title, "type", item.zh, item.en, false);
         award(false, input);
+        openTip(box, 260);
         setTimeout(() => { input.value = ""; input.classList.remove("err"); input.focus(); }, 620);
       }
     };
@@ -565,8 +671,11 @@
       Store.recordSentence(false); Store.addMinutes(1); Store.logPractice(course.id, "type", false);
       Store.recordWeak(course.id, course.title, "type", item.zh, item.en, false);
       breakCombo();
+      openTip(box);
       const n = document.createElement("button"); n.className = "btn-green"; n.style.marginTop = "14px";
-      n.textContent = "下一句 →"; n.addEventListener("click", () => nextSentence(course)); box.appendChild(n);
+      n.textContent = "下一句 →"; n.addEventListener("click", () => nextSentence(course));
+      const tipEl = box.querySelector("#tipbox");
+      if (tipEl) box.insertBefore(n, tipEl); else box.appendChild(n);
     });
   }
   function renderSentence(box, course) {
@@ -582,12 +691,14 @@
         ${shuffled.map((w, i) => `<button class="word-chip" data-w="${esc(w)}" data-i="${i}">${esc(w)}</button>`).join("")}
       </div>
       <div class="feedback" id="fb"></div>
+      ${tipBlockHTML(learnText(course.id, item.en, false), "讲讲这句的语法")}
       <div style="margin-top:8px;display:flex;gap:12px;">
         <button class="btn-green" id="submit">提交</button>
         <button class="btn-ghost" id="clear">清空</button>
       </div>`;
     const slots = box.querySelector("#slots");
     const bank = box.querySelector("#bank");
+    bindTip(box);
     let chosen = [];
     const pick = (w, btn) => {
       if (pstate.answered) return;
@@ -615,6 +726,7 @@
         Store.recordSentence(true); Store.recordWord(true); Store.addMinutes(1); Store.logPractice(course.id, "sentence", true);
         Store.recordWeak(course.id, course.title, "sentence", item.zh, item.en, true);
         award(true, slots);
+        openTip(box, 420);
         setTimeout(() => nextSentence(course), 1150);
       } else {
         pstate.answered = false;
@@ -623,6 +735,7 @@
         speak("Try again");
         Store.recordWeak(course.id, course.title, "sentence", item.zh, item.en, false);
         award(false, slots);
+        openTip(box, 260);
         clear();
       }
     });
@@ -648,6 +761,7 @@
       <div class="sentence-hint">根据中文释义，拼写出对应的英文单词。</div>
       <input class="typing-input" id="ti" placeholder="Type the English word…" autocomplete="off" />
       <div class="feedback" id="fb"></div>
+      ${tipBlockHTML(learnText(course.id, item.en, true), "这个单词怎么用")}
       <div style="margin-top:16px;display:flex;gap:12px;">
         <button class="btn-green" id="submit">提交</button>
         <button class="btn-ghost" id="skip">看答案</button>
@@ -655,6 +769,7 @@
     const input = box.querySelector("#ti");
     setTimeout(() => input.focus(), 50);
     setTimeout(() => speak(item.en), 350);
+    bindTip(box);
     const submit = () => {
       if (pstate.answered) return;
       const val = input.value;
@@ -669,6 +784,7 @@
         Store.recordWord(true); Store.addMinutes(1); Store.logPractice(course.id, "word", true);
         Store.recordWeak(course.id, course.title, "word", item.zh, item.en, true);
         award(true, input);
+        openTip(box, 420);
         setTimeout(() => nextWord(course), 1150);
       } else {
         pstate.answered = false;
@@ -677,6 +793,7 @@
         speak("Try again");
         Store.recordWeak(course.id, course.title, "word", item.zh, item.en, false);
         award(false, input);
+        openTip(box, 260);
         setTimeout(() => { input.value = ""; input.classList.remove("err"); input.focus(); }, 620);
       }
     };
@@ -691,8 +808,11 @@
       Store.recordWord(false); Store.addMinutes(1); Store.logPractice(course.id, "word", false);
       Store.recordWeak(course.id, course.title, "word", item.zh, item.en, false);
       breakCombo();
+      openTip(box);
       const n = document.createElement("button"); n.className = "btn-green"; n.style.marginTop = "14px";
-      n.textContent = "下一个 →"; n.addEventListener("click", () => nextWord(course)); box.appendChild(n);
+      n.textContent = "下一个 →"; n.addEventListener("click", () => nextWord(course));
+      const tipEl = box.querySelector("#tipbox");
+      if (tipEl) box.insertBefore(n, tipEl); else box.appendChild(n);
     });
   }
   function nextWord(course) {
@@ -712,6 +832,7 @@
   const mcls = (t) => (t === "type" ? "m-type" : t === "sentence" ? "m-sentence" : "m-word");
 
   function weakCardHTML(e, mastered) {
+    const learn = learnText(e.courseId, e.en, e.type === "word");
     return `
       <div class="weak-card ${mastered ? "mastered" : ""}" data-key="${esc(e.key)}" data-zh="${esc(e.zh)}" data-en="${esc(e.en)}">
         <div class="wc-main">
@@ -722,6 +843,7 @@
             <span class="wc-course">${esc(e.courseTitle || "")}</span>
           </div>
           <div class="wc-counts">错 <b>${e.wrong}</b> · 对 <b>${e.right}</b>${e.lastWrong ? ` · 最近错 ${e.lastWrong}` : ""}${mastered ? " · ✅ 已掌握" : ""}</div>
+          ${learn ? `<div class="wc-tip"><span class="wc-tip-ico">💡</span><span class="wc-tip-tx">${richTip(learn)}</span></div>` : ""}
         </div>
         <div class="wc-actions">
           ${mastered
@@ -876,6 +998,7 @@
       <div class="sentence-hint">把上面的中文翻译成英文，敲完按回车或点“提交”。</div>
       <input class="typing-input" id="ti" placeholder="Type the English sentence…" autocomplete="off" />
       <div class="feedback" id="fb"></div>
+      ${tipBlockHTML(learnText(item.courseId, item.en, false), "讲讲这句的语法")}
       <div style="margin-top:16px;display:flex;gap:12px;flex-wrap:wrap">
         <button class="btn-green" id="submit">提交</button>
         <button class="btn-ghost" id="skip">不会，看答案</button>
@@ -884,6 +1007,7 @@
     const input = box.querySelector("#ti");
     setTimeout(() => input.focus(), 50);
     setTimeout(() => speak(item.en), 350);
+    bindTip(box);
     let locked = false;
     const submit = () => {
       if (locked) return;
@@ -898,12 +1022,14 @@
         speak("Correct!");
         Store.recordWeak(item.courseId, item.courseTitle, "type", item.zh, item.en, true);
         WK.done += 1;
+        openTip(box, 420);
         setTimeout(() => wkNext(), 1200);
       } else {
         input.classList.remove("ok"); input.classList.add("err");
         fb.className = "feedback err"; fb.textContent = "❌ 不对，再想想";
         speak("Try again");
         Store.recordWeak(item.courseId, item.courseTitle, "type", item.zh, item.en, false);
+        openTip(box, 260);
         setTimeout(() => { input.value = ""; input.classList.remove("err"); input.focus(); }, 600);
       }
     };
@@ -916,6 +1042,7 @@
       const fb = box.querySelector("#fb"); fb.className = "feedback ok"; fb.textContent = `答案：${item.en}`;
       speak(item.en);
       Store.recordWeak(item.courseId, item.courseTitle, "type", item.zh, item.en, false);
+      openTip(box);
       addWeakNextBtn(box);
     });
     box.querySelector("#master").addEventListener("click", () => {
@@ -936,6 +1063,7 @@
         ${shuffled.map((w, i) => `<button class="word-chip" data-w="${esc(w)}" data-i="${i}">${esc(w)}</button>`).join("")}
       </div>
       <div class="feedback" id="fb"></div>
+      ${tipBlockHTML(learnText(item.courseId, item.en, false), "讲讲这句的语法")}
       <div style="margin-top:8px;display:flex;gap:12px;flex-wrap:wrap">
         <button class="btn-green" id="submit">提交</button>
         <button class="btn-ghost" id="clear">清空</button>
@@ -943,6 +1071,7 @@
       </div>`;
     const slots = box.querySelector("#slots");
     const bank = box.querySelector("#bank");
+    bindTip(box);
     let chosen = [];
     const pick = (w, btn) => {
       chosen.push(w); btn.classList.add("used");
@@ -965,11 +1094,13 @@
         speak("Correct!");
         Store.recordWeak(item.courseId, item.courseTitle, "sentence", item.zh, item.en, true);
         WK.done += 1;
+        openTip(box, 420);
         setTimeout(() => wkNext(), 1200);
       } else {
         fb.className = "feedback err"; fb.textContent = "❌ 不对，再试试";
         speak("Try again");
         Store.recordWeak(item.courseId, item.courseTitle, "sentence", item.zh, item.en, false);
+        openTip(box, 260);
         clear();
       }
     });
@@ -986,6 +1117,7 @@
       <div class="sentence-hint">根据中文释义，拼写出对应的英文单词。</div>
       <input class="typing-input" id="ti" placeholder="Type the English word…" autocomplete="off" />
       <div class="feedback" id="fb"></div>
+      ${tipBlockHTML(learnText(item.courseId, item.en, true), "这个单词怎么用")}
       <div style="margin-top:16px;display:flex;gap:12px;flex-wrap:wrap">
         <button class="btn-green" id="submit">提交</button>
         <button class="btn-ghost" id="skip">看答案</button>
@@ -994,6 +1126,7 @@
     const input = box.querySelector("#ti");
     setTimeout(() => input.focus(), 50);
     setTimeout(() => speak(item.en), 350);
+    bindTip(box);
     let locked = false;
     const submit = () => {
       if (locked) return;
@@ -1008,12 +1141,14 @@
         speak("Correct!");
         Store.recordWeak(item.courseId, item.courseTitle, "word", item.zh, item.en, true);
         WK.done += 1;
+        openTip(box, 420);
         setTimeout(() => wkNext(), 1200);
       } else {
         input.classList.remove("ok"); input.classList.add("err");
         fb.className = "feedback err"; fb.textContent = "❌ 不对，再想想";
         speak("Try again");
         Store.recordWeak(item.courseId, item.courseTitle, "word", item.zh, item.en, false);
+        openTip(box, 260);
         setTimeout(() => { input.value = ""; input.classList.remove("err"); input.focus(); }, 600);
       }
     };
@@ -1026,6 +1161,7 @@
       const fb = box.querySelector("#fb"); fb.className = "feedback ok"; fb.textContent = `答案：${item.en}`;
       speak(item.en);
       Store.recordWeak(item.courseId, item.courseTitle, "word", item.zh, item.en, false);
+      openTip(box);
       addWeakNextBtn(box);
     });
     box.querySelector("#master").addEventListener("click", () => {
