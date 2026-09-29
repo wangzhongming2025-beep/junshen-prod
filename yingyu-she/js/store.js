@@ -182,6 +182,27 @@ const Store = (() => {
       return { name: cur.name, icon: cur.icon, total, next };
     },
 
+    // 段位 / 称号（基于累计经验 XP，参照游戏化对战体系）
+    getRank() {
+      const xp = state.stats.xp || 0;
+      const tiers = [
+        { min: 0, title: "新秀", icon: "🌱" },
+        { min: 200, title: "先锋", icon: "⚡" },
+        { min: 600, title: "精英", icon: "🔥" },
+        { min: 1500, title: "专家", icon: "💎" },
+        { min: 4000, title: "大师", icon: "👑" },
+        { min: 9000, title: "宗师", icon: "🏆" },
+      ];
+      let cur = tiers[0];
+      for (const t of tiers) if (xp >= t.min) cur = t;
+      const idx = tiers.indexOf(cur);
+      const next = tiers[idx + 1] || null;
+      const lo = cur.min;
+      const hi = next ? next.min : cur.min;
+      const percent = next ? Math.min(100, Math.round(((xp - lo) / (hi - lo)) * 100)) : 100;
+      return { title: cur.title, icon: cur.icon, xp, idx, next, percent, total: tiers.length };
+    },
+
     // 连续打卡勋章
     getBadges() {
       const max = state.checkin.max;

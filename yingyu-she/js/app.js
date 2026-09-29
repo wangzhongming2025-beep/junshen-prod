@@ -95,6 +95,7 @@
     courses: renderCourses,
     course: renderCourseDetail,
     practice: renderPractice,
+    challenge: renderChallenge,
     weak: renderWeakBook,
     weakPractice: renderWeakReview,
     leaderboard: renderLeaderboard,
@@ -103,6 +104,7 @@
   };
   let statRange = "total";
   function route() {
+    if (window.__challengeCleanup) { try { window.__challengeCleanup(); } catch (e) {} window.__challengeCleanup = null; }
     const full = location.hash.replace("#/", "") || "home";
     const parts = full.split("/");
     const r = parts[0];
@@ -138,6 +140,7 @@
     const s = Store.getStats();
     const c = Store.getCheckin();
     const lvl = Store.getLevel();
+    const rank = Store.getRank();
     const goal = Store.getTodayGoal();
     const badges = Store.getBadges();
     const ciDots = c.calendar
@@ -160,11 +163,22 @@
         </div>
       </section>
 
-      <div class="grow-row">
-        <div class="grow-level">${lvl.icon} <b>${lvl.name}</b>${lvl.next ? `<span class="grow-next">距「${lvl.next.name}」还差 ${lvl.next.min - lvl.total}</span>` : `<span class="grow-next">已封顶 🎉</span>`}</div>
-        <div class="grow-goal">
-          <div class="grow-goal-top"><span>今日目标 ${goal.goal} 句</span><span>${goal.done}/${goal.goal}</span></div>
-          <div class="goal-bar"><div class="goal-bar-fill" style="width:${goal.percent}%"></div></div>
+      <div class="rank-card">
+        <div class="rank-main">
+          <div class="rank-ico">${rank.icon}</div>
+          <div class="rank-meta">
+            <div class="rank-title">${rank.title}<span class="rank-sub">当前段位</span></div>
+            <div class="rank-xp">⚡ ${fmt(rank.xp)} XP · 📅 今日 ${goal.done}/${goal.goal} 句</div>
+          </div>
+          <div class="rank-score">
+            <div class="rank-best">🔥 最高连击 ${fmt(Store.getBestCombo())}</div>
+            <a class="rank-challenge" href="#/challenge">⚔️ 竞技挑战</a>
+          </div>
+        </div>
+        <div class="rank-prog">
+          <div class="rank-prog-top"><span>${rank.idx + 1}/${rank.total} · ${rank.title}</span><span>${rank.next ? `下一档：${rank.next.icon} ${rank.next.title}` : "已封顶"}</span></div>
+          <div class="rank-bar"><div class="rank-bar-fill" style="width:${rank.percent}%"></div></div>
+          <div class="rank-prog-bottom">${rank.next ? `还需 ${fmt(rank.next.min - rank.xp)} XP 晋级` : "满级 🏆"}</div>
         </div>
       </div>
       <div class="badge-row">
@@ -531,6 +545,143 @@
     stage.querySelector("#reWeak").addEventListener("click", () => { location.hash = "#/weak"; });
     const fill = document.getElementById("pbarFill");
     if (fill) fill.style.width = "100%";
+  }
+
+  // ---------- 竞技挑战（单人对战 AI 对手，限时连击抢分）----------
+  function renderChallenge() {
+    if (window.__challengeCleanup) { try { window.__challengeCleanup(); } catch (e) {} window.__challengeCleanup = null; }
+    const POOL = COURSES.flatMap((c) => (c.lessons || []).map((l) => ({ zh: l.zh, en: l.en, courseId: c.id, courseTitle: c.title })));
+    const ch = { timeLeft: 60, my: 0, rival: 0, combo: 0, best: 0, correct: 0, wrong: 0, item: null, locked: false };
+    let tTimer = null, rTimer = null;
+
+    function comboMult() { return 1 + Math.min(Math.max(ch.combo - 1, 0), 5) * 0.2; }
+    function nextQ() {
+      ch.item = POOL[Math.floor(Math.random() * POOL.length)];
+      ch.locked = false;
+      const zh = document.getElementById("chZh"); if (zh) zh.textContent = ch.item.zh;
+      const inp = document.getElementById("chInput"); if (inp) { inp.value = ""; inp.classList.remove("ok", "err"); setTimeout(() => inp.focus(), 30); }
+      const fb = document.getElementById("chFb"); if (fb) { fb.textContent = ""; fb.className = "feedback"; }
+    }
+    function refreshTop() {
+      const t = document.getElementById("chTime"); if (t) t.textContent = ch.timeLeft;
+      const m = document.getElementById("chMy"); if (m) m.textContent = ch.my;
+      const r = document.getElementById("chRival"); if (r) r.textContent = ch.rival;
+    }
+    function updateProgress() {
+      const f = document.getElementById("chProg"); if (f) f.style.width = (100 - (ch.timeLeft / 60) * 100) + "%";
+    }
+    function submit() {
+      if (ch.locked || !ch.item) return;
+      const inp = document.getElementById("chInput");
+      const val = inp ? inp.value : "";
+      const fb = document.getElementById("chFb");
+      if (!val.trim()) { toast("先写点英文再提交"); return; }
+      const ok = normalize(val) === normalize(ch.item.en);
+      const anchor = document.getElementById("chInput");
+      ch.locked = true;
+      if (ok) {
+        ch.correct += 1; ch.combo += 1; if (ch.combo > ch.best) ch.best = ch.combo;
+        const pts = Math.round(10 * comboMult());
+        ch.my += pts; Store.addXp(pts); Store.bumpCombo(ch.best);
+        FX.Sound.correct(ch.combo);
+        FX.floatText(anchor, "+" + pts + (ch.combo > 1 ? "  🔥x" + ch.combo : ""));
+        FX.burstAt(anchor, { count: 12 + Math.min(ch.combo, 8) * 3 });
+        FX.pulse(anchor, "reward-pop");
+        if (fb) { fb.className = "feedback ok"; fb.textContent = "✅ " + praise(); }
+        if (MILESTONES.indexOf(ch.combo) >= 0) { FX.Sound.milestone(); FX.confetti(70 + ch.combo * 2); toast("🔥 连击 x" + ch.combo + "！手感爆棚"); }
+        refreshTop();
+        if (ch.timeLeft > 0) setTimeout(nextQ, 520);
+      } else {
+        ch.wrong += 1; ch.combo = 0; ch.rival += 8;
+        FX.Sound.wrong(); FX.pulse(anchor, "reward-shake");
+        if (fb) { fb.className = "feedback err"; fb.textContent = wrongHint(val, ch.item.en); }
+        refreshTop();
+        if (ch.timeLeft > 0) setTimeout(nextQ, 560);
+      }
+    }
+    function skip() {
+      if (ch.locked || !ch.item) return;
+      ch.combo = 0; ch.rival += 5;
+      const fb = document.getElementById("chFb");
+      if (fb) { fb.className = "feedback err"; fb.textContent = "⏭ 跳过，正确答案：" + ch.item.en; }
+      ch.locked = true; refreshTop();
+      if (ch.timeLeft > 0) setTimeout(nextQ, 560);
+    }
+    function end() {
+      if (window.__challengeCleanup) { window.__challengeCleanup(); window.__challengeCleanup = null; }
+      const win = ch.my > ch.rival, draw = ch.my === ch.rival;
+      const acc = (ch.correct + ch.wrong) ? Math.round((ch.correct / (ch.correct + ch.wrong)) * 100) : 0;
+      const bless = win ? "干得漂亮，这把对手被你按在地上摩擦！" : draw ? "势均力敌，再来一局分胜负！" : "对手这局更快，找找节奏再来！";
+      FX.Sound.finish(); if (win) FX.confetti(160);
+      const stage = document.getElementById("chStage");
+      if (stage) {
+        stage.innerHTML = `
+          <div class="round-end">
+            <div class="re-emoji">${win ? "🏆" : draw ? "🤝" : "😤"}</div>
+            <div class="re-title">${win ? "挑战胜利！" : draw ? "平局！" : "惜败，再来一局"}</div>
+            <div class="re-bless">${esc(bless)}</div>
+            <div class="re-stats">
+              <div class="re-stat"><b>${ch.correct}</b><span>答对</span></div>
+              <div class="re-stat"><b>${ch.best}</b><span>最高连击</span></div>
+              <div class="re-stat hl"><b>${ch.my}</b><span>我的得分</span></div>
+              <div class="re-stat"><b>${ch.rival}</b><span>对手得分</span></div>
+            </div>
+            <div class="re-actions">
+              <button class="btn-green" id="chAgain">🔁 再来一局</button>
+              <button class="btn-ghost" id="chHome">🏠 返回首页</button>
+            </div>
+          </div>`;
+        stage.querySelector("#chAgain").addEventListener("click", renderChallenge);
+        stage.querySelector("#chHome").addEventListener("click", () => { location.hash = "#/home"; });
+      }
+    }
+    function stop() { if (tTimer) clearInterval(tTimer); if (rTimer) clearInterval(rTimer); tTimer = rTimer = null; }
+    window.__challengeCleanup = stop;
+
+    app.innerHTML = `
+      <section class="challenge-wrap">
+        <div class="ch-top">
+          <div class="ch-timer">⏱ <b id="chTime">60</b>s</div>
+          <div class="ch-scores">
+            <div class="ch-side me"><span>你</span><b id="chMy">0</b></div>
+            <div class="ch-vs">VS</div>
+            <div class="ch-side rival"><span>🤖 对手</span><b id="chRival">0</b></div>
+          </div>
+          <button class="ch-quit" id="chQuit" title="退出">✕</button>
+        </div>
+        <div class="ch-progress"><div class="ch-progress-fill" id="chProg"></div></div>
+        <div class="practice-stage" id="chStage">
+          <div class="sentence-zh" id="chZh">准备中…</div>
+          <button class="speak-btn" id="chSpeak" type="button">🔊 听发音</button>
+          <div class="sentence-hint">看中文敲英文，越快越准分越高！连击翻倍得分。</div>
+          <input class="typing-input" id="chInput" placeholder="Type the English sentence…" autocomplete="off" />
+          <div class="feedback" id="chFb"></div>
+          <div style="margin-top:16px;display:flex;gap:12px;">
+            <button class="btn-green" id="chSubmit">提交</button>
+            <button class="btn-ghost" id="chSkip">跳过</button>
+          </div>
+        </div>
+      </section>`;
+
+    document.getElementById("chSubmit").addEventListener("click", submit);
+    document.getElementById("chSkip").addEventListener("click", skip);
+    document.getElementById("chQuit").addEventListener("click", () => { stop(); location.hash = "#/home"; });
+    const inp = document.getElementById("chInput");
+    inp.addEventListener("keydown", (e) => { if (e.key === "Enter") submit(); });
+    document.getElementById("chSpeak").addEventListener("click", () => { if (ch.item) speak(ch.item.en); });
+
+    nextQ();
+    refreshTop();
+    tTimer = setInterval(() => {
+      ch.timeLeft -= 1;
+      refreshTop(); updateProgress();
+      if (ch.timeLeft <= 0) { stop(); end(); }
+    }, 1000);
+    rTimer = setInterval(() => {
+      if (ch.timeLeft <= 0) return;
+      ch.rival += 6 + Math.floor(Math.random() * 14);
+      refreshTop();
+    }, 1900);
   }
   function renderPractice() {
     const idFromHash = location.hash.replace("#/", "").split("/")[1];
