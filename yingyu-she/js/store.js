@@ -21,6 +21,7 @@ const Store = (() => {
     },
     journal: [],
     practiceLog: [],
+    weakBook: {}, // 易错本：key -> {key,courseId,courseTitle,type,zh,en,wrong,right,lastWrong,lastRight,mastered,createdAt}
     vip: false,
     redeemedCodes: [],
   });
@@ -50,6 +51,10 @@ const Store = (() => {
     const d = new Date();
     return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
   };
+
+  // 规范化英文文本，用于生成稳定 key（去标点、转小写、压空格）
+  const normalizeGlobal = (s) =>
+    String(s || "").trim().toLowerCase().replace(/[.,!?;:'"()]/g, "").replace(/\s+/g, " ");
 
   return {
     get: () => state,
@@ -193,6 +198,64 @@ const Store = (() => {
       save();
       return { ok: true, msg: "🎉 学习卡激活成功，会员权益已开通！" };
     },
+
+    // ---------- 易错本（自动记录记得好/记不好）----------
+    // key 由 课程 + 模式 + 英文 唯一确定；模式：type=看中文敲英文, sentence=拼句, word=单词闯关
+    _weakKey(courseId, type, en) {
+      return `${courseId}::${type}::${normalizeGlobal(en)}`;
+    },
+    // 每次作答后调用：correct=true 记对、false 记错
+    recordWeak(courseId, courseTitle, type, zh, en, correct) {
+      const key = this._weakKey(courseId, type, en);
+      const b = state.weakBook;
+      if (!b[key]) {
+        b[key] = {
+          key, courseId, courseTitle, type, zh, en,
+          wrong: 0, right: 0, lastWrong: null, lastRight: null,
+          mastered: false, createdAt: todayStr(),
+        };
+      }
+      const e = b[key];
+      if (e.courseTitle !== courseTitle) e.courseTitle = courseTitle; // 标题更新兜底
+      if (correct) { e.right += 1; e.lastRight = todayStr(); }
+      else {
+        e.wrong += 1; e.lastWrong = todayStr();
+        if (e.mastered) e.mastered = false; // 已掌握后再次出错 → 重新回到待巩固
+      }
+      save();
+      return e;
+    },
+    // 待巩固列表（未掌握），按错得最多、最近错、对得最少排序
+    getWeakBook() {
+      return Object.values(state.weakBook)
+        .filter((e) => !e.mastered)
+        .sort((a, b) => b.wrong - a.wrong
+          || (b.lastWrong || "").localeCompare(a.lastWrong || "")
+          || a.right - b.right);
+    },
+    // 全部条目（含已掌握），用于「记得好」视图
+    getWeakAll() {
+      return Object.values(state.weakBook).map((e) => ({ ...e }));
+    },
+    getWeakStats() {
+      const all = Object.values(state.weakBook);
+      return {
+        weak: all.filter((e) => !e.mastered).length,
+        mastered: all.filter((e) => e.mastered).length,
+        total: all.length,
+      };
+    },
+    // 复习用：待巩固条目（不含已掌握），映射为题目
+    getWeakReviewItems() {
+      return this.getWeakBook().map((e) => ({
+        key: e.key, courseId: e.courseId, courseTitle: e.courseTitle,
+        type: e.type, zh: e.zh, en: e.en,
+      }));
+    },
+    markMastered(key) { if (state.weakBook[key]) { state.weakBook[key].mastered = true; save(); } },
+    unmarkMastered(key) { if (state.weakBook[key]) { state.weakBook[key].mastered = false; save(); } },
+    removeWeak(key) { delete state.weakBook[key]; save(); },
+    clearWeak() { state.weakBook = {}; save(); },
 
     reset() { state = defaultState(); save(); },
   };

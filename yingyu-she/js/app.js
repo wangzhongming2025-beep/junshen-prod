@@ -94,15 +94,21 @@
     courses: renderCourses,
     course: renderCourseDetail,
     practice: renderPractice,
+    weak: renderWeakBook,
+    weakPractice: renderWeakReview,
     leaderboard: renderLeaderboard,
     journal: renderJournal,
   };
   let statRange = "total";
   function route() {
-    const r = (location.hash.replace("#/", "") || "home").split("/")[0];
+    const full = location.hash.replace("#/", "") || "home";
+    const parts = full.split("/");
+    const r = parts[0];
     Object.values(nav.querySelectorAll("a")).forEach((a) => {
       a.classList.toggle("active", a.dataset.route === r);
     });
+    // 二级路由：#/weak/practice 走「只练易错」复习
+    if (r === "weak" && parts[1] === "practice") { routes.weakPractice(); return; }
     (routes[r] || renderHome)();
   }
   window.addEventListener("hashchange", route);
@@ -187,6 +193,7 @@
         <div class="stat-card" style="cursor:pointer" onclick="openCardModal()"><div class="n orange">¥365</div><div class="l">年卡</div><div class="sub">平均每天仅 ¥1</div></div>
         <div class="stat-card" style="cursor:pointer" onclick="openCardModal()"><div class="n green">¥1299</div><div class="l">永久卡</div><div class="sub">一次开通，终身可用</div></div>
       </div>`}
+      ${(() => { const w = Store.getWeakStats(); return w.weak ? `<div class="weak-banner">📒 你有 <b>${w.weak}</b> 个易错内容待巩固，<a href="#/weak">去易错本专项复习 →</a></div>` : ""; })()}
     `;
     app.querySelector("#homeCheckin").addEventListener("click", doCheckin);
     app.querySelectorAll(".tt").forEach((b) =>
@@ -374,12 +381,14 @@
         fb.className = "feedback ok"; fb.textContent = "✅ 正确！";
         speak("Correct!");
         Store.recordSentence(true); Store.addMinutes(1); Store.logPractice(course.id, "type", true);
+        Store.recordWeak(course.id, course.title, "type", item.zh, item.en, true);
         setTimeout(() => nextSentence(course), 1200);
       } else {
         pstate.answered = false;
         input.classList.remove("ok"); input.classList.add("err");
         fb.className = "feedback err"; fb.textContent = "❌ Try again";
         speak("Try again");
+        Store.recordWeak(course.id, course.title, "type", item.zh, item.en, false);
         setTimeout(() => { input.value = ""; input.classList.remove("err"); input.focus(); }, 600);
       }
     };
@@ -392,6 +401,7 @@
       const fb = box.querySelector("#fb"); fb.className = "feedback ok"; fb.textContent = `答案：${item.en}`;
       speak(item.en);
       Store.recordSentence(false); Store.addMinutes(1); Store.logPractice(course.id, "type", false);
+      Store.recordWeak(course.id, course.title, "type", item.zh, item.en, false);
       const n = document.createElement("button"); n.className = "btn-green"; n.style.marginTop = "14px";
       n.textContent = "下一句 →"; n.addEventListener("click", () => nextSentence(course)); box.appendChild(n);
     });
@@ -440,11 +450,13 @@
         fb.className = "feedback ok"; fb.textContent = "✅ 拼对啦！";
         speak("Correct!");
         Store.recordSentence(true); Store.recordWord(true); Store.addMinutes(1); Store.logPractice(course.id, "sentence", true);
+        Store.recordWeak(course.id, course.title, "sentence", item.zh, item.en, true);
         setTimeout(() => nextSentence(course), 1200);
       } else {
         pstate.answered = false;
         fb.className = "feedback err"; fb.textContent = "❌ Try again";
         speak("Try again");
+        Store.recordWeak(course.id, course.title, "sentence", item.zh, item.en, false);
         clear();
       }
     });
@@ -487,12 +499,14 @@
         fb.className = "feedback ok"; fb.textContent = "✅ 正确！";
         speak("Correct!");
         Store.recordWord(true); Store.addMinutes(1); Store.logPractice(course.id, "word", true);
+        Store.recordWeak(course.id, course.title, "word", item.zh, item.en, true);
         setTimeout(() => nextWord(course), 1200);
       } else {
         pstate.answered = false;
         input.classList.remove("ok"); input.classList.add("err");
         fb.className = "feedback err"; fb.textContent = "❌ Try again";
         speak("Try again");
+        Store.recordWeak(course.id, course.title, "word", item.zh, item.en, false);
         setTimeout(() => { input.value = ""; input.classList.remove("err"); input.focus(); }, 600);
       }
     };
@@ -505,6 +519,7 @@
       const fb = box.querySelector("#fb"); fb.className = "feedback ok"; fb.textContent = `答案：${item.en}`;
       speak(item.en);
       Store.recordWord(false); Store.addMinutes(1); Store.logPractice(course.id, "word", false);
+      Store.recordWeak(course.id, course.title, "word", item.zh, item.en, false);
       const n = document.createElement("button"); n.className = "btn-green"; n.style.marginTop = "14px";
       n.textContent = "下一个 →"; n.addEventListener("click", () => nextWord(course)); box.appendChild(n);
     });
@@ -516,6 +531,332 @@
     }
     setProg(pstate.courseId, pstate.mode, pstate.idx);
     renderStage();
+  }
+
+  // ---------- 易错本（自动记录记得好 / 记不好）----------
+  const modeLabel = (t) => (t === "type" ? "看中文敲英文" : t === "sentence" ? "拼句闯关" : "单词闯关");
+  const mcls = (t) => (t === "type" ? "m-type" : t === "sentence" ? "m-sentence" : "m-word");
+
+  function weakCardHTML(e, mastered) {
+    return `
+      <div class="weak-card ${mastered ? "mastered" : ""}" data-key="${esc(e.key)}" data-zh="${esc(e.zh)}" data-en="${esc(e.en)}">
+        <div class="wc-main">
+          <div class="wc-zh">${esc(e.zh)}</div>
+          <div class="wc-en">${esc(e.en)}<button class="speak-btn sm" data-en="${esc(e.en)}">🔊</button></div>
+          <div class="wc-meta">
+            <span class="mode-pill ${mcls(e.type)}">${modeLabel(e.type)}</span>
+            <span class="wc-course">${esc(e.courseTitle || "")}</span>
+          </div>
+          <div class="wc-counts">错 <b>${e.wrong}</b> · 对 <b>${e.right}</b>${e.lastWrong ? ` · 最近错 ${e.lastWrong}` : ""}${mastered ? " · ✅ 已掌握" : ""}</div>
+        </div>
+        <div class="wc-actions">
+          ${mastered
+            ? `<button class="chip wc-unmaster" data-key="${esc(e.key)}">↩ 打回复习</button>`
+            : `<button class="chip wc-master" data-key="${esc(e.key)}">✅ 标记已掌握</button>`}
+          <button class="chip wc-del" data-key="${esc(e.key)}">🗑 删除</button>
+        </div>
+      </div>`;
+  }
+
+  function bindWeakCards() {
+    app.querySelectorAll(".wc-master").forEach((b) =>
+      b.addEventListener("click", () => { Store.markMastered(b.dataset.key); toast("✅ 已标记掌握，移入「记得好」"); renderWeakBook(); })
+    );
+    app.querySelectorAll(".wc-unmaster").forEach((b) =>
+      b.addEventListener("click", () => { Store.unmarkMastered(b.dataset.key); toast("已打回复习，回到待巩固"); renderWeakBook(); })
+    );
+    app.querySelectorAll(".wc-del").forEach((b) =>
+      b.addEventListener("click", () => { Store.removeWeak(b.dataset.key); toast("已删除"); renderWeakBook(); })
+    );
+    app.querySelectorAll(".weak-card .speak-btn.sm").forEach((b) =>
+      b.addEventListener("click", () => speak(b.dataset.en))
+    );
+  }
+
+  function renderWeakBook() {
+    const stats = Store.getWeakStats();
+    const list = Store.getWeakBook();
+    const mastered = Store.getWeakAll().filter((e) => e.mastered);
+
+    app.innerHTML = `
+      <div class="page-title">📒 易错本</div>
+      <div class="page-sub">练习时答错的句子和单词会自动收进这里，按「错得最多」排序。可逐个标记已掌握，或进入「只练易错」专项攻克。</div>
+
+      <div class="weak-stats">
+        <div class="ws"><div class="n orange">${stats.weak}</div><div class="l">待巩固（记不好）</div></div>
+        <div class="ws"><div class="n green">${stats.mastered}</div><div class="l">已掌握（记得好）</div></div>
+        <div class="ws"><div class="n">${stats.total}</div><div class="l">累计收录</div></div>
+      </div>
+
+      <div class="weak-toolbar">
+        <button class="btn-green" id="weakReview">🎯 只练易错（${stats.weak}）</button>
+        ${stats.total ? `<button class="btn-ghost" id="weakClear">🗑 清空易错本</button>` : ""}
+      </div>
+
+      ${stats.weak
+        ? `<div class="weak-search"><input id="weakSearch" class="typing-input" placeholder="搜索中文 / 英文关键词…" style="font-size:15px" /></div>
+           <div class="weak-list">${list.map((e) => weakCardHTML(e, false)).join("")}</div>`
+        : `<div class="empty">🎉 目前没有易错内容。<br />去「开始练习」做几题，做错的会自动归类到这里。</div>`}
+
+      ${mastered.length
+        ? `<div class="section-h"><span class="bar"></span>已掌握 · 记得好（${mastered.length}）</div>
+           <div class="weak-list">${mastered.map((e) => weakCardHTML(e, true)).join("")}</div>`
+        : ""}
+    `;
+
+    const rb = app.querySelector("#weakReview");
+    if (rb) rb.addEventListener("click", startWeakReview);
+    const clr = app.querySelector("#weakClear");
+    if (clr) clr.addEventListener("click", () => {
+      if (window.confirm("确定清空整个易错本？已掌握的记录也会一并删除，且不可恢复。")) {
+        Store.clearWeak(); toast("易错本已清空"); renderWeakBook();
+      }
+    });
+    const search = app.querySelector("#weakSearch");
+    if (search) search.addEventListener("input", () => {
+      const q = search.value.trim().toLowerCase();
+      app.querySelectorAll(".weak-card").forEach((c) => {
+        const hay = ((c.dataset.zh || "") + " " + (c.dataset.en || "")).toLowerCase();
+        c.style.display = !q || hay.indexOf(q) >= 0 ? "" : "none";
+      });
+    });
+    bindWeakCards();
+  }
+
+  // ---------- 只练易错（专项复习）----------
+  const WK = { items: [], idx: 0, done: 0 };
+
+  function startWeakReview() {
+    const items = Store.getWeakReviewItems();
+    if (!items.length) { toast("暂无易错内容，去练几题吧～"); return; }
+    WK.items = items.slice(0, 30); WK.idx = 0; WK.done = 0;
+    location.hash = "#/weak/practice";
+  }
+
+  function wkNext() {
+    WK.idx += 1;
+    if (WK.idx >= WK.items.length) { renderWeakReviewDone(); return; }
+    renderWeakReview();
+  }
+  function addWeakNextBtn(box) {
+    const n = document.createElement("button");
+    n.className = "btn-green"; n.style.marginTop = "14px"; n.textContent = "下一题 →";
+    n.addEventListener("click", () => wkNext());
+    box.appendChild(n);
+  }
+
+  function renderWeakReviewDone() {
+    const remain = Store.getWeakStats().weak;
+    app.innerHTML = `
+      <div class="page-title">🎯 只练易错</div>
+      <div class="practice-wrap">
+        <section class="practice-stage">
+          <div class="weak-done">
+            <div class="wd-n">🎉 本轮复习完成</div>
+            <div class="wd-sub">本轮练了 <b>${WK.items.length}</b> 个易错点 · 答对巩固 <b>${WK.done}</b> 个<br />当前仍有 <b>${remain}</b> 个待巩固</div>
+            <div style="margin-top:20px;display:flex;gap:12px;flex-wrap:wrap">
+              <button class="btn-green" id="again">🔁 再练一轮</button>
+              <a class="btn-ghost" href="#/weak">返回易错本</a>
+            </div>
+          </div>
+        </section>
+      </div>`;
+    app.querySelector("#again").addEventListener("click", () => { WK.items = []; startWeakReview(); });
+  }
+
+  function renderWeakReview() {
+    if (!WK.items.length) {
+      const items = Store.getWeakReviewItems();
+      if (!items.length) {
+        app.innerHTML = `
+          <div class="page-title">🎯 只练易错</div>
+          <div class="empty">🎉 当前没有易错内容，去「开始练习」做几题再来复习吧。</div>
+          <div style="margin-top:16px"><a class="btn-green" href="#/practice">去练习 →</a></div>`;
+        return;
+      }
+      WK.items = items.slice(0, 30); WK.idx = 0; WK.done = 0;
+    }
+    const item = WK.items[WK.idx];
+    if (!item) { renderWeakReviewDone(); return; }
+    const total = WK.items.length;
+    app.innerHTML = `
+      <div class="page-title">🎯 只练易错</div>
+      <div class="page-sub">只练你记不好的内容，逐个攻克。</div>
+      <div class="practice-wrap">
+        <section class="practice-stage">
+          <div class="progress-line">易错复习 ${WK.idx + 1} / ${total} · 本次已巩固 ${WK.done}</div>
+          <div id="wkq"></div>
+        </section>
+      </div>`;
+    const box = app.querySelector("#wkq");
+    if (item.type === "type") weakRenderType(box, item);
+    else if (item.type === "sentence") weakRenderSentence(box, item);
+    else weakRenderWord(box, item);
+  }
+
+  // 复习题：看中文敲英文
+  function weakRenderType(box, item) {
+    box.innerHTML = `
+      <div class="sentence-zh">${esc(item.zh)}</div>
+      <button class="speak-btn" id="speak" type="button">🔊 听发音</button>
+      <div class="sentence-hint">把上面的中文翻译成英文，敲完按回车或点“提交”。</div>
+      <input class="typing-input" id="ti" placeholder="Type the English sentence…" autocomplete="off" />
+      <div class="feedback" id="fb"></div>
+      <div style="margin-top:16px;display:flex;gap:12px;flex-wrap:wrap">
+        <button class="btn-green" id="submit">提交</button>
+        <button class="btn-ghost" id="skip">不会，看答案</button>
+        <button class="chip wk-master" id="master">✅ 标记已掌握</button>
+      </div>`;
+    const input = box.querySelector("#ti");
+    setTimeout(() => input.focus(), 50);
+    setTimeout(() => speak(item.en), 350);
+    let locked = false;
+    const submit = () => {
+      if (locked) return;
+      const val = input.value;
+      if (!val.trim()) { toast("先写点英文再提交"); return; }
+      const correct = normalize(val) === normalize(item.en);
+      const fb = box.querySelector("#fb");
+      if (correct) {
+        locked = true;
+        input.classList.add("ok"); input.setAttribute("readonly", "true");
+        fb.className = "feedback ok"; fb.textContent = "✅ 正确！";
+        speak("Correct!");
+        Store.recordWeak(item.courseId, item.courseTitle, "type", item.zh, item.en, true);
+        WK.done += 1;
+        setTimeout(() => wkNext(), 1200);
+      } else {
+        input.classList.remove("ok"); input.classList.add("err");
+        fb.className = "feedback err"; fb.textContent = "❌ 不对，再想想";
+        speak("Try again");
+        Store.recordWeak(item.courseId, item.courseTitle, "type", item.zh, item.en, false);
+        setTimeout(() => { input.value = ""; input.classList.remove("err"); input.focus(); }, 600);
+      }
+    };
+    box.querySelector("#submit").addEventListener("click", submit);
+    input.addEventListener("keydown", (e) => { if (e.key === "Enter") submit(); });
+    box.querySelector("#speak").addEventListener("click", () => speak(item.en));
+    box.querySelector("#skip").addEventListener("click", () => {
+      if (locked) return;
+      locked = true; input.value = item.en; input.classList.add("ok");
+      const fb = box.querySelector("#fb"); fb.className = "feedback ok"; fb.textContent = `答案：${item.en}`;
+      speak(item.en);
+      Store.recordWeak(item.courseId, item.courseTitle, "type", item.zh, item.en, false);
+      addWeakNextBtn(box);
+    });
+    box.querySelector("#master").addEventListener("click", () => {
+      Store.markMastered(item.key); toast("✅ 已掌握"); wkNext();
+    });
+  }
+
+  // 复习题：拼句闯关
+  function weakRenderSentence(box, item) {
+    const words = item.en.replace(/[.,!?;:'"]/g, "").split(/\s+/).filter(Boolean);
+    const shuffled = [...words].sort(() => Math.random() - 0.5);
+    box.innerHTML = `
+      <div class="sentence-zh">${esc(item.zh)}</div>
+      <button class="speak-btn" id="speak" type="button">🔊 听发音</button>
+      <div class="sentence-hint">点击下方单词，按顺序拼出正确句子。</div>
+      <div class="answer-slots" id="slots"></div>
+      <div class="word-bank" id="bank">
+        ${shuffled.map((w, i) => `<button class="word-chip" data-w="${esc(w)}" data-i="${i}">${esc(w)}</button>`).join("")}
+      </div>
+      <div class="feedback" id="fb"></div>
+      <div style="margin-top:8px;display:flex;gap:12px;flex-wrap:wrap">
+        <button class="btn-green" id="submit">提交</button>
+        <button class="btn-ghost" id="clear">清空</button>
+        <button class="chip wk-master" id="master">✅ 标记已掌握</button>
+      </div>`;
+    const slots = box.querySelector("#slots");
+    const bank = box.querySelector("#bank");
+    let chosen = [];
+    const pick = (w, btn) => {
+      chosen.push(w); btn.classList.add("used");
+      const chip = document.createElement("button"); chip.className = "word-chip"; chip.textContent = w;
+      chip.addEventListener("click", () => {
+        chosen = chosen.filter((x) => x !== w); btn.classList.remove("used"); chip.remove();
+      });
+      slots.appendChild(chip);
+    };
+    bank.querySelectorAll(".word-chip").forEach((b) => b.addEventListener("click", () => pick(b.dataset.w, b)));
+    const clear = () => { chosen = []; slots.innerHTML = ""; bank.querySelectorAll(".word-chip").forEach((b) => b.classList.remove("used")); };
+    box.querySelector("#clear").addEventListener("click", clear);
+    setTimeout(() => speak(item.en), 350);
+    box.querySelector("#speak").addEventListener("click", () => speak(item.en));
+    box.querySelector("#submit").addEventListener("click", () => {
+      const correct = normalize(chosen.join(" ")) === normalize(item.en);
+      const fb = box.querySelector("#fb");
+      if (correct) {
+        fb.className = "feedback ok"; fb.textContent = "✅ 拼对啦！";
+        speak("Correct!");
+        Store.recordWeak(item.courseId, item.courseTitle, "sentence", item.zh, item.en, true);
+        WK.done += 1;
+        setTimeout(() => wkNext(), 1200);
+      } else {
+        fb.className = "feedback err"; fb.textContent = "❌ 不对，再试试";
+        speak("Try again");
+        Store.recordWeak(item.courseId, item.courseTitle, "sentence", item.zh, item.en, false);
+        clear();
+      }
+    });
+    box.querySelector("#master").addEventListener("click", () => {
+      Store.markMastered(item.key); toast("✅ 已掌握"); wkNext();
+    });
+  }
+
+  // 复习题：单词闯关
+  function weakRenderWord(box, item) {
+    box.innerHTML = `
+      <div class="sentence-zh">${esc(item.zh)}</div>
+      <button class="speak-btn" id="speak" type="button">🔊 听发音</button>
+      <div class="sentence-hint">根据中文释义，拼写出对应的英文单词。</div>
+      <input class="typing-input" id="ti" placeholder="Type the English word…" autocomplete="off" />
+      <div class="feedback" id="fb"></div>
+      <div style="margin-top:16px;display:flex;gap:12px;flex-wrap:wrap">
+        <button class="btn-green" id="submit">提交</button>
+        <button class="btn-ghost" id="skip">看答案</button>
+        <button class="chip wk-master" id="master">✅ 标记已掌握</button>
+      </div>`;
+    const input = box.querySelector("#ti");
+    setTimeout(() => input.focus(), 50);
+    setTimeout(() => speak(item.en), 350);
+    let locked = false;
+    const submit = () => {
+      if (locked) return;
+      const val = input.value;
+      if (!val.trim()) { toast("先写点英文再提交"); return; }
+      const correct = normalize(val) === normalize(item.en);
+      const fb = box.querySelector("#fb");
+      if (correct) {
+        locked = true;
+        input.classList.add("ok"); input.setAttribute("readonly", "true");
+        fb.className = "feedback ok"; fb.textContent = "✅ 正确！";
+        speak("Correct!");
+        Store.recordWeak(item.courseId, item.courseTitle, "word", item.zh, item.en, true);
+        WK.done += 1;
+        setTimeout(() => wkNext(), 1200);
+      } else {
+        input.classList.remove("ok"); input.classList.add("err");
+        fb.className = "feedback err"; fb.textContent = "❌ 不对，再想想";
+        speak("Try again");
+        Store.recordWeak(item.courseId, item.courseTitle, "word", item.zh, item.en, false);
+        setTimeout(() => { input.value = ""; input.classList.remove("err"); input.focus(); }, 600);
+      }
+    };
+    box.querySelector("#submit").addEventListener("click", submit);
+    input.addEventListener("keydown", (e) => { if (e.key === "Enter") submit(); });
+    box.querySelector("#speak").addEventListener("click", () => speak(item.en));
+    box.querySelector("#skip").addEventListener("click", () => {
+      if (locked) return;
+      locked = true; input.value = item.en; input.classList.add("ok");
+      const fb = box.querySelector("#fb"); fb.className = "feedback ok"; fb.textContent = `答案：${item.en}`;
+      speak(item.en);
+      Store.recordWeak(item.courseId, item.courseTitle, "word", item.zh, item.en, false);
+      addWeakNextBtn(box);
+    });
+    box.querySelector("#master").addEventListener("click", () => {
+      Store.markMastered(item.key); toast("✅ 已掌握"); wkNext();
+    });
   }
 
   // ---------- 排行榜 ----------
