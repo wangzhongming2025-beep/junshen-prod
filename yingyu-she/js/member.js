@@ -234,6 +234,8 @@
             PHONE_INVALID: "手机号格式不正确",
             TOO_FREQUENT: "发送太频繁，请稍后再试",
             SMS_NOT_CONFIGURED: "短信服务未配置，请联系站长",
+            DB_NOT_CONFIGURED: "服务尚未开通，请联系站长（vip20213456）",
+            AUTH_SECRET_NOT_CONFIGURED: "服务尚未开通，请联系站长（vip20213456）",
             NETWORK_ERROR: "网络异常，请检查网络后重试",
           })[r.error] || ("发送失败：" + (r.error || "未知错误"));
         }
