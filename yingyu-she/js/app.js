@@ -596,6 +596,9 @@
   // 机械感逐词下划线输入框：count 个下划线框，空格/回车/方向键跳格，自动扩宽
   function buildWordSlots(box, count, opts) {
     opts = opts || {};
+    const words = opts.words || [];                 // 每格目标词，用于预置宽度（长词长线、短词短线）
+    const clean = (w) => String(w || "").replace(/[.,!?;:'"()]/g, "");
+    const estW = (w) => Math.max(3, clean(w).length + 2);   // 等宽字体下每字母约 1ch，留 2ch 余量
     const wrap = document.createElement("div");
     wrap.className = "word-slots";
     const els = [];
@@ -608,19 +611,25 @@
         idx.textContent = String(i + 1).padStart(2, "0");
         cell.appendChild(idx);
       }
+      const target = words[i] || "";
+      const tLen = clean(target).length || 4;
       const inp = document.createElement("input");
       inp.className = "word-slot"; inp.type = "text"; inp.autocomplete = "off";
       inp.setAttribute("data-i", i);
       if (opts.placeholder) inp.placeholder = opts.placeholder;
-      if (opts.width) inp.style.width = opts.width;
+      inp.style.width = estW(target) + "ch";        // 预置宽度：长短随单词自适应
       cell.appendChild(inp);
       wrap.appendChild(cell);
       els.push(inp);
-      const grow = () => { inp.style.width = (Math.max(inp.value.length, 4) + 1) + "ch"; };
-      inp.addEventListener("input", grow);
+      const grow = () => { inp.style.width = (Math.max(inp.value.length, tLen) + 2) + "ch"; };
+      inp.addEventListener("input", () => {
+        inp.value = inp.value.replace(/\s+/g, "");  // 忽略误敲的空格
+        grow();
+        // 填到目标长度就自动跳到下一格，不再依赖空格键
+        if (tLen > 0 && inp.value.length >= tLen && i + 1 < els.length) focusSlot(i + 1);
+      });
       inp.addEventListener("keydown", (e) => {
-        if (e.key === " " || e.key === "Spacebar") { e.preventDefault(); focusSlot(i + 1); }
-        else if (e.key === "Enter") { e.preventDefault(); if (opts.onEnter) opts.onEnter(); }
+        if (e.key === "Enter") { e.preventDefault(); if (opts.onEnter) opts.onEnter(); }
         else if (e.key === "ArrowRight") { focusSlot(i + 1); }
         else if (e.key === "ArrowLeft") { focusSlot(i - 1); }
         else if (e.key === "Backspace" && !inp.value) { e.preventDefault(); focusSlot(i - 1); }
@@ -630,10 +639,10 @@
     function focusSlot(n) { if (n < 0 || n >= els.length) return; els[n].focus(); }
     return {
       els, wrap,
-      getValue() { return els.map((e) => e.value).join(" ").trim(); },
+      getValue() { return els.map((e) => e.value).filter(Boolean).join(" ").trim(); },
       fill(val) {
-        const ws = String(val).split(/\s+/);
-        els.forEach((e, i) => { e.value = ws[i] || ""; e.style.width = (Math.max(e.value.length, 4) + 1) + "ch"; });
+        const ws = clean(val).split(/\s+/);
+        els.forEach((e, i) => { e.value = ws[i] || ""; e.style.width = (Math.max(e.value.length, clean(words[i]).length || 4) + 2) + "ch"; });
       },
       setReadOnly(ro) { els.forEach((e) => { if (ro) e.setAttribute("readonly", "true"); else e.removeAttribute("readonly"); }); },
       setStatus(cls) { els.forEach((e) => { e.classList.remove("ok", "err"); if (cls) e.classList.add(cls); }); },
@@ -676,7 +685,7 @@
     box.innerHTML = `
       <div class="sentence-zh">${esc(item.zh)}</div>
       <button class="speak-btn" id="speak" type="button">🔊 听发音</button>
-      <div class="sentence-hint">把上面的中文翻译成英文，一个单词填一个框，敲空格跳到下一个，回车提交。</div>
+      <div class="sentence-hint">把上面的中文翻译成英文，一个单词一条横线（长短随单词自适应），填完当前词自动跳到下一格，回车提交。</div>
       <div id="slotBox"></div>
       <div class="feedback" id="fb"></div>
       ${tipBlockHTML(learnText(course.id, item.en, false), "讲讲这句的语法")}
@@ -713,7 +722,7 @@
         Store.recordWeak(course.id, course.title, "type", item.zh, item.en, false);
         award(false, inputEl);
         openTip(box, 260);
-        setTimeout(() => { slots.setStatus(""); slots.els.forEach((e) => { e.value = ""; e.style.width = ""; }); slots.focus(0); }, 620);
+        setTimeout(() => { slots.setStatus(""); slots.els.forEach((e) => { e.value = ""; }); slots.focus(0); }, 620);
       }
     }
     box.querySelector("#submit").addEventListener("click", submit);
@@ -813,7 +822,7 @@
     box.innerHTML = `
       <div class="sentence-zh">${esc(item.zh)}</div>
       <button class="speak-btn" id="speak" type="button">🔊 听发音</button>
-      <div class="sentence-hint">根据中文释义，在下方横线上拼写出对应的英文单词，回车提交。</div>
+      <div class="sentence-hint">根据中文释义，在下方横线上拼写出对应的英文单词（横线长度随单词自动调整），回车提交。</div>
       <div id="slotBox"></div>
       <div class="feedback" id="fb"></div>
       ${tipBlockHTML(learnText(course.id, item.en, true), "这个单词怎么用")}
@@ -850,7 +859,7 @@
         Store.recordWeak(course.id, course.title, "word", item.zh, item.en, false);
         award(false, inputEl);
         openTip(box, 260);
-        setTimeout(() => { slots.setStatus(""); slots.els.forEach((e) => { e.value = ""; e.style.width = ""; }); slots.focus(0); }, 620);
+        setTimeout(() => { slots.setStatus(""); slots.els.forEach((e) => { e.value = ""; }); slots.focus(0); }, 620);
       }
     }
     box.querySelector("#submit").addEventListener("click", submit);

@@ -226,7 +226,7 @@ img { max-width: 100%; display: block; }
   letter-spacing: 1px; color: var(--ink-3); opacity: .65;
 }
 .word-slot {
-  width: 8ch; min-width: 4ch; padding: 9px 6px 8px; text-align: center;
+  width: 8ch; min-width: 2ch; padding: 9px 6px 8px; text-align: center;
   font-family: "SF Mono", "Cascadia Code", "Consolas", "Roboto Mono", monospace;
   font-size: 19px; letter-spacing: .5px; color: var(--ink);
   background: #fff; border: 1px solid #cdd7e2; border-bottom: 3px solid #98a6b4;
