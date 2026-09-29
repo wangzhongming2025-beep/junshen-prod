@@ -7,7 +7,55 @@
 
 ---
 
-## 一、必须在 Vercel 后台配置的环境变量
+## 〇、先跑通最小可用（推荐路径，10 分钟搞定）
+
+阿里云短信需要**实名认证 + 签名审核 + 模板审核**，个人主体往往要几天甚至过不了审。所以建议**分两步走**：先绕过短信把注册/云同步跑通，等短信资质下来再补。
+
+### 第 1 步：只填这 4 个变量就能用
+
+打开 Vercel → 项目 `junshen-prod` → **Settings → Environment Variables**，添加：
+
+| 变量名 | 值 |
+|---|---|
+| `UPSTASH_REDIS_REST_URL` | 你 sighthealthpro 项目已在用的那个（建议给本站单独建一个库，别和护眼站混） |
+| `UPSTASH_REDIS_REST_TOKEN` | 同上 |
+| `AUTH_SECRET` | 随便一串 ≥32 位的随机字符，例如 `hy8Kd2mQ7pL4nR9sT1vX6zB3cF5gH0j` |
+| `ALLOW_DEV_CODE` | `1` ← **关键**，填了它就不用配短信也能登录 |
+
+> `ALLOW_DEV_CODE=1` 的效果：点「获取验证码」后，6 位验证码会**直接显示在弹窗里并自动填入**，不用真发短信。这是官方预留的联调开关，等你短信通了把它删掉即可。
+
+### 第 2 步：Redeploy（最容易漏的一步）
+
+Vercel → **Deployments** → 点最新一条右侧的 `⋯` → **Redeploy**。
+不重新部署，环境变量不会生效。
+
+### 第 3 步：验证
+
+打开 `https://www.junshen.top/api/health`，应该看到：
+
+```json
+{ "ready": { "db": true, "sms": false, "auth": true, "redeemCodes": false }, "devCode": true }
+```
+
+`db` 和 `auth` 变 `true`、`devCode` 变 `true` 就成了。`sms` 仍是 `false` 没关系，第 4 步再补。
+
+然后到站点点「登录 / 注册」，输入任意 11 位手机号 → 点获取验证码 → 验证码会自动出现 → 点登录。
+
+### 第 4 步（以后）：补上短信和兑换码
+
+短信资质下来后，再补这 5 个，然后把 `ALLOW_DEV_CODE` 删掉：
+
+| 变量名 | 说明 |
+|---|---|
+| `ALIYUN_ACCESS_KEY_ID` | 阿里云 AccessKey ID |
+| `ALIYUN_ACCESS_KEY_SECRET` | 阿里云 AccessKey Secret |
+| `ALIYUN_SMS_SIGN_NAME` | 审核通过的短信签名 |
+| `ALIYUN_SMS_TEMPLATE_CODE` | 验证码模板 CODE（变量名必须是 `code`） |
+| `REDEEM_CODES` | 兑换码池，格式 `码=套餐`，逗号分隔。套餐：`month`/`quarter`/`year`/`forever`。例如 `HY2026-1001=month,HY2026-1299=forever` |
+
+---
+
+## 一、完整环境变量清单
 
 打开 Vercel → 项目 `junshen-prod` → **Settings → Environment Variables**，逐条添加（Environment 选 Production + Preview + Development 均可）：
 
@@ -67,6 +115,8 @@ https://www.junshen.top/api/health
 | GET | `/api/user/usage` | 查询今日已用秒数 / 会员态 | Bearer |
 | POST | `/api/user/usage` | 累加今日时长 `{seconds}` | Bearer |
 | POST | `/api/member/redeem` | 兑换码开通会员 `{code}` | Bearer |
+| POST | `/api/survey/submit` | 提交 1299 合伙人问卷 `{answers, advantage}` → 返回匹配度与建议 | Bearer |
+| GET | `/api/survey/get` | 读取自己提交过的问卷 | Bearer |
 
 鉴权方式：请求头 `Authorization: Bearer <token>`。
 
@@ -81,6 +131,7 @@ https://www.junshen.top/api/health
 | `smscode:{phone}` | `{code, at}` 验证码 | 5 分钟 |
 | `smsrate:{phone}` | 发码频控标记 | 60 秒 |
 | `redeem:{code}` | `{uid, at, plan}` 兑换码归属，防一码多号 | 永久 |
+| `survey:{uid}` | 1299 合伙人问卷 `{answers, advantage, score, advice}` | 永久 |
 
 ---
 
