@@ -11,6 +11,8 @@ const Store = (() => {
       studyMinutes: 0,
       todayMinutes: 0,
       monthMinutes: 0,
+      xp: 0,
+      bestCombo: 0,
     },
     checkin: {
       current: 0,
@@ -83,6 +85,23 @@ const Store = (() => {
       state.stats.monthMinutes += n;
       save();
     },
+
+    // ---------- 经验与连击（奖励系统）----------
+    addXp(n) {
+      const v = Math.round(Number(n) || 0);
+      if (v <= 0) return state.stats.xp || 0;
+      state.stats.xp = (state.stats.xp || 0) + v;
+      save();
+      return state.stats.xp;
+    },
+    getXp() { return state.stats.xp || 0; },
+    // 记录历史最高连击（只在破纪录时写盘）
+    bumpCombo(n) {
+      const v = Math.round(Number(n) || 0);
+      if (v > (state.stats.bestCombo || 0)) { state.stats.bestCombo = v; save(); }
+      return state.stats.bestCombo || 0;
+    },
+    getBestCombo() { return state.stats.bestCombo || 0; },
     logPractice(course, mode, correct) {
       state.practiceLog.push({ date: todayStr(), course, mode, correct });
       if (state.practiceLog.length > 200) state.practiceLog.shift();

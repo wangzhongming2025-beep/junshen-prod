@@ -424,6 +424,120 @@ img { max-width: 100%; display: block; }
 .wd-n { font-size: 22px; font-weight: 800; }
 .wd-sub { margin-top: 10px; color: var(--ink-2); line-height: 1.8; }
 
+/* ===== 奖励反馈（连击 / 飘分 / 粒子 / 彩带 / 结算） ===== */
+.hud { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin: 4px 0 10px; }
+.hud-item {
+  display: flex; align-items: baseline; gap: 5px;
+  padding: 8px 14px; border-radius: 14px;
+  background: rgba(255, 255, 255, .78);
+  border: 1px solid var(--line);
+  box-shadow: 0 3px 12px rgba(31, 42, 55, .05);
+  transition: all .25s ease;
+}
+.hud-item b { font-size: 18px; font-weight: 800; color: var(--ink); font-variant-numeric: tabular-nums; }
+.hud-ico { font-size: 14px; }
+.hud-lb { font-size: 11.5px; color: var(--ink-3); }
+.hud-item.combo.hot {
+  border-color: #ffcfa4;
+  background: linear-gradient(135deg, #fff5ea, #fff);
+  box-shadow: 0 4px 18px rgba(255, 138, 61, .22);
+  animation: comboGlow 1.6s ease-in-out infinite;
+}
+.hud-item.combo.hot b { color: var(--orange-d); }
+@keyframes comboGlow { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-2px); } }
+.hud-sound {
+  margin-left: auto; width: 40px; height: 40px; border-radius: 12px; cursor: pointer;
+  border: 1px solid var(--line); background: #fff; font-size: 16px; transition: all .2s ease;
+}
+.hud-sound:hover { border-color: var(--green); }
+.hud-sound.off { opacity: .5; }
+
+.pbar { height: 8px; border-radius: 999px; background: #e9eef4; overflow: hidden; margin-bottom: 16px; }
+.pbar > i {
+  display: block; height: 100%; width: 0%; border-radius: 999px;
+  background: linear-gradient(90deg, #6ee7a8, var(--green), #35c98a);
+  box-shadow: 0 0 10px rgba(24, 180, 107, .45);
+  transition: width .5s cubic-bezier(.22, 1, .36, 1);
+}
+
+/* 答对：元素脉冲 / 答错：轻抖 */
+.reward-pop { animation: rewardPop .62s cubic-bezier(.34, 1.56, .64, 1); }
+@keyframes rewardPop { 0% { transform: scale(1); } 28% { transform: scale(1.045); } 58% { transform: scale(.995); } 100% { transform: scale(1); } }
+.reward-shake { animation: rewardShake .42s ease; }
+@keyframes rewardShake { 0%, 100% { transform: translateX(0); } 18% { transform: translateX(-7px); } 38% { transform: translateX(6px); } 58% { transform: translateX(-4px); } 78% { transform: translateX(3px); } }
+
+/* 飘分 */
+.fx-float {
+  position: fixed; z-index: 10000; pointer-events: none;
+  transform: translate(-50%, 0);
+  font-weight: 800; font-size: 20px; letter-spacing: .3px;
+  color: var(--green-d);
+  text-shadow: 0 2px 10px rgba(24, 180, 107, .35), 0 0 2px #fff;
+  animation: fxFloat 1.05s cubic-bezier(.22, 1, .36, 1) forwards;
+}
+@keyframes fxFloat {
+  0% { opacity: 0; transform: translate(-50%, 6px) scale(.75); }
+  22% { opacity: 1; transform: translate(-50%, -12px) scale(1.14); }
+  100% { opacity: 0; transform: translate(-50%, -66px) scale(1); }
+}
+
+/* 粒子迸发 */
+.fx-burst { position: fixed; z-index: 9999; pointer-events: none; }
+.fx-burst > i {
+  position: absolute; border-radius: 50%; display: block;
+  transform: translate(-50%, -50%);
+  animation: fxBurst .78s ease-out forwards;
+}
+@keyframes fxBurst {
+  0% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+  100% { opacity: 0; transform: translate(calc(-50% + var(--dx)), calc(-50% + var(--dy))) scale(.25); }
+}
+
+/* 全屏彩带 */
+.fx-confetti { position: fixed; inset: 0; z-index: 9998; pointer-events: none; overflow: hidden; }
+.fx-confetti > i {
+  position: absolute; top: -12vh; display: block; border-radius: 2px;
+  animation-name: fxConfetti; animation-timing-function: linear; animation-fill-mode: forwards;
+}
+@keyframes fxConfetti {
+  0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+  100% { transform: translateY(118vh) rotate(var(--rot)); opacity: .85; }
+}
+
+/* 答对反馈更醒目 */
+.feedback.ok {
+  font-size: 17px; font-weight: 800; color: var(--green-d);
+  animation: rewardPop .5s cubic-bezier(.34, 1.56, .64, 1);
+}
+.typing-input.ok {
+  border-color: var(--green) !important;
+  box-shadow: 0 0 0 5px rgba(24, 180, 107, .14), 0 10px 26px rgba(24, 180, 107, .18) !important;
+}
+
+/* 结算面板 */
+.round-end { text-align: center; padding: 26px 18px 30px; animation: roundIn .5s cubic-bezier(.22, 1, .36, 1); }
+@keyframes roundIn { from { opacity: 0; transform: translateY(14px) scale(.97); } to { opacity: 1; transform: none; } }
+.re-emoji { font-size: 54px; line-height: 1; animation: rewardPop .8s cubic-bezier(.34, 1.56, .64, 1); }
+.re-title { font-size: 26px; font-weight: 800; color: var(--ink); margin-top: 10px; }
+.re-bless { color: var(--ink-2); margin-top: 8px; }
+.re-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin: 24px 0 22px; }
+.re-stat {
+  background: #fff; border: 1px solid var(--line); border-radius: 14px; padding: 14px 6px;
+  box-shadow: 0 3px 12px rgba(31, 42, 55, .05);
+}
+.re-stat b { display: block; font-size: 22px; font-weight: 800; color: var(--ink); }
+.re-stat span { font-size: 11.5px; color: var(--ink-3); }
+.re-stat.hl { border-color: #bfe8d3; background: var(--green-l); }
+.re-stat.hl b { color: var(--green-d); }
+.re-actions { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+
+@media (max-width: 560px) {
+  .hud-item { padding: 6px 10px; }
+  .hud-item b { font-size: 16px; }
+  .hud-sound { width: 36px; height: 36px; margin-left: 0; }
+  .re-stats { grid-template-columns: repeat(2, 1fr); }
+}
+
 /* ===== 登录 / 会员 / 每日免费额度 ===== */
 .usage-bar {
   position: fixed; left: 16px; bottom: 16px; z-index: 60;

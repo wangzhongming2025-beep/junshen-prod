@@ -305,6 +305,141 @@
     if (m.mode) pstate.mode = m.mode;
     pstate.idx = getProg(pstate.courseId, pstate.mode);
   })();
+
+  // ---------- 奖励系统：连击 / 经验 / 粒子 / 结算 ----------
+  const session = { correct: 0, wrong: 0, combo: 0, bestCombo: 0, xp: 0 };
+  function resetSession() { session.correct = 0; session.wrong = 0; session.combo = 0; session.bestCombo = 0; session.xp = 0; }
+
+  const PRAISES = ["漂亮！", "就是这样！", "完全正确！", "Nice!", "Perfect!", "稳！", "手感来了！", "就是这个感觉！"];
+  const MILESTONES = [3, 5, 10, 20, 30, 50];
+  const praise = () => PRAISES[Math.floor(Math.random() * PRAISES.length)];
+  // 连击加成：1 连=1.0 倍，最高 2.0 倍（每题基础 10 经验）
+  const comboMult = () => 1 + Math.min(Math.max(session.combo - 1, 0), 5) * 0.2;
+  function qAnchor() {
+    return document.querySelector(".practice-stage .typing-input")
+      || document.querySelector(".practice-stage .answer-slots")
+      || document.querySelector(".practice-stage");
+  }
+
+  // 答错不给冷冰冰的 "Try again"，给能引导下一步的提示
+  const _nrm = (s) => String(s || "").toLowerCase().replace(/[.,!?;:'"]/g, "").replace(/\s+/g, " ").trim();
+  function wrongHint(val, en) {
+    const a = String(val || "").trim();
+    if (!a) return "还没写内容哦～";
+    const va = _nrm(a), ve = _nrm(en);
+    if (va.replace(/\s/g, "") === ve.replace(/\s/g, "")) return "❗ 差一点点 —— 检查单词之间的空格";
+    const pa = va.split(" "), pb = ve.split(" ");
+    if (Math.abs(pa.length - pb.length) >= 2) return "❗ 句子成分还不够，再想想还有哪些词";
+    for (let i = 0; i < Math.max(pa.length, pb.length); i++) {
+      if (pa[i] !== pb[i]) return "❗ 第 " + (i + 1) + " 个词不太对，再试试";
+    }
+    return "❗ 再试一次，注意拼写";
+  }
+  function wrongWordHint(val, en) {
+    const a = String(val || "").trim();
+    if (!a) return "还没写内容哦～";
+    const va = a.toLowerCase().trim(), ve = String(en || "").toLowerCase().trim();
+    if (va.length === ve.length) return "❗ 长度对了，有几个字母不对";
+    if (ve.indexOf(va) === 0) return "❗ 开头对了，后面还差几个字母";
+    return "❗ 再拼一遍，注意拼写";
+  }
+  // 看答案 / 跳过：不断连击但也不算答对
+  function breakCombo() { session.combo = 0; session.wrong += 1; updateHud(); }
+
+  // 统一入口：答对给奖励，答错给反馈
+  function award(correct, anchorEl) {
+    const target = anchorEl || qAnchor();
+    if (correct) {
+      session.correct += 1;
+      session.combo += 1;
+      if (session.combo > session.bestCombo) session.bestCombo = session.combo;
+      const xp = Math.round(10 * comboMult());
+      session.xp += xp;
+      Store.addXp(xp);
+      Store.bumpCombo(session.bestCombo);
+      FX.Sound.correct(session.combo);
+      FX.floatText(target, "+" + xp + (session.combo > 1 ? "  🔥x" + session.combo : ""));
+      FX.burstAt(target, { count: 12 + Math.min(session.combo, 8) * 3 });
+      FX.pulse(target, "reward-pop");
+      if (MILESTONES.indexOf(session.combo) >= 0) {
+        FX.Sound.milestone();
+        FX.confetti(70 + session.combo * 2);
+        toast("🔥 连击 x" + session.combo + "！手感爆棚");
+      }
+      updateHud();
+      return xp;
+    }
+    session.wrong += 1;
+    session.combo = 0;
+    FX.Sound.wrong();
+    FX.pulse(target, "reward-shake");
+    updateHud();
+    return 0;
+  }
+
+  function updateHud() {
+    const c = document.getElementById("hudCombo");
+    if (c) { c.textContent = session.combo; if (c.parentNode) c.parentNode.classList.toggle("hot", session.combo >= 3); }
+    const x = document.getElementById("hudXp");
+    if (x) x.textContent = session.xp;
+    const t = document.getElementById("hudTotal");
+    if (t) t.textContent = Store.getXp();
+    const b = document.getElementById("hudBest");
+    if (b) b.textContent = Store.getBestCombo();
+    const a = document.getElementById("hudAcc");
+    if (a) { const tot = session.correct + session.wrong; a.textContent = tot ? Math.round((session.correct / tot) * 100) + "%" : "—"; }
+    const fill = document.getElementById("pbarFill");
+    if (fill) {
+      const course = COURSES.find((cc) => cc.id === pstate.courseId);
+      if (course) {
+        const isWord = pstate.mode === "word";
+        const total = isWord ? (course.words || []).length : course.lessons.length;
+        const done = Math.min(pstate.idx + (pstate.answered ? 1 : 0), total);
+        fill.style.width = total ? Math.round((done / total) * 100) + "%" : "0%";
+      }
+    }
+    syncSoundBtn();
+  }
+
+  function syncSoundBtn() {
+    const b = document.getElementById("hudSound");
+    if (b) { const m = FX.Sound.isMuted(); b.textContent = m ? "🔇" : "🔊"; b.classList.toggle("off", m); }
+  }
+
+  // 一轮练完 → 结算面板（撒花 + 战绩）
+  function renderRoundEnd(course) {
+    const total = session.correct + session.wrong;
+    const acc = total ? Math.round((session.correct / total) * 100) : 0;
+    const bless = acc >= 95 ? "几乎全对，这状态能去打比赛了！" : acc >= 80 ? "很稳，再加把劲就满分了！" : acc >= 60 ? "有进步空间，再来一轮更熟。" : "别急，慢一点反而记得牢。";
+    FX.Sound.finish();
+    FX.confetti(140);
+    const stage = app.querySelector("#stage");
+    stage.innerHTML = `
+      <div class="round-end">
+        <div class="re-emoji">🎉</div>
+        <div class="re-title">本轮完成！</div>
+        <div class="re-bless">${esc(bless)}</div>
+        <div class="re-stats">
+          <div class="re-stat"><b>${session.correct}</b><span>答对</span></div>
+          <div class="re-stat"><b>${acc}%</b><span>正确率</span></div>
+          <div class="re-stat"><b>${session.bestCombo}</b><span>最高连击</span></div>
+          <div class="re-stat hl"><b>+${session.xp}</b><span>获得经验</span></div>
+        </div>
+        <div class="re-actions">
+          <button class="btn-green" id="reAgain">🔁 再来一轮</button>
+          <button class="btn-ghost" id="reWeak">📕 去易错本</button>
+        </div>
+      </div>`;
+    stage.querySelector("#reAgain").addEventListener("click", () => {
+      pstate.idx = 0; pstate.answered = false;
+      setProg(pstate.courseId, pstate.mode, 0);
+      resetSession();
+      renderStage();
+    });
+    stage.querySelector("#reWeak").addEventListener("click", () => { location.hash = "#/weak"; });
+    const fill = document.getElementById("pbarFill");
+    if (fill) fill.style.width = "100%";
+  }
   function renderPractice() {
     const idFromHash = location.hash.replace("#/", "").split("/")[1];
     if (idFromHash && COURSES.find((c) => c.id === idFromHash)) pstate.courseId = idFromHash;
@@ -317,8 +452,17 @@
 
     app.innerHTML = `
       <div class="page-title">开始练习</div>
-      <div class="page-sub">两种玩法：看中文敲英文，或把打乱的单词拼成句子。</div>
+      <div class="page-sub">答对就有经验、有连击、有爽感 —— 连对越多，音效越亮、彩带越多。</div>
       <div class="voice-bar"><span class="voice-label">🔊 发音嗓音</span><select id="voiceSel" class="voice-sel"></select></div>
+      <div class="hud">
+        <div class="hud-item combo"><span class="hud-ico">🔥</span><b id="hudCombo">0</b><span class="hud-lb">连击</span></div>
+        <div class="hud-item"><span class="hud-ico">⭐</span><b id="hudXp">0</b><span class="hud-lb">本轮经验</span></div>
+        <div class="hud-item"><span class="hud-ico">🏅</span><b id="hudTotal">0</b><span class="hud-lb">总经验</span></div>
+        <div class="hud-item"><span class="hud-ico">🎯</span><b id="hudAcc">—</b><span class="hud-lb">正确率</span></div>
+        <div class="hud-item"><span class="hud-ico">👑</span><b id="hudBest">0</b><span class="hud-lb">最高连击</span></div>
+        <button class="hud-sound" id="hudSound" type="button" title="音效开关">🔊</button>
+      </div>
+      <div class="pbar"><i id="pbarFill"></i></div>
       <div class="practice-wrap">
         <aside class="side-list"><h4>选择课程</h4>${side}</aside>
         <section class="practice-stage" id="stage"></section>
@@ -330,9 +474,16 @@
         if (location.hash !== target) location.hash = target; // 由 hash 路由驱动，避免被 renderPractice 内的 hash 解析覆盖
       })
     );
+    resetSession();
     renderStage();
     bindVoiceSelect();
     savePracticeMeta();
+    const sb = document.getElementById("hudSound");
+    if (sb) sb.addEventListener("click", () => {
+      FX.Sound.toggle(); syncSoundBtn();
+      if (!FX.Sound.isMuted()) FX.Sound.tick();
+    });
+    syncSoundBtn();
   }
   function renderStage() {
     const course = COURSES.find((c) => c.id === pstate.courseId);
@@ -349,11 +500,19 @@
       <div id="qbox"></div>
     `;
     stage.querySelectorAll(".mode-tab").forEach((el) =>
-      el.addEventListener("click", () => { pstate.mode = el.dataset.mode; pstate.idx = getProg(pstate.courseId, pstate.mode); pstate.answered = false; savePracticeMeta(); renderStage(); })
+      el.addEventListener("click", () => {
+        pstate.mode = el.dataset.mode;
+        pstate.idx = getProg(pstate.courseId, pstate.mode);
+        pstate.answered = false;
+        resetSession();                 // 换玩法 = 新一轮，连击与经验重新累计
+        savePracticeMeta();
+        renderStage();
+      })
     );
     if (pstate.mode === "type") renderType(stage.querySelector("#qbox"), course);
     else if (pstate.mode === "sentence") renderSentence(stage.querySelector("#qbox"), course);
     else renderWord(stage.querySelector("#qbox"), course);
+    updateHud();
   }
   function renderType(box, course) {
     const item = course.lessons[pstate.idx];
@@ -379,18 +538,20 @@
       if (correct) {
         pstate.answered = true;
         input.classList.add("ok"); input.setAttribute("readonly", "true");
-        fb.className = "feedback ok"; fb.textContent = "✅ 正确！";
+        fb.className = "feedback ok"; fb.textContent = "✅ " + praise();
         speak("Correct!");
         Store.recordSentence(true); Store.addMinutes(1); Store.logPractice(course.id, "type", true);
         Store.recordWeak(course.id, course.title, "type", item.zh, item.en, true);
-        setTimeout(() => nextSentence(course), 1200);
+        award(true, input);
+        setTimeout(() => nextSentence(course), 1150);
       } else {
         pstate.answered = false;
         input.classList.remove("ok"); input.classList.add("err");
-        fb.className = "feedback err"; fb.textContent = "❌ Try again";
+        fb.className = "feedback err"; fb.textContent = wrongHint(val, item.en);
         speak("Try again");
         Store.recordWeak(course.id, course.title, "type", item.zh, item.en, false);
-        setTimeout(() => { input.value = ""; input.classList.remove("err"); input.focus(); }, 600);
+        award(false, input);
+        setTimeout(() => { input.value = ""; input.classList.remove("err"); input.focus(); }, 620);
       }
     };
     box.querySelector("#submit").addEventListener("click", submit);
@@ -403,6 +564,7 @@
       speak(item.en);
       Store.recordSentence(false); Store.addMinutes(1); Store.logPractice(course.id, "type", false);
       Store.recordWeak(course.id, course.title, "type", item.zh, item.en, false);
+      breakCombo();
       const n = document.createElement("button"); n.className = "btn-green"; n.style.marginTop = "14px";
       n.textContent = "下一句 →"; n.addEventListener("click", () => nextSentence(course)); box.appendChild(n);
     });
@@ -448,16 +610,19 @@
       const fb = box.querySelector("#fb");
       if (correct) {
         pstate.answered = true;
-        fb.className = "feedback ok"; fb.textContent = "✅ 拼对啦！";
+        fb.className = "feedback ok"; fb.textContent = "✅ " + praise();
         speak("Correct!");
         Store.recordSentence(true); Store.recordWord(true); Store.addMinutes(1); Store.logPractice(course.id, "sentence", true);
         Store.recordWeak(course.id, course.title, "sentence", item.zh, item.en, true);
-        setTimeout(() => nextSentence(course), 1200);
+        award(true, slots);
+        setTimeout(() => nextSentence(course), 1150);
       } else {
         pstate.answered = false;
-        fb.className = "feedback err"; fb.textContent = "❌ Try again";
+        fb.className = "feedback err";
+        fb.textContent = chosen.length < words.length ? "❗ 还有单词没放进去" : "❗ 词都对了，顺序再调整一下";
         speak("Try again");
         Store.recordWeak(course.id, course.title, "sentence", item.zh, item.en, false);
+        award(false, slots);
         clear();
       }
     });
@@ -465,8 +630,10 @@
   function nextSentence(course) {
     pstate.idx += 1; pstate.answered = false;
     if (pstate.idx >= course.lessons.length) {
-      pstate.idx = 0;
-      toast("🎉 本课程已练完一轮，从头再来！");
+      // 练完一整轮 → 先给结算奖励，而不是默默从头开始
+      setProg(pstate.courseId, pstate.mode, course.lessons.length - 1);
+      renderRoundEnd(course);
+      return;
     }
     setProg(pstate.courseId, pstate.mode, pstate.idx);
     renderStage();
@@ -497,18 +664,20 @@
       if (correct) {
         pstate.answered = true;
         input.classList.add("ok"); input.setAttribute("readonly", "true");
-        fb.className = "feedback ok"; fb.textContent = "✅ 正确！";
+        fb.className = "feedback ok"; fb.textContent = "✅ " + praise();
         speak("Correct!");
         Store.recordWord(true); Store.addMinutes(1); Store.logPractice(course.id, "word", true);
         Store.recordWeak(course.id, course.title, "word", item.zh, item.en, true);
-        setTimeout(() => nextWord(course), 1200);
+        award(true, input);
+        setTimeout(() => nextWord(course), 1150);
       } else {
         pstate.answered = false;
         input.classList.remove("ok"); input.classList.add("err");
-        fb.className = "feedback err"; fb.textContent = "❌ Try again";
+        fb.className = "feedback err"; fb.textContent = wrongWordHint(val, item.en);
         speak("Try again");
         Store.recordWeak(course.id, course.title, "word", item.zh, item.en, false);
-        setTimeout(() => { input.value = ""; input.classList.remove("err"); input.focus(); }, 600);
+        award(false, input);
+        setTimeout(() => { input.value = ""; input.classList.remove("err"); input.focus(); }, 620);
       }
     };
     box.querySelector("#submit").addEventListener("click", submit);
@@ -521,16 +690,20 @@
       speak(item.en);
       Store.recordWord(false); Store.addMinutes(1); Store.logPractice(course.id, "word", false);
       Store.recordWeak(course.id, course.title, "word", item.zh, item.en, false);
+      breakCombo();
       const n = document.createElement("button"); n.className = "btn-green"; n.style.marginTop = "14px";
       n.textContent = "下一个 →"; n.addEventListener("click", () => nextWord(course)); box.appendChild(n);
     });
   }
   function nextWord(course) {
+    const total = (course.words || []).length;
     pstate.idx += 1; pstate.answered = false;
-    if (pstate.idx >= (course.words || []).length) {
-      pstate.idx = 0; toast("🎉 单词练完一轮，再来一遍！");
+    if (total && pstate.idx >= total) {
+      setProg(pstate.courseId, pstate.mode, total - 1);
+      renderRoundEnd(course);
+      return;
     }
-    setProg(pstate.courseId, pstate.mode, pstate.idx);
+    setProg(pstate.courseId, pstate.mode, total ? pstate.idx % total : 0);
     renderStage();
   }
 
