@@ -21,6 +21,8 @@ const Store = (() => {
     },
     journal: [],
     practiceLog: [],
+    vip: false,
+    redeemedCodes: [],
   });
 
   let state = load();
@@ -174,6 +176,22 @@ const Store = (() => {
     // 某课程已练句数
     getCourseCount(id) {
       return state.practiceLog.filter((l) => l.course === id).length;
+    },
+
+    // 会员态：是否开通学习卡
+    isVip() { return !!state.vip; },
+
+    // 兑换码激活：校验码池 + 防复用，成功后置 vip
+    redeemCode(raw) {
+      const code = (raw || "").trim().toUpperCase();
+      if (!code) return { ok: false, msg: "请输入兑换码" };
+      const codes = (window.PAY && Array.isArray(window.PAY.codes)) ? window.PAY.codes : [];
+      if (!codes.includes(code)) return { ok: false, msg: "兑换码无效，请核对后重试" };
+      if (state.redeemedCodes.includes(code)) return { ok: false, msg: "该兑换码已被使用" };
+      state.redeemedCodes.push(code);
+      state.vip = true;
+      save();
+      return { ok: true, msg: "🎉 学习卡激活成功，会员权益已开通！" };
     },
 
     reset() { state = defaultState(); save(); },

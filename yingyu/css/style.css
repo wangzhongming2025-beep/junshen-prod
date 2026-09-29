@@ -257,6 +257,21 @@ img { max-width: 100%; display: block; }
 .pay-sep { margin-top: 14px; }
 .pay-copy { width: 100%; margin-top: 4px; }
 .modal-close { position: absolute; }
+.pay-qr-wrap { text-align: center; margin: 8px 0; }
+.qr-tip { font-size: 13px; color: var(--ink-2); padding: 18px; border: 1.5px dashed var(--green); border-radius: 12px; background: #f3fbf4; }
+.qr-tip code { background: #e6f4e8; padding: 2px 6px; border-radius: 6px; }
+.redeem-box { margin-top: 18px; border-top: 1px solid #eee; padding-top: 16px; }
+.rb-h { font-weight: 700; margin-bottom: 10px; color: var(--ink); }
+.rb-h.ok { color: var(--green); }
+.rb-row { display: flex; gap: 8px; }
+.code-input { flex: 1; padding: 10px 12px; border: 1.5px solid #ddd; border-radius: 10px; font-size: 15px; outline: none; }
+.code-input:focus { border-color: var(--green); }
+.redeem-msg { margin-top: 10px; font-size: 14px; min-height: 20px; }
+.redeem-msg.ok { color: var(--green); font-weight: 700; }
+.redeem-msg.err { color: #e23; }
+.vip-tag { background: #fff3d6; color: #a76b00; border: 1px solid #ffd97a; border-radius: 999px; padding: 1px 8px; font-size: 11px; margin-left: 6px; }
+.vip-on { background: #1f9d55 !important; }
+.vip-on-box { background: #f3fbf4; border: 1.5px solid var(--green); border-radius: 14px; padding: 16px; color: var(--green); font-weight: 700; text-align: center; }
 
 /* ===== 空状态 ===== */
 .empty { text-align: center; color: var(--ink-3); padding: 40px; }

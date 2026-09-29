@@ -166,13 +166,15 @@
         <button class="btn-green" id="homeCheckin">📅 立即打卡</button>
       </div>
 
-      <div class="section-h"><span class="bar"></span>开通学习卡，解锁全部课程</div>
-      <div class="stat-grid">
+      <div class="section-h"><span class="bar"></span>${Store.isVip() ? "学习卡已开通 ✓" : "开通学习卡，解锁全部课程"}</div>
+      ${Store.isVip()
+        ? `<div class="vip-on-box">🎉 您已开通会员，全部课程（含会员专享）已解锁，继续加油！</div>`
+        : `<div class="stat-grid">
         <div class="stat-card" style="cursor:pointer" onclick="openCardModal()"><div class="n orange">¥39</div><div class="l">月卡</div><div class="sub">先体验，随时退</div></div>
         <div class="stat-card" style="cursor:pointer" onclick="openCardModal()"><div class="n orange">¥109</div><div class="l">季卡</div><div class="sub">立省 ¥8</div></div>
         <div class="stat-card" style="cursor:pointer" onclick="openCardModal()"><div class="n orange">¥365</div><div class="l">年卡</div><div class="sub">平均每天仅 ¥1</div></div>
         <div class="stat-card" style="cursor:pointer" onclick="openCardModal()"><div class="n green">¥1299</div><div class="l">永久卡</div><div class="sub">一次开通，终身可用</div></div>
-      </div>
+      </div>`}
     `;
     app.querySelector("#homeCheckin").addEventListener("click", doCheckin);
     app.querySelectorAll(".tt").forEach((b) =>
@@ -203,7 +205,11 @@
       el.addEventListener("click", () => { catFilter = el.dataset.cat; renderCourses(); })
     );
     app.querySelectorAll(".course-card").forEach((el) =>
-      el.addEventListener("click", () => { location.hash = "#/course/" + el.dataset.id; })
+      el.addEventListener("click", () => {
+        const c = COURSES.find((x) => x.id === el.dataset.id);
+        if (isVipLocked(c)) { openCardModal(); return; }
+        location.hash = "#/course/" + el.dataset.id;
+      })
     );
   }
   function courseCard(c) {
@@ -213,7 +219,7 @@
       <div class="course-card" data-id="${c.id}">
         <div class="course-cover ${c.cover}"><span class="emoji">${c.emoji}</span></div>
         <div class="course-body">
-          <div class="course-tags"><span class="lv-tag lv-${c.level}">${c.level}</span><span class="cat-tag">${esc(c.cat)}</span></div>
+          <div class="course-tags"><span class="lv-tag lv-${c.level}">${c.level}</span><span class="cat-tag">${esc(c.cat)}</span>${c.level === "高级" ? '<span class="vip-tag">🔒 会员专享</span>' : ""}</div>
           <h3>${esc(c.title)}</h3>
           <div class="course-desc">${esc(c.desc || "")}</div>
           <div class="course-meta">${c.lessons.length} 个句子 · 👥 ${fmt(c.learners)} 人在学</div>
@@ -245,13 +251,15 @@
       <div class="detail-head">
         <div class="detail-cover ${c.cover}">${c.emoji}</div>
         <div class="detail-info">
-          <div class="course-tags"><span class="lv-tag lv-${c.level}">${c.level}</span><span class="cat-tag">${esc(c.cat)}</span></div>
+          <div class="course-tags"><span class="lv-tag lv-${c.level}">${c.level}</span><span class="cat-tag">${esc(c.cat)}</span>${c.level === "高级" ? '<span class="vip-tag">🔒 会员专享</span>' : ""}</div>
           <h1>${esc(c.title)}</h1>
           <p class="detail-desc">${esc(c.desc || "")}</p>
           <div class="detail-meta">${total} 个句子 · 👥 ${fmt(c.learners)} 人在学 · 已练 ${done} 句</div>
           <div class="course-prog"><div class="course-prog-bar" style="width:${pct}%"></div></div>
           <div style="margin-top:14px;display:flex;gap:12px">
-            <a class="btn-green" href="#/practice/${c.id}">▶ 开始练习</a>
+            ${isVipLocked(c)
+              ? `<button class="btn-green" onclick="openCardModal()">🔒 开通学习卡后解锁</button>`
+              : `<a class="btn-green" href="#/practice/${c.id}">▶ 开始练习</a>`}
           </div>
         </div>
       </div>
@@ -561,43 +569,33 @@
   }
   document.getElementById("checkinBtn").addEventListener("click", doCheckin);
 
-  // ---------- 支付配置（把你的真实通道填进来）----------
-  // link = 微信小店商品链接 / 小程序商品页链接；wx = 客服微信号；qr = 二维码图片路径(放 images/ 下)
-  // 三个都留空时，点击购买会提示先配置；填了 qr 优先展示二维码，否则展示复制链接/微信号
-  const PAY = {
-    "月卡":   { link: "", wx: "laowang-vip", qr: "" },
-    "季卡":   { link: "", wx: "laowang-vip", qr: "" },
-    "年卡":   { link: "", wx: "laowang-vip", qr: "" },
-    "永久卡": { link: "", wx: "laowang-vip", qr: "" },
+  // ---------- 支付 / 会员配置 ----------
+  // contact = 付款后加此客服领取兑换码；qr = 收款码图片(放本目录，命名为 pay-qr.png)
+  // codes = 可用兑换码池（手动维护，每个码建议只发给一人，避免被复用）
+  const PAY = window.PAY = {
+    contact: "vip20213456",
+    qr: "pay-qr.png",
+    codes: [
+      "HY2026-1001","HY2026-1002","HY2026-1003","HY2026-1004","HY2026-1005",
+      "HY2026-2001","HY2026-2002","HY2026-2003","HY2026-2004","HY2026-2005",
+    ],
   };
 
-  function showPay(p, mask) {
-    const box = mask.querySelector("#payBox");
-    const cfg = PAY[p] || {};
-    let html = `<div class="pay-card"><div class="pay-h">${esc(p)} · 购买方式</div>`;
-    if (cfg.qr) {
-      html += `<img class="pay-qr" src="${esc(cfg.qr)}" alt="扫码购买"/><div class="pay-tip">用微信「扫一扫」完成支付，付款后客服秒开通</div>`;
-    } else {
-      html += `<div class="pay-tip">① 复制商品链接，去微信粘贴打开购买</div>`;
-      html += `<button class="btn-green pay-copy" data-copy="${esc(cfg.link || "")}">复制商品链接</button>`;
-      html += `<div class="pay-tip pay-sep">② 或直接加客服微信，付款后秒开通</div>`;
-      html += `<button class="btn-ghost pay-copy" data-copy="${esc(cfg.wx || "")}">复制客服微信</button>`;
-    }
-    html += `</div>`;
-    box.innerHTML = html;
-    box.classList.add("show");
-    box.querySelectorAll(".pay-copy").forEach((b) => {
-      b.addEventListener("click", () => {
-        const t = b.dataset.copy;
-        if (!t) { toast("请先在 PAY 配置里填写链接或微信号"); return; }
-        if (navigator.clipboard && navigator.clipboard.writeText) {
-          navigator.clipboard.writeText(t).then(() => toast("已复制：" + t)).catch(() => toast("复制失败，请手动复制：" + t));
-        } else { toast("请手动复制：" + t); }
-      });
-    });
+  // 会员专享判定：高级课程需兑换码激活
+  function isVipLocked(c) {
+    return c && c.level === "高级" && !Store.isVip();
   }
 
-  // ---------- 学习卡弹层 ----------
+  // 刷新会员态 UI（顶栏按钮）
+  function refreshVipUI() {
+    const btn = document.getElementById("navOpenCard");
+    if (btn && Store.isVip()) {
+      btn.textContent = "会员已开通 ✓";
+      btn.classList.add("vip-on");
+    }
+  }
+
+  // ---------- 学习卡弹层（收款码 + 兑换码激活）----------
   window.openCardModal = function () {
     let mask = document.getElementById("cardMask");
     if (!mask) {
@@ -606,26 +604,47 @@
       mask.innerHTML = `
         <div class="modal">
           <h3>开通学习卡</h3>
-          <p>微信扫码或复制链接购买，付款后客服秒开通全部课程。</p>
-          <div class="plan-list">
-            <div class="plan"><div><div class="pp">¥39 <small>/ 月</small></div><div class="pd">先体验，随时退</div></div><button class="btn-green" data-p="月卡">购买</button></div>
-            <div class="plan"><div><div class="pp">¥109 <small>/ 季</small></div><div class="pd">立省 ¥8</div></div><button class="btn-green" data-p="季卡">购买</button></div>
-            <div class="plan"><div><div class="pp">¥365 <small>/ 年</small></div><div class="pd">平均每天仅 ¥1</div></div><button class="btn-green" data-p="年卡">购买</button></div>
-            <div class="plan"><div><div class="pp">¥1299 <small>/ 永久</small></div><div class="pd">一次开通，终身可用</div></div><button class="btn-green" data-p="永久卡">购买</button></div>
+          <p class="modal-sub">微信 / 支付宝 <b>扫码付款</b>，付款后加客服 <b>${esc(PAY.contact)}</b> 领取兑换码，即可激活全部会员课程。</p>
+          <div class="pay-qr-wrap">
+            <img class="pay-qr" src="${esc(PAY.qr)}" alt="收款码"
+                 onerror="this.style.display='none';document.getElementById('qrTip').style.display='block'" />
+            <div id="qrTip" class="qr-tip" style="display:none">请将收款码图片命名为 <code>pay-qr.png</code> 放到本站目录下</div>
           </div>
-          <div id="payBox" class="pay-box"></div>
+          <div class="redeem-box">
+            <div class="rb-h">已付款？输入兑换码立即激活</div>
+            <div class="rb-row">
+              <input id="codeInput" class="code-input" placeholder="例如 HY2026-1001" autocomplete="off" />
+              <button class="btn-green" id="redeemBtn">激活</button>
+            </div>
+            <div id="redeemMsg" class="redeem-msg"></div>
+          </div>
           <div style="text-align:right;margin-top:16px"><button class="btn-ghost" id="cardClose">关闭</button></div>
         </div>`;
       document.body.appendChild(mask);
       mask.addEventListener("click", (e) => { if (e.target === mask) mask.classList.remove("show"); });
       mask.querySelector("#cardClose").addEventListener("click", () => mask.classList.remove("show"));
-      mask.querySelectorAll(".plan button").forEach((b) =>
-        b.addEventListener("click", () => { showPay(b.dataset.p, mask); })
-      );
+      mask.querySelector("#redeemBtn").addEventListener("click", () => {
+        const v = mask.querySelector("#codeInput").value;
+        const r = Store.redeemCode(v);
+        const msg = mask.querySelector("#redeemMsg");
+        if (r.ok) {
+          msg.className = "redeem-msg ok"; msg.textContent = r.msg;
+          toast(r.msg); refreshVipUI();
+          setTimeout(() => mask.classList.remove("show"), 1500);
+        } else {
+          msg.className = "redeem-msg err"; msg.textContent = r.msg;
+        }
+      });
+    }
+    // 已开通则显示已激活状态
+    if (Store.isVip()) {
+      const rb = mask.querySelector(".redeem-box");
+      if (rb) rb.innerHTML = `<div class="rb-h ok">🎉 您已开通学习卡，会员权益已生效</div>`;
     }
     mask.classList.add("show");
   };
 
   // ---------- 启动 ----------
   route();
+  refreshVipUI();
 })();
