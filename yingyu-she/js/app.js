@@ -18,6 +18,56 @@
   function normalize(s) {
     return s.trim().toLowerCase().replace(/[.,!?;:'"()]/g, "").replace(/\s+/g, " ");
   }
+  // ---------- 句子拆解 / 单词卡片 ----------
+  function cleanWord(w) {
+    return String(w || "").replace(/[.,!?;:'"()]/g, "").trim().toLowerCase();
+  }
+  function parseSentence(en) {
+    return String(en || "").replace(/[.,!?;:'"()]/g, "").split(/\s+/).filter(Boolean);
+  }
+  function getWordDetail(raw) {
+    const w = cleanWord(raw);
+    if (!w) return { pos: "unknown", phonetic: "", mean: "" };
+    if (typeof WORD_DETAIL !== "undefined" && WORD_DETAIL[w]) return WORD_DETAIL[w];
+    // fallback：根据词尾/常见规则推断词性
+    if (/^(i|you|he|she|it|we|they|me|him|her|us|them|my|your|his|our|their|this|that|these|those|what|which|who)$/i.test(w)) return { pos: "pronoun", phonetic: "", mean: "" };
+    if (/^(a|an|the)$/i.test(w)) return { pos: "article", phonetic: "", mean: "" };
+    if (/^(and|but|or|because|if|when|where|while|although)$/i.test(w)) return { pos: "conjunction", phonetic: "", mean: "" };
+    if (/^(in|on|at|to|for|with|from|of|about|by|into|out|off|over|under|before|after|between)$/i.test(w)) return { pos: "preposition", phonetic: "", mean: "" };
+    if (/^(very|really|too|so|not|no|now|then|here|there|today|tomorrow|yesterday|often|always|never|sometimes|usually|still|already|just|only|also|even|again|back|away|down|up)$/i.test(w)) return { pos: "adverb", phonetic: "", mean: "" };
+    if (/^(is|am|are|was|were|be|been|being|have|has|had|do|does|did|done|can|could|will|would|shall|should|may|might|must)$/i.test(w)) return { pos: "verb", phonetic: "", mean: "" };
+    if (/ing$|ed$|s$/.test(w) && w.length > 3) return { pos: "verb", phonetic: "", mean: "" };
+    if (/ful$|ive$|ous$|able$|ible$|less$|al$|ic$|ish$/.test(w)) return { pos: "adjective", phonetic: "", mean: "" };
+    if (/ly$/.test(w)) return { pos: "adverb", phonetic: "", mean: "" };
+    if (/tion$|sion$|ment$|ness$|ity$|er$|or$|ist$|ism$/.test(w)) return { pos: "noun", phonetic: "", mean: "" };
+    return { pos: "noun", phonetic: "", mean: "" };
+  }
+  function posClass(pos) {
+    const map = {
+      pronoun: "pos-pronoun", verb: "pos-verb", "aux verb": "pos-aux", adverb: "pos-adverb",
+      noun: "pos-noun", adjective: "pos-adj", preposition: "pos-prep", article: "pos-article", conjunction: "pos-conj"
+    };
+    return map[pos] || "pos-default";
+  }
+  function posLabel(pos) {
+    const map = {
+      pronoun: "代词", verb: "动词", "aux verb": "助动词", adverb: "副词",
+      noun: "名词", adjective: "形容词", preposition: "介词", article: "冠词", conjunction: "连词", unknown: ""
+    };
+    return map[pos] || pos;
+  }
+  function renderWordCards(words) {
+    return words.map((w) => {
+      const d = getWordDetail(w);
+      return `
+        <div class="word-card">
+          <span class="pos-tag ${posClass(d.pos)}">${esc(posLabel(d.pos))}</span>
+          <span class="en">${esc(w)}</span>
+          ${d.phonetic ? `<span class="phonetic">${esc(d.phonetic)}</span>` : ""}
+          ${d.mean ? `<span class="mean">${esc(d.mean)}</span>` : ""}
+        </div>`;
+    }).join("");
+  }
   // ---------- 语音嗓音切换 ----------
   let VOICES = [];
   let currentVoiceURI = "";
@@ -136,94 +186,138 @@
         <div class="sub">当前连续 <b>${c.current}</b> · 最高 <b>${c.max}</b> · 累计 <b>${c.total}</b></div></div>
     `;
   }
+  // 首页独立练习统计（与 practice 页 session 分开）
+  let homeSession = { correct: 0, wrong: 0, combo: 0, bestCombo: 0, xp: 0 };
   function renderHome() {
-    const s = Store.getStats();
-    const c = Store.getCheckin();
-    const lvl = Store.getLevel();
-    const rank = Store.getRank();
-    const goal = Store.getTodayGoal();
-    const badges = Store.getBadges();
-    const ciDots = c.calendar
-      .map((on, i) => `<div class="ci-dot ${on ? "on" : ""} ${i === c.calendar.length - 1 && !on ? "today" : ""}">${on ? "✓" : ""}</div>`)
-      .join("");
+    const course = COURSES.find((c) => c.id === pstate.courseId) || COURSES[0];
+    if (!pstate.courseId) { pstate.courseId = course.id; savePracticeMeta(); }
+    const idx = Math.min(Math.max(pstate.idx || 0, 0), course.lessons.length - 1);
+    pstate.idx = idx;
+    const item = course.lessons[idx];
+    const words = parseSentence(item.en);
+    const options = COURSES.map((c) => `<option value="${c.id}" ${c.id === course.id ? "selected" : ""}>${c.emoji} ${esc(c.title)}</option>`).join("");
+    const weakStats = Store.getWeakStats();
     app.innerHTML = `
-      <section class="hero">
-        <div>
-          <h1>游戏化，把英语学进肌肉记忆</h1>
-          <p>看着中文敲英文、把打乱的单词拼成句子，像闯关一样练句型。每天打卡、看排名，让坚持有反馈。</p>
-          <div style="margin-top:16px;display:flex;gap:12px;">
-            <a class="btn-primary" href="#/practice" style="background:#fff;color:var(--green-d);box-shadow:none;">开始练习 →</a>
-            <a class="btn-ghost" href="#/courses" style="background:rgba(255,255,255,.18);border-color:rgba(255,255,255,.65);color:#fff;">逛课程广场</a>
+      <div class="studio-page">
+        <div class="studio-nav">
+          <a href="#/practice">📝 练习模式</a>
+          <a href="#/challenge">⚔️ 竞技挑战</a>
+          <a href="#/courses">📚 课程广场</a>
+          <a href="#/weak">📒 易错本${weakStats.weak ? ` (${weakStats.weak})` : ""}</a>
+          <a href="#/leaderboard">🏆 排行榜</a>
+        </div>
+        <div class="studio-head">
+          <div class="studio-title">当前课程：<b>${esc(course.title)}</b> · 第 ${idx + 1}/${course.lessons.length} 句</div>
+          <select class="course-picker" id="homeCoursePicker">${options}</select>
+        </div>
+        <div class="studio-card" id="studioCard">
+          <div class="sentence-zh-big">${esc(item.zh)}</div>
+          <div class="word-flow">${renderWordCards(words)}</div>
+          <div class="studio-input">
+            <div class="studio-input-label">看中文，在横线上敲出每个英文单词</div>
+            <div id="homeSlotBox"></div>
+          </div>
+          <div class="studio-feedback" id="homeFb"></div>
+          <div class="studio-actions">
+            <button class="btn-green" id="homeSubmit">提交</button>
+            <button class="btn-ghost" id="homeSpeak">🔊 听发音</button>
+            <button class="btn-ghost" id="homeSkip">不会，看答案</button>
+          </div>
+          <div class="studio-tipbox" id="homeTipBox">${tipBlockHTML(learnText(course.id, item.en, false), "讲讲这句的语法")}</div>
+        </div>
+        <div style="text-align:center;margin-top:22px;">
+          <div class="studio-stats">
+            <div class="s"><b>${fmt(Store.getStats().sentencesDone)}</b><span>完成句子</span></div>
+            <div class="s ok"><b id="homeCorrect">${homeSession.correct}</b><span>已答对</span></div>
+            <div class="s err"><b id="homeWrong">${homeSession.wrong}</b><span>已答错</span></div>
+            <div class="s"><b id="homeCombo">${homeSession.combo}</b><span>当前连击</span></div>
           </div>
         </div>
-        <div class="hero-stats">
-          <div class="hero-stat"><div class="n">${fmt(s.sentencesDone)}</div><div class="l">完成句子</div></div>
-          <div class="hero-stat"><div class="n">${fmt(s.wordsDone)}</div><div class="l">完成单词</div></div>
-          <div class="hero-stat"><div class="n">${c.current}</div><div class="l">连续打卡</div></div>
-        </div>
-      </section>
-
-      <div class="rank-card">
-        <div class="rank-main">
-          <div class="rank-ico">${rank.icon}</div>
-          <div class="rank-meta">
-            <div class="rank-title">${rank.title}<span class="rank-sub">当前段位</span></div>
-            <div class="rank-xp">⚡ ${fmt(rank.xp)} XP · 📅 今日 ${goal.done}/${goal.goal} 句</div>
-          </div>
-          <div class="rank-score">
-            <div class="rank-best">🔥 最高连击 ${fmt(Store.getBestCombo())}</div>
-            <a class="rank-challenge" href="#/challenge">⚔️ 竞技挑战</a>
-          </div>
-        </div>
-        <div class="rank-prog">
-          <div class="rank-prog-top"><span>${rank.idx + 1}/${rank.total} · ${rank.title}</span><span>${rank.next ? `下一档：${rank.next.icon} ${rank.next.title}` : "已封顶"}</span></div>
-          <div class="rank-bar"><div class="rank-bar-fill" style="width:${rank.percent}%"></div></div>
-          <div class="rank-prog-bottom">${rank.next ? `还需 ${fmt(rank.next.min - rank.xp)} XP 晋级` : "满级 🏆"}</div>
-        </div>
       </div>
-      <div class="badge-row">
-        ${badges.map((b) => `<div class="badge ${b.got ? "got" : "nogot"}">${b.icon}<span>${b.name}</span></div>`).join("")}
-      </div>
-
-      <div class="section-h"><span class="bar"></span>我的学习统计</div>
-      <div class="time-tabs">
-        <button class="tt ${statRange === "total" ? "active" : ""}" data-r="total">总计</button>
-        <button class="tt ${statRange === "today" ? "active" : ""}" data-r="today">今日</button>
-        <button class="tt ${statRange === "week" ? "active" : ""}" data-r="week">本周</button>
-        <button class="tt ${statRange === "month" ? "active" : ""}" data-r="month">本月</button>
-      </div>
-      <div class="stat-grid" id="statGrid">${statCardsHTML(statRange)}</div>
-
-      <div class="checkin-row">
-        <div class="ci-info">
-          <div class="ci-num"><div class="n">${c.current}</div><div class="l">当前连续</div></div>
-          <div class="ci-week">${ciDots}</div>
-        </div>
-        <button class="btn-green" id="homeCheckin">📅 立即打卡</button>
-      </div>
-
-      <div class="section-h"><span class="bar"></span>${Store.isVip() ? "学习卡已开通 ✓" : "开通学习卡，解锁全部课程"}</div>
-      ${Store.isVip()
-        ? `<div class="vip-on-box">🎉 您已开通会员，全部课程（含会员专享）已解锁，继续加油！</div>`
-        : `<div class="stat-grid">
-        <div class="stat-card" style="cursor:pointer" onclick="openCardModal()"><div class="n orange">¥39</div><div class="l">月卡</div><div class="sub">先体验，随时退</div></div>
-        <div class="stat-card" style="cursor:pointer" onclick="openCardModal()"><div class="n orange">¥109</div><div class="l">季卡</div><div class="sub">立省 ¥8</div></div>
-        <div class="stat-card" style="cursor:pointer" onclick="openCardModal()"><div class="n orange">¥365</div><div class="l">年卡</div><div class="sub">平均每天仅 ¥1</div></div>
-        <a class="stat-card" href="#/partner" style="text-decoration:none;cursor:pointer;position:relative">
-          <div class="n green">¥1299</div><div class="l">永久卡</div><div class="sub">一次开通，终身可用</div>
-          <div class="sv-link-tag">先测一测 · 适合再付</div>
-        </a>
-      </div>`}
-      ${(() => { const w = Store.getWeakStats(); return w.weak ? `<div class="weak-banner">📒 你有 <b>${w.weak}</b> 个易错内容待巩固，<a href="#/weak">去易错本专项复习 →</a></div>` : ""; })()}
     `;
-    app.querySelector("#homeCheckin").addEventListener("click", doCheckin);
-    app.querySelectorAll(".tt").forEach((b) =>
-      b.addEventListener("click", () => {
-        statRange = b.dataset.r;
-        app.querySelectorAll(".tt").forEach((x) => x.classList.toggle("active", x === b));
-        app.querySelector("#statGrid").innerHTML = statCardsHTML(statRange);
-      })
-    );
+    bindTip(app);
+    const slots = buildWordSlots(app.querySelector("#homeSlotBox"), words.length, { words, showIndex: true, onEnter: homeSubmit });
+    setTimeout(() => slots.focus(0), 50);
+    setTimeout(() => speak(item.en), 350);
+    app.querySelector("#homeSpeak").addEventListener("click", () => speak(item.en));
+    app.querySelector("#homeCoursePicker").addEventListener("change", (e) => {
+      pstate.courseId = e.target.value;
+      pstate.idx = 0;
+      setProg(pstate.courseId, pstate.mode, 0);
+      savePracticeMeta();
+      homeSession = { correct: 0, wrong: 0, combo: 0, bestCombo: 0, xp: 0 };
+      renderHome();
+    });
+    const fb = app.querySelector("#homeFb");
+    function homeAward(correct, anchor) {
+      if (correct) {
+        homeSession.correct += 1; homeSession.combo += 1;
+        if (homeSession.combo > homeSession.bestCombo) homeSession.bestCombo = homeSession.combo;
+        const xp = Math.round(10 * (1 + Math.min(Math.max(homeSession.combo - 1, 0), 5) * 0.2));
+        homeSession.xp += xp; Store.addXp(xp); Store.bumpCombo(homeSession.bestCombo);
+        FX.Sound.correct(homeSession.combo);
+        FX.floatText(anchor, "+" + xp + (homeSession.combo > 1 ? "  🔥x" + homeSession.combo : ""));
+        FX.burstAt(anchor, { count: 12 + Math.min(homeSession.combo, 8) * 3 });
+        FX.pulse(anchor, "reward-pop");
+        if ([3, 5, 10, 20, 30, 50].indexOf(homeSession.combo) >= 0) {
+          FX.Sound.milestone(); FX.confetti(70 + homeSession.combo * 2); toast("🔥 连击 x" + homeSession.combo + "！手感爆棚");
+        }
+      } else {
+        homeSession.wrong += 1; homeSession.combo = 0; FX.Sound.wrong(); FX.pulse(anchor, "reward-shake");
+      }
+      updateHomeHud();
+    }
+    function homeSubmit() {
+      if (slots._locked) return;
+      const val = slots.getValue();
+      if (!val.trim()) { toast("先写点英文再提交"); return; }
+      const correct = normalize(val) === normalize(item.en);
+      if (correct) {
+        slots._locked = true;
+        slots.setStatus("ok"); slots.setReadOnly(true);
+        fb.className = "studio-feedback ok"; fb.textContent = "✅ " + praise();
+        speak("Correct!");
+        Store.recordSentence(true); Store.addMinutes(1); Store.logPractice(course.id, "type", true);
+        Store.recordWeak(course.id, course.title, "type", item.zh, item.en, true);
+        homeAward(true, slots.wrap);
+        openTip(app, 420);
+        setTimeout(() => nextHomeSentence(course), 1150);
+      } else {
+        slots.setStatus("err");
+        fb.className = "studio-feedback err"; fb.textContent = wrongHint(val, item.en);
+        speak("Try again");
+        Store.recordWeak(course.id, course.title, "type", item.zh, item.en, false);
+        homeAward(false, slots.wrap);
+        openTip(app, 260);
+        setTimeout(() => { slots.setStatus(""); slots.els.forEach((e) => { e.value = ""; }); slots.focus(0); }, 620);
+      }
+    }
+    function nextHomeSentence(course) {
+      pstate.idx += 1;
+      if (pstate.idx >= course.lessons.length) { pstate.idx = 0; }
+      setProg(pstate.courseId, pstate.mode, pstate.idx);
+      renderHome();
+    }
+    app.querySelector("#homeSubmit").addEventListener("click", homeSubmit);
+    app.querySelector("#homeSkip").addEventListener("click", () => {
+      if (slots._locked) return;
+      slots._locked = true; slots.fill(item.en); slots.setStatus("ok"); slots.setReadOnly(true);
+      fb.className = "studio-feedback ok"; fb.textContent = `答案：${item.en}`;
+      speak(item.en);
+      Store.recordSentence(false); Store.addMinutes(1); Store.logPractice(course.id, "type", false);
+      Store.recordWeak(course.id, course.title, "type", item.zh, item.en, false);
+      homeSession.combo = 0; updateHomeHud();
+      openTip(app);
+      const n = document.createElement("button"); n.className = "btn-green"; n.style.marginTop = "14px";
+      n.textContent = "下一句 →"; n.addEventListener("click", () => nextHomeSentence(course));
+      const tipEl = app.querySelector("#tipbox");
+      if (tipEl) app.querySelector(".studio-card").insertBefore(n, tipEl); else app.querySelector(".studio-card").appendChild(n);
+    });
+    function updateHomeHud() {
+      const c = document.getElementById("homeCorrect"); if (c) c.textContent = homeSession.correct;
+      const w = document.getElementById("homeWrong"); if (w) w.textContent = homeSession.wrong;
+      const b = document.getElementById("homeCombo"); if (b) b.textContent = homeSession.combo;
+    }
   }
 
   // ---------- 课程广场 ----------
@@ -833,11 +927,12 @@
   }
   function renderType(box, course) {
     const item = course.lessons[pstate.idx];
-    const answerWords = item.en.replace(/[.,!?;:'"()]/g, "").split(/\s+/).filter(Boolean);
+    const answerWords = parseSentence(item.en);
     box.innerHTML = `
       <div class="sentence-zh">${esc(item.zh)}</div>
+      <div class="word-flow">${renderWordCards(answerWords)}</div>
       <button class="speak-btn" id="speak" type="button">🔊 听发音</button>
-      <div class="sentence-hint">把上面的中文翻译成英文，一个单词一条横线（长短随单词自适应）；填完自动跳下一格，或敲空格 / → 跳格，回车提交。</div>
+      <div class="sentence-hint">看中文，在横线上敲出每个英文单词；填完自动跳下一格，或敲空格 / → 跳格，回车提交。</div>
       <div id="slotBox"></div>
       <div class="feedback" id="fb"></div>
       ${tipBlockHTML(learnText(course.id, item.en, false), "讲讲这句的语法")}
@@ -847,7 +942,7 @@
       </div>`;
     setTimeout(() => speak(item.en), 350);
     bindTip(box);
-    const slots = buildWordSlots(box.querySelector("#slotBox"), answerWords.length, { showIndex: true, onEnter: submit });
+    const slots = buildWordSlots(box.querySelector("#slotBox"), answerWords.length, { words: answerWords, showIndex: true, onEnter: submit });
     setTimeout(() => slots.focus(0), 50);
     const inputEl = slots.wrap;
     function submit() {
