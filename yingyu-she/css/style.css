@@ -1156,6 +1156,10 @@ body { background: var(--bg); color: var(--ink); }
 .word-card .en {
   font-size: 28px; font-weight: 800; color: var(--ink); letter-spacing: .4px; line-height: 1;
 }
+/* 上方卡片隐藏英文答案时，用虚线空位代替（保留卡片形状，不泄露答案） */
+.word-card .en.en-blank {
+  width: 52px; height: 0; border-bottom: 3px dashed #cbd5e1; align-self: center;
+}
 .word-card .phonetic {
   font-size: 13px; color: var(--ink-3); font-family: "SF Mono", Consolas, monospace;
 }

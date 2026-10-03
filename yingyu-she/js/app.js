@@ -56,13 +56,15 @@
     };
     return map[pos] || pos;
   }
-  function renderWordCards(words) {
+  function renderWordCards(words, opts) {
+    opts = opts || {};
+    const hideEn = !!opts.hideEn;     // 上方卡片不显示英文答案，仅留音标/词性/中文作提示
     return words.map((w) => {
       const d = getWordDetail(w);
       return `
         <div class="word-card">
           <span class="pos-tag ${posClass(d.pos)}">${esc(posLabel(d.pos))}</span>
-          <span class="en">${esc(w)}</span>
+          ${hideEn ? `<span class="en en-blank" title="自己拼出来"></span>` : `<span class="en">${esc(w)}</span>`}
           ${d.phonetic ? `<span class="phonetic">${esc(d.phonetic)}</span>` : ""}
           ${d.mean ? `<span class="mean">${esc(d.mean)}</span>` : ""}
         </div>`;
@@ -212,7 +214,7 @@
         </div>
         <div class="studio-card" id="studioCard">
           <div class="sentence-zh-big">${esc(item.zh)}</div>
-          <div class="word-flow">${renderWordCards(words)}</div>
+          <div class="word-flow">${renderWordCards(words, { hideEn: true })}</div>
           <div class="studio-input">
             <div class="studio-input-label">看中文，在横线上敲出每个英文单词</div>
             <div id="homeSlotBox"></div>
@@ -930,7 +932,7 @@
     const answerWords = parseSentence(item.en);
     box.innerHTML = `
       <div class="sentence-zh">${esc(item.zh)}</div>
-      <div class="word-flow">${renderWordCards(answerWords)}</div>
+      <div class="word-flow">${renderWordCards(answerWords, { hideEn: true })}</div>
       <button class="speak-btn" id="speak" type="button">🔊 听发音</button>
       <div class="sentence-hint">看中文，在横线上敲出每个英文单词；填完自动跳下一格，或敲空格 / → 跳格，回车提交。</div>
       <div id="slotBox"></div>
